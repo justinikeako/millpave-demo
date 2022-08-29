@@ -2,12 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	font-size: clamp(14px, calc(0.875rem + ((1vw - 2.24px) * 1.25)), 24px);
+	min-height: 0vw;
+}
+
+@font-face {
+	font-family: 'Inter Display';
+	src: url('/fonts/InterDisplay-SemiBold.woff2') format('woff2');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
 @font-face {
 	font-family: 'Inter Display';
 	src: url('/fonts/InterDisplay-Bold.woff2') format('woff2');
-	font-weight: bold;
+	font-weight: 700;
 	font-style: normal;
 	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Inter Display';
+	src: url('/fonts/InterDisplay-Black.woff2') format('woff2');
+	font-weight: 900;
+	font-style: normal;
+	font-display: block;
+}
+
+@font-face {
+	font-family: 'Inter';
+	src: url('/fonts/Inter-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: block;
 }
 
 @font-face {
@@ -18,18 +47,7 @@
 	font-display: swap;
 }
 
-@font-face {
-	font-family: 'Inter Display';
-	src: url('/fonts/InterDisplay-Black.woff2') format('woff2');
-	font-weight: 900;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Inter';
-	src: url('/fonts/Inter-Regular.woff2') format('woff2');
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+	-webkit-appearance: none;
 }

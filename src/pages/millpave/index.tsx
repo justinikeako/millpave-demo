@@ -6,7 +6,7 @@ const Page: NextPage = () => {
 	return (
 		<>
 			<Head>
-				<title>Sell more. Work less.</title>
+				<title>Sell More. Work Less.</title>
 				<meta
 					name="description"
 					content="A pitch for Millennium Paving Stones LTD."
@@ -14,10 +14,10 @@ const Page: NextPage = () => {
 				<link rel="icon" href="/logo.png" />
 			</Head>
 
-			<main className="container min-h-screen">
+			<main className="container">
 				{/* Hero */}
-				<section className="h-screen px-12 flex flex-col justify-center">
-					<h1 className="text-4xl leading-tight font-display font-black">
+				<section className="flex h-screen flex-col justify-center px-12">
+					<h1 className="font-display text-4xl font-black">
 						Sell more. <br /> Work less.
 					</h1>
 					<p className="mt-8">
@@ -26,8 +26,8 @@ const Page: NextPage = () => {
 				</section>
 
 				{/* Motivation */}
-				<section className="px-12 py-24 space-y-8">
-					<p className="text-2xl leading-tight font-display font-bold">
+				<section className="space-y-8 px-12 py-24">
+					<p className="font-display text-2xl font-bold">
 						The way we sell at Millennium is pretty old school.
 					</p>
 					<p>
@@ -36,12 +36,14 @@ const Page: NextPage = () => {
 						them notifications. And we still whip out calculators to invoice
 						projects — even when millions are on the table.
 					</p>
-					<p>As the status quo, this hurts customer experience.</p>
+					<p className="font-display text-lg font-semibold">
+						As the status quo, this hurts customer experience.
+					</p>
 					<p>
 						It creates an unnecessary barrier between customers and the company.
 						And it slows down the team with lots of simple yet repetitive work.
 					</p>
-					<p className="mt-16 text-2xl leading-tight font-display font-bold">
+					<p className="mt-16 font-display text-2xl font-bold">
 						But what if it could be different?
 					</p>
 					<p>
@@ -53,10 +55,10 @@ const Page: NextPage = () => {
 
 				{/* Intro */}
 				<section className="px-12 py-24">
-					<h2 className="text-4xl leading-tight font-display font-black">
+					<h2 className="font-display text-4xl font-black">
 						Meet the Virtual Showroom.
 					</h2>
-					<p className="text-xl font-display font-semibold leading-tight">
+					<p className="w-2/3 font-display text-xl font-semibold">
 						It's way better than magic.
 					</p>
 				</section>
@@ -65,16 +67,14 @@ const Page: NextPage = () => {
 				<section>
 					<div className="px-12 py-24">
 						<h2 className="font-semibold">Product Discovery</h2>
-						<p className="text-3xl leading-tight font-display font-black">
-							Photoshop.
-						</p>
+						<p className="font-display text-3xl font-black">Photoshop.</p>
 						<p className="mt-8">
 							Many prospects visit the showroom to find the perfect pavers for
 							their space. By going virtual, they can do this from anywhere.
 						</p>
 					</div>
 					<div className="h-[200vh]">
-						<div className="sticky top-0 h-screen px-12 py-16 space-y-8">
+						<div className="sticky top-0 h-screen space-y-8 px-12 py-16">
 							<p>
 								Prospects can snap a photo of the area they want to work with,
 							</p>
@@ -104,8 +104,8 @@ const Page: NextPage = () => {
 						But sometimes, they need to see how our products look in their
 						space.
 					</p>
-					<div className="sticky top-0 py-16 space-y-8">
-						<p className="text-4xl leading-tight font-display font-black">
+					<div className="sticky top-0 space-y-8 py-16">
+						<p className="font-display text-4xl font-black">
 							So I asked the third dimension for some help.
 						</p>
 						<p>
@@ -121,14 +121,14 @@ const Page: NextPage = () => {
 							in their own space without ever having to visit the showroom.
 						</p>
 						<div className="flex flex-col items-center justify-center space-y-8">
-							<p className="text-2xl text-center leading-tight font-display font-bold">
+							<p className="text-center font-display text-2xl font-bold">
 								Mindblowing, right?
 							</p>
 							<p>But don't just take my word for it.</p>
 							<a
 								target="_blank"
-								href="/"
-								className="block px-8 py-4 font-semibold border border-black rounded-full"
+								href="/millpave/demo/product"
+								className="block rounded-full border border-black px-8 py-4 font-semibold"
 							>
 								Try it out for yourself
 							</a>
@@ -140,9 +140,7 @@ const Page: NextPage = () => {
 				<section>
 					<div className="px-12 py-24">
 						<h2 className="font-semibold">Invoicing</h2>
-						<p className="text-3xl leading-tight font-display font-black">
-							QuickerBooks.
-						</p>
+						<p className="font-display text-3xl font-black">QuickerBooks.</p>
 
 						<p className="mt-8">
 							A tool to make invoicing projects so easy, anyone could do it —
@@ -151,27 +149,27 @@ const Page: NextPage = () => {
 					</div>
 
 					<div className="h-[200vh]">
-						<div className="sticky top-0 px-12 py-24 space-y-8">
-							<p className=" text-2xl text-center leading-tight font-display font-bold">
+						<div className="sticky top-0 space-y-8 px-12 py-24">
+							<p className=" text-center font-display text-2xl font-bold">
 								Just enter your measurements
 							</p>
-							<p className="text-2xl text-center leading-tight font-display font-bold">
+							<p className="text-center font-display text-2xl font-bold">
 								Pick your patterns
 							</p>
-							<p className="text-2xl text-center leading-tight font-display font-bold">
+							<p className="text-center font-display text-2xl font-bold">
 								And get your invoice.
 							</p>
-							<p className="text-2xl text-center leading-tight font-display font-bold">
+							<p className="text-center font-display text-2xl font-bold">
 								No, I didn't forget any other steps.
 							</p>
-							<p className="text-xl leading-tight font-display font-bold">
+							<p className="font-display text-xl font-bold">
 								It supports complex borders, infill cutouts and so much more.
 							</p>
-							<p className="text-xl leading-tight font-display font-bold">
+							<p className="font-display text-xl font-bold">
 								So your sales team can invoice projects like this, and this, and
 								even this in under a minute.
 							</p>
-							<p className="text-xl leading-tight font-display font-bold">
+							<p className="font-display text-xl font-bold">
 								Then drop those invoices in prospects' inboxes with the click of
 								a button using an email service like Sendgrid.
 							</p>
@@ -183,10 +181,10 @@ const Page: NextPage = () => {
 				</section>
 
 				{/* Beyond Paper */}
-				<section className="px-12 pt-16 space-y-8">
+				<section className="space-y-8 px-12 pt-16">
 					<div>
 						<h2 className="font-bold">Digital Invoices</h2>
-						<p className="text-3xl leading-tight font-display font-black">
+						<p className="font-display text-3xl font-black">
 							Doing what paper can't.
 						</p>
 					</div>
@@ -211,10 +209,10 @@ const Page: NextPage = () => {
 
 				{/* Concrete to cash */}
 				<section>
-					<div className="px-12 pt-16 space-y-8">
+					<div className="space-y-8 px-12 pt-16">
 						<div>
 							<h2 className="font-semibold">Ecommerce</h2>
-							<p className="text-3xl leading-tight font-display font-black">
+							<p className="font-display text-3xl font-black">
 								Turn concrete to cash.
 							</p>
 						</div>
@@ -232,27 +230,27 @@ const Page: NextPage = () => {
 						<div className="sticky top-0 h-screen px-12 pt-16">
 							<ul className="space-y-8">
 								<li>
-									<p className="text-3xl text-center leading-tight font-display font-black">
+									<p className="text-center font-display text-3xl font-black">
 										Kingston
 									</p>
 								</li>
 								<li>
-									<p className="text-3xl text-center leading-tight font-display font-black">
+									<p className="text-center font-display text-3xl font-black">
 										Montego Bay
 									</p>
 								</li>
 								<li>
-									<p className="text-3xl text-center leading-tight font-display font-black">
+									<p className="text-center font-display text-3xl font-black">
 										Miami
 									</p>
 								</li>
 								<li>
-									<p className="text-3xl text-center leading-tight font-display font-black">
+									<p className="text-center font-display text-3xl font-black">
 										London
 									</p>
 								</li>
 							</ul>
-							<p className="mt-8 text-3xl leading-tight font-display font-black">
+							<p className="mt-8 font-display text-3xl font-black">
 								Or anywhere else on the planet*
 							</p>
 							<p className="mt-8">*with an internet connection.</p>
@@ -261,7 +259,7 @@ const Page: NextPage = () => {
 				</section>
 
 				{/* Transition */}
-				<section className="px-12 py-16 space-y-8">
+				<section className="space-y-8 px-12 py-16">
 					<p>
 						The virtual showroom provides our customers with a first class
 						shopping experience.
@@ -284,55 +282,55 @@ const Page: NextPage = () => {
 				<section>
 					<div className="px-12 py-16">
 						<h2 className="font-semibold">1. Customer Analytics</h2>
-						<p className="text-4xl leading-tight font-display font-black">
+						<p className="font-display text-4xl font-black">
 							Business intelligence in real time.
 						</p>
 					</div>
 
 					<div className="h-[400vh]">
-						<div className="sticky top-0 px-12 py-16 space-y-8">
-							<p className="text-xl leading-tight font-display font-bold">
+						<div className="sticky top-0 space-y-8 px-12 py-16">
+							<p className="font-display text-xl font-bold">
 								Any time a customer views a product, gets a quote, or makes a
 								purchase, this system takes note.
 							</p>
 
 							<ul className="space-y-8">
 								<li>
-									<p className="text-xl leading-tight font-display font-bold">
+									<p className="font-display text-xl font-bold">
 										Ask "Which products do customers buy most?"
 									</p>
-									<p className="mt-2 text-xl leading-tight font-display font-bold">
+									<p className="mt-2 font-display text-xl font-bold">
 										And see what you should be making more.
 									</p>
 								</li>
 								<li>
-									<p className="text-xl leading-tight font-display font-bold">
+									<p className="font-display text-xl font-bold">
 										Ask "How are customers using our products?"
 									</p>
-									<p className="mt-2 text-xl leading-tight font-display font-bold">
+									<p className="mt-2 font-display text-xl font-bold">
 										And drive your next ad campaign with insights on customer
 										behavior.
 									</p>
 								</li>
 								<li>
-									<p className="text-xl leading-tight font-display font-bold">
+									<p className="font-display text-xl font-bold">
 										Ask "Where are customers ordering to?"
 									</p>
-									<p className="mt-2 text-xl leading-tight font-display font-bold">
+									<p className="mt-2 font-display text-xl font-bold">
 										And find out where you should open your next locations.
 									</p>
 								</li>
 							</ul>
 
-							<p className="text-xl leading-tight font-display font-bold">
+							<p className="font-display text-xl font-bold">
 								The analytics system keeps track of all this and so much more in
 								real time.
 							</p>
-							<p className="text-xl leading-tight font-display font-bold">
+							<p className="font-display text-xl font-bold">
 								Then makes sense of it all in a single dashboard that you can
 								check on whenever, wherever.
 							</p>
-							<p className="text-xl leading-tight font-display font-bold">
+							<p className="font-display text-xl font-bold">
 								Business intelligence never looked so good.
 							</p>
 						</div>
@@ -343,7 +341,7 @@ const Page: NextPage = () => {
 				<section>
 					<div className="px-12 py-16">
 						<h2 className="font-semibold">2. Inventory Management</h2>
-						<p className="text-4xl leading-tight font-display font-black">
+						<p className="font-display text-4xl font-black">
 							An eye on supply.
 						</p>
 						<p className="mt-8">
@@ -353,10 +351,10 @@ const Page: NextPage = () => {
 					</div>
 
 					<div className="h-[400vh]">
-						<div className="sticky top-0 px-12 py-16 space-y-8">
+						<div className="sticky top-0 space-y-8 px-12 py-16">
 							<ul className="space-y-8">
 								<li>
-									<p className="text-xl leading-tight font-display font-bold">
+									<p className="font-display text-xl font-bold">
 										Want to check what's available?
 									</p>
 									<p className="mt-2">
@@ -366,7 +364,7 @@ const Page: NextPage = () => {
 									</p>
 								</li>
 								<li>
-									<p className="text-xl leading-tight font-display font-bold">
+									<p className="font-display text-xl font-bold">
 										Sold some stones?
 									</p>
 									<p className="mt-2">
@@ -375,7 +373,7 @@ const Page: NextPage = () => {
 									</p>
 								</li>
 								<li>
-									<p className="text-xl leading-tight font-display font-bold">
+									<p className="font-display text-xl font-bold">
 										Need to restock?
 									</p>
 									<p className="mt-2">
@@ -400,7 +398,7 @@ const Page: NextPage = () => {
 
 				{/* Combined */}
 				<section className="px-12 py-16">
-					<h2 className="text-2xl leading-tight font-display font-black">
+					<h2 className="font-display text-2xl font-black">
 						A match made in Heaven.
 					</h2>
 					<p className="mt-8">
@@ -414,16 +412,16 @@ const Page: NextPage = () => {
 				{/* Logistics */}
 				<section>
 					<div className="px-12 py-16">
-						<h2 className="text-3xl leading-tight font-display font-black">
+						<h2 className="font-display text-3xl font-black">
 							Logistics on easy mode.
 						</h2>
 						<p className="mt-8">Describing paragraph goes here.</p>
 					</div>
 
-					<div className="px-4 py-16 space-y-4">
-						<div className="px-8 py-12 space-y-4 bg-gray-500 text-white rounded-2xl">
+					<div className="space-y-4 px-4 py-16">
+						<div className="space-y-4 rounded-lg bg-neutral-500 px-8 py-12 text-white">
 							<h3 className="font-semibold">Just-in-time Manufacturing</h3>
-							<p className="text-3xl leading-tight font-display font-black">
+							<p className="font-display text-3xl font-black">
 								Data-driven production.
 							</p>
 							<p>
@@ -434,8 +432,8 @@ const Page: NextPage = () => {
 								forecasted demand is high.
 							</p>
 						</div>
-						<div className="px-8 py-12 space-y-4 bg-gray-200 text-black rounded-2xl">
-							<h3 className="text-xl leading-tight font-display font-bold">
+						<div className="space-y-4 rounded-lg bg-neutral-100 px-8 py-12 text-black">
+							<h3 className="font-display text-xl font-bold">
 								Smart distribution.
 							</h3>
 							<p>
@@ -443,8 +441,8 @@ const Page: NextPage = () => {
 								showroom and what to keep at the factory.
 							</p>
 						</div>
-						<div className="px-8 py-12 space-y-4 bg-gray-200 text-black rounded-2xl">
-							<h3 className="text-xl leading-tight font-display font-bold">
+						<div className="space-y-4 rounded-lg bg-neutral-100 px-8 py-12 text-black">
+							<h3 className="font-display text-xl font-bold">
 								More goods on less gas.
 							</h3>
 							<p>
@@ -459,7 +457,7 @@ const Page: NextPage = () => {
 				<section>
 					<div className="px-12 py-16">
 						<h2 className="font-semibold">Notifications</h2>
-						<p className="text-2xl leading-tight font-display font-black">
+						<p className="font-display text-2xl font-black">
 							Stay in the loop.
 						</p>
 						<p className="mt-8">
@@ -468,9 +466,9 @@ const Page: NextPage = () => {
 						</p>
 					</div>
 
-					<div className="px-4 py-16 space-y-4">
-						<div className="px-8 py-12 space-y-4 bg-gray-200 text-black rounded-2xl">
-							<h3 className="text-xl leading-tight font-display font-bold">
+					<div className="space-y-4 px-4 py-16">
+						<div className="space-y-4 rounded-lg bg-neutral-100 px-8 py-12 text-black">
+							<h3 className="font-display text-xl font-bold">
 								Restock. Preorder.
 							</h3>
 							<p>
@@ -480,9 +478,9 @@ const Page: NextPage = () => {
 								they can reserve their stock early.
 							</p>
 						</div>
-						<div className="px-8 py-12 space-y-4 bg-gray-500 text-white rounded-2xl">
+						<div className="space-y-4 rounded-lg bg-neutral-500 px-8 py-12 text-white">
 							<h3 className="font-semibold">Fulfillment Timelines</h3>
-							<p className="text-2xl leading-tight font-display font-black">
+							<p className="font-display text-2xl font-black">
 								Track every order.
 							</p>
 							<p>
@@ -493,8 +491,8 @@ const Page: NextPage = () => {
 								to plan.
 							</p>
 						</div>
-						<div className="px-8 py-12 space-y-4 bg-gray-200 text-black rounded-2xl">
-							<h3 className="text-xl leading-tight font-display font-semibold">
+						<div className="space-y-4 rounded-lg bg-neutral-100 px-8 py-12 text-black">
+							<h3 className="font-display text-xl font-semibold">
 								Repeat customers.
 							</h3>
 							<p>
@@ -509,14 +507,14 @@ const Page: NextPage = () => {
 				{/* Admin features */}
 				<section>
 					<div className="px-12 py-16">
-						<h2 className="text-4xl leading-tight font-display font-black">
+						<h2 className="font-display text-4xl font-black">
 							Even more to love.
 						</h2>
 					</div>
 
-					<div className="px-4 py-16 space-y-4">
-						<div className="space-y-4 px-8 py-12 bg-gray-200 text-black rounded-2xl">
-							<h3 className="text-2xl leading-tight font-display font-bold">
+					<div className="space-y-4 px-4 py-16">
+						<div className="space-y-4 rounded-lg bg-neutral-100 px-8 py-12 text-black">
+							<h3 className="font-display text-2xl font-bold">
 								You're in control.
 							</h3>
 							<p>
@@ -525,8 +523,8 @@ const Page: NextPage = () => {
 								Your changes get reflected everywhere, instantly.
 							</p>
 						</div>
-						<div className="space-y-4 px-8 py-12 bg-gray-200 text-black rounded-2xl">
-							<h3 className="text-2xl leading-tight font-display font-bold">
+						<div className="space-y-4 rounded-lg bg-neutral-100 px-8 py-12 text-black">
+							<h3 className="font-display text-2xl font-bold">
 								Security built in.
 							</h3>
 							<p>
@@ -534,8 +532,8 @@ const Page: NextPage = () => {
 								every system with user permissions.
 							</p>
 						</div>
-						<div className="space-y-4 px-8 py-12 bg-gray-200 text-black rounded-2xl">
-							<h3 className="text-2xl leading-tight font-display font-bold">
+						<div className="space-y-4 rounded-lg bg-neutral-100 px-8 py-12 text-black">
+							<h3 className="font-display text-2xl font-bold">
 								Built to scale.
 							</h3>
 							<p>
@@ -543,8 +541,8 @@ const Page: NextPage = () => {
 								performance in minutes. No technician required.
 							</p>
 						</div>
-						<div className="space-y-4 px-8 py-12 bg-gray-200 text-black rounded-2xl">
-							<h3 className="text-2xl leading-tight font-display font-bold">
+						<div className="space-y-4 rounded-lg bg-neutral-100 px-8 py-12 text-black">
+							<h3 className="font-display text-2xl font-bold">
 								Work anywhere.
 							</h3>
 							<p>
@@ -556,22 +554,23 @@ const Page: NextPage = () => {
 				</section>
 
 				{/* Outro */}
-				<section className="h-screen px-12 py-16 flex flex-col justify-center">
+				<section className="flex h-screen flex-col justify-center px-12 py-16">
 					<div className="space-y-8">
-						<h2 className="text-3xl font-display font-black">Get started.</h2>
+						<h2 className="font-display text-3xl font-black">Millennium.</h2>
 						<p>Remember that magic wand I mentioned earlier?</p>
 						<p>
-							It's actually in your hand right now. If you're in, wave it by
+							It's actually in your hand right now. If you like these ideas,
+							wave it by
 						</p>
 
 						<div>
 							<a
 								href="tel:+8763384628"
-								className="block text-center mt-8 px-8 py-4 bg-black text-white rounded-full"
+								className="mt-8 block rounded-full bg-black px-8 py-4 text-center text-white"
 							>
 								Calling Me
 							</a>
-							<p className="text-center mt-4">Any time between 11 am - 7 pm</p>
+							<p className="mt-4 text-center">Any time between 11 am - 7 pm</p>
 						</div>
 					</div>
 				</section>

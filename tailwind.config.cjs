@@ -9,20 +9,29 @@ module.exports = {
 		},
 
 		fontSize: {
-			sm: '0.8rem',
-			lg: '1.25rem',
-			xl: '1.563rem',
-			'2xl': '1.953rem',
-			'3xl': '2.441rem',
-			'4xl': '3.052rem'
+			sm: ['0.8rem', '1.5'],
+			base: ['1rem', '1.5'],
+			lg: ['1.25rem', '1.15'],
+			xl: ['1.563rem', '1.15'],
+			'2xl': ['1.953rem', '1.15'],
+			'3xl': ['2.441rem', '1.15'],
+			'4xl': ['3.052rem', '1.15']
 		},
 
 		extend: {
 			lineHeight: {
 				tight: '1.15'
+			},
+
+			borderRadius: {
+				sm: '0.5rem',
+				md: '0.75rem',
+				lg: '1rem',
+				xl: '1.5rem',
+				'2xl': '2rem'
 			}
 		}
 	},
 
-	plugins: []
+	plugins: [require('@tailwindcss/aspect-ratio')]
 };

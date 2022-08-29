@@ -1,12 +1,9 @@
-/* eslint-disable @next/next/no-page-custom-font */
-/* eslint-disable @next/next/google-font-display */
-
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import ProductGallery from '../../../components/product-page-gallery';
-import Button from '../../../components/button';
+import ProductGallery from '../../../components/demo/product-page-gallery';
+import Button from '../../../components/demo/button';
 import Icon from '../../../components/icon';
-import { PropsWithChildren } from 'react';
+import { FC, PropsWithChildren } from 'react';
 
 const colors = [
 	'D9D9D9',
@@ -29,7 +26,7 @@ type SectionHeaderProps = {
 	title: string;
 };
 
-const SectionHeader: React.FC<PropsWithChildren<SectionHeaderProps>> = ({
+const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 	title,
 	children
 }) => {
@@ -45,11 +42,6 @@ const Page: NextPage = () => {
 	return (
 		<>
 			<Head>
-				<link
-					rel="stylesheet"
-					href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-				/>
-
 				<title>Colonial Classic Terracotta — Millennium Paving Stones</title>
 			</Head>
 
@@ -70,13 +62,19 @@ const Page: NextPage = () => {
 			<aside className="relative z-10 -mt-8 space-y-12 rounded-2xl bg-white px-8 py-16">
 				{/* Header */}
 				<section className="space-y-2">
-					<p className="font-semibold">Concrete Paver</p>
+					<p>Concrete Paver</p>
 					<h1 className="font-display text-xl font-semibold leading-tight">
 						Colonial Classic Terracotta
 					</h1>
 					<div className="flex justify-between">
 						<p>$228/sqft</p>
-						<p>Restocks in 2 days</p>
+
+						<div className="flex space-x-1">
+							<p>Restocks in 2 days</p>
+							<div>
+								<Button variant="tertiary" iconLeft="info" weight="normal" />
+							</div>
+						</div>
 					</div>
 				</section>
 
@@ -90,7 +88,7 @@ const Page: NextPage = () => {
 						<ul className="grid grid-cols-8 gap-2">
 							{colors.map((color) => (
 								<li key={color} className="contents">
-									<label htmlFor={color} className="contents">
+									<label htmlFor={color} className="aspect-w-1 aspect-h-1">
 										<input
 											className="peer hidden"
 											type="radio"
@@ -98,7 +96,7 @@ const Page: NextPage = () => {
 											id={color}
 										/>
 										<div
-											className="aspect-w-1 aspect-h-1 rounded-full border border-neutral-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-black"
+											className=" rounded-full border border-neutral-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-black"
 											style={{ background: `#${color}` }}
 										/>
 									</label>
@@ -114,11 +112,11 @@ const Page: NextPage = () => {
 						{/* Input */}
 						<div className="flex space-x-2">
 							<label
-								htmlFor="quickcalc"
+								htmlFor="quickcalc-value"
 								className="flex flex-1 space-x-2 rounded-md border border-neutral-300 p-4 focus-within:border-black"
 							>
 								<input
-									id="quickcalc"
+									id="quickcalc-value"
 									type="number"
 									placeholder="Quantity"
 									className="w-[100%] placeholder-neutral-500 outline-none"
@@ -126,10 +124,13 @@ const Page: NextPage = () => {
 							</label>
 
 							<label
-								htmlFor="quickcalc"
+								htmlFor="quickcalc-unit"
 								className="flex space-x-2 rounded-md border border-neutral-300 p-4 focus-within:border-black"
 							>
-								<select className="bg-transparent outline-none">
+								<select
+									name="quickcalc-unit"
+									className="bg-transparent outline-none"
+								>
 									<option value="sqft">sqft</option>
 									<option value="sqm">sqin</option>
 									<option value="sqm">sqm</option>
@@ -187,14 +188,27 @@ const Page: NextPage = () => {
 					<SectionHeader title="Product Gallery" />
 
 					<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory space-x-2 overflow-x-scroll px-4">
+						<li className="shrink-0 basis-2"></li>
 						<li className="relative h-64 shrink-0 basis-full snap-center rounded-lg bg-neutral-100">
-							<Icon name="info" className="absolute left-4 bottom-4" />
+							<Button
+								variant="tertiary"
+								iconLeft="info"
+								className="absolute left-4 bottom-4"
+							/>
 						</li>
 						<li className="relative h-64 shrink-0 basis-full snap-center rounded-lg bg-neutral-100">
-							<Icon name="info" className="absolute left-4 bottom-4" />
+							<Button
+								variant="tertiary"
+								iconLeft="info"
+								className="absolute left-4 bottom-4"
+							/>
 						</li>
 						<li className="relative h-64 shrink-0 basis-full snap-center rounded-lg bg-neutral-100">
-							<Icon name="info" className="absolute left-4 bottom-4" />
+							<Button
+								variant="tertiary"
+								iconLeft="info"
+								className="absolute left-4 bottom-4"
+							/>
 						</li>
 						<li className="shrink-0 basis-2"></li>
 					</ul>

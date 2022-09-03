@@ -369,7 +369,7 @@ function calculateTotal(
 		jmd: (num, sku) => calculateTotalInverse[deliveryLocation](num, sku)
 	};
 
-	const rawArea = convertToSqftFrom[unit](quantity, sku);
+	const rawArea = convertToSqftFrom[unit](quantity, sku) || 0;
 
 	const roundingFunction: {
 		[key in DeliveryLocation]: (num: number) => number;
@@ -460,11 +460,9 @@ const Page: NextPage = () => {
 	const [sku, setSKU] = useState<SKU>();
 
 	useEffect(() => {
-		if (!router.query.sku) return;
-
 		try {
 			const foundSKU = skus.find((sku) => {
-				return sku.id === `${product.id}:${router.query.sku}`;
+				return sku.id === `${product.id}:${router.query.sku || 'grey'}`;
 			});
 
 			if (!foundSKU)

@@ -1,4 +1,4 @@
-import { env } from "./src/env/server.mjs";
+import { env } from './src/env/server.mjs';
 
 /**
  * Don't be scared of the generics here.
@@ -9,10 +9,23 @@ import { env } from "./src/env/server.mjs";
  * @constraint {{import('next').NextConfig}}
  */
 function defineNextConfig(config) {
-  return config;
+	return config;
 }
 
 export default defineNextConfig({
-  reactStrictMode: true,
-  swcMinify: true,
+	reactStrictMode: true,
+	swcMinify: true,
+
+	headers: async () => [
+		{
+			source: '/:all*(woff2|png)',
+			locale: false,
+			headers: [
+				{
+					key: 'Cache-Control',
+					value: 'public, max-age=31536000, stale-while-revalidate'
+				}
+			]
+		}
+	]
 });

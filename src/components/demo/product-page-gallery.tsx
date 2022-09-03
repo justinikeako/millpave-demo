@@ -1,7 +1,28 @@
 import { Canvas } from '@react-three/fiber';
 import { Box, OrbitControls /* , Plane */ } from '@react-three/drei';
 
-const ProductGallery = () => {
+type Props = {
+	colorID: string;
+};
+
+const colors: { [key: string]: string } = {
+	grey: 'D9D9D9',
+	ash: 'B1B1B1',
+	charcoal: '696969',
+	spanish_brown: '95816D',
+	sunset_taupe: 'C9B098',
+	tan: 'DDCCBB',
+	shale_brown: '907A7A',
+	sunset_clay: 'E7A597',
+	red: 'EF847A',
+	terracotta: 'EFA17A',
+	orange: 'EBB075',
+	sunset_tangerine: 'E7C769',
+	yellow: 'E7DD69',
+	green: 'A9D786'
+};
+
+const ProductGallery = ({ colorID }: Props) => {
 	return (
 		<Canvas frameloop="demand" camera={{ position: [0, 2.5, 0] }}>
 			<OrbitControls enablePan={false} />
@@ -17,7 +38,10 @@ const ProductGallery = () => {
 			/> */}
 
 			<Box castShadow receiveShadow position={[0, 0, 0]} args={[1, 0.5, 2]}>
-				<meshStandardMaterial attach="material" color="yellow" />
+				<meshStandardMaterial
+					attach="material"
+					color={'#' + colors[`${colorID.split(':')[1]}`]}
+				/>
 			</Box>
 
 			{/* <Plane

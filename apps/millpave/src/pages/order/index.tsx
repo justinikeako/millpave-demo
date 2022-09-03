@@ -1,8 +1,8 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { FC, PropsWithChildren } from 'react';
-import Button from '../../../components/demo/button';
-import Icon from '../../../components/icon';
+import Button from '../../components/button';
+import Icon from '../../components/icon';
 
 type SectionHeaderProps = {
 	title: string;

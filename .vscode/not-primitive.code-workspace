@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"tailwindCSS.experimental.configFile": {
+			"apps/millpave/tailwind.config.cjs": "apps/millpave/**",
+			"apps/site/tailwind.config.cjs": "apps/site/**"
+		}
+	}
+}

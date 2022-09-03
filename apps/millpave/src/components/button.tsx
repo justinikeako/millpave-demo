@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
-import Icon from '../icon';
+import Icon from './icon';
 
 type ButtonProps = {
 	variant: 'primary' | 'secondary' | 'tertiary';

@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { FC, PropsWithChildren, Suspense, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Button from '../../../components/demo/button';
+import Button from '../../components/button';
 import { addDays, differenceInCalendarDays, format } from 'date-fns';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -450,7 +450,7 @@ const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 };
 
 const LazyProductGallery = dynamic(
-	() => import('../../../components/demo/product-page-gallery'),
+	() => import('../../components/product-page-gallery'),
 	{ ssr: false, suspense: true }
 );
 
@@ -478,12 +478,13 @@ const Page: NextPage = () => {
 		defaultValues: {
 			unit: 'sqft',
 			deliveryLocation: 'showroom',
-			color: 'D9D9D9'
+			color: 'grey'
 		}
 	});
 
 	if (!sku) return null;
 
+	// TODO: Find a better name for the constant and the function
 	const d = calculateTotal(watch(), product.details, sku);
 
 	return (

@@ -325,11 +325,13 @@ type FormValues = {
 };
 
 function round(value: number, multpile: number, direction?: 'up' | 'down') {
-	return (
-		Math[direction ? (direction === 'up' ? 'ceil' : 'floor') : 'round'](
-			value / multpile,
-		) * multpile
-	);
+	let roundingFunction: (num: number) => number;
+
+	if (direction === 'up') roundingFunction = Math.ceil;
+	else if (direction === 'down') roundingFunction = Math.floor;
+	else roundingFunction = Math.round;
+
+	return roundingFunction(value / multpile) * multpile;
 }
 
 const getGCT = (subtotal: number) => subtotal * 0.15;
@@ -449,12 +451,11 @@ function convertFromSqft(
 	return parseFloat(convertFromSqftTo[unit](quantity).toFixed(2));
 }
 
-function isNumeric(str: string) {
-	if (typeof str !== 'string') return false; // we only process strings!
-	return (
-		!isNaN(Number(str)) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-		!isNaN(parseFloat(str))
-	); // ...and ensure strings of whitespace fail
+// Understand how this function works later
+function isNumeric(str: string | number) {
+	if (typeof str !== 'string') return false; // We only process strings!
+
+	return !isNaN(Number(str)) && !isNaN(parseFloat(str));
 }
 
 type SectionHeaderProps = {
@@ -512,9 +513,8 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 
 	const values = watch();
 
-	// TODO: Find a better name for the constant and the function
 	const quickCalc = calculateTotal(
-		{ ...values, quantity: values.quantity || 0 },
+		{ ...values, quantity: !isNaN(values.quantity) ? values.quantity : 0 },
 		product.details,
 		sku,
 	);
@@ -652,7 +652,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 												'quantity',
 												convertFromSqft(
 													e.target.value,
-													{ ...watch(), quantity: quickCalc.unroundedArea },
+													{ ...values, quantity: quickCalc.unroundedArea },
 													product.details,
 													sku,
 												),

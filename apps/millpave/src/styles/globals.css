@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+	html {
+		@apply text-zinc-900;
+	}
+
 	@font-face {
 		font-family: 'Inter Display';
 		src: url('/fonts/InterDisplay-SemiBold.woff2') format('woff2');

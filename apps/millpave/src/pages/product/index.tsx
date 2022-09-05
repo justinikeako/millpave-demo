@@ -10,10 +10,10 @@ import {
 } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Button from '../../components/button';
-import { addDays, differenceInCalendarDays, format } from 'date-fns';
+import { addDays, addHours, differenceInCalendarDays, format } from 'date-fns';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { evaluate } from 'mathjs';
+import { evaluate, number } from 'mathjs';
 
 type Detail = {
 	id: string;
@@ -68,7 +68,7 @@ type SKU = {
 	display_name_modifier: string;
 	price: Price;
 	current_stock: { value: number; unit: 'sqft' };
-	closest_restock_date: number;
+	closest_restock_date?: number;
 };
 
 // Mock Product
@@ -176,22 +176,22 @@ const skuList: SKU[] = [
 		id: 'colonial_classic:grey',
 		display_name_modifier: 'Grey',
 		price: 203,
-		current_stock: { value: 175, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		current_stock: { value: 3605, unit: 'sqft' },
+		closest_restock_date: addDays(new Date(), 2).getTime(),
 	},
 	{
 		id: 'colonial_classic:ash',
 		display_name_modifier: 'Ash',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 7).getTime(),
 	},
 	{
 		id: 'colonial_classic:charcoal',
 		display_name_modifier: 'Charcoal',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 1).getTime(),
 	},
 	{
 		id: 'colonial_classic:spanish_brown',
@@ -205,7 +205,6 @@ const skuList: SKU[] = [
 		display_name_modifier: 'Sunset Taupe',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
 	},
 	{
 		id: 'colonial_classic:tan',
@@ -219,34 +218,33 @@ const skuList: SKU[] = [
 		display_name_modifier: 'Shale Brown',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addHours(new Date(), 1).getTime(),
 	},
 	{
 		id: 'colonial_classic:sunset_clay',
 		display_name_modifier: 'Sunset Clay',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
 	},
 	{
 		id: 'colonial_classic:red',
 		display_name_modifier: 'Red',
 		price: 228,
-		current_stock: { value: 0, unit: 'sqft' },
+		current_stock: { value: 1545, unit: 'sqft' },
 		closest_restock_date: addDays(new Date(), 3).getTime(),
 	},
 	{
 		id: 'colonial_classic:terracotta',
 		display_name_modifier: 'Terracotta',
 		price: 228,
-		current_stock: { value: 0, unit: 'sqft' },
+		current_stock: { value: 515, unit: 'sqft' },
 		closest_restock_date: addDays(new Date(), 3).getTime(),
 	},
 	{
 		id: 'colonial_classic:orange',
 		display_name_modifier: 'Orange',
 		price: 228,
-		current_stock: { value: 0, unit: 'sqft' },
+		current_stock: { value: 257, unit: 'sqft' },
 		closest_restock_date: addDays(new Date(), 3).getTime(),
 	},
 	{
@@ -254,20 +252,20 @@ const skuList: SKU[] = [
 		display_name_modifier: 'Sunset Tangerine',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 10).getTime(),
 	},
 	{
 		id: 'colonial_classic:yellow',
 		display_name_modifier: 'Yellow',
 		price: 233,
-		current_stock: { value: 0, unit: 'sqft' },
+		current_stock: { value: 450, unit: 'sqft' },
 		closest_restock_date: addDays(new Date(), 3).getTime(),
 	},
 	{
 		id: 'colonial_classic:green',
 		display_name_modifier: 'Green',
 		price: 363,
-		current_stock: { value: 0, unit: 'sqft' },
+		current_stock: { value: 64.38, unit: 'sqft' },
 		closest_restock_date: addDays(new Date(), 3).getTime(),
 	},
 ];
@@ -304,22 +302,27 @@ function extractBasicProductDetailValue(detailArr: Detail[], detailID: string) {
 	}
 }
 
-const numberFormatter = new Intl.NumberFormat('en', {
+const priceFormatter = new Intl.NumberFormat('en', {
 	minimumFractionDigits: 2,
 	maximumFractionDigits: 2,
 });
 
+const numberFormatter = new Intl.NumberFormat('en', {
+	maximumFractionDigits: 2,
+});
+
 function formatPrice(price: number) {
-	return '$' + numberFormatter.format(price);
+	return '$' + priceFormatter.format(price);
 }
 
 function formatStock(stock: Stock) {
-	return `${stock.value} ${stock.unit} available`;
+	return `${numberFormatter.format(stock.value)} ${stock.unit} available`;
 }
 
 type FormValues = {
 	color: string;
-	quantity: number;
+	_quickCalcValue: string;
+	value: number;
 	unit: Unit;
 	deliveryLocation: DeliveryLocation;
 };
@@ -343,7 +346,7 @@ type TransformerRecord<TKey extends string> = Record<
 >;
 
 function calculateTotal(
-	{ quantity, unit, deliveryLocation }: FormValues,
+	{ value, unit, deliveryLocation }: FormValues,
 	detailArr: Detail[],
 	sku: SKU,
 ) {
@@ -386,7 +389,7 @@ function calculateTotal(
 		},
 	};
 
-	const unroundedArea = convertToSqftFrom[unit](quantity);
+	const unroundedArea = convertToSqftFrom[unit](value);
 
 	const roundingFunction: TransformerRecord<DeliveryLocation> = {
 		factory: (num) => round(num, sqft_per_pallet / 2, 'up'), // Round to the nearest half pallet
@@ -416,7 +419,7 @@ function calculateTotal(
 
 function convertFromSqft(
 	unit: Unit,
-	{ quantity, deliveryLocation, color }: FormValues,
+	{ value, ...formValues }: FormValues,
 	detailArr: Detail[],
 	sku: SKU,
 ) {
@@ -439,7 +442,7 @@ function convertFromSqft(
 		jmd: (sqft) =>
 			round(
 				calculateTotal(
-					{ quantity: sqft, unit: 'sqft', deliveryLocation, color },
+					{ ...formValues, value: sqft, unit: 'sqft' },
 					detailArr,
 					sku,
 				).total,
@@ -448,14 +451,23 @@ function convertFromSqft(
 	};
 
 	// Ensure value has a maximum of 2 fraction digits
-	return parseFloat(convertFromSqftTo[unit](quantity).toFixed(2));
+	return parseFloat(convertFromSqftTo[unit](value).toFixed(2));
 }
 
 // Understand how this function works later
-function isNumeric(str: string | number) {
-	if (typeof str !== 'string') return false; // We only process strings!
 
-	return !isNaN(Number(str)) && !isNaN(parseFloat(str));
+function isNumeric(value: string | number) {
+	try {
+		number(value);
+
+		if (value.toString().split('').at(-1) === '.') return false;
+
+		if (isNaN(parseFloat(value as string))) return false;
+
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 type SectionHeaderProps = {
@@ -479,6 +491,16 @@ const LazyProductGallery = dynamic(
 	{ ssr: false, suspense: true },
 );
 
+const quicKCalcPlaceholder: Record<Unit, string> = {
+	pcs: 'Quantity',
+	pal: 'Quantity',
+	sqft: 'Area',
+	sqin: 'Area',
+	sqm: 'Area',
+	sqcm: 'Area',
+	jmd: 'Amount',
+};
+
 const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 	product,
 	initialSKU,
@@ -486,6 +508,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 	const router = useRouter();
 
 	const [sku, setSKU] = useState<SKU>(initialSKU);
+	const [showWork, setShowWork] = useState(false);
 
 	useEffect(() => {
 		try {
@@ -505,19 +528,17 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 	const { watch, register, setValue, handleSubmit, control } =
 		useForm<FormValues>({
 			defaultValues: {
+				_quickCalcValue: '',
+				value: 0,
 				unit: 'sqft',
-				deliveryLocation: 'showroom',
+				deliveryLocation: 'factory',
 				color: initialSKU.id.split(':')[1],
 			},
 		});
 
-	const values = watch();
+	const currentValues = watch();
 
-	const quickCalc = calculateTotal(
-		{ ...values, quantity: !isNaN(values.quantity) ? values.quantity : 0 },
-		product.details,
-		sku,
-	);
+	const quickCalc = calculateTotal(currentValues, product.details, sku);
 
 	return (
 		<>
@@ -529,7 +550,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 			</Head>
 
 			{/* Canvas */}
-			<main className="flex h-[75vh] flex-col bg-neutral-100 pb-16">
+			<main className="flex h-[75vh] flex-col bg-zinc-100 pb-16">
 				<div className="flex-1">
 					<Suspense fallback="Loading...">
 						<LazyProductGallery colorID={sku.id} />
@@ -551,14 +572,16 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 					<h1 className="font-display text-xl font-semibold leading-tight">
 						{product.display_name} {sku.display_name_modifier}
 					</h1>
-					<div className="flex justify-between">
+					<div className="flex flex-wrap justify-between text-zinc-500">
 						<p>{formatPrice(sku.price)}/sqft</p>
 
 						<div className="flex space-x-1">
 							{sku.current_stock.value > 0 ? (
 								<p>{formatStock(sku.current_stock)}</p>
-							) : (
+							) : sku.closest_restock_date ? (
 								<p>Restocks {formatRestockDate(sku.closest_restock_date)}</p>
+							) : (
+								<p>Done to Order</p>
 							)}
 							<div>
 								<Button variant="tertiary" iconLeft="info" weight="normal" />
@@ -571,10 +594,10 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 					{/* Color Picker */}
 					<section className="space-y-4">
 						<SectionHeader title="Colors">
-							<p className="text-sm">Color Guide</p>
+							<p className="text-sm text-rose-600">Color Guide</p>
 						</SectionHeader>
 
-						<ul className="grid grid-cols-8 gap-2">
+						<ul className="grid grid-cols-8 gap-2 [@media(max-width:320px)]:grid-cols-7">
 							{product.sku_modifier_list[0]?.modifiers.map(({ id, hex }) => (
 								<li key={id} className="contents">
 									<label htmlFor={id} className="aspect-w-1 aspect-h-1">
@@ -592,7 +615,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 											id={id}
 										/>
 										<div
-											className=" rounded-full border border-neutral-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-black"
+											className=" rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-rose-900"
 											style={{ background: `#${hex}` }}
 										/>
 									</label>
@@ -609,54 +632,170 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 						<div className="flex space-x-2">
 							<label
 								htmlFor="quickcalc-value"
-								className="flex flex-1 space-x-2 rounded-md border border-neutral-300 p-4 focus-within:border-black"
+								className="flex flex-1 space-x-2 rounded-md border border-zinc-300 p-4 focus-within:border-rose-900"
 							>
 								<Controller
 									control={control}
-									name="quantity"
-									render={({ field: { value, ...field } }) => (
-										<input
-											{...field}
-											id="quickcalc-value"
-											type="text"
-											value={!value || value === 0 ? '' : value.toString()}
-											onBlur={(e) => {
-												// evalutate value if parseFloat doesn't work
-												field.onBlur();
+									name="_quickCalcValue"
+									render={({ field: { value, ...field } }) => {
+										const setFieldValue = field.onChange;
 
-												if (isNumeric(e.target.value)) field.onChange(e);
-												else {
-													try {
-														let calculatedValue = evaluate(e.target.value);
-														field.onChange(round(calculatedValue, 0.01));
-													} catch {
-														field.onChange(value);
+										function commitChange(
+											value: number,
+											shouldRound?: boolean,
+										) {
+											let valueToCommit = value;
+
+											if (shouldRound) valueToCommit = round(value, 0.01);
+											setFieldValue(valueToCommit);
+
+											if (valueToCommit > 0) setValue('value', valueToCommit);
+											else setValue('value', 0);
+										}
+
+										return (
+											<input
+												{...field}
+												id="quickcalc-value"
+												type="text"
+												autoComplete="off"
+												placeholder={quicKCalcPlaceholder[currentValues.unit]}
+												className="w-[100%] placeholder-zinc-500 outline-none"
+												value={value === undefined ? '' : value.toString()}
+												onChange={(e) => {
+													const inputValue = e.currentTarget.value;
+													const inputValueIsNumeric = isNumeric(inputValue);
+
+													//
+													if (inputValueIsNumeric) {
+														const inputValueAsNumber = parseFloat(inputValue);
+
+														commitChange(inputValueAsNumber);
+													} else {
+														// If the input is empty...
+														if (inputValue === '') {
+															setValue('value', 0); // ...set value to 0
+															setFieldValue(e); //
+														} else {
+															try {
+																let calculatedValue = evaluate(inputValue);
+
+																// ^ `evaluate` may return an object
+																if (isNaN(calculatedValue)) {
+																	// Got an object! Restore the last valid value
+																	setFieldValue(e);
+																} else {
+																	// Commit evaluated value...
+																	setValue(
+																		'value',
+																		round(calculatedValue, 0.01),
+																	);
+
+																	// ...without hijacking the input
+																	setFieldValue(e);
+																}
+															} catch {
+																setFieldValue(e);
+															}
+														}
 													}
-												}
-											}}
-											placeholder="Quantity"
-											className="w-[100%] placeholder-neutral-500 outline-none"
-										/>
-									)}
+												}}
+												onBlur={(e) => {
+													field.onBlur(); // Let the form know when this input was touched
+
+													const inputValue = e.currentTarget.value;
+													const inputValueIsNumeric = isNumeric(inputValue);
+
+													// Numbers don't need to be evaluated
+													if (inputValueIsNumeric === false) {
+														// If the input is empty, avoid NaN by setting value to 0
+														if (inputValue === '') setValue('value', 0);
+														else {
+															try {
+																// Otherwise evalutate input as an expression
+																const calculatedValue = evaluate(inputValue);
+
+																// ^ `evaluate` may return an object
+																if (isNaN(calculatedValue)) {
+																	// Got an object! Restore the last valid value
+																	commitChange(currentValues.value);
+																} else {
+																	// Commit calculated value
+																	commitChange(round(calculatedValue, 0.01));
+																}
+															} catch {
+																// Evaluation failed, restore the last valid value
+																commitChange(currentValues.value);
+															}
+														}
+													}
+												}}
+												onKeyDown={(e) => {
+													const inputValue = e.currentTarget.value;
+													const inputValueIsNumeric = isNumeric(inputValue);
+
+													// Allow nudge only if the input value is a number
+													if (
+														(inputValueIsNumeric || inputValue === '') &&
+														(e.key === 'ArrowUp' || e.key === 'ArrowDown')
+													) {
+														e.preventDefault();
+
+														if (e.key === 'ArrowUp') {
+															commitChange(currentValues.value + 1); // add 1 to inputValue
+														} else if (e.key === 'ArrowDown') {
+															commitChange(currentValues.value - 1); // subtract 1 to inputValue
+														}
+													} else if (
+														!inputValueIsNumeric &&
+														e.key === 'Enter'
+													) {
+														e.preventDefault();
+
+														// If input is empty, avoid NaN by setting value to 0
+														if (inputValue === '') setValue('value', 0);
+														else {
+															try {
+																// Otherwise evalutate input as an expression
+																const calculatedValue = evaluate(inputValue);
+
+																// ^ `evaluate` may return an object
+																if (isNaN(calculatedValue)) {
+																	// Got an object! Restore the last valid value
+																	commitChange(currentValues.value);
+																} else {
+																	// Commit calculated value
+																	commitChange(round(calculatedValue, 0.01));
+																}
+															} catch {
+																// Evaluation failed, restore the last valid value
+																commitChange(currentValues.value);
+															}
+														}
+													}
+												}}
+											/>
+										);
+									}}
 								/>
 							</label>
 
 							<label
 								htmlFor="quickcalc-unit"
-								className="flex space-x-2 rounded-md border border-neutral-300 p-4 focus-within:border-black"
+								className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:border-rose-900"
 							>
 								<select
 									{...register('unit', {
 										onChange: (e) => {
-											setValue(
-												'quantity',
-												convertFromSqft(
-													e.target.value,
-													{ ...values, quantity: quickCalc.unroundedArea },
-													product.details,
-													sku,
-												),
+											const convertedValue = convertFromSqft(
+												e.target.value,
+												{ ...currentValues, value: quickCalc.unroundedArea },
+												product.details,
+												sku,
 											);
+
+											setValue('value', convertedValue);
+											setValue('_quickCalcValue', convertedValue.toString());
 										},
 									})}
 									id="quickcalc-unit"
@@ -682,22 +821,61 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 								<option value="factory">Factory Pickup</option>
 								<option value="showroom">Showroom Pickup</option>
 							</select>
-							<p className="whitespace-nowrap">
-								<label htmlFor="quickcalc-total">Total: </label>
-								<output id="quickcalc-total" htmlFor="quickcalc-value">
-									{formatPrice(quickCalc.total)}
-								</output>
-							</p>
+							{!showWork && (
+								<p
+									className="whitespace-nowrap"
+									onClick={() => setShowWork(true)}
+								>
+									<label htmlFor="quickcalc-total">Total: </label>
+									<output id="quickcalc-total" htmlFor="quickcalc-value">
+										{formatPrice(quickCalc.total)}
+									</output>
+								</p>
+							)}
 						</div>
+
 						{/* Show on toggle click with total*/}
-						<div className="flex flex-wrap justify-between">
-							<label htmlFor="quickcalc-rounded-area">
-								Minimum Viable Area:
-							</label>
-							<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
-								{numberFormatter.format(quickCalc.roundedArea)} sqft
-							</output>
-						</div>
+						{showWork && (
+							<ul
+								onClick={() => setShowWork(false)}
+								className="space-y-2 tabular-nums text-zinc-500"
+							>
+								<li className="flex flex-wrap justify-between">
+									<label htmlFor="quickcalc-rounded-area">
+										Calculated Area:
+									</label>
+									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
+										{numberFormatter.format(quickCalc.unroundedArea)} sqft
+									</output>
+								</li>
+								<li className="flex flex-wrap justify-between">
+									<label htmlFor="quickcalc-rounded-area">
+										Minimum Viable Area:
+									</label>
+									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
+										{numberFormatter.format(quickCalc.roundedArea)} sqft
+									</output>
+								</li>
+								<li className="flex flex-wrap justify-between">
+									<label htmlFor="quickcalc-rounded-area">Subtotal</label>
+									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
+										${priceFormatter.format(quickCalc.subtotal)}
+									</output>
+								</li>
+								<li className="flex flex-wrap justify-between">
+									<label htmlFor="quickcalc-rounded-area">Tax</label>
+									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
+										${priceFormatter.format(quickCalc.tax)}
+									</output>
+								</li>
+								<li className="flex flex-wrap justify-between text-rose-600">
+									<label htmlFor="quickcalc-rounded-area">Total</label>
+									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
+										${priceFormatter.format(quickCalc.total)}
+									</output>
+								</li>
+							</ul>
+						)}
 
 						<div className="flex flex-col space-y-2">
 							<Button type="submit" variant="primary">
@@ -715,7 +893,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 						{product.details.map((detail) => (
 							<li
 								key={detail.id}
-								className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-neutral-100"
+								className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100"
 							>
 								<p>{detail.display_name}</p>
 								<p>{formatProductDetail(detail)}</p>
@@ -734,7 +912,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 						{product.gallery.map(({ id, img_url }) => (
 							<li
 								key={id}
-								className="relative h-64 shrink-0 basis-full snap-center overflow-hidden rounded-lg bg-neutral-100"
+								className="relative h-64 shrink-0 basis-full snap-center overflow-hidden rounded-lg bg-zinc-100"
 							>
 								{/* eslint-disable-next-line @next/next/no-img-element */}
 								<img
@@ -763,19 +941,25 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 						<ul className="grid w-full grid-cols-2 gap-2">
 							{product.similar.map(({ id, display_name, price }) => (
 								<li key={id} className="items-center space-y-2">
-									<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-neutral-100" />
+									<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-zinc-100" />
 
 									<div>
 										<h3 className="text-center font-semibold">
 											{display_name}
 										</h3>
-										<p className="text-center">from {formatPrice(price)}</p>
+										<p className="text-center text-zinc-500">
+											from {formatPrice(price)}
+										</p>
 									</div>
 								</li>
 							))}
 						</ul>
 
-						<Button variant="tertiary" iconRight="expand_more">
+						<Button
+							variant="tertiary"
+							iconRight="expand_more"
+							className="text-rose-600"
+						>
 							Show more products
 						</Button>
 					</div>

@@ -13,10 +13,10 @@ type ButtonProps = {
 
 const classes = {
 	primary:
-		'flex justify-center space-x-2 rounded-md bg-black px-6 py-4 text-white',
+		'flex justify-center space-x-2 rounded-md bg-rose-900 px-6 py-4 text-white',
 	secondary:
 		'flex justify-center space-x-2 rounded-md border border-neutral-300 px-6 py-4',
-	tertiary: '-m-4 flex justify-center space-x-2 rounded-md p-4'
+	tertiary: '-m-4 flex justify-center space-x-2 rounded-md p-4',
 };
 
 const Button = forwardRef<
@@ -32,7 +32,7 @@ const Button = forwardRef<
 		children,
 		...props
 	},
-	ref
+	ref,
 ) {
 	const iconWeight = weight === 'normal' ? 'normal' : 'bold';
 	const textWeight = weight === 'normal' ? 'font-normal' : 'font-semibold';

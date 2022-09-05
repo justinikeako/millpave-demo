@@ -5,7 +5,7 @@
 	},
 	"plugins": ["@typescript-eslint"],
 	"extends": [
-		"next/babel",
+		"next",
 		"next/core-web-vitals",
 		"plugin:@typescript-eslint/recommended"
 	]

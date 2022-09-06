@@ -43,7 +43,7 @@ const Page: NextPage = () => {
 						It creates an unnecessary barrier between customers and the company.
 						And it slows down the team with lots of simple yet repetitive work.
 					</p>
-					<p className="font-display mt-16 text-2xl font-bold">
+					<p className="mt-16 font-display text-2xl font-bold">
 						But what if it could be different?
 					</p>
 					<p>
@@ -58,7 +58,7 @@ const Page: NextPage = () => {
 					<h2 className="font-display text-4xl font-black">
 						Meet the Virtual Showroom.
 					</h2>
-					<p className="font-display w-2/3 text-xl font-semibold">
+					<p className="w-2/3 font-display text-xl font-semibold">
 						It's way better than magic.
 					</p>
 				</section>
@@ -121,7 +121,7 @@ const Page: NextPage = () => {
 							in their own space without ever having to visit the showroom.
 						</p>
 						<div className="flex flex-col items-center justify-center space-y-8">
-							<p className="font-display text-center text-2xl font-bold">
+							<p className="text-center font-display text-2xl font-bold">
 								Mindblowing, right?
 							</p>
 							<p>But don't just take my word for it.</p>
@@ -150,16 +150,16 @@ const Page: NextPage = () => {
 
 					<div className="h-[200vh]">
 						<div className="sticky top-0 space-y-8 px-12 py-24">
-							<p className=" font-display text-center text-2xl font-bold">
+							<p className=" text-center font-display text-2xl font-bold">
 								Just enter your measurements
 							</p>
-							<p className="font-display text-center text-2xl font-bold">
+							<p className="text-center font-display text-2xl font-bold">
 								Pick your patterns
 							</p>
-							<p className="font-display text-center text-2xl font-bold">
+							<p className="text-center font-display text-2xl font-bold">
 								And get your invoice.
 							</p>
-							<p className="font-display text-center text-2xl font-bold">
+							<p className="text-center font-display text-2xl font-bold">
 								No, I didn't forget any other steps.
 							</p>
 							<p className="font-display text-xl font-bold">
@@ -230,27 +230,27 @@ const Page: NextPage = () => {
 						<div className="sticky top-0 h-screen px-12 pt-16">
 							<ul className="space-y-8">
 								<li>
-									<p className="font-display text-center text-3xl font-black">
+									<p className="text-center font-display text-3xl font-black">
 										Kingston
 									</p>
 								</li>
 								<li>
-									<p className="font-display text-center text-3xl font-black">
+									<p className="text-center font-display text-3xl font-black">
 										Montego Bay
 									</p>
 								</li>
 								<li>
-									<p className="font-display text-center text-3xl font-black">
+									<p className="text-center font-display text-3xl font-black">
 										Miami
 									</p>
 								</li>
 								<li>
-									<p className="font-display text-center text-3xl font-black">
+									<p className="text-center font-display text-3xl font-black">
 										London
 									</p>
 								</li>
 							</ul>
-							<p className="font-display mt-8 text-3xl font-black">
+							<p className="mt-8 font-display text-3xl font-black">
 								Or anywhere else on the planet*
 							</p>
 							<p className="mt-8">*with an internet connection.</p>
@@ -299,7 +299,7 @@ const Page: NextPage = () => {
 									<p className="font-display text-xl font-bold">
 										Ask "Which products do customers buy most?"
 									</p>
-									<p className="font-display mt-2 text-xl font-bold">
+									<p className="mt-2 font-display text-xl font-bold">
 										And see what you should be making more.
 									</p>
 								</li>
@@ -307,7 +307,7 @@ const Page: NextPage = () => {
 									<p className="font-display text-xl font-bold">
 										Ask "How are customers using our products?"
 									</p>
-									<p className="font-display mt-2 text-xl font-bold">
+									<p className="mt-2 font-display text-xl font-bold">
 										And drive your next ad campaign with insights on customer
 										behavior.
 									</p>
@@ -316,7 +316,7 @@ const Page: NextPage = () => {
 									<p className="font-display text-xl font-bold">
 										Ask "Where are customers ordering to?"
 									</p>
-									<p className="font-display mt-2 text-xl font-bold">
+									<p className="mt-2 font-display text-xl font-bold">
 										And find out where you should open your next locations.
 									</p>
 								</li>

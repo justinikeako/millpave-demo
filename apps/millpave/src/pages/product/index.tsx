@@ -1,4 +1,4 @@
-import type { GetServerSideProps, NextPage, Redirect } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import {
 	FC,
@@ -6,7 +6,7 @@ import {
 	startTransition,
 	Suspense,
 	useEffect,
-	useState,
+	useState
 } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Button from '../../components/button';
@@ -81,65 +81,65 @@ const product: Product = {
 			id: 'dimensions',
 			display_name: 'Dimensions',
 			value: [4, 8, 2.375],
-			unit: 'in',
+			unit: 'in'
 		},
 		{
 			type: 'basic',
 			id: 'weight_per_unit',
 			display_name: 'Weight per unit',
 			value: 5,
-			unit: 'lbs',
+			unit: 'lbs'
 		},
 		{
 			type: 'basic',
 			id: 'area_per_pallet',
 			display_name: 'Area per pallet',
 			value: 128.75,
-			unit: 'sqft',
+			unit: 'sqft'
 		},
 		{
 			type: 'basic',
 			id: 'units_per_pallet',
 			display_name: 'Units per pallet',
 			value: 600,
-			unit: null,
+			unit: null
 		},
 		{
 			type: 'basic',
 			id: 'pcs_per_sqft',
 			display_name: 'Pieces per sqft',
 			value: 4.66,
-			unit: null,
-		},
+			unit: null
+		}
 	],
 	gallery: [
 		{
 			id: '32kjrl',
 			img_url:
-				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg',
+				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
 		},
 		{
 			id: '08reif',
 			img_url:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZbfAPwMpsFKxnnD3Q-Zq4NS_jOcdiDROoqjHBUrGcN10K_VlZPPzsRxh4fwYxT2Ec0lU&usqp=CAU',
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZbfAPwMpsFKxnnD3Q-Zq4NS_jOcdiDROoqjHBUrGcN10K_VlZPPzsRxh4fwYxT2Ec0lU&usqp=CAU'
 		},
 		{
 			id: 'ca09u3',
 			img_url:
-				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg',
-		},
+				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
+		}
 	],
 	similar: [
 		{
 			id: 'banjo',
 			display_name: 'Banjo',
-			price: 228,
+			price: 228
 		},
 		{
 			id: 'heritage_regular',
 			display_name: 'Heritage Regular',
-			price: 228,
-		},
+			price: 228
+		}
 	],
 	sku_modifier_list: [
 		{
@@ -161,13 +161,13 @@ const product: Product = {
 				{
 					id: 'sunset_tangerine',
 					display_name: 'Sunset Tangerine',
-					hex: 'E7C769',
+					hex: 'E7C769'
 				},
 				{ id: 'yellow', display_name: 'Yellow', hex: 'E7DD69' },
-				{ id: 'green', display_name: 'Green', hex: 'A9D786' },
-			],
-		},
-	],
+				{ id: 'green', display_name: 'Green', hex: 'A9D786' }
+			]
+		}
+	]
 };
 
 // Mock SKUs
@@ -177,97 +177,97 @@ const skuList: SKU[] = [
 		display_name_modifier: 'Grey',
 		price: 203,
 		current_stock: { value: 3605, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 2).getTime(),
+		closest_restock_date: addDays(new Date(), 2).getTime()
 	},
 	{
 		id: 'colonial_classic:ash',
 		display_name_modifier: 'Ash',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 7).getTime(),
+		closest_restock_date: addDays(new Date(), 7).getTime()
 	},
 	{
 		id: 'colonial_classic:charcoal',
 		display_name_modifier: 'Charcoal',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 1).getTime(),
+		closest_restock_date: addDays(new Date(), 1).getTime()
 	},
 	{
 		id: 'colonial_classic:spanish_brown',
 		display_name_modifier: 'Spanish Brown',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 3).getTime()
 	},
 	{
 		id: 'colonial_classic:sunset_taupe',
 		display_name_modifier: 'Sunset Taupe',
 		price: 228,
-		current_stock: { value: 0, unit: 'sqft' },
+		current_stock: { value: 0, unit: 'sqft' }
 	},
 	{
 		id: 'colonial_classic:tan',
 		display_name_modifier: 'Tan',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 3).getTime()
 	},
 	{
 		id: 'colonial_classic:shale_brown',
 		display_name_modifier: 'Shale Brown',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addHours(new Date(), 1).getTime(),
+		closest_restock_date: addHours(new Date(), 1).getTime()
 	},
 	{
 		id: 'colonial_classic:sunset_clay',
 		display_name_modifier: 'Sunset Clay',
 		price: 228,
-		current_stock: { value: 0, unit: 'sqft' },
+		current_stock: { value: 0, unit: 'sqft' }
 	},
 	{
 		id: 'colonial_classic:red',
 		display_name_modifier: 'Red',
 		price: 228,
 		current_stock: { value: 1545, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 3).getTime()
 	},
 	{
 		id: 'colonial_classic:terracotta',
 		display_name_modifier: 'Terracotta',
 		price: 228,
 		current_stock: { value: 515, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 3).getTime()
 	},
 	{
 		id: 'colonial_classic:orange',
 		display_name_modifier: 'Orange',
 		price: 228,
 		current_stock: { value: 257, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 3).getTime()
 	},
 	{
 		id: 'colonial_classic:sunset_tangerine',
 		display_name_modifier: 'Sunset Tangerine',
 		price: 228,
 		current_stock: { value: 0, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 10).getTime(),
+		closest_restock_date: addDays(new Date(), 10).getTime()
 	},
 	{
 		id: 'colonial_classic:yellow',
 		display_name_modifier: 'Yellow',
 		price: 233,
 		current_stock: { value: 450, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
+		closest_restock_date: addDays(new Date(), 3).getTime()
 	},
 	{
 		id: 'colonial_classic:green',
 		display_name_modifier: 'Green',
 		price: 363,
 		current_stock: { value: 64.38, unit: 'sqft' },
-		closest_restock_date: addDays(new Date(), 3).getTime(),
-	},
+		closest_restock_date: addDays(new Date(), 3).getTime()
+	}
 ];
 
 function formatRestockDate(date: number) {
@@ -304,11 +304,11 @@ function extractBasicProductDetailValue(detailArr: Detail[], detailID: string) {
 
 const priceFormatter = new Intl.NumberFormat('en', {
 	minimumFractionDigits: 2,
-	maximumFractionDigits: 2,
+	maximumFractionDigits: 2
 });
 
 const numberFormatter = new Intl.NumberFormat('en', {
-	maximumFractionDigits: 2,
+	maximumFractionDigits: 2
 });
 
 function formatPrice(price: number) {
@@ -320,8 +320,8 @@ function formatStock(stock: Stock) {
 }
 
 type FormValues = {
-	color: string;
 	_quickCalcValue: string;
+	color: string;
 	value: number;
 	unit: Unit;
 	deliveryLocation: DeliveryLocation;
@@ -348,15 +348,15 @@ type TransformerRecord<TKey extends string> = Record<
 function calculateTotal(
 	{ value, unit, deliveryLocation }: FormValues,
 	detailArr: Detail[],
-	sku: SKU,
+	sku: SKU
 ) {
 	const sqft_per_pallet = extractBasicProductDetailValue(
 		detailArr,
-		'area_per_pallet',
+		'area_per_pallet'
 	);
 	const pcs_per_sqft = extractBasicProductDetailValue(
 		detailArr,
-		'pcs_per_sqft',
+		'pcs_per_sqft'
 	);
 	const sku_price = sku.price;
 
@@ -373,7 +373,7 @@ function calculateTotal(
 			const roundedSqft = round(sqft, 1 / pcs_per_sqft, 'down'); // Round Down to nearest piece
 
 			return roundedSqft;
-		},
+		}
 	};
 
 	// Convert a given unit to square feet
@@ -386,24 +386,24 @@ function calculateTotal(
 		pcs: (pieces) => pieces / pcs_per_sqft,
 		jmd: (price) => {
 			return sqftFromTotal[deliveryLocation](price);
-		},
+		}
 	};
 
 	const unroundedArea = convertToSqftFrom[unit](value);
 
 	const roundingFunction: TransformerRecord<DeliveryLocation> = {
 		factory: (num) => round(num, sqft_per_pallet / 2, 'up'), // Round to the nearest half pallet
-		showroom: (num) => round(num, 1 / pcs_per_sqft, 'up'), // Round to the nearest piece
+		showroom: (num) => round(num, 1 / pcs_per_sqft, 'up') // Round to the nearest piece
 	};
 
 	const roundedArea = roundingFunction[deliveryLocation](unroundedArea);
 
 	const calculateSubtotal: TransformerRecord<DeliveryLocation> = {
 		factory: (sqft) => sqft * sku_price, // Multiply area by the sku price
-		showroom: (sqft) => sqft * (sku_price + 20), // Multiply area by the premium sku price
+		showroom: (sqft) => sqft * (sku_price + 20) // Multiply area by the premium sku price
 	};
 
-	let subtotal = calculateSubtotal[deliveryLocation](roundedArea);
+	const subtotal = calculateSubtotal[deliveryLocation](roundedArea);
 
 	const tax = getGCT(subtotal);
 	const total = subtotal + tax;
@@ -413,7 +413,7 @@ function calculateTotal(
 		roundedArea: roundedArea,
 		subtotal: subtotal,
 		tax: tax,
-		total: total,
+		total: total
 	};
 }
 
@@ -421,15 +421,15 @@ function convertFromSqft(
 	unit: Unit,
 	{ value, ...formValues }: FormValues,
 	detailArr: Detail[],
-	sku: SKU,
+	sku: SKU
 ) {
 	const sqft_per_pallet = extractBasicProductDetailValue(
 		detailArr,
-		'area_per_pallet',
+		'area_per_pallet'
 	);
 	const pcs_per_sqft = extractBasicProductDetailValue(
 		detailArr,
-		'pcs_per_sqft',
+		'pcs_per_sqft'
 	);
 
 	const convertFromSqftTo: TransformerRecord<Unit> = {
@@ -444,10 +444,10 @@ function convertFromSqft(
 				calculateTotal(
 					{ ...formValues, value: sqft, unit: 'sqft' },
 					detailArr,
-					sku,
+					sku
 				).total,
-				0.01,
-			),
+				0.01
+			)
 	};
 
 	// Ensure value has a maximum of 2 fraction digits
@@ -476,7 +476,7 @@ type SectionHeaderProps = {
 
 const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 	title,
-	children,
+	children
 }) => {
 	return (
 		<div className="flex items-center justify-between">
@@ -488,7 +488,7 @@ const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 
 const LazyProductGallery = dynamic(
 	() => import('../../components/product-page-gallery'),
-	{ ssr: false, suspense: true },
+	{ ssr: false, suspense: true }
 );
 
 const quicKCalcPlaceholder: Record<Unit, string> = {
@@ -498,12 +498,12 @@ const quicKCalcPlaceholder: Record<Unit, string> = {
 	sqin: 'Area',
 	sqm: 'Area',
 	sqcm: 'Area',
-	jmd: 'Amount',
+	jmd: 'Amount'
 };
 
 const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 	product,
-	initialSKU,
+	initialSKU
 }) => {
 	const router = useRouter();
 
@@ -523,7 +523,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 		} catch (err) {
 			throw err;
 		}
-	}, [router]);
+	}, [product.id, router]);
 
 	const { watch, register, setValue, handleSubmit, control } =
 		useForm<FormValues>({
@@ -532,8 +532,8 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 				value: 0,
 				unit: 'sqft',
 				deliveryLocation: 'factory',
-				color: initialSKU.id.split(':')[1],
-			},
+				color: initialSKU.id.split(':')[1]
+			}
 		});
 
 	const currentValues = watch();
@@ -606,8 +606,8 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 												onChange: (e) =>
 													router.push(`?sku=${e.target.value}`, undefined, {
 														shallow: true,
-														scroll: false,
-													}),
+														scroll: false
+													})
 											})}
 											className="peer hidden"
 											type="radio"
@@ -642,7 +642,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 
 										function commitChange(
 											value: number,
-											shouldRound?: boolean,
+											shouldRound?: boolean
 										) {
 											let valueToCommit = value;
 
@@ -678,7 +678,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 															setFieldValue(e); //
 														} else {
 															try {
-																let calculatedValue = evaluate(inputValue);
+																const calculatedValue = evaluate(inputValue);
 
 																// ^ `evaluate` may return an object
 																if (isNaN(calculatedValue)) {
@@ -688,7 +688,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 																	// Commit evaluated value...
 																	setValue(
 																		'value',
-																		round(calculatedValue, 0.01),
+																		round(calculatedValue, 0.01)
 																	);
 
 																	// ...without hijacking the input
@@ -791,12 +791,12 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 												e.target.value,
 												{ ...currentValues, value: quickCalc.unroundedArea },
 												product.details,
-												sku,
+												sku
 											);
 
 											setValue('value', convertedValue);
 											setValue('_quickCalcValue', convertedValue.toString());
-										},
+										}
 									})}
 									id="quickcalc-unit"
 									className="bg-transparent outline-none"
@@ -970,22 +970,22 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 };
 
 export const getServerSideProps: GetServerSideProps<
-	{},
+	{ initialSKU: SKU; product: Product },
 	{ sku: string }
 > = async ({ query }) => {
-	let redirect: Redirect | undefined = undefined;
-
 	const skuID = `${product.id}:${query.sku}`;
 
-	const sku = skuList.find((sku) => {
-		return sku.id === skuID;
-	});
+	const sku = skuList.find((sku) => sku.id === skuID);
 
-	if (!sku) redirect = { destination: '?sku=grey', permanent: false };
+	// SKU not found, redirect to main product page
+	if (!sku) {
+		return {
+			redirect: { destination: '?sku=grey', permanent: false, statusCode: 404 }
+		};
+	}
 
 	return {
-		redirect,
-		props: { initialSKU: sku, product: product },
+		props: { initialSKU: sku, product: product }
 	};
 };
 

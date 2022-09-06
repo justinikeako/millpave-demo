@@ -10,7 +10,7 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/logo.png" />
 			</Head>
 
-			<main className=" grid h-screen place-items-center bg-black">
+			<main className="grid h-screen place-items-center bg-black">
 				<h1 className="font-display text-4xl text-white">Coming Soon.</h1>
 			</main>
 		</>

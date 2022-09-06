@@ -403,17 +403,19 @@ function calculateTotal(
 		showroom: (sqft) => sqft * (sku_price + 20) // Multiply area by the premium sku price
 	};
 
-	const subtotal = calculateSubtotal[deliveryLocation](roundedArea);
-
-	const tax = getGCT(subtotal);
-	const total = subtotal + tax;
+	const subtotal = round(
+		calculateSubtotal[deliveryLocation](roundedArea),
+		0.01
+	);
+	const tax = round(getGCT(subtotal), 0.01);
+	const total = round(subtotal + tax, 0.01);
 
 	return {
 		unroundedArea,
-		roundedArea: roundedArea,
-		subtotal: subtotal,
-		tax: tax,
-		total: total
+		roundedArea,
+		subtotal,
+		tax,
+		total
 	};
 }
 
@@ -459,8 +461,6 @@ function convertFromSqft(
 function isNumeric(value: string | number) {
 	try {
 		number(value);
-
-		if (value.toString().split('').at(-1) === '.') return false;
 
 		if (isNaN(parseFloat(value as string))) return false;
 
@@ -647,7 +647,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 											let valueToCommit = value;
 
 											if (shouldRound) valueToCommit = round(value, 0.01);
-											setFieldValue(valueToCommit);
+											setFieldValue(valueToCommit.toString());
 
 											if (valueToCommit > 0) setValue('value', valueToCommit);
 											else setValue('value', 0);
@@ -670,12 +670,13 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 													if (inputValueIsNumeric) {
 														const inputValueAsNumber = parseFloat(inputValue);
 
-														commitChange(inputValueAsNumber);
+														setValue('value', inputValueAsNumber); // Use as value
+														setFieldValue(e); // Don't hijack the input
 													} else {
 														// If the input is empty...
 														if (inputValue === '') {
 															setValue('value', 0); // ...set value to 0
-															setFieldValue(e); //
+															setFieldValue(e); // Don't hijack the input
 														} else {
 															try {
 																const calculatedValue = evaluate(inputValue);
@@ -743,7 +744,10 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 
 														if (e.key === 'ArrowUp') {
 															commitChange(currentValues.value + 1); // add 1 to inputValue
-														} else if (e.key === 'ArrowDown') {
+														} else if (
+															e.key === 'ArrowDown' &&
+															currentValues.value >= 1
+														) {
 															commitChange(currentValues.value - 1); // subtract 1 to inputValue
 														}
 													} else if (
@@ -812,7 +816,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 							</label>
 						</div>
 
-						{/* Total Preview */}
+						{/* Delivery Location */}
 						<div className="flex flex-wrap justify-between">
 							<select
 								className="bg-transparent"
@@ -821,61 +825,69 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 								<option value="factory">Factory Pickup</option>
 								<option value="showroom">Showroom Pickup</option>
 							</select>
-							{!showWork && (
-								<p
-									className="whitespace-nowrap"
-									onClick={() => setShowWork(true)}
-								>
-									<label htmlFor="quickcalc-total">Total: </label>
-									<output id="quickcalc-total" htmlFor="quickcalc-value">
-										{formatPrice(quickCalc.total)}
-									</output>
-								</p>
-							)}
+							<Button
+								variant="tertiary"
+								type="button"
+								weight="normal"
+								className="text-zinc-500"
+								onClick={() => setShowWork(!showWork)}
+							>
+								{showWork ? 'Hide Work' : 'Show Work'}
+							</Button>
 						</div>
 
-						{/* Show on toggle click with total*/}
-						{showWork && (
-							<ul
-								onClick={() => setShowWork(false)}
-								className="space-y-2 tabular-nums text-zinc-500"
-							>
-								<li className="flex flex-wrap justify-between">
-									<label htmlFor="quickcalc-rounded-area">
-										Calculated Area:
-									</label>
-									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
-										{numberFormatter.format(quickCalc.unroundedArea)} sqft
-									</output>
-								</li>
-								<li className="flex flex-wrap justify-between">
-									<label htmlFor="quickcalc-rounded-area">
-										Minimum Viable Area:
-									</label>
-									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
-										{numberFormatter.format(quickCalc.roundedArea)} sqft
-									</output>
-								</li>
-								<li className="flex flex-wrap justify-between">
-									<label htmlFor="quickcalc-rounded-area">Subtotal</label>
-									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
-										${priceFormatter.format(quickCalc.subtotal)}
-									</output>
-								</li>
-								<li className="flex flex-wrap justify-between">
-									<label htmlFor="quickcalc-rounded-area">Tax</label>
-									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
-										${priceFormatter.format(quickCalc.tax)}
-									</output>
-								</li>
-								<li className="flex flex-wrap justify-between text-rose-600">
-									<label htmlFor="quickcalc-rounded-area">Total</label>
-									<output id="quickcalc-rounded-area" htmlFor="quickcalc-value">
-										${priceFormatter.format(quickCalc.total)}
-									</output>
-								</li>
-							</ul>
-						)}
+						{/* The total + how it was calculated */}
+						<ul className="space-y-2 tabular-nums text-zinc-500">
+							{showWork && (
+								<>
+									<li className="flex flex-wrap justify-between">
+										<label htmlFor="quickcalc-quantity">
+											Calculated Quantity
+										</label>
+										<output id="quickcalc-quantity" htmlFor="quickcalc-value">
+											{convertFromSqft(
+												currentValues.deliveryLocation === 'factory'
+													? 'pal'
+													: 'pcs',
+												{ ...currentValues, value: quickCalc.roundedArea },
+												product.details,
+												sku
+											)}{' '}
+											{currentValues.deliveryLocation === 'factory'
+												? 'pal'
+												: 'pcs'}
+										</output>
+									</li>
+									<li className="flex flex-wrap justify-between">
+										<label htmlFor="quickcalc-rounded-area">Area</label>
+										<output
+											id="quickcalc-rounded-area"
+											htmlFor="quickcalc-value"
+										>
+											{numberFormatter.format(quickCalc.roundedArea)} sqft
+										</output>
+									</li>
+									<li className="flex flex-wrap justify-between">
+										<label htmlFor="quickcalc-subtotal">Subtotal</label>
+										<output id="quickcalc-subtotal" htmlFor="quickcalc-value">
+											${priceFormatter.format(quickCalc.subtotal)}
+										</output>
+									</li>
+									<li className="flex flex-wrap justify-between">
+										<label htmlFor="quickcalc-tax">Tax</label>
+										<output id="quickcalc-tax" htmlFor="quickcalc-value">
+											${priceFormatter.format(quickCalc.tax)}
+										</output>
+									</li>
+								</>
+							)}
+							<li className="flex flex-wrap justify-between font-semibold text-rose-900">
+								<label htmlFor="quickcalc-total">Total</label>
+								<output id="quickcalc-total" htmlFor="quickcalc-value">
+									${priceFormatter.format(quickCalc.total)}
+								</output>
+							</li>
+						</ul>
 
 						<div className="flex flex-col space-y-2">
 							<Button type="submit" variant="primary">
@@ -980,7 +992,7 @@ export const getServerSideProps: GetServerSideProps<
 	// SKU not found, redirect to main product page
 	if (!sku) {
 		return {
-			redirect: { destination: '?sku=grey', permanent: false, statusCode: 404 }
+			redirect: { destination: '?sku=grey', permanent: false }
 		};
 	}
 

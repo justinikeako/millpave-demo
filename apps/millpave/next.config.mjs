@@ -27,5 +27,13 @@ export default defineNextConfig({
 				}
 			]
 		}
+	],
+
+	redirects: async () => [
+		{
+			source: '/',
+			destination: '/product',
+			permanent: true
+		}
 	]
 });

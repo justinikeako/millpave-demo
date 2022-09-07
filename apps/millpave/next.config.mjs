@@ -33,7 +33,7 @@ export default defineNextConfig({
 		{
 			source: '/',
 			destination: '/product',
-			permanent: true
+			permanent: false
 		}
 	]
 });

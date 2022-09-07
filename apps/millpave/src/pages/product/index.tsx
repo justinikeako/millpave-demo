@@ -15,21 +15,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { evaluate, number } from 'mathjs';
 
-type Detail = {
-	id: string;
-	display_name: string;
-	unit: string | null;
-} & (
-	| {
-			type: 'basic';
-			value: number;
-	  }
-	| {
-			type: 'dimensions';
-			value: number[];
-	  }
-);
-
 type Unit = 'sqft' | 'sqin' | 'sqm' | 'sqcm' | 'pcs' | 'pal' | 'jmd';
 
 type Price = number;
@@ -38,10 +23,18 @@ type DeliveryLocation = 'factory' | 'showroom';
 
 type Stock = { value: number; unit: string };
 
+type ProductDetails = {
+	dimensions: [number, number, number];
+	lbs_per_unit: number;
+	sqft_per_pallet: number;
+	units_per_pallet: number;
+	pcs_per_sqft: number;
+};
+
 type Product = {
 	id: string;
 	display_name: string;
-	details: Detail[];
+	details: ProductDetails;
 	gallery: {
 		id: string;
 		img_url: string;
@@ -75,43 +68,13 @@ type SKU = {
 const product: Product = {
 	id: 'colonial_classic',
 	display_name: 'Colonial Classic',
-	details: [
-		{
-			type: 'dimensions',
-			id: 'dimensions',
-			display_name: 'Dimensions',
-			value: [4, 8, 2.375],
-			unit: 'in'
-		},
-		{
-			type: 'basic',
-			id: 'weight_per_unit',
-			display_name: 'Weight per unit',
-			value: 5,
-			unit: 'lbs'
-		},
-		{
-			type: 'basic',
-			id: 'area_per_pallet',
-			display_name: 'Area per pallet',
-			value: 128.75,
-			unit: 'sqft'
-		},
-		{
-			type: 'basic',
-			id: 'units_per_pallet',
-			display_name: 'Units per pallet',
-			value: 600,
-			unit: null
-		},
-		{
-			type: 'basic',
-			id: 'pcs_per_sqft',
-			display_name: 'Pieces per sqft',
-			value: 4.66,
-			unit: null
-		}
-	],
+	details: {
+		dimensions: [4, 8, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 128.75,
+		units_per_pallet: 600,
+		pcs_per_sqft: 4.66
+	},
 	gallery: [
 		{
 			id: '32kjrl',
@@ -279,29 +242,6 @@ function formatRestockDate(date: number) {
 	return format(date, 'EEE, LLL d');
 }
 
-function formatProductDetail({ type, value, unit }: Detail) {
-	if (type === 'dimensions')
-		return `${value[0]} ${unit} x ${value[1]} ${unit} x ${value[2]} ${unit}`;
-
-	return value + (unit ? ` ${unit}` : '');
-}
-
-function extractBasicProductDetailValue(detailArr: Detail[], detailID: string) {
-	try {
-		const detail = detailArr.find((detail) => {
-			if (detail.id === detailID && detail.type !== 'basic')
-				throw new Error(`Detail '${detailID}' is not basic.`);
-
-			return detail.id === detailID;
-		});
-		if (!detail) throw new Error(`Detail '${detailID}' does not exist.`);
-
-		return detail.value as number;
-	} catch (err) {
-		throw err;
-	}
-}
-
 const priceFormatter = new Intl.NumberFormat('en', {
 	minimumFractionDigits: 2,
 	maximumFractionDigits: 2
@@ -320,7 +260,6 @@ function formatStock(stock: Stock) {
 }
 
 type FormValues = {
-	_quickCalcValue: string;
 	color: string;
 	value: number;
 	unit: Unit;
@@ -340,123 +279,120 @@ function round(value: number, multpile: number, direction?: 'up' | 'down') {
 const getGCT = (subtotal: number) => subtotal * 0.15;
 const removeGCT = (total: number) => total / 1.15;
 
+function calculateTotal(area: number, skuPrice: number) {
+	const subtotal = round(area * skuPrice, 0.01);
+	const tax = round(getGCT(subtotal), 0.01);
+	const total = round(subtotal + tax, 0.01);
+
+	return { total, tax, subtotal };
+}
+
 type TransformerRecord<TKey extends string> = Record<
 	TKey,
 	(num: number) => number
 >;
 
-function calculateTotal(
-	{ value, unit, deliveryLocation }: FormValues,
-	detailArr: Detail[],
-	sku: SKU
+type RoundAreaConfig = {
+	deliveryLocation: DeliveryLocation;
+	productDetails: ProductDetails;
+	unit: Unit;
+};
+
+function roundArea(
+	area: number,
+	{ productDetails, deliveryLocation, unit }: RoundAreaConfig
 ) {
-	const sqft_per_pallet = extractBasicProductDetailValue(
-		detailArr,
-		'area_per_pallet'
-	);
-	const pcs_per_sqft = extractBasicProductDetailValue(
-		detailArr,
-		'pcs_per_sqft'
-	);
-	const sku_price = sku.price;
-
-	// For JMD to sqft conversion
-	const sqftFromTotal: TransformerRecord<DeliveryLocation> = {
-		factory: (total) => {
-			const sqft = removeGCT(total / sku.price); // Divide total by sku price
-			const roundedSqft = round(sqft, sqft_per_pallet / 2, 'down'); // Round Down to nearest half pallet
-
-			return roundedSqft;
-		},
-		showroom: (total) => {
-			const sqft = removeGCT(total) / (sku.price + 20); // Divide total by showroom sku price
-			const roundedSqft = round(sqft, 1 / pcs_per_sqft, 'down'); // Round Down to nearest piece
-
-			return roundedSqft;
-		}
-	};
-
-	// Convert a given unit to square feet
-	const convertToSqftFrom: TransformerRecord<Unit> = {
-		sqft: (squarefeet) => squarefeet,
-		sqin: (inches) => inches / 12,
-		sqm: (squareMeters) => squareMeters * 3.281,
-		sqcm: (squareCentimeters) => squareCentimeters / 30.48,
-		pal: (pallets) => pallets * sqft_per_pallet,
-		pcs: (pieces) => pieces / pcs_per_sqft,
-		jmd: (price) => {
-			return sqftFromTotal[deliveryLocation](price);
-		}
-	};
-
-	const unroundedArea = convertToSqftFrom[unit](value);
+	const { sqft_per_pallet, pcs_per_sqft } = productDetails;
 
 	const roundingFunction: TransformerRecord<DeliveryLocation> = {
-		factory: (num) => round(num, sqft_per_pallet / 2, 'up'), // Round to the nearest half pallet
-		showroom: (num) => round(num, 1 / pcs_per_sqft, 'up') // Round to the nearest piece
+		factory: (sqft) => {
+			if (unit === 'jmd') return sqft; // Already rounded, pass value onward
+
+			return round(sqft, sqft_per_pallet / 2, 'up'); // Round up to the nearest half pallet
+		},
+		showroom: (sqft) => {
+			if (unit === 'jmd') return sqft; // Already rounded, pass value onward
+
+			return round(sqft, 1 / pcs_per_sqft, 'up'); // Round up to the nearest piece
+		}
 	};
 
-	const roundedArea = roundingFunction[deliveryLocation](unroundedArea);
+	return roundingFunction[deliveryLocation](area);
+}
 
-	const calculateSubtotal: TransformerRecord<DeliveryLocation> = {
-		factory: (sqft) => sqft * sku_price, // Multiply area by the sku price
-		showroom: (sqft) => sqft * (sku_price + 20) // Multiply area by the premium sku price
-	};
+type ConvertConfig = {
+	deliveryLocation: DeliveryLocation;
+	productDetails: ProductDetails;
+	skuPrice: number;
+};
 
-	const subtotal = round(
-		calculateSubtotal[deliveryLocation](roundedArea),
-		0.01
-	);
-	const tax = round(getGCT(subtotal), 0.01);
-	const total = round(subtotal + tax, 0.01);
+function convert(
+	value: number,
+	{ skuPrice, productDetails, deliveryLocation }: ConvertConfig
+) {
+	const { sqft_per_pallet, pcs_per_sqft } = productDetails;
 
 	return {
-		unroundedArea,
-		roundedArea,
-		subtotal,
-		tax,
-		total
+		toSqftFrom(unit: Unit) {
+			// For JMD to sqft conversion
+			const sqftFromTotal: TransformerRecord<DeliveryLocation> = {
+				factory: (total) => {
+					const sqft = removeGCT(total / skuPrice); // Divide total by sku price
+					const roundedSqft = round(sqft, sqft_per_pallet / 2, 'down'); // Round Down to nearest half pallet
+
+					return roundedSqft;
+				},
+				showroom: (total) => {
+					const sqft = removeGCT(total / skuPrice); // Divide total by showroom sku price
+					const roundedSqft = round(sqft, 1 / pcs_per_sqft, 'down'); // Round Down to nearest piece
+
+					return roundedSqft;
+				}
+			};
+
+			const convertToSqftFrom: TransformerRecord<Unit> = {
+				sqft: (squarefeet) => squarefeet,
+				sqin: (inches) => inches / 12,
+				sqm: (squareMeters) => squareMeters * 3.281,
+				sqcm: (squareCentimeters) => squareCentimeters / 30.48,
+				pal: (pallets) => pallets * sqft_per_pallet,
+				pcs: (pieces) => pieces / pcs_per_sqft,
+				jmd: (price) => {
+					return sqftFromTotal[deliveryLocation](price);
+				}
+			};
+
+			const unroundedArea = convertToSqftFrom[unit](value);
+			const roundedArea = roundArea(unroundedArea, {
+				productDetails,
+				deliveryLocation,
+				unit
+			});
+			return { unroundedArea, roundedArea };
+		},
+		fromSqftTo(unit: Unit) {
+			const convertFromSqftTo: TransformerRecord<Unit> = {
+				sqft: (sqft) => round(sqft, 0.01),
+				sqin: (sqft) => round(sqft * 12, 1),
+				sqm: (sqft) => round(sqft / 3.281, 0.01),
+				sqcm: (sqft) => round(sqft * 30.48, 1),
+				pal: (sqft) => round(sqft / sqft_per_pallet, 0.5),
+				pcs: (sqft) => round(sqft * pcs_per_sqft, 1),
+				jmd: (sqft) => {
+					const roundedSqft = roundArea(sqft, {
+						productDetails,
+						deliveryLocation,
+						unit
+					});
+					return calculateTotal(roundedSqft, skuPrice).total;
+				}
+			};
+
+			// Ensure value has a maximum of 2 fraction digits
+			return parseFloat(convertFromSqftTo[unit](value).toFixed(2));
+		}
 	};
 }
-
-function convertFromSqft(
-	unit: Unit,
-	{ value, ...formValues }: FormValues,
-	detailArr: Detail[],
-	sku: SKU
-) {
-	const sqft_per_pallet = extractBasicProductDetailValue(
-		detailArr,
-		'area_per_pallet'
-	);
-	const pcs_per_sqft = extractBasicProductDetailValue(
-		detailArr,
-		'pcs_per_sqft'
-	);
-
-	const convertFromSqftTo: TransformerRecord<Unit> = {
-		sqft: (sqft) => round(sqft, 0.01),
-		sqin: (sqft) => round(sqft * 12, 1),
-		sqm: (sqft) => round(sqft / 3.281, 0.01),
-		sqcm: (sqft) => round(sqft * 30.48, 1),
-		pal: (sqft) => round(sqft / sqft_per_pallet, 0.5),
-		pcs: (sqft) => round(sqft * pcs_per_sqft, 1),
-		jmd: (sqft) =>
-			round(
-				calculateTotal(
-					{ ...formValues, value: sqft, unit: 'sqft' },
-					detailArr,
-					sku
-				).total,
-				0.01
-			)
-	};
-
-	// Ensure value has a maximum of 2 fraction digits
-	return parseFloat(convertFromSqftTo[unit](value).toFixed(2));
-}
-
-// Understand how this function works later
 
 function isNumeric(value: string | number) {
 	try {
@@ -509,6 +445,38 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 
 	const [sku, setSKU] = useState<SKU>(initialSKU);
 	const [showWork, setShowWork] = useState(false);
+	const [qcInputValue, setQcInputValue] = useState('');
+
+	const { watch, register, setValue, handleSubmit, control } =
+		useForm<FormValues>({
+			defaultValues: {
+				value: 0,
+				unit: 'sqft',
+				deliveryLocation: 'factory',
+				color: initialSKU.id.split(':')[1]
+			}
+		});
+
+	const { value, unit, deliveryLocation } = watch();
+
+	const skuPrice = sku.price + (deliveryLocation === 'showroom' ? 20 : 0);
+
+	const convertConfig: ConvertConfig = {
+		skuPrice: skuPrice,
+		productDetails: product.details,
+		deliveryLocation: deliveryLocation
+	};
+
+	const { unroundedArea, roundedArea } = convert(
+		value,
+		convertConfig
+	).toSqftFrom(unit);
+
+	const quickCalc = {
+		unroundedArea,
+		roundedArea,
+		...calculateTotal(roundedArea, skuPrice)
+	};
 
 	useEffect(() => {
 		try {
@@ -524,21 +492,6 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 			throw err;
 		}
 	}, [product.id, router]);
-
-	const { watch, register, setValue, handleSubmit, control } =
-		useForm<FormValues>({
-			defaultValues: {
-				_quickCalcValue: '',
-				value: 0,
-				unit: 'sqft',
-				deliveryLocation: 'factory',
-				color: initialSKU.id.split(':')[1]
-			}
-		});
-
-	const currentValues = watch();
-
-	const quickCalc = calculateTotal(currentValues, product.details, sku);
 
 	return (
 		<>
@@ -573,7 +526,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 						{product.display_name} {sku.display_name_modifier}
 					</h1>
 					<div className="flex flex-wrap justify-between text-zinc-500">
-						<p>{formatPrice(sku.price)}/sqft</p>
+						<p>{formatPrice(skuPrice)}/sqft</p>
 
 						<div className="flex space-x-1">
 							{sku.current_stock.value > 0 ? (
@@ -636,9 +589,14 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 							>
 								<Controller
 									control={control}
-									name="_quickCalcValue"
-									render={({ field: { value, ...field } }) => {
-										const setFieldValue = field.onChange;
+									name="value"
+									render={({ field }) => {
+										const hijackInputValue = (newValue: string) => {
+											setQcInputValue(newValue);
+										};
+
+										const setQcValue = (number: number) =>
+											setValue('value', number);
 
 										function commitChange(
 											value: number,
@@ -647,10 +605,14 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 											let valueToCommit = value;
 
 											if (shouldRound) valueToCommit = round(value, 0.01);
-											setFieldValue(valueToCommit.toString());
 
-											if (valueToCommit > 0) setValue('value', valueToCommit);
-											else setValue('value', 0);
+											// Committed value is always rounded to nearest hundredth
+											valueToCommit = parseFloat(valueToCommit.toFixed(2));
+
+											hijackInputValue(valueToCommit.toString());
+
+											if (valueToCommit > 0) setQcValue(valueToCommit);
+											else setQcValue(0);
 										}
 
 										return (
@@ -659,46 +621,36 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 												id="quickcalc-value"
 												type="text"
 												autoComplete="off"
-												placeholder={quicKCalcPlaceholder[currentValues.unit]}
+												placeholder={quicKCalcPlaceholder[unit]}
 												className="w-[100%] placeholder-zinc-500 outline-none"
-												value={value === undefined ? '' : value.toString()}
+												value={qcInputValue}
 												onChange={(e) => {
 													const inputValue = e.currentTarget.value;
 													const inputValueIsNumeric = isNumeric(inputValue);
 
-													//
-													if (inputValueIsNumeric) {
+													// Don't hijack the input
+													setQcInputValue(e.currentTarget.value);
+
+													if (inputValueIsNumeric === true) {
+														// Turn inputValue into a number
 														const inputValueAsNumber = parseFloat(inputValue);
 
-														setValue('value', inputValueAsNumber); // Use as value
-														setFieldValue(e); // Don't hijack the input
+														// Commit that number as qcValue
+														setQcValue(inputValueAsNumber);
+													} else if (inputValue === '') {
+														// If the input is empty, set qcValue to 0
+														setQcValue(0);
 													} else {
-														// If the input is empty...
-														if (inputValue === '') {
-															setValue('value', 0); // ...set value to 0
-															setFieldValue(e); // Don't hijack the input
-														} else {
-															try {
-																const calculatedValue = evaluate(inputValue);
+														try {
+															// Otherwise, try to evaluate the inputValue as an expression
+															const calculatedValue = evaluate(inputValue);
 
-																// ^ `evaluate` may return an object
-																if (isNaN(calculatedValue)) {
-																	// Got an object! Restore the last valid value
-																	setFieldValue(e);
-																} else {
-																	// Commit evaluated value...
-																	setValue(
-																		'value',
-																		round(calculatedValue, 0.01)
-																	);
-
-																	// ...without hijacking the input
-																	setFieldValue(e);
-																}
-															} catch {
-																setFieldValue(e);
+															// ^ `evaluate` may return an object
+															if (!isNaN(calculatedValue)) {
+																// Set calculated value as qcValue
+																setQcValue(round(calculatedValue, 0.01));
 															}
-														}
+														} catch {}
 													}
 												}}
 												onBlur={(e) => {
@@ -710,7 +662,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 													// Numbers don't need to be evaluated
 													if (inputValueIsNumeric === false) {
 														// If the input is empty, avoid NaN by setting value to 0
-														if (inputValue === '') setValue('value', 0);
+														if (inputValue === '') setQcValue(0);
 														else {
 															try {
 																// Otherwise evalutate input as an expression
@@ -719,14 +671,14 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 																// ^ `evaluate` may return an object
 																if (isNaN(calculatedValue)) {
 																	// Got an object! Restore the last valid value
-																	commitChange(currentValues.value);
+																	commitChange(value);
 																} else {
-																	// Commit calculated value
+																	// Set calculated value as qcValue
 																	commitChange(round(calculatedValue, 0.01));
 																}
 															} catch {
 																// Evaluation failed, restore the last valid value
-																commitChange(currentValues.value);
+																commitChange(value);
 															}
 														}
 													}
@@ -743,12 +695,11 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 														e.preventDefault();
 
 														if (e.key === 'ArrowUp') {
-															commitChange(currentValues.value + 1); // add 1 to inputValue
-														} else if (
-															e.key === 'ArrowDown' &&
-															currentValues.value >= 1
-														) {
-															commitChange(currentValues.value - 1); // subtract 1 to inputValue
+															// Nudge up 1 step
+															commitChange(value + 1);
+														} else if (e.key === 'ArrowDown' && value >= 1) {
+															// Nudge down 1 step if current value is greater than 1
+															commitChange(value - 1);
 														}
 													} else if (
 														!inputValueIsNumeric &&
@@ -756,8 +707,8 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 													) {
 														e.preventDefault();
 
-														// If input is empty, avoid NaN by setting value to 0
-														if (inputValue === '') setValue('value', 0);
+														// If input is empty, avoid NaN by setting qcValue to 0
+														if (inputValue === '') setQcValue(0);
 														else {
 															try {
 																// Otherwise evalutate input as an expression
@@ -765,15 +716,15 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 
 																// ^ `evaluate` may return an object
 																if (isNaN(calculatedValue)) {
-																	// Got an object! Restore the last valid value
-																	commitChange(currentValues.value);
+																	// Got an object! Restore the last valid qcValue
+																	commitChange(value);
 																} else {
-																	// Commit calculated value
+																	// Set calculated value as qcValue
 																	commitChange(round(calculatedValue, 0.01));
 																}
 															} catch {
-																// Evaluation failed, restore the last valid value
-																commitChange(currentValues.value);
+																// Evaluation failed, restore the last valid qcValue
+																commitChange(value);
 															}
 														}
 													}
@@ -791,15 +742,13 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 								<select
 									{...register('unit', {
 										onChange: (e) => {
-											const convertedValue = convertFromSqft(
-												e.target.value,
-												{ ...currentValues, value: quickCalc.unroundedArea },
-												product.details,
-												sku
-											);
+											const convertedValue = convert(
+												quickCalc.unroundedArea,
+												convertConfig
+											).fromSqftTo(e.target.value);
 
 											setValue('value', convertedValue);
-											setValue('_quickCalcValue', convertedValue.toString());
+											setQcInputValue(convertedValue.toString());
 										}
 									})}
 									id="quickcalc-unit"
@@ -845,17 +794,10 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 											Calculated Quantity
 										</label>
 										<output id="quickcalc-quantity" htmlFor="quickcalc-value">
-											{convertFromSqft(
-												currentValues.deliveryLocation === 'factory'
-													? 'pal'
-													: 'pcs',
-												{ ...currentValues, value: quickCalc.roundedArea },
-												product.details,
-												sku
+											{convert(quickCalc.roundedArea, convertConfig).fromSqftTo(
+												deliveryLocation === 'factory' ? 'pal' : 'pcs'
 											)}{' '}
-											{currentValues.deliveryLocation === 'factory'
-												? 'pal'
-												: 'pcs'}
+											{deliveryLocation === 'factory' ? 'pal' : 'pcs'}
 										</output>
 									</li>
 									<li className="flex flex-wrap justify-between">
@@ -864,7 +806,7 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 											id="quickcalc-rounded-area"
 											htmlFor="quickcalc-value"
 										>
-											{numberFormatter.format(quickCalc.roundedArea)} sqft
+											{numberFormatter.format(roundedArea)} sqft
 										</output>
 									</li>
 									<li className="flex flex-wrap justify-between">
@@ -902,15 +844,30 @@ const Page: NextPage<{ product: Product; initialSKU: SKU }> = ({
 					<SectionHeader title="Product Details" />
 
 					<ul className="-mx-4">
-						{product.details.map((detail) => (
-							<li
-								key={detail.id}
-								className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100"
-							>
-								<p>{detail.display_name}</p>
-								<p>{formatProductDetail(detail)}</p>
-							</li>
-						))}
+						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<p>Dimensions</p>
+							<p>
+								{product.details.dimensions[0]} in x{' '}
+								{product.details.dimensions[1]} in x{' '}
+								{product.details.dimensions[2]} in
+							</p>
+						</li>
+						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<p>Weight per unit</p>
+							<p>{product.details.lbs_per_unit} lbs</p>
+						</li>
+						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<p>Area per pallet</p>
+							<p>{product.details.sqft_per_pallet} sqft</p>
+						</li>
+						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<p>Units per pallet</p>
+							<p>{product.details.units_per_pallet}</p>
+						</li>
+						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<p>Pieces per sqft</p>
+							<p>{product.details.pcs_per_sqft}</p>
+						</li>
 					</ul>
 				</section>
 

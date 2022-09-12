@@ -28,6 +28,7 @@
 		"react-query": "3.39.2",
 		"superjson": "^1.9.1",
 		"three": "^0.143.0",
+		"three-stdlib": "^2.15.0",
 		"zod": "^3.17.3"
 	},
 	"devDependencies": {

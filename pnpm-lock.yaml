@@ -45,6 +45,7 @@ importers:
       superjson: ^1.9.1
       tailwindcss: ^3.1.8
       three: ^0.143.0
+      three-stdlib: ^2.15.0
       tsconfig: workspace:*
       typescript: 4.7.4
       zod: ^3.17.3
@@ -67,6 +68,7 @@ importers:
       react-query: 3.39.2_biqbaboplfbrettd7655fr4n2y
       superjson: 1.9.1
       three: 0.143.0
+      three-stdlib: 2.15.0_three@0.143.0
       zod: 3.18.0
     devDependencies:
       '@types/node': 18.0.0
@@ -459,7 +461,7 @@ packages:
       suspend-react: 0.0.8_react@18.2.0
       three: 0.143.0
       three-mesh-bvh: 0.5.15_three@0.143.0
-      three-stdlib: 2.14.3_three@0.143.0
+      three-stdlib: 2.15.0_three@0.143.0
       troika-three-text: 0.46.4_three@0.143.0
       utility-types: 3.10.0
       zustand: 3.7.2_react@18.2.0
@@ -580,6 +582,10 @@ packages:
   /@types/node/18.0.0:
     resolution: {integrity: sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==}
     dev: true
+
+  /@types/offscreencanvas/2019.7.0:
+    resolution: {integrity: sha512-PGcyveRIpL1XIqK8eBsmRBt76eFgtzuPiSTyKHZxnGemp2yzGzWpjYKAfK3wIMiU7eH+851yEpiuP8JZerTmWg==}
+    dev: false
 
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
@@ -3046,12 +3052,13 @@ packages:
       three: 0.143.0
     dev: false
 
-  /three-stdlib/2.14.3_three@0.143.0:
-    resolution: {integrity: sha512-FS2HsQFuGIexhzVRrAzhOHtC5YSkIyauWr3MgT6TSVcNZIVy5r+H9i5+Pjed2Oq4mpe97BufmJd+1Xg5Exh0rA==}
+  /three-stdlib/2.15.0_three@0.143.0:
+    resolution: {integrity: sha512-81jgpEajYB1HczIKAqcG8oEgRPbKJr/8KfxMY3xIHe9kDNw426PckStLt+GVmV15ezOS+QlUFVSuyjSRPpSLsg==}
     peerDependencies:
       three: '>=0.122.0'
     dependencies:
       '@babel/runtime': 7.18.9
+      '@types/offscreencanvas': 2019.7.0
       '@webgpu/glslang': 0.0.15
       chevrotain: 10.3.0
       draco3d: 1.5.3

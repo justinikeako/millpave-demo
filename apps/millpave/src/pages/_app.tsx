@@ -29,15 +29,26 @@ export default withTRPC<AppRouter>({
 
 		return {
 			url,
-			transformer: superjson
+			transformer: superjson,
 			/**
 			 * @link https://react-query.tanstack.com/reference/QueryClient
 			 */
-			// queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
+			queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } }
 		};
 	},
-	/**
-	 * @link https://trpc.io/docs/ssr
-	 */
-	ssr: false
+	ssr: true,
+	responseMeta: ({ clientErrors }) => {
+		if (clientErrors[0]) {
+			// propagate first http error from API calls
+			return {
+				status: clientErrors[0].data?.httpStatus ?? 500
+			};
+		}
+		// cache full page for 1 day + revalidate once every second
+		const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+
+		return {
+			'Cache-Control': `s-maxage=1, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`
+		};
+	}
 })(MyApp);

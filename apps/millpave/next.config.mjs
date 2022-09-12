@@ -32,7 +32,7 @@ export default defineNextConfig({
 	redirects: async () => [
 		{
 			source: '/',
-			destination: '/product',
+			destination: '/product?sku=grey',
 			permanent: false
 		}
 	]

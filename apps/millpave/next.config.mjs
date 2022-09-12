@@ -18,7 +18,7 @@ export default defineNextConfig({
 
 	headers: async () => [
 		{
-			source: '/:all*(woff2|png|bin)',
+			source: '/:all*(woff2|png|bin|gltf)',
 			locale: false,
 			headers: [
 				{

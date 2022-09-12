@@ -17,7 +17,7 @@ function ProductGallery({ colorId }: Props) {
 		<>
 			<div className="flex-1">
 				<Canvas frameloop="demand" camera={{ position: [0, 0.2, 0] }}>
-					<OrbitControls />
+					<OrbitControls enablePan={false} />
 					<ambientLight />
 					<pointLight position={[-2, 2, 2]} intensity={0.5} />
 					<pointLight position={[-2, 2, -2]} intensity={1} castShadow />
@@ -30,7 +30,7 @@ function ProductGallery({ colorId }: Props) {
 			<div className="flex flex-col items-center">
 				<LinkButton
 					variant="secondary"
-					href={`intent://arvr.google.com/scene-viewer/1.0?file=https://beta.millpave.notprimitive.com/models/colonial_classic-${colorId}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`}
+					href={`intent://arvr.google.com/scene-viewer/1.0?file=https://beta.millpave.notprimitive.com/models/colonial_classic-${colorId}.gltf&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`}
 					iconLeft="view_in_ar_new"
 				>
 					View in Your Space

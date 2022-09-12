@@ -30,7 +30,7 @@ function ProductGallery({ colorId }: Props) {
 			<div className="flex flex-col items-center">
 				<LinkButton
 					variant="secondary"
-					href={`intent://arvr.google.com/scene-viewer/1.0?file=https://millpave.notprimitive.com/models/colonial_classic-${colorId}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`}
+					href={`intent://arvr.google.com/scene-viewer/1.0?file=https://beta.millpave.notprimitive.com/models/colonial_classic-${colorId}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`}
 					iconLeft="view_in_ar_new"
 				>
 					View in Your Space

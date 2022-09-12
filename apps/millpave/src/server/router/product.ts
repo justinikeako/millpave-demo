@@ -2,11 +2,11 @@ import { createRouter } from './context';
 import { z } from 'zod';
 import { addBusinessDays, addHours } from 'date-fns';
 import { nanoid } from 'nanoid';
-import { PickupLocation, Product, SKU } from '../../types/product';
+import { Product, RestockQueueElement, SKU, Stock } from '../../types/product';
 import { TRPCError } from '@trpc/server';
 
 // Mock Product
-const product: Product = {
+const COLONIAL_CLASSIC: Product = {
 	id: 'colonial_classic',
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Colonial Classic',
@@ -145,12 +145,6 @@ const skuList: SKU[] = [
 	}
 ];
 
-type Stock = {
-	sku_id: string;
-	location: PickupLocation;
-	quantity: number;
-};
-
 const color_list = [
 	'grey',
 	'ash',
@@ -200,14 +194,6 @@ const stock: Stock[] = color_list.flatMap((color) => {
 	];
 });
 
-type RestockQueueElement = {
-	sku_id: string;
-	location: PickupLocation;
-	quantity: number;
-	date: number;
-	fulfilled: boolean;
-};
-
 const restockQueue: RestockQueueElement[] = color_list.flatMap((color) => {
 	const fromFactory = coinFlip();
 
@@ -236,51 +222,32 @@ const restockQueue: RestockQueueElement[] = color_list.flatMap((color) => {
 		: [];
 });
 
-export const productRouter = createRouter()
-	.query('get', {
-		resolve() {
-			return { ...product, skuList };
-		}
-	})
-	.query('getSKUFulfillment', {
-		input: z.object({
-			skuId: z.string(),
-			pickupLocation: z.string()
-		}),
-		resolve({ input }) {
-			const current_stock = stock.find((item) => {
-				const matchesSkuId = item.sku_id === input.skuId;
-				const matchesPickupLocation = item.location === input.pickupLocation;
+export const productRouter = createRouter().query('get', {
+	input: z.object({
+		productId: z.string()
+	}),
+	resolve({ input }) {
+		const product = COLONIAL_CLASSIC;
 
-				return matchesSkuId && matchesPickupLocation;
+		const filterPredicate = (item: Stock | RestockQueueElement) => {
+			const productId = item.sku_id.split(':').at(0);
+
+			const matchesProductId = productId === input.productId;
+
+			return matchesProductId;
+		};
+
+		const productStock = stock.filter(filterPredicate);
+
+		const productQueue = restockQueue.filter(filterPredicate);
+
+		if (!product) {
+			throw new TRPCError({
+				message: `SKU '${input.productId}' does not exist`,
+				code: 'NOT_FOUND'
 			});
-
-			const matchedQueueElements = restockQueue.filter(
-				(queueElement) =>
-					queueElement.sku_id === input.skuId &&
-					queueElement.location === input.pickupLocation
-			);
-
-			// Default to none
-			let closest_restock_date = -1;
-
-			// If any exist in the queue, find the one closest to today.
-			if (matchedQueueElements.length) {
-				closest_restock_date = matchedQueueElements.reduce((prev, curr) => {
-					return prev.date < curr.date ? prev : curr;
-				}).date;
-			}
-
-			if (!current_stock) {
-				throw new TRPCError({
-					message: `SKU '${input.skuId}' does not exist`,
-					code: 'NOT_FOUND'
-				});
-			}
-
-			return {
-				closest_restock_date,
-				current_stock: current_stock.quantity
-			};
 		}
-	});
+
+		return { ...product, skuList, stock: productStock, queue: productQueue };
+	}
+});

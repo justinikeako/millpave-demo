@@ -41,3 +41,17 @@ export type SKU = {
 	display_name: string;
 	price: number;
 };
+
+export type Stock = {
+	sku_id: string;
+	location: PickupLocation;
+	quantity: number;
+};
+
+export type RestockQueueElement = {
+	sku_id: string;
+	location: PickupLocation;
+	quantity: number;
+	date: number;
+	fulfilled: boolean;
+};

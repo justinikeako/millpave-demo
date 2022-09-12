@@ -9,7 +9,13 @@ import { useRouter } from 'next/router';
 import { evaluate, number } from 'mathjs';
 import { trpc } from '../../utils/trpc';
 import NextError from 'next/error';
-import { PickupLocation, ProductDetails, SKU } from '../../types/product';
+import {
+	PickupLocation,
+	ProductDetails,
+	RestockQueueElement,
+	SKU,
+	Stock
+} from '../../types/product';
 
 type Unit = 'sqft' | 'sqin' | 'sqm' | 'sqcm' | 'pcs' | 'pal' | 'jmd';
 
@@ -226,12 +232,49 @@ const quicKCalcPlaceholder: Record<Unit, string> = {
 	jmd: 'Amount'
 };
 
+type StockProps = {
+	fulfillment: { stock: Stock[]; queue: RestockQueueElement[] };
+	pickupLocation: PickupLocation;
+	skuId: string;
+};
+
+const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
+	// get stock
+	const currentStock =
+		fulfillment.stock.find((item) => {
+			const matchesSkuId = item.sku_id === skuId;
+			const matchesPickupLocation = item.location === pickupLocation;
+
+			return matchesSkuId && matchesPickupLocation;
+		})?.quantity || 0;
+
+	const matchedQueueElements = fulfillment.queue.filter(
+		(queueElement) =>
+			queueElement.sku_id === skuId && queueElement.location === pickupLocation
+	);
+
+	const closestRestock = matchedQueueElements.length
+		? matchedQueueElements.reduce((prev, curr) => {
+				return prev.date < curr.date ? prev : curr;
+		  }).date
+		: -1;
+
+	return currentStock > 0 ? (
+		<p>{formatNumber(currentStock)} sqft Available</p>
+	) : (
+		<p>{formatRestockDate(closestRestock)}</p>
+	);
+};
+
 const Page: NextPage = () => {
 	const router = useRouter();
 
 	const skuColorId = router.query.sku as string;
 
-	const product = trpc.useQuery(['product.get']);
+	const product = trpc.useQuery(
+		['product.get', { productId: 'colonial_classic' }],
+		{ refetchOnWindowFocus: false }
+	);
 
 	const [showWork, setShowWork] = useState(false);
 	const [qcInputValue, setQcInputValue] = useState('');
@@ -249,13 +292,6 @@ const Page: NextPage = () => {
 	const { value, unit, pickupLocation } = watch();
 
 	const skuId = `colonial_classic:${skuColorId}`;
-	const skuFulfillment = trpc.useQuery([
-		'product.getSKUFulfillment',
-		{
-			skuId,
-			pickupLocation
-		}
-	]);
 
 	const currentSKU = findSKU(skuId, product.data?.skuList);
 
@@ -303,19 +339,12 @@ const Page: NextPage = () => {
 						<p>{formatPrice(skuPrice)}/sqft</p>
 
 						<div className="flex space-x-1">
-							{skuFulfillment.data &&
-								(skuFulfillment.data.current_stock > 0 ? (
-									<p>
-										{formatNumber(skuFulfillment.data.current_stock)} sqft
-										available
-									</p>
-								) : (
-									<p>
-										{formatRestockDate(
-											skuFulfillment.data.closest_restock_date
-										)}
-									</p>
-								))}
+							<Stock
+								fulfillment={product.data}
+								pickupLocation={pickupLocation}
+								skuId={skuId}
+							/>
+
 							<div>
 								<Button variant="tertiary" iconLeft="info" weight="normal" />
 							</div>

@@ -20,7 +20,7 @@ function ProductGallery({ colorId, sku }: Props) {
 	const ARLink = new URL('intent://arvr.google.com/scene-viewer/1.0');
 	ARLink.searchParams.append(
 		'file',
-		`https://beta.millpave.notprimitive.com/models/${slug}.gltf`
+		`https://beta.millpave.notprimitive.com/models/${slug}`
 	);
 	ARLink.searchParams.append('mode', 'ar_only');
 	ARLink.searchParams.append(

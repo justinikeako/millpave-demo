@@ -13,12 +13,12 @@ type GLTFResult = GLTF & {
 };
 
 type ModelProps = JSX.IntrinsicElements['group'] & {
-	color: string;
+	slug: string;
 };
 
-function Model({ color, ...props }: ModelProps) {
+function Model({ slug, ...props }: ModelProps) {
 	const { nodes, materials } = useGLTF(
-		`/models/colonial_classic-${color}.gltf`
+		`/models/${slug}`
 	) as unknown as GLTFResult;
 
 	return (

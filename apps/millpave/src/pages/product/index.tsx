@@ -324,7 +324,7 @@ const Page: NextPage = () => {
 
 			{/* Canvas */}
 			<main className="flex h-[75vh] flex-col bg-zinc-100 pb-16">
-				<ProductGallery colorId={skuColorId} />
+				<ProductGallery colorId={skuColorId} sku={currentSKU} />
 			</main>
 
 			{/* Bottom Sheet */}

@@ -15,7 +15,7 @@ const Model = dynamic(() => import('./paver'), {
 });
 
 function ProductGallery({ colorId, sku }: Props) {
-	const slug = sku.id.replace(/:/g, '-') + '.gltf';
+	const slug = sku.id.replace(/:/g, '/') + '.gltf';
 
 	const ARLink = new URL('intent://arvr.google.com/scene-viewer/1.0');
 	ARLink.searchParams.append(
@@ -29,7 +29,9 @@ function ProductGallery({ colorId, sku }: Props) {
 	);
 	ARLink.searchParams.append('title', sku.display_name);
 	ARLink.searchParams.append('resizable', 'false');
-	ARLink.hash = `Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://beta.millpave.notprimitive.com/product?sku=${colorId};end;`;
+	ARLink.hash = encodeURIComponent(
+		`Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://beta.millpave.notprimitive.com/product?sku=${colorId};end;`
+	);
 
 	return (
 		<>

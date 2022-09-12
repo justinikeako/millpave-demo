@@ -5,7 +5,24 @@ import { nanoid } from 'nanoid';
 import { Product, RestockQueueElement, SKU, Stock } from '../../types/product';
 import { TRPCError } from '@trpc/server';
 
-// Mock Product
+const color_fragments = [
+	{ id: 'grey', hex: 'D9D9D9' },
+	{ id: 'ash', hex: 'B1B1B1' },
+	{ id: 'charcoal', hex: '696969' },
+	{ id: 'spanish_brown', hex: '95816D' },
+	{ id: 'sunset_taupe', hex: 'C9B098' },
+	{ id: 'tan', hex: 'DDCCBB' },
+	{ id: 'shale_brown', hex: '907A7A' },
+	{ id: 'sunset_clay', hex: 'E7A597' },
+	{ id: 'red', hex: 'EF847A' },
+	{ id: 'terracotta', hex: 'EFA17A' },
+	{ id: 'orange', hex: 'EBB075' },
+	{ id: 'sunset_tangerine', hex: 'E7C769' },
+	{ id: 'yellow', hex: 'E7DD69' },
+	{ id: 'green', hex: 'A9D786' }
+];
+
+// Mock Products
 const COLONIAL_CLASSIC: Product = {
 	id: 'colonial_classic',
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
@@ -36,14 +53,14 @@ const COLONIAL_CLASSIC: Product = {
 	],
 	similar_products: [
 		{
-			id: 'banjo',
-			display_name: 'Banjo',
-			price: 228
+			id: 'thin_classic',
+			display_name: 'Thin Classic',
+			price: 188
 		},
 		{
-			id: 'heritage',
-			display_name: 'Heritage Series',
-			price: 228
+			id: 'banjo',
+			display_name: 'Banjo',
+			price: 219
 		}
 	],
 	sku_id_fragments: [
@@ -51,101 +68,64 @@ const COLONIAL_CLASSIC: Product = {
 			index: 0,
 			type: 'color',
 			display_name: 'Color',
-			fragments: [
-				{ id: 'grey', hex: 'D9D9D9' },
-				{ id: 'ash', hex: 'B1B1B1' },
-				{ id: 'charcoal', hex: '696969' },
-				{ id: 'spanish_brown', hex: '95816D' },
-				{ id: 'sunset_taupe', hex: 'C9B098' },
-				{ id: 'tan', hex: 'DDCCBB' },
-				{ id: 'shale_brown', hex: '907A7A' },
-				{ id: 'sunset_clay', hex: 'E7A597' },
-				{ id: 'red', hex: 'EF847A' },
-				{ id: 'terracotta', hex: 'EFA17A' },
-				{ id: 'orange', hex: 'EBB075' },
-				{ id: 'sunset_tangerine', hex: 'E7C769' },
-				{ id: 'yellow', hex: 'E7DD69' },
-				{ id: 'green', hex: 'A9D786' }
-			]
+			fragments: color_fragments
 		}
 	]
 };
 
-// Mock SKUs
-const skuList: SKU[] = [
-	{
-		id: 'colonial_classic:grey',
-		display_name: 'Colonial Classic Grey',
-		price: 203
+const THIN_CLASSIC: Product = {
+	id: 'thin_classic',
+	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
+	display_name: 'Thin Classic',
+	details: {
+		dimensions: [4, 8, 1.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 154.5,
+		units_per_pallet: 720,
+		pcs_per_sqft: 4.66
 	},
-	{
-		id: 'colonial_classic:ash',
-		display_name: 'Colonial Classic Ash',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:charcoal',
-		display_name: 'Colonial Classic Charcoal',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:spanish_brown',
-		display_name: 'Colonial Classic Spanish Brown',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:sunset_taupe',
-		display_name: 'Colonial Classic Sunset Taupe',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:tan',
-		display_name: 'Colonial Classic Tan',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:shale_brown',
-		display_name: 'Colonial Classic Shale Brown',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:sunset_clay',
-		display_name: 'Colonial Classic Sunset Clay',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:red',
-		display_name: 'Colonial Classic Red',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:terracotta',
-		display_name: 'Colonial Classic Terracotta',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:orange',
-		display_name: 'Colonial Classic Orange',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:sunset_tangerine',
-		display_name: 'Colonial Classic Sunset Tangerine',
-		price: 228
-	},
-	{
-		id: 'colonial_classic:yellow',
-		display_name: 'Colonial Classic Yellow',
-		price: 233
-	},
-	{
-		id: 'colonial_classic:green',
-		display_name: 'Colonial Classic Green',
-		price: 363
-	}
-];
+	gallery: [
+		{
+			id: nanoid(),
+			img_url:
+				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
+		}
+	],
+	similar_products: [
+		{
+			id: 'colonial_classic',
+			display_name: 'Colonial Classic',
+			price: 203
+		},
+		{
+			id: 'banjo',
+			display_name: 'Banjo',
+			price: 219
+		}
+	],
+	sku_id_fragments: [
+		{
+			index: 0,
+			type: 'color',
+			display_name: 'Color',
+			fragments: color_fragments
+		}
+	]
+};
 
-const color_list = [
+const PRODUCTS = [COLONIAL_CLASSIC, THIN_CLASSIC];
+
+const color_id_list = [
 	'grey',
 	'ash',
 	'charcoal',
@@ -162,6 +142,55 @@ const color_list = [
 	'green'
 ];
 
+const color_display_name_list = [
+	'Grey',
+	'Ash',
+	'Charcoal',
+	'Spanish Brown',
+	'Sunset Taupe',
+	'Tan',
+	'Shale Brown',
+	'Sunset Clay',
+	'Red',
+	'Terracotta',
+	'Orange',
+	'Sunset Tangerine',
+	'Yellow',
+	'Green'
+];
+
+function generateSKUList(
+	{ productId, displayName }: { productId: string; displayName: string },
+	prices: [number, number, number, number, number]
+): SKU[] {
+	return color_id_list.map((colorId, index) => {
+		const price: Record<string, number> = {
+			grey: prices[0],
+			yellow: prices[2],
+			white: prices[3],
+			green: prices[4]
+		};
+
+		return {
+			id: `${productId}:${colorId}`,
+			display_name: `${displayName} ${color_display_name_list[index]}`,
+			price: price[colorId] || prices[1]
+		} as SKU;
+	});
+}
+
+// Mock SKUs
+const skuList: SKU[] = [
+	...generateSKUList(
+		{ productId: 'colonial_classic', displayName: 'Colonial Classic' },
+		[203, 228, 233, 260.27, 363]
+	),
+	...generateSKUList(
+		{ productId: 'thin_classic', displayName: 'Colonial Classic' },
+		[188, 210, 215, 247, 333]
+	)
+];
+
 function round(value: number, multpile: number, direction?: 'up' | 'down') {
 	let roundingFunction: (num: number) => number;
 
@@ -176,7 +205,7 @@ function coinFlip(chance = 0.5) {
 	return Math.random() > chance ? true : false;
 }
 
-const stock: Stock[] = color_list.flatMap((color) => {
+const stock: Stock[] = color_id_list.flatMap((color) => {
 	const showroomQuantity = round(Math.random() * 2 * 128.75, 1 / 4.66);
 	const factoryQuantity = Math.round(Math.random() * 30) * (128.75 / 2);
 
@@ -194,7 +223,7 @@ const stock: Stock[] = color_list.flatMap((color) => {
 	];
 });
 
-const restockQueue: RestockQueueElement[] = color_list.flatMap((color) => {
+const restockQueue: RestockQueueElement[] = color_id_list.flatMap((color) => {
 	const fromFactory = coinFlip();
 
 	return coinFlip()
@@ -227,7 +256,9 @@ export const productRouter = createRouter().query('get', {
 		productId: z.string()
 	}),
 	resolve({ input }) {
-		const product = COLONIAL_CLASSIC;
+		const product = PRODUCTS.find((product) => {
+			return product.id === input.productId;
+		});
 
 		const filterPredicate = (item: Stock | RestockQueueElement) => {
 			const productId = item.sku_id.split(':').at(0);

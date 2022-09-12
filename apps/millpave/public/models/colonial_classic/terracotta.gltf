@@ -69,17 +69,17 @@
 		{
 			"mimeType": "image/png",
 			"name": "concrete_normal",
-			"uri": "textures/concrete_normal.png"
+			"uri": "../textures/concrete_normal.png"
 		},
 		{
 			"mimeType": "image/png",
-			"name": "concrete_charcoal",
-			"uri": "textures/concrete_charcoal.png"
+			"name": "concrete_terracotta",
+			"uri": "../textures/concrete_terracotta.png"
 		},
 		{
 			"mimeType": "image/png",
 			"name": "concrete_roughness",
-			"uri": "textures/concrete_roughness.png"
+			"uri": "../textures/concrete_roughness.png"
 		}
 	],
 	"accessors": [
@@ -141,7 +141,7 @@
 	"buffers": [
 		{
 			"byteLength": 8872,
-			"uri": "bin/colonial_classic.bin"
+			"uri": "../bin/colonial_classic.bin"
 		}
 	]
 }

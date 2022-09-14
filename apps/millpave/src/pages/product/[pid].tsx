@@ -16,6 +16,7 @@ import {
 	SKU,
 	Stock
 } from '../../types/product';
+import Link from 'next/link';
 
 type Unit = 'sqft' | 'sqin' | 'sqm' | 'sqcm' | 'pcs' | 'pal' | 'jmd';
 
@@ -47,7 +48,7 @@ function formatNumber(number: number) {
 }
 
 type FormValues = {
-	color: string;
+	skuId: string;
 	value: number;
 	unit: Unit;
 	pickupLocation: PickupLocation;
@@ -144,9 +145,7 @@ function convert(
 				sqcm: (squareCentimeters) => squareCentimeters / 30.48,
 				pal: (pallets) => pallets * sqft_per_pallet,
 				pcs: (pieces) => pieces / pcs_per_sqft,
-				jmd: (price) => {
-					return sqftFromTotal[pickupLocation](price);
-				}
+				jmd: (price) => sqftFromTotal[pickupLocation](price)
 			};
 
 			const unroundedArea = convertToSqftFrom[unit](value);
@@ -269,12 +268,14 @@ const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
 const Page: NextPage = () => {
 	const router = useRouter();
 
-	const skuColorId = router.query.sku as string;
+	const productId = router.query.pid as string;
 
-	const product = trpc.useQuery(
-		['product.get', { productId: 'colonial_classic' }],
-		{ refetchOnWindowFocus: false }
-	);
+	const skuIdFragment = (router.query.sku as string).replace(/ /s, ':');
+	const skuId = `${productId}:${skuIdFragment}`;
+
+	const product = trpc.useQuery(['product.get', { productId }], {
+		refetchOnWindowFocus: false
+	});
 
 	const [showWork, setShowWork] = useState(false);
 	const [qcInputValue, setQcInputValue] = useState('');
@@ -285,23 +286,40 @@ const Page: NextPage = () => {
 				value: 0,
 				unit: 'sqft',
 				pickupLocation: 'factory',
-				color: skuColorId
+				skuId: skuIdFragment
 			}
 		});
 
 	const { value, unit, pickupLocation } = watch();
 
-	const skuId = `colonial_classic:${skuColorId}`;
-
 	const currentSKU = findSKU(skuId, product.data?.skuList);
 
-	if (!product.data || !currentSKU) return <NextError statusCode={404} />;
+	const findDetails = (skuIdFragment: string) => {
+		const sku_id_fragment = skuIdFragment.split(':');
+
+		return product.data?.details.find((details) => {
+			return details.supports.reduce((matches, { values, index }) => {
+				return matches && values === 'all'
+					? true
+					: values.includes(sku_id_fragment[index] || '');
+			}, true);
+		});
+	};
+
+	const productDetails = findDetails(skuIdFragment);
+
+	if (!product.data || !currentSKU || !productDetails) {
+		if (product.error?.data?.code === 'NOT_FOUND')
+			return <NextError statusCode={404} />;
+
+		return null;
+	}
 
 	const skuPrice = currentSKU.price + (pickupLocation === 'showroom' ? 20 : 0);
 
 	const convertConfig: ConvertConfig = {
 		skuPrice: skuPrice,
-		productDetails: product.data.details,
+		productDetails: productDetails,
 		pickupLocation: pickupLocation
 	};
 
@@ -324,7 +342,7 @@ const Page: NextPage = () => {
 
 			{/* Canvas */}
 			<main className="flex h-[75vh] flex-col bg-zinc-100 pb-16">
-				<ProductGallery colorId={skuColorId} sku={currentSKU} />
+				<ProductGallery sku={currentSKU} />
 			</main>
 
 			{/* Bottom Sheet */}
@@ -354,39 +372,110 @@ const Page: NextPage = () => {
 
 				<form className="space-y-12" onSubmit={handleSubmit(console.log)}>
 					{/* Color Picker */}
-					<section className="space-y-4">
-						<SectionHeader title="Colors">
-							<p className="text-sm text-rose-600">Color Guide</p>
-						</SectionHeader>
+					<Controller
+						name="skuId"
+						control={control}
+						render={({ field }) => {
+							const skuFragments = field.value.split(':');
 
-						<ul className="grid grid-cols-8 gap-2 [@media(max-width:320px)]:grid-cols-7">
-							{product.data.sku_id_fragments[0]?.fragments.map(
-								({ id, hex }) => (
-									<li key={id} className="contents">
-										<label htmlFor={id} className="aspect-w-1 aspect-h-1">
-											<input
-												{...register('color', {
-													onChange: (e) =>
-														router.push(`?sku=${e.target.value}`, undefined, {
-															shallow: true,
-															scroll: false
-														})
-												})}
-												className="peer hidden"
-												type="radio"
-												value={id}
-												id={id}
-											/>
-											<div
-												className=" rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-rose-900"
-												style={{ background: `#${hex}` }}
-											/>
-										</label>
-									</li>
-								)
-							)}
-						</ul>
-					</section>
+							const handleChange = (
+								newFragment: string,
+								changeIndex: number
+							) => {
+								const newSkuFragments = skuFragments.map(
+									(oldFragment, index) => {
+										return index === changeIndex ? newFragment : oldFragment;
+									}
+								);
+
+								const newSku = newSkuFragments.join(':');
+								const newSkuQuery = newSkuFragments.join('+');
+
+								field.onChange(newSku);
+
+								router.push(
+									`/product/${productId}?sku=${newSkuQuery}`,
+									undefined,
+									{
+										shallow: true,
+										scroll: false
+									}
+								);
+							};
+
+							return (
+								<>
+									{product.data.sku_id_fragments.map(
+										({ type, fragments, display_name, index }) => (
+											<section key={index} className="space-y-4">
+												<SectionHeader title={display_name}>
+													{type === 'color' && (
+														<p className="text-sm text-rose-600">Color Guide</p>
+													)}
+												</SectionHeader>
+
+												{type === 'variant' && (
+													<ul className="grid grid-cols-3 gap-2">
+														{fragments.map(({ id, display_name }) => (
+															<li key={id} className="contents">
+																<label
+																	htmlFor={id}
+																	className="aspect-w-1 aspect-h-1"
+																>
+																	<input
+																		className="peer hidden"
+																		type="radio"
+																		name={type}
+																		value={id}
+																		id={id}
+																		checked={skuFragments[index] === id}
+																		onChange={(e) =>
+																			handleChange(e.target.value, index)
+																		}
+																	/>
+																	<div className="rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-rose-900">
+																		{display_name}
+																	</div>
+																</label>
+															</li>
+														))}
+													</ul>
+												)}
+												{type === 'color' && (
+													<ul className="grid grid-cols-8 gap-2 [@media(max-width:320px)]:grid-cols-7">
+														{fragments.map(({ id, hex }) => (
+															<li key={id} className="contents">
+																<label
+																	htmlFor={id}
+																	className="aspect-w-1 aspect-h-1"
+																>
+																	<input
+																		className="peer hidden"
+																		type="radio"
+																		name={type}
+																		value={id}
+																		id={id}
+																		checked={skuFragments[index] === id}
+																		onChange={(e) =>
+																			handleChange(e.target.value, index)
+																		}
+																	/>
+																	<div
+																		className="rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-rose-900"
+																		style={{ background: `#${hex}` }}
+																	/>
+																</label>
+															</li>
+														))}
+													</ul>
+												)}
+											</section>
+										)
+									)}
+								</>
+							);
+						}}
+					/>
 
 					{/* QuickCalc */}
 					<section className="space-y-4">
@@ -417,17 +506,17 @@ const Page: NextPage = () => {
 												.replace(/÷/g, '/');
 
 											// Evaluate parsed input value
-											const evaluatedInputValue = evaluate(parsedInputValue);
+											const transpiledInputValue = evaluate(parsedInputValue);
 
 											// Throw if `evaluate` returns an object
-											if (isNaN(evaluatedInputValue)) {
+											if (isNaN(transpiledInputValue)) {
 												throw new Error(
 													'Got an object. Restoring last valid qcValue'
 												);
 											}
 
-											// Return evaluated value otherwise
-											return evaluatedInputValue;
+											// Return transpiled value otherwise
+											return transpiledInputValue;
 										}
 
 										function commitChange(
@@ -667,26 +756,26 @@ const Page: NextPage = () => {
 						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
 							<p>Dimensions</p>
 							<p>
-								{product.data.details.dimensions[0]} in x{' '}
-								{product.data.details.dimensions[1]} in x{' '}
-								{product.data.details.dimensions[2]} in
+								{productDetails.dimensions[0]} in x{' '}
+								{productDetails.dimensions[1]} in x{' '}
+								{productDetails.dimensions[2]} in
 							</p>
 						</li>
 						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
 							<p>Weight per unit</p>
-							<p>{product.data.details.lbs_per_unit} lbs</p>
+							<p>{productDetails.lbs_per_unit} lbs</p>
 						</li>
 						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
 							<p>Area per pallet</p>
-							<p>{product.data.details.sqft_per_pallet} sqft</p>
+							<p>{productDetails.sqft_per_pallet} sqft</p>
 						</li>
 						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
 							<p>Units per pallet</p>
-							<p>{product.data.details.units_per_pallet}</p>
+							<p>{productDetails.units_per_pallet}</p>
 						</li>
 						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
 							<p>Pieces per sqft</p>
-							<p>{product.data.details.pcs_per_sqft}</p>
+							<p>{productDetails.pcs_per_sqft}</p>
 						</li>
 					</ul>
 				</section>
@@ -707,6 +796,7 @@ const Page: NextPage = () => {
 								<img
 									className="min-h-full min-w-full"
 									src={img_url}
+									loading="lazy"
 									alt="Paving Stones"
 								/>
 
@@ -730,16 +820,34 @@ const Page: NextPage = () => {
 						<ul className="grid w-full grid-cols-2 gap-2">
 							{product.data.similar_products.map((product) => (
 								<li key={product.id} className="items-center space-y-2">
-									<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-zinc-100" />
+									<Link
+										href={`/product/${product.id}?sku=${(() => {
+											const colorId = skuIdFragment.split(':').at(-1);
 
-									<div>
-										<h3 className="text-center font-semibold">
-											{product.display_name}
-										</h3>
-										<p className="text-center text-zinc-500">
-											from {formatPrice(product.price)}
-										</p>
-									</div>
+											const defaultSkuIdFragmentList =
+												product.default_sku_id_fragment.map((val) => {
+													return val === '[color]' ? colorId : val;
+												});
+
+											const skuIdFragmentResult =
+												defaultSkuIdFragmentList.join('+');
+
+											return skuIdFragmentResult;
+										})()}`}
+									>
+										<a>
+											<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-zinc-100" />
+
+											<div>
+												<h3 className="text-center font-semibold">
+													{product.display_name}
+												</h3>
+												<p className="text-center text-zinc-500">
+													from {formatPrice(product.price)}
+												</p>
+											</div>
+										</a>
+									</Link>
 								</li>
 							))}
 						</ul>

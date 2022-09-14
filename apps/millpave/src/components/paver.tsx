@@ -23,11 +23,14 @@ function Model({ slug, ...props }: ModelProps) {
 
 	return (
 		<group {...props} dispose={null}>
-			<mesh
-				geometry={nodes.model.geometry}
-				material={materials.concrete}
-				position={[0, 0, 0]}
-			/>
+			{Object.entries(nodes).map(([, { id, geometry, position }]) => (
+				<mesh
+					key={id}
+					geometry={geometry}
+					material={materials.concrete}
+					position={position}
+				/>
+			))}
 		</group>
 	);
 }

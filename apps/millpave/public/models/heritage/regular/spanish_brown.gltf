@@ -1,0 +1,149 @@
+{
+	"asset": {
+		"generator": "Khronos glTF Blender I/O v3.2.40",
+		"version": "2.0"
+	},
+	"scene": 0,
+	"scenes": [
+		{
+			"name": "Scene",
+			"nodes": [0]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0,
+			"name": "model",
+			"translation": [0, 0, 0]
+		}
+	],
+	"materials": [
+		{
+			"doubleSided": true,
+			"name": "concrete",
+			"normalTexture": {
+				"index": 0
+			},
+			"pbrMetallicRoughness": {
+				"baseColorTexture": {
+					"index": 1
+				},
+				"metallicFactor": 0,
+				"metallicRoughnessTexture": {
+					"index": 2
+				}
+			}
+		}
+	],
+	"meshes": [
+		{
+			"name": "model",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2
+					},
+					"indices": 3,
+					"material": 0
+				}
+			]
+		}
+	],
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		},
+		{
+			"sampler": 0,
+			"source": 1
+		},
+		{
+			"sampler": 0,
+			"source": 2
+		}
+	],
+	"images": [
+		{
+			"mimeType": "image/png",
+			"name": "concrete_normal",
+			"uri": "../../textures/concrete_normal.png"
+		},
+		{
+			"mimeType": "image/png",
+			"name": "concrete_spanish_brown",
+			"uri": "../../textures/concrete_spanish_brown.png"
+		},
+		{
+			"mimeType": "image/png",
+			"name": "concrete_roughness",
+			"uri": "../../textures/concrete_roughness.png"
+		}
+	],
+	"accessors": [
+		{
+			"bufferView": 0,
+			"componentType": 5126,
+			"count": 238,
+			"max": [0.07620000094175339, 0.030162500217556953, 0.11429999023675919],
+			"min": [
+				-0.07620000094175339, -0.030162500217556953, -0.11429998278617859
+			],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"componentType": 5126,
+			"count": 238,
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"componentType": 5126,
+			"count": 238,
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 3,
+			"componentType": 5123,
+			"count": 756,
+			"type": "SCALAR"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 2856,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2856,
+			"byteOffset": 2856
+		},
+		{
+			"buffer": 0,
+			"byteLength": 1904,
+			"byteOffset": 5712
+		},
+		{
+			"buffer": 0,
+			"byteLength": 1512,
+			"byteOffset": 7616
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9987
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 9128,
+			"uri": "../../bin/heritage/regular.bin"
+		}
+	]
+}

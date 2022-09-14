@@ -14,7 +14,7 @@
 		{
 			"mesh": 0,
 			"name": "model",
-			"translation": [-0.025400005280971527, 0, -0.45719999074935913]
+			"translation": [0, 0, 0]
 		}
 	],
 	"materials": [

@@ -1,0 +1,149 @@
+{
+	"asset": {
+		"generator": "Khronos glTF Blender I/O v3.2.40",
+		"version": "2.0"
+	},
+	"scene": 0,
+	"scenes": [
+		{
+			"name": "Scene",
+			"nodes": [0]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0,
+			"name": "model",
+			"translation": [0, 0, 0]
+		}
+	],
+	"materials": [
+		{
+			"doubleSided": true,
+			"name": "concrete",
+			"normalTexture": {
+				"index": 0
+			},
+			"pbrMetallicRoughness": {
+				"baseColorTexture": {
+					"index": 1
+				},
+				"metallicFactor": 0,
+				"metallicRoughnessTexture": {
+					"index": 2
+				}
+			}
+		}
+	],
+	"meshes": [
+		{
+			"name": "model",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2
+					},
+					"indices": 3,
+					"material": 0
+				}
+			]
+		}
+	],
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		},
+		{
+			"sampler": 0,
+			"source": 1
+		},
+		{
+			"sampler": 0,
+			"source": 2
+		}
+	],
+	"images": [
+		{
+			"mimeType": "image/png",
+			"name": "concrete_normal",
+			"uri": "../textures/concrete_normal.png"
+		},
+		{
+			"mimeType": "image/png",
+			"name": "concrete_sunset_taupe",
+			"uri": "../textures/concrete_sunset_taupe.png"
+		},
+		{
+			"mimeType": "image/png",
+			"name": "concrete_roughness",
+			"uri": "../textures/concrete_roughness.png"
+		}
+	],
+	"accessors": [
+		{
+			"bufferView": 0,
+			"componentType": 5126,
+			"count": 362,
+			"max": [0.06984999775886536, 0.030162500217556953, 0.11429999768733978],
+			"min": [
+				-0.06984999775886536, -0.030162498354911804, -0.11429999768733978
+			],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"componentType": 5126,
+			"count": 362,
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"componentType": 5126,
+			"count": 362,
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 3,
+			"componentType": 5123,
+			"count": 1284,
+			"type": "SCALAR"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 4344,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 4344,
+			"byteOffset": 4344
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2896,
+			"byteOffset": 8688
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2568,
+			"byteOffset": 11584
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9987
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 14152,
+			"uri": "../bin/banjo.bin"
+		}
+	]
+}

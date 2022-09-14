@@ -2,7 +2,13 @@ import { createRouter } from './context';
 import { z } from 'zod';
 import { addBusinessDays, addHours } from 'date-fns';
 import { nanoid } from 'nanoid';
-import { Product, RestockQueueElement, SKU, Stock } from '../../types/product';
+import {
+	Product,
+	ProductDetails,
+	RestockQueueElement,
+	SKU,
+	Stock
+} from '../../types/product';
 import { TRPCError } from '@trpc/server';
 
 const color_fragments = [
@@ -22,18 +28,78 @@ const color_fragments = [
 	{ id: 'green', hex: 'A9D786' }
 ];
 
-// Mock Products
-const COLONIAL_CLASSIC: Product = {
-	id: 'colonial_classic',
-	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
-	display_name: 'Colonial Classic',
-	details: {
+const DETAILS: ProductDetails[] = [
+	{
+		product_id: 'colonial_classic',
+		supports: [{ index: 0, values: 'all' }],
 		dimensions: [4, 8, 2.375],
 		lbs_per_unit: 5,
 		sqft_per_pallet: 128.75,
 		units_per_pallet: 600,
 		pcs_per_sqft: 4.66
 	},
+	{
+		product_id: 'thin_classic',
+		supports: [{ index: 0, values: 'all' }],
+		dimensions: [4, 8, 1.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 154.5,
+		units_per_pallet: 720,
+		pcs_per_sqft: 4.66
+	},
+	{
+		product_id: 'banjo',
+		supports: [{ index: 0, values: 'all' }],
+		dimensions: [5.5, 9, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 128.57,
+		units_per_pallet: 450,
+		pcs_per_sqft: 3.5
+	},
+	{
+		product_id: 'heritage',
+		supports: [
+			{ index: 0, values: ['regular'] },
+			{ index: 1, values: 'all' }
+		],
+		dimensions: [6, 9, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 128.57,
+		units_per_pallet: 450,
+		pcs_per_sqft: 3.5
+	},
+	{
+		product_id: 'heritage',
+		supports: [
+			{ index: 0, values: ['square'] },
+			{ index: 1, values: 'all' }
+		],
+		dimensions: [6, 6, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 128.57,
+		units_per_pallet: 450,
+		pcs_per_sqft: 3.5
+	},
+	{
+		product_id: 'heritage',
+		supports: [
+			{ index: 0, values: ['two_part'] },
+			{ index: 1, values: 'all' }
+		],
+		dimensions: [6, 9, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 128.57,
+		units_per_pallet: 450,
+		pcs_per_sqft: 3.5
+	}
+];
+
+// Mock Products
+const COLONIAL_CLASSIC: Product = {
+	id: 'colonial_classic',
+	pickup_location_list: ['factory', 'showroom'],
+	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
+	display_name: 'Colonial Classic',
 	gallery: [
 		{
 			id: nanoid(),
@@ -55,11 +121,13 @@ const COLONIAL_CLASSIC: Product = {
 		{
 			id: 'thin_classic',
 			display_name: 'Thin Classic',
+			default_sku_id_fragment: ['[color]'],
 			price: 188
 		},
 		{
 			id: 'banjo',
 			display_name: 'Banjo',
+			default_sku_id_fragment: ['[color]'],
 			price: 219
 		}
 	],
@@ -67,7 +135,7 @@ const COLONIAL_CLASSIC: Product = {
 		{
 			index: 0,
 			type: 'color',
-			display_name: 'Color',
+			display_name: 'Colors',
 			fragments: color_fragments
 		}
 	]
@@ -75,15 +143,9 @@ const COLONIAL_CLASSIC: Product = {
 
 const THIN_CLASSIC: Product = {
 	id: 'thin_classic',
+	pickup_location_list: ['factory', 'showroom'],
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Thin Classic',
-	details: {
-		dimensions: [4, 8, 1.375],
-		lbs_per_unit: 5,
-		sqft_per_pallet: 154.5,
-		units_per_pallet: 720,
-		pcs_per_sqft: 4.66
-	},
 	gallery: [
 		{
 			id: nanoid(),
@@ -105,11 +167,13 @@ const THIN_CLASSIC: Product = {
 		{
 			id: 'colonial_classic',
 			display_name: 'Colonial Classic',
+			default_sku_id_fragment: ['[color]'],
 			price: 203
 		},
 		{
 			id: 'banjo',
 			display_name: 'Banjo',
+			default_sku_id_fragment: ['[color]'],
 			price: 219
 		}
 	],
@@ -117,13 +181,115 @@ const THIN_CLASSIC: Product = {
 		{
 			index: 0,
 			type: 'color',
-			display_name: 'Color',
+			display_name: 'Colors',
 			fragments: color_fragments
 		}
 	]
 };
 
-const PRODUCTS = [COLONIAL_CLASSIC, THIN_CLASSIC];
+const BANJO: Product = {
+	id: 'banjo',
+	pickup_location_list: ['factory', 'showroom'],
+	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
+	display_name: 'Banjo',
+	gallery: [
+		{
+			id: nanoid(),
+			img_url:
+				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
+		}
+	],
+	similar_products: [
+		{
+			id: 'colonial_classic',
+			display_name: 'Colonial Classic',
+			default_sku_id_fragment: ['[color]'],
+			price: 203
+		},
+		{
+			id: 'thin_classic',
+			display_name: 'Thin Classic',
+			default_sku_id_fragment: ['[color]'],
+			price: 188
+		}
+	],
+	sku_id_fragments: [
+		{
+			index: 0,
+			type: 'color',
+			display_name: 'Colors',
+			fragments: color_fragments
+		}
+	]
+};
+
+const HERITAGE: Product = {
+	id: 'heritage',
+	pickup_location_list: ['factory'],
+	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
+	display_name: 'Heritage Series',
+	gallery: [
+		{
+			id: nanoid(),
+			img_url:
+				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
+		}
+	],
+	similar_products: [
+		{
+			id: 'cobble_mix',
+			display_name: 'Cobble Mix',
+			default_sku_id_fragment: ['regular', '[color]'],
+			price: 203
+		},
+		{
+			id: 'owc',
+			display_name: 'Old World Cobble',
+			default_sku_id_fragment: ['[color]'],
+			price: 188
+		}
+	],
+	sku_id_fragments: [
+		{
+			index: 0,
+			type: 'variant',
+			display_name: 'Variant',
+			fragments: [
+				{ id: 'regular', display_name: 'Regular' },
+				{ id: 'square', display_name: 'Square' },
+				{ id: 'two_part', display_name: 'Two Part' }
+			]
+		},
+		{
+			index: 1,
+			type: 'color',
+			display_name: 'Colors',
+			fragments: color_fragments
+		}
+	]
+};
+
+const PRODUCTS = [COLONIAL_CLASSIC, THIN_CLASSIC, BANJO, HERITAGE];
 
 const color_id_list = [
 	'grey',
@@ -186,8 +352,24 @@ const skuList: SKU[] = [
 		[203, 228, 233, 260.27, 363]
 	),
 	...generateSKUList(
-		{ productId: 'thin_classic', displayName: 'Colonial Classic' },
+		{ productId: 'thin_classic', displayName: 'Thin Classic' },
 		[188, 210, 215, 247, 333]
+	),
+	...generateSKUList(
+		{ productId: 'banjo', displayName: 'Banjo' },
+		[219, 247, 253, 253, 396]
+	),
+	...generateSKUList(
+		{ productId: 'heritage:regular', displayName: 'Heritage Regular' },
+		[219, 247, 253, 253, 396]
+	),
+	...generateSKUList(
+		{ productId: 'heritage:square', displayName: 'Heritage Square' },
+		[219, 247, 253, 253, 396]
+	),
+	...generateSKUList(
+		{ productId: 'heritage:two_part', displayName: 'Heritage Two-Part' },
+		[219, 247, 253, 253, 396]
 	)
 ];
 
@@ -205,51 +387,82 @@ function coinFlip(chance = 0.5) {
 	return Math.random() > chance ? true : false;
 }
 
-const stock: Stock[] = color_id_list.flatMap((color) => {
-	const showroomQuantity = round(Math.random() * 2 * 128.75, 1 / 4.66);
-	const factoryQuantity = Math.round(Math.random() * 30) * (128.75 / 2);
+function generateStock(
+	productId: string,
+	popularity: number,
+	doneToOrder = false
+): Stock[] {
+	return color_id_list.flatMap((color) => {
+		const showroomQuantity = round(
+			Math.random() * (2 * popularity) * 128.75,
+			1 / 4.66
+		);
 
-	return [
-		{
-			sku_id: `colonial_classic:${color}`,
-			location: 'showroom',
-			quantity: coinFlip() ? showroomQuantity : 0
-		},
-		{
-			sku_id: `colonial_classic:${color}`,
-			location: 'factory',
-			quantity: coinFlip() ? factoryQuantity : 0
-		}
-	];
-});
+		const factoryQuantity =
+			Math.round(Math.random() * (30 * popularity)) * (128.75 / 2);
 
-const restockQueue: RestockQueueElement[] = color_id_list.flatMap((color) => {
-	const fromFactory = coinFlip();
+		return [
+			{
+				sku_id: `${productId}:${color}`,
+				location: 'showroom',
+				quantity: doneToOrder ? 0 : coinFlip() ? showroomQuantity : 0
+			},
+			{
+				sku_id: `${productId}:${color}`,
+				location: 'factory',
+				quantity: doneToOrder ? 0 : coinFlip() ? factoryQuantity : 0
+			}
+		];
+	});
+}
 
-	return coinFlip()
-		? [
-				{
-					sku_id: `colonial_classic:${color}`,
-					location: fromFactory ? 'factory' : 'showroom',
-					quantity: fromFactory
-						? (1 + Math.round(Math.random() * 30)) * (128.75 / 2)
-						: (1 + Math.round(Math.random() * 2)) * (128.75 / 2),
-					date: fromFactory
-						? addBusinessDays(
-								new Date(),
-								Math.round(Math.random() * 20)
-						  ).getTime()
-						: coinFlip(0.75)
-						? addHours(new Date(), Math.round(Math.random() * 3)).getTime()
-						: addBusinessDays(
-								new Date(),
-								Math.round(Math.random() * 7)
-						  ).getTime(),
-					fulfilled: coinFlip()
-				}
-		  ]
-		: [];
-});
+const stock: Stock[] = [
+	...generateStock('colonial_classic', 1),
+	...generateStock('banjo', 0.5),
+	...generateStock('thin_classic', 0.1)
+];
+
+function generateRestockElements(
+	productId: string,
+	popularity: number
+): RestockQueueElement[] {
+	return color_id_list.flatMap((color) => {
+		const fromFactory = coinFlip();
+
+		const factoryQuantity =
+			(1 + Math.round(Math.random() * (30 * popularity))) * (128.75 / 2);
+		const showroomQuantity =
+			(1 + Math.round(Math.random() * popularity)) * (128.75 / 2);
+
+		return coinFlip(popularity / 2)
+			? [
+					{
+						sku_id: `${productId}:${color}`,
+						location: fromFactory ? 'factory' : 'showroom',
+						quantity: fromFactory ? factoryQuantity : showroomQuantity,
+						date: fromFactory
+							? addBusinessDays(
+									new Date(),
+									Math.round(Math.random() * 20)
+							  ).getTime()
+							: coinFlip(0.75)
+							? addHours(new Date(), Math.round(Math.random() * 3)).getTime()
+							: addBusinessDays(
+									new Date(),
+									Math.round(Math.random() * 7)
+							  ).getTime(),
+						fulfilled: coinFlip()
+					}
+			  ]
+			: [];
+	});
+}
+
+const restockQueue: RestockQueueElement[] = [
+	...generateRestockElements('colonial_classic', 1),
+	...generateRestockElements('banjo', 0.5),
+	...generateRestockElements('thin_classic', 0.25)
+];
 
 export const productRouter = createRouter().query('get', {
 	input: z.object({
@@ -268,6 +481,18 @@ export const productRouter = createRouter().query('get', {
 			return matchesProductId;
 		};
 
+		const productDetails = DETAILS.filter(
+			(item) => item.product_id === input.productId
+		);
+
+		const productSkuList = skuList.filter((sku) => {
+			const productId = sku.id.split(':').at(0);
+
+			const matchesProductId = productId === input.productId;
+
+			return matchesProductId;
+		});
+
 		const productStock = stock.filter(filterPredicate);
 
 		const productQueue = restockQueue.filter(filterPredicate);
@@ -279,6 +504,12 @@ export const productRouter = createRouter().query('get', {
 			});
 		}
 
-		return { ...product, skuList, stock: productStock, queue: productQueue };
+		return {
+			...product,
+			skuList: productSkuList,
+			stock: productStock,
+			queue: productQueue,
+			details: productDetails
+		};
 	}
 });

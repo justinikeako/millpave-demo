@@ -1,17 +1,12 @@
 import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import dynamic from 'next/dynamic';
-import { Suspense } from 'react';
 import { SKU } from '../types/product';
 import LinkButton from './link-button';
+import Model from './paver';
 
 type Props = {
 	sku: SKU;
 };
-
-const Model = dynamic(() => import('./paver'), {
-	suspense: true
-});
 
 function ProductGallery({ sku }: Props) {
 	const slug = sku.id.replace(/:/g, '/') + '.gltf';
@@ -40,20 +35,20 @@ function ProductGallery({ sku }: Props) {
 			<div className="flex-1">
 				<Canvas
 					frameloop="demand"
-					camera={{ position: [0, 0.2, 0], near: 0.01, far: 2 }}
+					camera={{ position: [0, 0.4, 0], near: 0.01, far: 2, fov: 45 }}
 				>
 					<OrbitControls
 						enablePan={false}
-						minDistance={0.15}
-						maxDistance={0.3}
+						minDistance={0.3}
+						maxDistance={0.5}
+						minPolarAngle={0}
+						maxPolarAngle={Math.PI / 2}
 					/>
 					<ambientLight />
 					<pointLight position={[-2, 2, 2]} intensity={0.5} />
 					<pointLight position={[-2, 2, -2]} intensity={1} castShadow />
 
-					<Suspense fallback={null}>
-						<Model slug={slug} />
-					</Suspense>
+					<Model slug={slug} />
 				</Canvas>
 			</div>
 			<div className="flex flex-col items-center">

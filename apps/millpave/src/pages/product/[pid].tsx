@@ -216,9 +216,12 @@ const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 	);
 };
 
-const ProductGallery = dynamic(
-	() => import('../../components/product-page-gallery'),
-	{ ssr: false, loading: () => <p>Loading...</p> }
+const ProductModelViewer = dynamic(
+	() => import('../../components/product-model-viewer'),
+	{
+		ssr: false,
+		loading: () => <p>Loading...</p>
+	}
 );
 
 const quicKCalcPlaceholder: Record<Unit, string> = {
@@ -342,7 +345,7 @@ const Page: NextPage = () => {
 
 			{/* Canvas */}
 			<main className="flex h-[75vh] flex-col bg-zinc-100 pb-16">
-				<ProductGallery sku={currentSKU} />
+				<ProductModelViewer sku={currentSKU} />
 			</main>
 
 			{/* Bottom Sheet */}

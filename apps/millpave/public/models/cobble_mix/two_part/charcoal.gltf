@@ -1,0 +1,216 @@
+{
+	"asset": {
+		"generator": "Khronos glTF Blender I/O v3.2.40",
+		"version": "2.0"
+	},
+	"scene": 0,
+	"scenes": [
+		{
+			"name": "Scene",
+			"nodes": [0, 1]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0,
+			"name": "Cobble Mix Half",
+			"translation": [0, 0, 0.06127747893333435]
+		},
+		{
+			"mesh": 1,
+			"name": "Cobble Mix Square",
+			"translation": [0, 0, -0.030797479674220085]
+		}
+	],
+	"materials": [
+		{
+			"doubleSided": true,
+			"name": "concrete",
+			"normalTexture": {
+				"index": 0
+			},
+			"pbrMetallicRoughness": {
+				"baseColorTexture": {
+					"index": 1
+				},
+				"metallicFactor": 0,
+				"metallicRoughnessTexture": {
+					"index": 2
+				}
+			}
+		}
+	],
+	"meshes": [
+		{
+			"name": "Cobble Mix Half",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2
+					},
+					"indices": 3,
+					"material": 0
+				}
+			]
+		},
+		{
+			"name": "Cobble Mix Square",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 4,
+						"NORMAL": 5,
+						"TEXCOORD_0": 6
+					},
+					"indices": 7,
+					"material": 0
+				}
+			]
+		}
+	],
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		},
+		{
+			"sampler": 0,
+			"source": 1
+		},
+		{
+			"sampler": 0,
+			"source": 2
+		}
+	],
+	"images": [
+		{
+			"mimeType": "image/png",
+			"name": "concrete_normal",
+			"uri": "../../textures/concrete_normal.png"
+		},
+		{
+			"mimeType": "image/png",
+			"name": "concrete_charcoal",
+			"uri": "../../textures/concrete_charcoal.png"
+		},
+		{
+			"mimeType": "image/png",
+			"name": "concrete_roughness",
+			"uri": "../../textures/concrete_roughness.png"
+		}
+	],
+	"accessors": [
+		{
+			"bufferView": 0,
+			"componentType": 5126,
+			"count": 537,
+			"max": [0.06032499670982361, 0.030162503942847252, 0.030162503942847252],
+			"min": [
+				-0.06032499670982361, -0.030162500217556953, -0.030162503942847252
+			],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"componentType": 5126,
+			"count": 537,
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"componentType": 5126,
+			"count": 537,
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 3,
+			"componentType": 5123,
+			"count": 1932,
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 4,
+			"componentType": 5126,
+			"count": 540,
+			"max": [0.060325004160404205, 0.030162500217556953, 0.060325004160404205],
+			"min": [
+				-0.060325004160404205, -0.030162500217556953, -0.060325004160404205
+			],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 5,
+			"componentType": 5126,
+			"count": 540,
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 6,
+			"componentType": 5126,
+			"count": 540,
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 7,
+			"componentType": 5123,
+			"count": 1932,
+			"type": "SCALAR"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 6444,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 6444,
+			"byteOffset": 6444
+		},
+		{
+			"buffer": 0,
+			"byteLength": 4296,
+			"byteOffset": 12888
+		},
+		{
+			"buffer": 0,
+			"byteLength": 3864,
+			"byteOffset": 17184
+		},
+		{
+			"buffer": 0,
+			"byteLength": 6480,
+			"byteOffset": 21048
+		},
+		{
+			"buffer": 0,
+			"byteLength": 6480,
+			"byteOffset": 27528
+		},
+		{
+			"buffer": 0,
+			"byteLength": 4320,
+			"byteOffset": 34008
+		},
+		{
+			"buffer": 0,
+			"byteLength": 3864,
+			"byteOffset": 38328
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9987
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 42192,
+			"uri": "../../bin/cobble_mix/two_part.bin"
+		}
+	]
+}

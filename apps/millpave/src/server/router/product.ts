@@ -57,6 +57,24 @@ const DETAILS: ProductDetails[] = [
 		pcs_per_sqft: 3.5
 	},
 	{
+		product_id: 'owc',
+		supports: [{ index: 0, values: 'all' }],
+		dimensions: [5.5, 9, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 125.39,
+		units_per_pallet: 800,
+		pcs_per_sqft: 6.38
+	},
+	{
+		product_id: 'tropical_wave',
+		supports: [{ index: 0, values: 'all' }],
+		dimensions: [4.75, 9.5, 3],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 102.89,
+		units_per_pallet: 320,
+		pcs_per_sqft: 3.11
+	},
+	{
 		product_id: 'heritage',
 		supports: [
 			{ index: 0, values: ['regular'] },
@@ -64,9 +82,9 @@ const DETAILS: ProductDetails[] = [
 		],
 		dimensions: [6, 9, 2.375],
 		lbs_per_unit: 5,
-		sqft_per_pallet: 128.57,
-		units_per_pallet: 450,
-		pcs_per_sqft: 3.5
+		sqft_per_pallet: 120.59,
+		units_per_pallet: 328,
+		pcs_per_sqft: 2.72
 	},
 	{
 		product_id: 'heritage',
@@ -76,9 +94,9 @@ const DETAILS: ProductDetails[] = [
 		],
 		dimensions: [6, 6, 2.375],
 		lbs_per_unit: 5,
-		sqft_per_pallet: 128.57,
-		units_per_pallet: 450,
-		pcs_per_sqft: 3.5
+		sqft_per_pallet: 128,
+		units_per_pallet: 512,
+		pcs_per_sqft: 4
 	},
 	{
 		product_id: 'heritage',
@@ -88,9 +106,45 @@ const DETAILS: ProductDetails[] = [
 		],
 		dimensions: [6, 9, 2.375],
 		lbs_per_unit: 5,
-		sqft_per_pallet: 128.57,
-		units_per_pallet: 450,
-		pcs_per_sqft: 3.5
+		sqft_per_pallet: 130,
+		units_per_pallet: 520,
+		pcs_per_sqft: 4 // think about how to add supply ratios
+	},
+	{
+		product_id: 'cobble_mix',
+		supports: [
+			{ index: 0, values: ['double'] },
+			{ index: 1, values: 'all' }
+		],
+		dimensions: [7, 9.5, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 119.28,
+		units_per_pallet: 266,
+		pcs_per_sqft: 2.23
+	},
+	{
+		product_id: 'cobble_mix',
+		supports: [
+			{ index: 0, values: ['oblong'] },
+			{ index: 1, values: 'all' }
+		],
+		dimensions: [4.75, 7, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 126.91,
+		units_per_pallet: 566,
+		pcs_per_sqft: 4.46
+	},
+	{
+		product_id: 'cobble_mix',
+		supports: [
+			{ index: 0, values: ['two_part'] },
+			{ index: 1, values: 'all' }
+		],
+		dimensions: [4.75, 7, 2.375],
+		lbs_per_unit: 5,
+		sqft_per_pallet: 130.97,
+		units_per_pallet: 850,
+		pcs_per_sqft: 6.49 // think about how to add supply ratios
 	}
 ];
 
@@ -233,6 +287,98 @@ const BANJO: Product = {
 	]
 };
 
+const OWC: Product = {
+	id: 'owc',
+	pickup_location_list: ['factory'],
+	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
+	display_name: 'OWC',
+	gallery: [
+		{
+			id: nanoid(),
+			img_url:
+				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
+		}
+	],
+	similar_products: [
+		{
+			id: 'colonial_classic',
+			display_name: 'Colonial Classic',
+			default_sku_id_fragment: ['[color]'],
+			price: 203
+		},
+		{
+			id: 'cobble_mix',
+			display_name: 'Cobble Mix',
+			default_sku_id_fragment: ['oblong', '[color]'],
+			price: 219
+		}
+	],
+	sku_id_fragments: [
+		{
+			index: 0,
+			type: 'color',
+			display_name: 'Colors',
+			fragments: color_fragments
+		}
+	]
+};
+
+const TROPICAL_WAVE: Product = {
+	id: 'tropical_wave',
+	pickup_location_list: ['factory'],
+	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
+	display_name: 'TROPICAL_WAVE',
+	gallery: [
+		{
+			id: nanoid(),
+			img_url:
+				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
+		}
+	],
+	similar_products: [
+		{
+			id: 'colonial_classic',
+			display_name: 'Colonial Classic',
+			default_sku_id_fragment: ['[color]'],
+			price: 203
+		},
+		{
+			id: 'cobble_mix',
+			display_name: 'Cobble Mix',
+			default_sku_id_fragment: ['oblong', '[color]'],
+			price: 219
+		}
+	],
+	sku_id_fragments: [
+		{
+			index: 0,
+			type: 'color',
+			display_name: 'Colors',
+			fragments: color_fragments
+		}
+	]
+};
+
 const HERITAGE: Product = {
 	id: 'heritage',
 	pickup_location_list: ['factory'],
@@ -259,14 +405,14 @@ const HERITAGE: Product = {
 		{
 			id: 'cobble_mix',
 			display_name: 'Cobble Mix',
-			default_sku_id_fragment: ['regular', '[color]'],
-			price: 203
+			default_sku_id_fragment: ['oblong', '[color]'],
+			price: 219
 		},
 		{
 			id: 'owc',
 			display_name: 'Old World Cobble',
 			default_sku_id_fragment: ['[color]'],
-			price: 188
+			price: 203
 		}
 	],
 	sku_id_fragments: [
@@ -289,7 +435,71 @@ const HERITAGE: Product = {
 	]
 };
 
-const PRODUCTS = [COLONIAL_CLASSIC, THIN_CLASSIC, BANJO, HERITAGE];
+const COBBLE_MIX: Product = {
+	id: 'cobble_mix',
+	pickup_location_list: ['factory'],
+	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
+	display_name: 'Cobble Mix',
+	gallery: [
+		{
+			id: nanoid(),
+			img_url:
+				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
+		},
+		{
+			id: nanoid(),
+			img_url:
+				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
+		}
+	],
+	similar_products: [
+		{
+			id: 'heritage',
+			display_name: 'Heritage Series',
+			default_sku_id_fragment: ['regular', '[color]'],
+			price: 203
+		},
+		{
+			id: 'owc',
+			display_name: 'Old World Cobble',
+			default_sku_id_fragment: ['[color]'],
+			price: 188
+		}
+	],
+	sku_id_fragments: [
+		{
+			index: 0,
+			type: 'variant',
+			display_name: 'Variant',
+			fragments: [
+				{ id: 'double', display_name: 'Double' },
+				{ id: 'oblong', display_name: 'Oblong' },
+				{ id: 'two_part', display_name: 'Two Part' }
+			]
+		},
+		{
+			index: 1,
+			type: 'color',
+			display_name: 'Colors',
+			fragments: color_fragments
+		}
+	]
+};
+
+const PRODUCTS = [
+	COLONIAL_CLASSIC,
+	THIN_CLASSIC,
+	BANJO,
+	OWC,
+	TROPICAL_WAVE,
+	HERITAGE,
+	COBBLE_MIX
+];
 
 const color_id_list = [
 	'grey',
@@ -360,6 +570,14 @@ const skuList: SKU[] = [
 		[219, 247, 253, 253, 396]
 	),
 	...generateSKUList(
+		{ productId: 'owc', displayName: 'Old World Cobble' },
+		[203, 228, 233, 260.27, 363]
+	),
+	...generateSKUList(
+		{ productId: 'tropical_wave', displayName: 'Tropical Wave' },
+		[228.5, 267.5, 275.5, 305.5, 445.5]
+	),
+	...generateSKUList(
 		{ productId: 'heritage:regular', displayName: 'Heritage Regular' },
 		[219, 247, 253, 253, 396]
 	),
@@ -369,6 +587,18 @@ const skuList: SKU[] = [
 	),
 	...generateSKUList(
 		{ productId: 'heritage:two_part', displayName: 'Heritage Two-Part' },
+		[219, 247, 253, 253, 396]
+	),
+	...generateSKUList(
+		{ productId: 'cobble_mix:double', displayName: 'Cobble Mix Double' },
+		[219, 247, 253, 253, 396]
+	),
+	...generateSKUList(
+		{ productId: 'cobble_mix:oblong', displayName: 'Cobble Mix Oblong' },
+		[219, 247, 253, 253, 396]
+	),
+	...generateSKUList(
+		{ productId: 'cobble_mix:two_part', displayName: 'Cobble Mix Two-Part' },
 		[219, 247, 253, 253, 396]
 	)
 ];

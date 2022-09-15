@@ -1,0 +1,283 @@
+{
+	"asset": {
+		"generator": "Khronos glTF Blender I/O v3.2.40",
+		"version": "2.0"
+	},
+	"scene": 0,
+	"scenes": [
+		{
+			"name": "Scene",
+			"nodes": [0, 1, 2]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0,
+			"name": "Old World Cobble Half.001",
+			"translation": [0.059689998626708984, 0, -0.05841999873518944]
+		},
+		{
+			"mesh": 1,
+			"name": "Old World Cobble Regular.001",
+			"translation": [-0.059689998626708984, 0, 0]
+		},
+		{
+			"mesh": 2,
+			"name": "Old World Cobble Square.001",
+			"translation": [0.059689998626708984, 0, 0.030479999259114265]
+		}
+	],
+	"materials": [
+		{
+			"doubleSided": true,
+			"name": "concrete",
+			"normalTexture": {
+				"index": 0
+			},
+			"pbrMetallicRoughness": {
+				"baseColorTexture": {
+					"index": 1
+				},
+				"metallicFactor": 0,
+				"metallicRoughnessTexture": {
+					"index": 2
+				}
+			}
+		}
+	],
+	"meshes": [
+		{
+			"name": "Old World Cobble Half",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2
+					},
+					"indices": 3,
+					"material": 0
+				}
+			]
+		},
+		{
+			"name": "Old World Cobble Regular",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 4,
+						"NORMAL": 5,
+						"TEXCOORD_0": 6
+					},
+					"indices": 7,
+					"material": 0
+				}
+			]
+		},
+		{
+			"name": "Old World Cobble Square",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 8,
+						"NORMAL": 9,
+						"TEXCOORD_0": 10
+					},
+					"indices": 11,
+					"material": 0
+				}
+			]
+		}
+	],
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		},
+		{
+			"sampler": 0,
+			"source": 1
+		},
+		{
+			"sampler": 0,
+			"source": 2
+		}
+	],
+	"images": [
+		{
+			"mimeType": "image/png",
+			"name": "concrete_normal",
+			"uri": "../textures/concrete_normal.png"
+		},
+		{
+			"mimeType": "image/png",
+			"name": "concrete_shale_brown",
+			"uri": "../textures/concrete_shale_brown.png"
+		},
+		{
+			"mimeType": "image/png",
+			"name": "concrete_roughness",
+			"uri": "../textures/concrete_roughness.png"
+		}
+	],
+	"accessors": [
+		{
+			"bufferView": 0,
+			"componentType": 5126,
+			"count": 531,
+			"max": [0.05910832807421684, 0.030162500217556953, 0.02955467626452446],
+			"min": [
+				-0.059108324348926544, -0.030162500217556953, -0.02955467626452446
+			],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"componentType": 5126,
+			"count": 531,
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"componentType": 5126,
+			"count": 531,
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 3,
+			"componentType": 5123,
+			"count": 1908,
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 4,
+			"componentType": 5126,
+			"count": 545,
+			"max": [0.05992744117975235, 0.030162500217556953, 0.08989040553569794],
+			"min": [
+				-0.05992744117975235, -0.030162500217556953, -0.08989040553569794
+			],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 5,
+			"componentType": 5126,
+			"count": 545,
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 6,
+			"componentType": 5126,
+			"count": 545,
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 7,
+			"componentType": 5123,
+			"count": 1908,
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 8,
+			"componentType": 5126,
+			"count": 548,
+			"max": [0.059725306928157806, 0.030162500217556953, 0.059725306928157806],
+			"min": [
+				-0.059725306928157806, -0.030162500217556953, -0.05972530320286751
+			],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 9,
+			"componentType": 5126,
+			"count": 548,
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 10,
+			"componentType": 5126,
+			"count": 548,
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 11,
+			"componentType": 5123,
+			"count": 1908,
+			"type": "SCALAR"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 6372,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 6372,
+			"byteOffset": 6372
+		},
+		{
+			"buffer": 0,
+			"byteLength": 4248,
+			"byteOffset": 12744
+		},
+		{
+			"buffer": 0,
+			"byteLength": 3816,
+			"byteOffset": 16992
+		},
+		{
+			"buffer": 0,
+			"byteLength": 6540,
+			"byteOffset": 20808
+		},
+		{
+			"buffer": 0,
+			"byteLength": 6540,
+			"byteOffset": 27348
+		},
+		{
+			"buffer": 0,
+			"byteLength": 4360,
+			"byteOffset": 33888
+		},
+		{
+			"buffer": 0,
+			"byteLength": 3816,
+			"byteOffset": 38248
+		},
+		{
+			"buffer": 0,
+			"byteLength": 6576,
+			"byteOffset": 42064
+		},
+		{
+			"buffer": 0,
+			"byteLength": 6576,
+			"byteOffset": 48640
+		},
+		{
+			"buffer": 0,
+			"byteLength": 4384,
+			"byteOffset": 55216
+		},
+		{
+			"buffer": 0,
+			"byteLength": 3816,
+			"byteOffset": 59600
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9987
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 63416,
+			"uri": "../bin/owc.bin"
+		}
+	]
+}

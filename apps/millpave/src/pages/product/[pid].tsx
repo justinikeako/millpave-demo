@@ -379,7 +379,7 @@ const Page: NextPage = () => {
 						name="skuId"
 						control={control}
 						render={({ field }) => {
-							const skuFragments = field.value.split(':');
+							const skuFragments = skuIdFragment.split(':');
 
 							const handleChange = (
 								newFragment: string,

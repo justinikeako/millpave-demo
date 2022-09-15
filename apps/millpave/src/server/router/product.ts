@@ -12,20 +12,20 @@ import {
 import { TRPCError } from '@trpc/server';
 
 const color_fragments = [
-	{ id: 'grey', hex: 'D9D9D9' },
-	{ id: 'ash', hex: 'B1B1B1' },
-	{ id: 'charcoal', hex: '696969' },
-	{ id: 'spanish_brown', hex: '95816D' },
-	{ id: 'sunset_taupe', hex: 'C9B098' },
-	{ id: 'tan', hex: 'DDCCBB' },
-	{ id: 'shale_brown', hex: '907A7A' },
-	{ id: 'sunset_clay', hex: 'E7A597' },
-	{ id: 'red', hex: 'EF847A' },
-	{ id: 'terracotta', hex: 'EFA17A' },
-	{ id: 'orange', hex: 'EBB075' },
-	{ id: 'sunset_tangerine', hex: 'E7C769' },
-	{ id: 'yellow', hex: 'E7DD69' },
-	{ id: 'green', hex: 'A9D786' }
+	{ id: 'grey', display_name: 'Grey', hex: 'D9D9D9' },
+	{ id: 'ash', display_name: 'Ash', hex: 'B1B1B1' },
+	{ id: 'charcoal', display_name: 'Charcoal', hex: '696969' },
+	{ id: 'spanish_brown', display_name: 'Spanish Brown', hex: '95816D' },
+	{ id: 'sunset_taupe', display_name: 'Sunset Taupe', hex: 'C9B098' },
+	{ id: 'tan', display_name: 'Tan', hex: 'DDCCBB' },
+	{ id: 'shale_brown', display_name: 'Shale Brown', hex: '907A7A' },
+	{ id: 'sunset_clay', display_name: 'Sunset Clay', hex: 'E7A597' },
+	{ id: 'red', display_name: 'Red', hex: 'EF847A' },
+	{ id: 'terracotta', display_name: 'Terracotta', hex: 'EFA17A' },
+	{ id: 'orange', display_name: 'Orange', hex: 'EBB075' },
+	{ id: 'sunset_tangerine', display_name: 'Sunset Tangerine', hex: 'E7C769' },
+	{ id: 'yellow', display_name: 'Yellow', hex: 'E7DD69' },
+	{ id: 'green', display_name: 'Green', hex: 'A9D786' }
 ];
 
 const DETAILS: ProductDetails[] = [
@@ -221,7 +221,7 @@ const COLONIAL_CLASSIC: Product = {
 		{
 			index: 0,
 			type: 'color',
-			display_name: 'Colors',
+			display_name: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -254,7 +254,7 @@ const THIN_CLASSIC: Product = {
 		{
 			index: 0,
 			type: 'color',
-			display_name: 'Colors',
+			display_name: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -287,7 +287,7 @@ const BANJO: Product = {
 		{
 			index: 0,
 			type: 'color',
-			display_name: 'Colors',
+			display_name: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -320,7 +320,7 @@ const OWC: Product = {
 		{
 			index: 0,
 			type: 'color',
-			display_name: 'Colors',
+			display_name: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -363,7 +363,7 @@ const COBBLE_MIX: Product = {
 		{
 			index: 1,
 			type: 'color',
-			display_name: 'Colors',
+			display_name: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -406,7 +406,7 @@ const HERITAGE: Product = {
 		{
 			index: 1,
 			type: 'color',
-			display_name: 'Colors',
+			display_name: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -439,7 +439,7 @@ const TROPICAL_WAVE: Product = {
 		{
 			index: 0,
 			type: 'color',
-			display_name: 'Colors',
+			display_name: 'Color',
 			fragments: color_fragments
 		}
 	]

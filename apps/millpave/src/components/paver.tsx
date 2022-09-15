@@ -13,13 +13,11 @@ type GLTFResult = GLTF & {
 };
 
 type ModelProps = JSX.IntrinsicElements['group'] & {
-	slug: string;
+	file: string;
 };
 
-function Model({ slug, ...props }: ModelProps) {
-	const { nodes, materials } = useGLTF(
-		`/models/${slug}`
-	) as unknown as GLTFResult;
+function Model({ file, ...props }: ModelProps) {
+	const { nodes, materials } = useGLTF(file) as unknown as GLTFResult;
 
 	return (
 		<group {...props} dispose={null}>

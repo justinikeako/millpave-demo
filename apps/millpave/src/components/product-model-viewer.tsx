@@ -14,21 +14,12 @@ function ProductGallery({ sku }: Props) {
 	// Spooky regex. replaces ':' with '+' and separates the product ID
 	const [productId, skuId] = sku.id.replace(/:/g, '+').split(/\+(.*)/s); // Not sure how it works 😔
 
-	const ARLink = new URL('intent://arvr.google.com/scene-viewer/1.0');
-	ARLink.searchParams.append(
-		'file',
-		`https://beta.millpave.notprimitive.com/models/${slug}`
-	);
-	ARLink.searchParams.append('mode', 'ar_preferred');
-	ARLink.searchParams.append(
-		'link',
-		`https://beta.millpave.notprimitive.com/product/${productId}?sku=${skuId}`
-	);
-	ARLink.searchParams.append('title', sku.display_name);
-	ARLink.searchParams.append('resizable', 'false');
-	ARLink.hash = encodeURIComponent(
-		`Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://beta.millpave.notprimitive.com/product/${productId}?sku=${skuId};end;`
-	);
+	const file = `https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/${slug}`;
+	const mode = 'ar_only';
+	const link = `https://beta.millpave.notprimitive.com/product/${productId}?sku=${skuId}`;
+	const title = encodeURIComponent(sku.display_name);
+	const resizable = false;
+	const fallback_url = `https://beta.millpave.notprimitive.com/product/${productId}?sku=${skuId}`;
 
 	return (
 		<>
@@ -48,13 +39,13 @@ function ProductGallery({ sku }: Props) {
 					<pointLight position={[-2, 2, 2]} intensity={0.5} />
 					<pointLight position={[-2, 2, -2]} intensity={1} castShadow />
 
-					<Model slug={slug} />
+					<Model file={file} />
 				</Canvas>
 			</div>
 			<div className="flex flex-col items-center">
 				<LinkButton
 					variant="secondary"
-					href={ARLink.href}
+					href={`intent://arvr.google.com/scene-viewer/1.0?file=${file}&mode=${mode}&title=${title}&link=${link}&resizable=${resizable}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${fallback_url};end;`}
 					iconLeft="view_in_ar_new"
 				>
 					View in Your Space

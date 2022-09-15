@@ -421,10 +421,7 @@ const Page: NextPage = () => {
 													<ul className="grid grid-cols-3 gap-2">
 														{fragments.map(({ id, display_name }) => (
 															<li key={id} className="contents">
-																<label
-																	htmlFor={id}
-																	className="aspect-w-1 aspect-h-1"
-																>
+																<label htmlFor={id} className="contents">
 																	<input
 																		className="peer hidden"
 																		type="radio"
@@ -436,7 +433,7 @@ const Page: NextPage = () => {
 																			handleChange(e.target.value, index)
 																		}
 																	/>
-																	<div className="rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-rose-900">
+																	<div className="flex items-center justify-center rounded-md border border-zinc-300 px-3 py-2 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-rose-900 peer-checked:bg-rose-50 peer-checked:text-rose-900">
 																		{display_name}
 																	</div>
 																</label>
@@ -488,7 +485,7 @@ const Page: NextPage = () => {
 						<div className="flex space-x-2">
 							<label
 								htmlFor="quickcalc-value"
-								className="flex flex-1 space-x-2 rounded-md border border-zinc-300 p-4 focus-within:border-rose-900"
+								className="flex flex-1 space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-rose-900"
 							>
 								<Controller
 									control={control}
@@ -649,7 +646,7 @@ const Page: NextPage = () => {
 
 							<label
 								htmlFor="quickcalc-unit"
-								className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:border-rose-900"
+								className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-rose-900"
 							>
 								<select
 									{...register('unit', {

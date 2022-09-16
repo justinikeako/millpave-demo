@@ -413,7 +413,7 @@ const Page: NextPage = () => {
 											<section key={index} className="space-y-4">
 												<SectionHeader title={display_name}>
 													{type === 'color' && (
-														<p className="text-sm text-rose-600">Color Guide</p>
+														<p className="text-sm text-pink-600">Color Guide</p>
 													)}
 												</SectionHeader>
 
@@ -433,7 +433,7 @@ const Page: NextPage = () => {
 																			handleChange(e.target.value, index)
 																		}
 																	/>
-																	<div className="flex items-center justify-center rounded-md border border-zinc-300 px-3 py-2 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-rose-900 peer-checked:bg-rose-50 peer-checked:text-rose-900">
+																	<div className="flex items-center justify-center rounded-md border border-zinc-300 px-3 py-2 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-pink-900 peer-checked:bg-pink-50 peer-checked:text-pink-900">
 																		{display_name}
 																	</div>
 																</label>
@@ -461,7 +461,7 @@ const Page: NextPage = () => {
 																		}
 																	/>
 																	<div
-																		className="rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-rose-900"
+																		className="rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-pink-900"
 																		style={{ background: `#${hex}` }}
 																	/>
 																</label>
@@ -485,7 +485,7 @@ const Page: NextPage = () => {
 						<div className="flex space-x-2">
 							<label
 								htmlFor="quickcalc-value"
-								className="flex flex-1 space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-rose-900"
+								className="flex flex-1 space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-900"
 							>
 								<Controller
 									control={control}
@@ -646,7 +646,7 @@ const Page: NextPage = () => {
 
 							<label
 								htmlFor="quickcalc-unit"
-								className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-rose-900"
+								className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-900"
 							>
 								<select
 									{...register('unit', {
@@ -732,7 +732,7 @@ const Page: NextPage = () => {
 									</li>
 								</>
 							)}
-							<li className="flex flex-wrap justify-between font-semibold text-rose-900">
+							<li className="flex flex-wrap justify-between font-semibold text-pink-900">
 								<label htmlFor="quickcalc-total">Total</label>
 								<output id="quickcalc-total" htmlFor="quickcalc-value">
 									{formatPrice(quickCalc.total)}
@@ -855,7 +855,7 @@ const Page: NextPage = () => {
 						<Button
 							variant="tertiary"
 							iconRight="expand_more"
-							className="text-rose-600"
+							className="text-pink-600"
 						>
 							Show more products
 						</Button>

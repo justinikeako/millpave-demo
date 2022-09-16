@@ -1,82 +1,10 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import Head from 'next/head';
 import { FC, PropsWithChildren, useState } from 'react';
 import Button from '../../components/button';
 import Icon from '../../components/icon';
-import { nanoid } from 'nanoid';
 import { differenceInCalendarDays, format } from 'date-fns';
-import { addDays } from 'date-fns';
-
-type Shape = {
-	id: string;
-	name: string;
-};
-
-type Item = {
-	sku_id: string;
-	id: string;
-	display_name: string;
-	closest_restock_date: number;
-	quantity: number;
-	price: number;
-};
-
-type OrderDetails = {
-	area: number;
-	weight: number;
-	subtotal: number;
-	tax: number;
-	total: number;
-};
-
-type Order = {
-	id: string;
-	title: string;
-	shapes: Shape[];
-	items: Item[];
-	details: OrderDetails;
-};
-
-const order: Order = {
-	id: nanoid(),
-	title: 'New Order',
-	shapes: [
-		{ id: nanoid(), name: 'Walkway' },
-		{ id: nanoid(), name: 'Driveway' },
-		{ id: nanoid(), name: 'Garden Edging' }
-	],
-	items: [
-		{
-			id: nanoid(),
-			sku_id: 'colonial_classic:grey',
-			display_name: 'Colonial Classic Grey',
-			closest_restock_date: addDays(new Date(), 2).getTime(),
-			quantity: 0,
-			price: 0
-		}
-	],
-	details: {
-		area: 20342.5,
-		weight: 473980,
-		subtotal: 4129527.5,
-		tax: 619429.13,
-		total: 4748956.63
-	}
-};
-
-type RecommendedItem = {
-	id: string;
-	display_name: string;
-	price: number;
-};
-
-const recommendations: RecommendedItem[] = [
-	{
-		id: 'eff_cleaner',
-		display_name: 'DynaMatrix Efflorescence Cleaner ',
-		price: 4000
-	}
-];
+import { trpc } from '../../utils/trpc';
 
 function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {
@@ -124,22 +52,25 @@ const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 	);
 };
 
-type PageProps = {
-	order: Order;
-	recommendations: RecommendedItem[];
-};
-
-const Page: NextPage<PageProps> = ({ order, recommendations }) => {
+const Page: NextPage = () => {
 	const [overage, setOverage] = useState('none');
+
+	const order = trpc.useQuery(['order.get', { id: '[ID_GOES_HERE]' }], {
+		cacheTime: 3
+	});
+
+	if (!order.data) return null;
 
 	return (
 		<>
 			<Head>
-				<title>{order.title} — Millennium Paving Stones</title>
+				<title>{`${order.data.title} — Millennium Paving Stones`}</title>
 			</Head>
 
 			<main className="space-y-16 px-8 py-24">
-				<h1 className="font-display text-2xl font-semibold">{order.title}</h1>
+				<h1 className="font-display text-2xl font-semibold">
+					{order.data.title}
+				</h1>
 				{/* Shapes */}
 				<section className="space-y-4">
 					<SectionHeader title="Shapes" />
@@ -150,7 +81,7 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 						<li className="flex snap-center rounded-full bg-zinc-100 p-2.5">
 							<Icon name="add" />
 						</li>
-						{order.shapes.map((shape) => (
+						{order.data.shapes.map((shape) => (
 							<li
 								key={shape.id}
 								className="flex snap-center whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2"
@@ -165,7 +96,7 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 
 				{/* Items */}
 				<section className="space-y-4">
-					<SectionHeader title="Items (4)" />
+					<SectionHeader title={`Items (${order.data.items.length})`} />
 
 					{/* Overage */}
 					<div className="flex items-center justify-between">
@@ -179,7 +110,7 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 
 						<label
 							htmlFor="overage"
-							className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:border-rose-900"
+							className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-900"
 						>
 							<select
 								name="overage"
@@ -197,7 +128,7 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 
 					{/* Overage Warning */}
 					{overage === 'none' && (
-						<div className="flex space-x-4 rounded-md bg-yellow-50 px-4 py-6 text-yellow-600">
+						<div className="flex space-x-4 rounded-md bg-red-50 px-4 py-6 text-red-500">
 							<Icon name="warning" />
 							<div className="flex-1 space-y-2">
 								<p className="font-semibold">Declining an overage?</p>
@@ -212,7 +143,7 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 
 					{/* Item List */}
 					<ul className="!mt-8">
-						{order.items.map((item) => (
+						{order.data.items.map((item) => (
 							<li
 								key={item.id}
 								className="flex flex-col items-center space-y-4"
@@ -237,7 +168,7 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 											&nbsp;
 											<b>{formatRestockDate(item.closest_restock_date)}</b>
 											&nbsp;at&nbsp;
-											<span className="inline-block text-rose-600">
+											<span className="inline-block text-pink-600">
 												Our St. Thomas Factory
 											</span>
 										</p>
@@ -257,28 +188,32 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 						<li className="flex justify-between py-1">
 							<p>Area Coverage</p>
 							<p className="tabular-nums">
-								{formatNumber(order.details.area)} sqft
+								{formatNumber(order.data.details.area)} sqft
 							</p>
 						</li>
 						<li className="flex justify-between py-1">
 							<p>Estimated Weight</p>
 							<p className="tabular-nums">
-								{formatNumber(order.details.weight)} lbs
+								{formatNumber(order.data.details.weight)} lbs
 							</p>
 						</li>
 						<li className="flex justify-between py-1">
 							<p>Subtotal</p>
 							<p className="tabular-nums">
-								{formatPrice(order.details.subtotal)}
+								{formatPrice(order.data.details.subtotal)}
 							</p>
 						</li>
 						<li className="flex justify-between py-1">
 							<p>Tax</p>
-							<p className="tabular-nums">{formatPrice(order.details.tax)}</p>
+							<p className="tabular-nums">
+								{formatPrice(order.data.details.tax)}
+							</p>
 						</li>
-						<li className="flex justify-between py-1 font-semibold text-rose-900">
+						<li className="flex justify-between py-1 font-semibold text-pink-900">
 							<p>Total</p>
-							<p className="tabular-nums">{formatPrice(order.details.total)}</p>
+							<p className="tabular-nums">
+								{formatPrice(order.data.details.total)}
+							</p>
 						</li>
 					</ul>
 
@@ -290,7 +225,7 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 						>
 							Check Out
 						</Button>
-						<Button variant="secondary" className="w-full text-rose-900">
+						<Button variant="secondary" className="w-full text-pink-900">
 							Send as Quote
 						</Button>
 					</div>
@@ -301,7 +236,7 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 					<SectionHeader title="You may like..." />
 
 					<ul>
-						{recommendations.map((item) => (
+						{order.data.recommendations.map((item) => (
 							<li
 								key={item.id}
 								className="flex flex-col items-center space-y-4"
@@ -322,15 +257,6 @@ const Page: NextPage<PageProps> = ({ order, recommendations }) => {
 			</main>
 		</>
 	);
-};
-
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
-	return {
-		props: {
-			order,
-			recommendations
-		}
-	};
 };
 
 export default Page;

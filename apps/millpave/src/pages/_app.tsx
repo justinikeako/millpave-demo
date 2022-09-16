@@ -37,7 +37,7 @@ export default withTRPC<AppRouter>({
 		};
 	},
 	ssr: true,
-	responseMeta: ({ clientErrors }) => {
+	responseMeta: ({ ctx, clientErrors }) => {
 		if (clientErrors[0]) {
 			// propagate first http error from API calls
 			return {
@@ -47,8 +47,13 @@ export default withTRPC<AppRouter>({
 		// cache full page for 1 day + revalidate once every second
 		const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
+		if (ctx.pathname === '/order')
+			return {
+				'Cache-Control': `s-maxage=${1}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`
+			};
+
 		return {
-			'Cache-Control': `s-maxage=1, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`
+			'Cache-Control': `s-maxage=${ONE_DAY_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`
 		};
 	}
 })(MyApp);

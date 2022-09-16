@@ -26,12 +26,12 @@ function ProductGallery({ sku }: Props) {
 			<div className="flex-1">
 				<Canvas
 					frameloop="demand"
-					camera={{ position: [0, 0.4, 0], near: 0.01, far: 2, fov: 45 }}
+					camera={{ position: [0, 0.45, 0], near: 0.01, far: 2, fov: 45 }}
 				>
 					<OrbitControls
 						enablePan={false}
 						minDistance={0.3}
-						maxDistance={0.5}
+						maxDistance={0.6}
 						minPolarAngle={0}
 						maxPolarAngle={Math.PI / 2}
 					/>

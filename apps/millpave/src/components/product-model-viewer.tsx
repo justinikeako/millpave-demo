@@ -9,7 +9,7 @@ type Props = {
 };
 
 function ProductGallery({ sku }: Props) {
-	const slug = sku.id.replace(/:/g, '/') + '.gltf';
+	const slug = sku.id.replace(/:/g, '-') + '.gltf';
 
 	// Spooky regex. replaces ':' with '+' and separates the product ID
 	const [productId, skuId] = sku.id.replace(/:/g, '+').split(/\+(.*)/s); // Not sure how it works 😔
@@ -35,9 +35,10 @@ function ProductGallery({ sku }: Props) {
 						minPolarAngle={0}
 						maxPolarAngle={Math.PI / 2}
 					/>
+
 					<ambientLight />
-					<pointLight position={[-2, 2, 2]} intensity={0.5} />
-					<pointLight position={[-2, 2, -2]} intensity={1} castShadow />
+					<pointLight position={[-2, -2, 2]} intensity={0.5} />
+					<pointLight position={[-2, 2, -2]} intensity={1} />
 
 					<Model file={file} />
 				</Canvas>

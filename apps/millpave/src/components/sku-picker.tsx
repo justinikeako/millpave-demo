@@ -75,7 +75,7 @@ const SkuPicker = ({
 																handleChange(e.target.value, index)
 															}
 														/>
-														<div className="flex items-center justify-center rounded-md border border-zinc-300 px-3 py-2 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-pink-900 peer-checked:bg-pink-50 peer-checked:text-pink-900">
+														<div className="flex items-center justify-center rounded-md border border-zinc-300 px-3 py-2 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-pink-800 peer-checked:bg-pink-50 peer-checked:text-pink-800">
 															{display_name}
 														</div>
 													</label>
@@ -100,7 +100,7 @@ const SkuPicker = ({
 															}
 														/>
 														<div
-															className="rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-pink-900"
+															className="rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-pink-800"
 															style={{ background: `#${hex}` }}
 														/>
 													</label>

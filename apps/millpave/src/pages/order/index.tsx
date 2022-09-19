@@ -110,7 +110,7 @@ const Page: NextPage = () => {
 
 						<label
 							htmlFor="overage"
-							className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-900"
+							className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-800"
 						>
 							<select
 								name="overage"
@@ -209,7 +209,7 @@ const Page: NextPage = () => {
 								{formatPrice(order.data.details.tax)}
 							</p>
 						</li>
-						<li className="flex justify-between py-1 font-semibold text-pink-900">
+						<li className="flex justify-between py-1 font-semibold text-pink-800">
 							<p>Total</p>
 							<p className="tabular-nums">
 								{formatPrice(order.data.details.total)}
@@ -225,7 +225,7 @@ const Page: NextPage = () => {
 						>
 							Check Out
 						</Button>
-						<Button variant="secondary" className="w-full text-pink-900">
+						<Button variant="secondary" className="w-full text-pink-800">
 							Send as Quote
 						</Button>
 					</div>

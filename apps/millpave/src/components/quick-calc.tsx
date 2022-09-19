@@ -209,7 +209,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 			<div className="flex space-x-2">
 				<label
 					htmlFor="quickcalc-value"
-					className="flex flex-1 space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-900"
+					className="flex flex-1 space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-800"
 				>
 					<Controller
 						control={control}
@@ -382,7 +382,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 
 				<label
 					htmlFor="quickcalc-unit"
-					className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-900"
+					className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-800"
 				>
 					<select
 						value={unit}
@@ -469,7 +469,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 						</li>
 					</>
 				)}
-				<li className="flex flex-wrap justify-between font-semibold text-pink-900">
+				<li className="flex flex-wrap justify-between font-semibold text-pink-800">
 					<label htmlFor="quickcalc-total">Total</label>
 					<output id="quickcalc-total" htmlFor="quickcalc-value">
 						{formatPrice(quickCalc.total)}

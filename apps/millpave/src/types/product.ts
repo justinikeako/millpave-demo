@@ -25,7 +25,7 @@ type SkuFragment =
 			index: number;
 			type: 'color';
 			display_name: string;
-			fragments: { id: string; display_name: string; hex: string }[];
+			fragments: { id: string; display_name: string; css: string }[];
 	  }
 	| {
 			index: number;

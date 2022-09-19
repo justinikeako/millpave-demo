@@ -85,7 +85,7 @@ const SkuPicker = ({
 									)}
 									{type === 'color' && (
 										<ul className="grid grid-cols-8 gap-2 [@media(max-width:320px)]:grid-cols-7">
-											{fragments.map(({ id, hex }) => (
+											{fragments.map(({ id, css }) => (
 												<li key={id} className="contents">
 													<label htmlFor={id} className="aspect-w-1 aspect-h-1">
 														<input
@@ -101,7 +101,7 @@ const SkuPicker = ({
 														/>
 														<div
 															className="rounded-full border border-zinc-300 shadow-[inset_0_0_0_2px_white] peer-checked:border-2 peer-checked:border-pink-800"
-															style={{ background: `#${hex}` }}
+															style={{ background: css }}
 														/>
 													</label>
 												</li>

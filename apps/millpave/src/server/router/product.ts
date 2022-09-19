@@ -12,20 +12,35 @@ import {
 import { TRPCError } from '@trpc/server';
 
 const color_fragments = [
-	{ id: 'grey', display_name: 'Grey', hex: 'D9D9D9' },
-	{ id: 'ash', display_name: 'Ash', hex: 'B1B1B1' },
-	{ id: 'charcoal', display_name: 'Charcoal', hex: '696969' },
-	{ id: 'spanish_brown', display_name: 'Spanish Brown', hex: '95816D' },
-	{ id: 'sunset_taupe', display_name: 'Sunset Taupe', hex: 'C9B098' },
-	{ id: 'tan', display_name: 'Tan', hex: 'DDCCBB' },
-	{ id: 'shale_brown', display_name: 'Shale Brown', hex: '907A7A' },
-	{ id: 'sunset_clay', display_name: 'Sunset Clay', hex: 'E7A597' },
-	{ id: 'red', display_name: 'Red', hex: 'EF847A' },
-	{ id: 'terracotta', display_name: 'Terracotta', hex: 'EFA17A' },
-	{ id: 'orange', display_name: 'Orange', hex: 'EBB075' },
-	{ id: 'sunset_tangerine', display_name: 'Sunset Tangerine', hex: 'E7C769' },
-	{ id: 'yellow', display_name: 'Yellow', hex: 'E7DD69' },
-	{ id: 'green', display_name: 'Green', hex: 'A9D786' }
+	{ id: 'grey', display_name: 'Grey', css: '#D9D9D9' },
+	{ id: 'ash', display_name: 'Ash', css: '#B1B1B1' },
+	{ id: 'charcoal', display_name: 'Charcoal', css: '#696969' },
+	{
+		id: 'slate',
+		display_name: 'Slate',
+		css: 'linear-gradient(45deg, #696969 50%, #D9D9D9 50%)'
+	},
+	{ id: 'spanish_brown', display_name: 'Spanish Brown', css: '#95816D' },
+	{ id: 'sunset_taupe', display_name: 'Sunset Taupe', css: '#C9B098' },
+	{ id: 'tan', display_name: 'Tan', css: '#DDCCBB' },
+	{ id: 'shale_brown', display_name: 'Shale Brown', css: '#907A7A' },
+	{ id: 'sunset_clay', display_name: 'Sunset Clay', css: '#E7A597' },
+	{ id: 'red', display_name: 'Red', css: '#EF847A' },
+	{
+		id: 'charcoal_red',
+		display_name: 'Charcoal Red',
+		css: 'linear-gradient(45deg, #696969 50%, #EF847A 50%)'
+	},
+	{
+		id: 'red_yellow',
+		display_name: 'Red Yellow',
+		css: 'linear-gradient(45deg, #EF847A 50%, #E7DD69 50%)'
+	},
+	{ id: 'terracotta', display_name: 'Terracotta', css: '#EFA17A' },
+	{ id: 'orange', display_name: 'Orange', css: '#EBB075' },
+	{ id: 'sunset_tangerine', display_name: 'Sunset Tangerine', css: '#E7C769' },
+	{ id: 'yellow', display_name: 'Yellow', css: '#E7DD69' },
+	{ id: 'green', display_name: 'Green', css: '#A9D786' }
 ];
 
 const DETAILS: ProductDetails[] = [
@@ -455,45 +470,11 @@ const PRODUCTS = [
 	COBBLE_MIX
 ];
 
-const color_id_list = [
-	'grey',
-	'ash',
-	'charcoal',
-	'spanish_brown',
-	'sunset_taupe',
-	'tan',
-	'shale_brown',
-	'sunset_clay',
-	'red',
-	'terracotta',
-	'orange',
-	'sunset_tangerine',
-	'yellow',
-	'green'
-];
-
-const color_display_name_list = [
-	'Grey',
-	'Ash',
-	'Charcoal',
-	'Spanish Brown',
-	'Sunset Taupe',
-	'Tan',
-	'Shale Brown',
-	'Sunset Clay',
-	'Red',
-	'Terracotta',
-	'Orange',
-	'Sunset Tangerine',
-	'Yellow',
-	'Green'
-];
-
 function generateSKUList(
-	{ productId, displayName }: { productId: string; displayName: string },
+	product: { id: string; displayName: string },
 	prices: [number, number, number, number, number]
 ): SKU[] {
-	return color_id_list.map((colorId, index) => {
+	return color_fragments.map((color) => {
 		const price: Record<string, number> = {
 			grey: prices[0],
 			yellow: prices[2],
@@ -502,9 +483,9 @@ function generateSKUList(
 		};
 
 		return {
-			id: `${productId}:${colorId}`,
-			display_name: `${displayName} ${color_display_name_list[index]}`,
-			price: price[colorId] || prices[1]
+			id: `${product.id}:${color.id}`,
+			display_name: `${product.displayName} ${color.display_name}`,
+			price: price[color.id] || prices[1]
 		} as SKU;
 	});
 }
@@ -512,47 +493,47 @@ function generateSKUList(
 // Mock SKUs
 const skuList: SKU[] = [
 	...generateSKUList(
-		{ productId: 'colonial_classic', displayName: 'Colonial Classic' },
+		{ id: 'colonial_classic', displayName: 'Colonial Classic' },
 		[203, 228, 233, 260.27, 363]
 	),
 	...generateSKUList(
-		{ productId: 'thin_classic', displayName: 'Thin Classic' },
+		{ id: 'thin_classic', displayName: 'Thin Classic' },
 		[188, 210, 215, 247, 333]
 	),
 	...generateSKUList(
-		{ productId: 'banjo', displayName: 'Banjo' },
+		{ id: 'banjo', displayName: 'Banjo' },
 		[219, 247, 253, 253, 396]
 	),
 	...generateSKUList(
-		{ productId: 'owc', displayName: 'Old World Cobble' },
+		{ id: 'owc', displayName: 'Old World Cobble' },
 		[203, 228, 233, 260.27, 363]
 	),
 	...generateSKUList(
-		{ productId: 'heritage:regular', displayName: 'Heritage Regular' },
+		{ id: 'heritage:regular', displayName: 'Heritage Regular' },
 		[219, 247, 253, 253, 396]
 	),
 	...generateSKUList(
-		{ productId: 'heritage:square', displayName: 'Heritage Square' },
+		{ id: 'heritage:square', displayName: 'Heritage Square' },
 		[219, 247, 253, 253, 396]
 	),
 	...generateSKUList(
-		{ productId: 'heritage:two_part', displayName: 'Heritage Two-Part' },
+		{ id: 'heritage:two_part', displayName: 'Heritage Two-Part' },
 		[219, 247, 253, 253, 396]
 	),
 	...generateSKUList(
-		{ productId: 'cobble_mix:double', displayName: 'Cobble Mix Double' },
+		{ id: 'cobble_mix:double', displayName: 'Cobble Mix Double' },
 		[219, 247, 253, 253, 396]
 	),
 	...generateSKUList(
-		{ productId: 'cobble_mix:oblong', displayName: 'Cobble Mix Oblong' },
+		{ id: 'cobble_mix:oblong', displayName: 'Cobble Mix Oblong' },
 		[219, 247, 253, 253, 396]
 	),
 	...generateSKUList(
-		{ productId: 'cobble_mix:two_part', displayName: 'Cobble Mix Two-Part' },
+		{ id: 'cobble_mix:two_part', displayName: 'Cobble Mix Two-Part' },
 		[219, 247, 253, 253, 396]
 	),
 	...generateSKUList(
-		{ productId: 'tropical_wave', displayName: 'Tropical Wave' },
+		{ id: 'tropical_wave', displayName: 'Tropical Wave' },
 		[228.5, 267.5, 275.5, 305.5, 445.5]
 	)
 ];
@@ -572,11 +553,11 @@ function coinFlip(chance = 0.5) {
 }
 
 function generateStock(
-	productId: string,
+	skuIdPrefix: string,
 	popularity: number,
 	doneToOrder = false
 ): Stock[] {
-	return color_id_list.flatMap((color) => {
+	return color_fragments.flatMap(({ id: colorId }) => {
 		const showroomQuantity = round(
 			Math.random() * (2 * popularity) * 128.75,
 			1 / 4.66
@@ -587,12 +568,12 @@ function generateStock(
 
 		return [
 			{
-				sku_id: `${productId}:${color}`,
+				sku_id: `${skuIdPrefix}:${colorId}`,
 				location: 'showroom',
 				quantity: doneToOrder ? 0 : coinFlip() ? showroomQuantity : 0
 			},
 			{
-				sku_id: `${productId}:${color}`,
+				sku_id: `${skuIdPrefix}:${colorId}`,
 				location: 'factory',
 				quantity: doneToOrder ? 0 : coinFlip() ? factoryQuantity : 0
 			}
@@ -607,10 +588,10 @@ const stock: Stock[] = [
 ];
 
 function generateRestockElements(
-	productId: string,
+	skuIdPrefix: string,
 	popularity: number
 ): RestockQueueElement[] {
-	return color_id_list.flatMap((color) => {
+	return color_fragments.flatMap(({ id: colorId }) => {
 		const fromFactory = coinFlip();
 
 		const factoryQuantity =
@@ -621,7 +602,7 @@ function generateRestockElements(
 		return coinFlip(popularity / 2)
 			? [
 					{
-						sku_id: `${productId}:${color}`,
+						sku_id: `${skuIdPrefix}:${colorId}`,
 						location: fromFactory ? 'factory' : 'showroom',
 						quantity: fromFactory ? factoryQuantity : showroomQuantity,
 						date: fromFactory

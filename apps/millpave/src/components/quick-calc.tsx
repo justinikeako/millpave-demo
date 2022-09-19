@@ -1,7 +1,7 @@
 import { Control, Controller, useFormContext } from 'react-hook-form';
 import { evaluate, number } from 'mathjs';
 import { PickupLocation, ProductDetails } from '../types/product';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import Button from './button';
 import { formatNumber, formatPrice } from '../utils/format';
 
@@ -178,7 +178,7 @@ type QuickCalcProps = {
 const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 	const { watch, register, setValue } = useFormContext<FormValues>();
 
-	const { skuId, area } = watch();
+	const { skuId, area, pickupLocation } = watch();
 	const [showWork, setShowWork] = useState(false);
 	const [qcInputValue, setQcInputValue] = useState('');
 	const [unit, setUnit] = useState<Unit>('sqft');
@@ -189,7 +189,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 	};
 
 	// Sync derived area with new convertConfigs only when skus change
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const { roundedArea } = convert(
 			parseFloat(noEmptyStrings(qcInputValue)),
 			convertConfig
@@ -197,7 +197,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 
 		setValue('area', roundedArea);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [skuId]);
+	}, [skuId, pickupLocation]);
 
 	const SectionHeader = header;
 

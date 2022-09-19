@@ -1,7 +1,7 @@
 import { Control, Controller, useFormContext } from 'react-hook-form';
 import { evaluate, number } from 'mathjs';
 import { PickupLocation, ProductDetails } from '../types/product';
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from './button';
 import { formatNumber, formatPrice } from '../utils/format';
 
@@ -189,7 +189,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 	};
 
 	// Sync derived area with new convertConfigs only when skus change
-	useLayoutEffect(() => {
+	useEffect(() => {
 		const { roundedArea } = convert(
 			parseFloat(noEmptyStrings(qcInputValue)),
 			convertConfig

@@ -19,6 +19,7 @@
 		"@trpc/react": "^9.27.0",
 		"@trpc/server": "^9.27.0",
 		"date-fns": "^2.29.2",
+		"framer-motion": "^7.3.5",
 		"mathjs": "^11.1.0",
 		"nanoid": "^4.0.0",
 		"next": "12.3.0",

@@ -13,9 +13,9 @@ type ButtonProps = {
 
 const classes = {
 	primary:
-		'flex justify-center space-x-2 rounded-md bg-pink-800 px-6 py-4 text-white',
+		'flex justify-center space-x-1.5 rounded-md bg-pink-700 px-6 py-4 text-white',
 	secondary:
-		'flex justify-center space-x-2 rounded-md border border-neutral-300 px-6 py-4',
+		'flex justify-center space-x-1.5 rounded-md border border-neutral-300 px-6 py-4',
 	tertiary: '-m-4 flex justify-center space-x-2 rounded-md p-4'
 };
 

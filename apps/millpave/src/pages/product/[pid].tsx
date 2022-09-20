@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { FC, PropsWithChildren, useEffect } from 'react';
+import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import Button from '../../components/button';
 import { differenceInCalendarDays, format } from 'date-fns';
@@ -18,6 +18,8 @@ import Link from 'next/link';
 import SkuPicker from '../../components/sku-picker';
 import QuickCalc from '../../components/quick-calc';
 import { formatNumber, formatPrice } from '../../utils/format';
+import Icon from '../../components/icon';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function formatRestockDate(date: number) {
 	const difference = differenceInCalendarDays(date, new Date());
@@ -101,6 +103,47 @@ const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
 	);
 };
 
+type PopoverProps = PropsWithChildren<{
+	show: boolean;
+	onDismiss: () => void;
+}>;
+
+const Popover = ({ show, onDismiss, children }: PopoverProps) => {
+	return (
+		<AnimatePresence>
+			{show && (
+				<>
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 0.2 }}
+						exit={{ opacity: 0 }}
+						transition={{
+							type: 'spring',
+							damping: 25,
+							stiffness: 200
+						}}
+						className="fixed inset-0 z-20  bg-black"
+						onClick={() => onDismiss()}
+					/>
+					<motion.div
+						className="fixed inset-x-0 bottom-0 z-30 rounded-t-2xl bg-white px-8"
+						initial={{ y: '100%' }}
+						animate={{ y: 0 }}
+						exit={{ y: '100%' }}
+						transition={{
+							type: 'spring',
+							damping: 25,
+							stiffness: 200
+						}}
+					>
+						{children}
+					</motion.div>
+				</>
+			)}
+		</AnimatePresence>
+	);
+};
+
 const Page: NextPage = () => {
 	const router = useRouter();
 
@@ -120,6 +163,8 @@ const Page: NextPage = () => {
 			pickupLocation: 'factory'
 		}
 	});
+
+	const [showPopover, setShowPopover] = useState(false);
 
 	useEffect(() => {
 		formMethods.reset();
@@ -158,6 +203,51 @@ const Page: NextPage = () => {
 				<title>{`${currentSKU.display_name} — Millennium Paving Stones`}</title>
 			</Head>
 
+			{/* Popover */}
+			<Popover show={showPopover} onDismiss={() => setShowPopover(false)}>
+				<div className="pt-8 pb-4">
+					<h2 className="font-display text-lg">Add item to...</h2>
+				</div>
+
+				<div className="space-y-8 pt-4 pb-12">
+					<Button
+						variant="secondary"
+						iconLeft="add"
+						className="w-full text-pink-700"
+					>
+						Create New Order
+					</Button>
+
+					<div className="space-y-2">
+						<h3 className="font-bold">Recent Orders</h3>
+
+						<ul className="-mx-4 space-y-1">
+							<li className="flex space-x-2 px-4 py-2">
+								<Icon name="request_quote" weight="normal" />
+
+								<div className="flex-1">
+									<div className="flex items-center justify-between">
+										<h4>Draft Quote</h4>
+										<time className="text-sm">12:39 PM</time>
+									</div>
+									<p className="text-zinc-500">No items yet.</p>
+								</div>
+							</li>
+						</ul>
+
+						<div className="flex w-full justify-center">
+							<Button
+								variant="tertiary"
+								iconRight="expand_more"
+								className=" text-pink-700"
+							>
+								See more
+							</Button>
+						</div>
+					</div>
+				</div>
+			</Popover>
+
 			{/* Canvas */}
 			<main className="flex h-[75vh] flex-col bg-zinc-100 pb-16">
 				<ProductModelViewer sku={currentSKU} />
@@ -192,7 +282,11 @@ const Page: NextPage = () => {
 					<form
 						key={productId}
 						className="space-y-12"
-						onSubmit={formMethods.handleSubmit(console.log)}
+						onSubmit={formMethods.handleSubmit((values) => {
+							setShowPopover(true);
+
+							console.log(values);
+						})}
 					>
 						{/* Color Picker */}
 						<SkuPicker
@@ -333,7 +427,7 @@ const Page: NextPage = () => {
 						<Button
 							variant="tertiary"
 							iconRight="expand_more"
-							className="text-pink-600"
+							className="text-pink-700"
 						>
 							Show more products
 						</Button>

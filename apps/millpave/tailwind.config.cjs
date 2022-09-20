@@ -10,13 +10,13 @@ module.exports = {
 		},
 
 		fontSize: {
-			sm: ['0.8rem', '1.5'],
-			base: ['1rem', '1.5'],
-			lg: ['1.25rem', '1.15'],
-			xl: ['1.563rem', '1.15'],
-			'2xl': ['1.953rem', '1.15'],
-			'3xl': ['2.441rem', '1.15'],
-			'4xl': ['3.052rem', '1.15']
+			sm: ['0.8rem', { lineHeight: '1.5', fontWeight: '400' }],
+			base: ['1rem', { lineHeight: '1.5', fontWeight: '400' }],
+			lg: ['1.25rem', { lineHeight: '1.15', fontWeight: '600' }],
+			xl: ['1.563rem', { lineHeight: '1.15', fontWeight: '600' }],
+			'2xl': ['1.953rem', { lineHeight: '1.15', fontWeight: '600' }],
+			'3xl': ['2.441rem', { lineHeight: '1.15', fontWeight: '900' }],
+			'4xl': ['3.052rem', { lineHeight: '1.15', fontWeight: '900' }]
 		},
 
 		extend: {

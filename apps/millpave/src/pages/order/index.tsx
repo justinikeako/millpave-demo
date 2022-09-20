@@ -55,9 +55,7 @@ const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 const Page: NextPage = () => {
 	const [overage, setOverage] = useState('none');
 
-	const order = trpc.useQuery(['order.get', { id: '[ID_GOES_HERE]' }], {
-		cacheTime: 3
-	});
+	const order = trpc.useQuery(['order.get', { id: '[ID_GOES_HERE]' }]);
 
 	if (!order.data) return null;
 
@@ -71,6 +69,7 @@ const Page: NextPage = () => {
 				<h1 className="font-display text-2xl font-semibold">
 					{order.data.title}
 				</h1>
+
 				{/* Shapes */}
 				<section className="space-y-4">
 					<SectionHeader title="Shapes" />
@@ -110,7 +109,7 @@ const Page: NextPage = () => {
 
 						<label
 							htmlFor="overage"
-							className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-800"
+							className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-700"
 						>
 							<select
 								name="overage"
@@ -168,7 +167,7 @@ const Page: NextPage = () => {
 											&nbsp;
 											<b>{formatRestockDate(item.closest_restock_date)}</b>
 											&nbsp;at&nbsp;
-											<span className="inline-block text-pink-600">
+											<span className="inline-block text-pink-700">
 												Our St. Thomas Factory
 											</span>
 										</p>
@@ -209,7 +208,7 @@ const Page: NextPage = () => {
 								{formatPrice(order.data.details.tax)}
 							</p>
 						</li>
-						<li className="flex justify-between py-1 font-semibold text-pink-800">
+						<li className="flex justify-between py-1 font-semibold text-pink-700">
 							<p>Total</p>
 							<p className="tabular-nums">
 								{formatPrice(order.data.details.total)}
@@ -225,7 +224,7 @@ const Page: NextPage = () => {
 						>
 							Check Out
 						</Button>
-						<Button variant="secondary" className="w-full text-pink-800">
+						<Button variant="secondary" className="w-full text-pink-700">
 							Send as Quote
 						</Button>
 					</div>

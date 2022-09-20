@@ -69,7 +69,7 @@ type RecommendedItem = {
 const recommendations: RecommendedItem[] = [
 	{
 		id: 'eff_cleaner',
-		display_name: 'DynaMatrix Efflorescence Cleaner ',
+		display_name: 'DynaMatrix Efflorescence Cleaner',
 		price: 4000
 	}
 ];

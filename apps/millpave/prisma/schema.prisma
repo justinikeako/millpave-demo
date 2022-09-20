@@ -1,0 +1,125 @@
+// This is a Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Invoice {
+  id         Int           @id @default(autoincrement())
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  overage    String        @default("FIVE")
+  items      InvoiceItem[]
+  subtotal   Float
+  tax        Float
+  total      Float
+  balance    Float
+  status     String
+  author     User          @relation(fields: [authorId], references: [id])
+  authorId   Int
+  customer   Customer      @relation(fields: [customerId], references: [id])
+  customerId Int
+
+  @@index(customerId)
+  @@index(authorId)
+}
+
+// enum Overage {
+//   ZERO
+//   THREE
+//   FIVE
+//   TEN
+// }
+
+// enum InvoiceStatus {
+//   PAID
+//   PARTIAL
+//   UNPAID
+// }
+
+model InvoiceItem {
+  id             Int     @id @default(autoincrement())
+  skuId          String
+  displayName    String
+  quantity       Int
+  pickupLocation String
+  price          Float
+  invoice        Invoice @relation(fields: [invoiceId], references: [id])
+  invoiceId      Int
+
+  @@index(invoiceId)
+}
+
+model Quote {
+  id         Int         @id @default(autoincrement())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  overage    String      @default("FIVE")
+  items      QuoteItem[]
+  area       Float
+  weight     Float
+  subtotal   Float
+  tax        Float
+  total      Float
+  author     User        @relation(fields: [authorId], references: [id])
+  authorId   Int
+  customer   Customer?   @relation(fields: [customerId], references: [id])
+  customerId Int?
+
+  @@index(customerId)
+  @@index(authorId)
+}
+
+model QuoteItem {
+  id               Int    @id @default(autoincrement())
+  skuId            String
+  displayName      String
+  quantity         Int
+  originalQuantity Int
+  pickupLocation   String
+  price            Float
+  quote            Quote  @relation(fields: [quoteId], references: [id])
+  quoteId          Int
+
+  @@index(quoteId)
+}
+
+// enum PickupLocation {
+//   SHOWROOM
+//   FACTORY
+// }
+
+model User {
+  id               Int       @id @default(autoincrement())
+  name             String
+  role             String
+  authoredInvoices Invoice[]
+  authoredQuotes   Quote[]
+}
+
+// enum UserRole {
+//   SALES
+//   ADMIN
+// }
+
+model Customer {
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String?
+  phone    String?
+  type     String
+  invoices Invoice[]
+  quotes   Quote[]
+}
+
+// enum CustomerType {
+//   INDIVIDUAL
+//   ORGANIZATION
+// }

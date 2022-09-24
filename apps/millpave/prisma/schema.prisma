@@ -7,119 +7,124 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model Invoice {
-  id         Int           @id @default(autoincrement())
+  id         String        @id @default(uuid())
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
-  overage    String        @default("FIVE")
+  overage    Overage       @default(FIVE)
   items      InvoiceItem[]
   subtotal   Float
   tax        Float
   total      Float
   balance    Float
-  status     String
+  status     InvoiceStatus
+  quote      Quote         @relation(fields: [quoteId], references: [id])
+  quoteId    String        @unique
   author     User          @relation(fields: [authorId], references: [id])
-  authorId   Int
+  authorId   String
   customer   Customer      @relation(fields: [customerId], references: [id])
-  customerId Int
+  customerId String
 
   @@index(customerId)
   @@index(authorId)
 }
 
-// enum Overage {
-//   ZERO
-//   THREE
-//   FIVE
-//   TEN
-// }
+enum Overage {
+  ZERO
+  THREE
+  FIVE
+  TEN
+}
 
-// enum InvoiceStatus {
-//   PAID
-//   PARTIAL
-//   UNPAID
-// }
+enum InvoiceStatus {
+  PAID
+  PARTIAL
+  UNPAID
+}
 
 model InvoiceItem {
-  id             Int     @id @default(autoincrement())
+  id             String  @id @default(uuid())
   skuId          String
   displayName    String
   quantity       Int
   pickupLocation String
   price          Float
   invoice        Invoice @relation(fields: [invoiceId], references: [id])
-  invoiceId      Int
+  invoiceId      String
 
   @@index(invoiceId)
 }
 
 model Quote {
-  id         Int         @id @default(autoincrement())
+  id         String      @id
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   overage    String      @default("FIVE")
+  shapes     Json        @db.Json
   items      QuoteItem[]
+  title      String
   area       Float
   weight     Float
   subtotal   Float
   tax        Float
   total      Float
   author     User        @relation(fields: [authorId], references: [id])
-  authorId   Int
+  authorId   String
   customer   Customer?   @relation(fields: [customerId], references: [id])
-  customerId Int?
+  customerId String?
+  invoice    Invoice?
 
   @@index(customerId)
   @@index(authorId)
 }
 
 model QuoteItem {
-  id               Int    @id @default(autoincrement())
-  skuId            String
-  displayName      String
-  quantity         Int
-  originalQuantity Int
-  pickupLocation   String
-  price            Float
-  quote            Quote  @relation(fields: [quoteId], references: [id])
-  quoteId          Int
+  id             String @id @default(uuid())
+  skuId          String
+  displayName    String
+  quantity       Int
+  metadata       Json?
+  pickupLocation String
+  price          Float
+  quote          Quote  @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  quoteId        String
 
   @@index(quoteId)
 }
 
-// enum PickupLocation {
-//   SHOWROOM
-//   FACTORY
-// }
+enum PickupLocation {
+  SHOWROOM
+  FACTORY
+}
 
 model User {
-  id               Int       @id @default(autoincrement())
+  id               String    @id @default(uuid())
   name             String
-  role             String
+  role             UserRole
   authoredInvoices Invoice[]
   authoredQuotes   Quote[]
 }
 
-// enum UserRole {
-//   SALES
-//   ADMIN
-// }
+enum UserRole {
+  SALES
+  ADMIN
+}
 
 model Customer {
-  id       Int       @id @default(autoincrement())
+  id       String       @id @default(uuid())
   name     String
   email    String?
   phone    String?
-  type     String
+  type     CustomerType
   invoices Invoice[]
   quotes   Quote[]
 }
 
-// enum CustomerType {
-//   INDIVIDUAL
-//   ORGANIZATION
-// }
+enum CustomerType {
+  INDIVIDUAL
+  ORGANIZATION
+}

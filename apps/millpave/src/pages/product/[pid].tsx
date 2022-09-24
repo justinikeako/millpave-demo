@@ -144,17 +144,84 @@ const Popover = ({ show, onDismiss, children }: PopoverProps) => {
 	);
 };
 
+type AddToProps = { onCreate: () => void; onAdd: (id: string) => void };
+
+const AddTo = ({ onCreate, onAdd }: AddToProps) => {
+	const recentQuotesRequest = trpc.useQuery(['quote.getAll']);
+
+	return (
+		<>
+			<div className="pt-8 pb-4">
+				<h2 className="font-display text-lg">Add item to...</h2>
+			</div>
+
+			<div className="space-y-8 pt-4 pb-12">
+				<Button
+					variant="secondary"
+					iconLeft="add"
+					className="w-full text-pink-700"
+					onClick={onCreate}
+				>
+					Create New Order
+				</Button>
+
+				<div className="space-y-2">
+					<h3 className="font-bold">Recent Orders</h3>
+
+					{recentQuotesRequest.isLoading && <p>Loading</p>}
+					{recentQuotesRequest.data && (
+						<ul className="-mx-4 space-y-1">
+							{recentQuotesRequest.data.map((quote) => (
+								<li
+									key={quote.id}
+									className="flex space-x-2 px-4 py-2"
+									onClick={() => onAdd(quote.id)}
+								>
+									<Icon name="request_quote" weight="normal" />
+
+									<div className="flex-1">
+										<div className="flex items-center justify-between">
+											<h4>{quote.title}</h4>
+											<time className="text-sm">
+												{quote.updatedAt.toISOString()}
+											</time>
+										</div>
+										<p className="text-zinc-500">No items yet.</p>
+									</div>
+								</li>
+							))}
+						</ul>
+					)}
+
+					<div className="flex w-full justify-center">
+						<Button
+							variant="tertiary"
+							iconRight="expand_more"
+							className=" text-pink-700"
+						>
+							See more
+						</Button>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+};
+
 const Page: NextPage = () => {
 	const router = useRouter();
 
 	const productId = router.query.pid as string;
 
-	const skuIdFragment = (router.query.sku as string).replace(/ /s, ':');
+	const skuIdFragment = (router.query.sku as string).replace(/ /gs, ':');
 	const skuId = `${productId}:${skuIdFragment}`;
 
 	const product = trpc.useQuery(['product.get', { productId }], {
 		refetchOnWindowFocus: false
 	});
+
+	const createQuote = trpc.useMutation(['quote.create']);
+	const addItemToQuote = trpc.useMutation(['quote.addItemTo']);
 
 	const formMethods = useForm<FormValues>({
 		defaultValues: {
@@ -189,8 +256,10 @@ const Page: NextPage = () => {
 	const productDetails = findDetails(skuIdFragment);
 
 	if (!product.data || !currentSKU || !productDetails) {
-		if (product.error?.data?.code === 'NOT_FOUND')
-			return <NextError statusCode={404} />;
+		const productNotFound = product.error?.data?.code === 'NOT_FOUND';
+		const skuNotFound = product.isSuccess && !currentSKU;
+
+		if (productNotFound || skuNotFound) return <NextError statusCode={404} />;
 
 		return null;
 	}
@@ -205,47 +274,29 @@ const Page: NextPage = () => {
 
 			{/* Popover */}
 			<Popover show={showPopover} onDismiss={() => setShowPopover(false)}>
-				<div className="pt-8 pb-4">
-					<h2 className="font-display text-lg">Add item to...</h2>
-				</div>
+				<AddTo
+					onCreate={() => {
+						createQuote.mutate(formMethods.watch(), {
+							onSuccess(data) {
+								console.log(`Successfully created quote: ${data.id}`);
 
-				<div className="space-y-8 pt-4 pb-12">
-					<Button
-						variant="secondary"
-						iconLeft="add"
-						className="w-full text-pink-700"
-					>
-						Create New Order
-					</Button>
+								setShowPopover(false);
+							}
+						});
+					}}
+					onAdd={(id) => {
+						addItemToQuote.mutate(
+							{ id, item: formMethods.watch() },
+							{
+								onSuccess(data) {
+									console.log(data);
 
-					<div className="space-y-2">
-						<h3 className="font-bold">Recent Orders</h3>
-
-						<ul className="-mx-4 space-y-1">
-							<li className="flex space-x-2 px-4 py-2">
-								<Icon name="request_quote" weight="normal" />
-
-								<div className="flex-1">
-									<div className="flex items-center justify-between">
-										<h4>Draft Quote</h4>
-										<time className="text-sm">12:39 PM</time>
-									</div>
-									<p className="text-zinc-500">No items yet.</p>
-								</div>
-							</li>
-						</ul>
-
-						<div className="flex w-full justify-center">
-							<Button
-								variant="tertiary"
-								iconRight="expand_more"
-								className=" text-pink-700"
-							>
-								See more
-							</Button>
-						</div>
-					</div>
-				</div>
+									setShowPopover(false);
+								}
+							}
+						);
+					}}
+				/>
 			</Popover>
 
 			{/* Canvas */}
@@ -282,10 +333,8 @@ const Page: NextPage = () => {
 					<form
 						key={productId}
 						className="space-y-12"
-						onSubmit={formMethods.handleSubmit((values) => {
+						onSubmit={formMethods.handleSubmit(() => {
 							setShowPopover(true);
-
-							console.log(values);
 						})}
 					>
 						{/* Color Picker */}

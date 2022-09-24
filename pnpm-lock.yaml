@@ -34,6 +34,7 @@ importers:
       eslint: 8.18.0
       eslint-config-next: 12.2.3
       framer-motion: ^7.3.5
+      lodash: ^4.17.21
       mathjs: ^11.1.0
       nanoid: ^4.0.0
       next: 12.3.0
@@ -64,6 +65,7 @@ importers:
       '@trpc/server': 9.27.2
       date-fns: 2.29.2
       framer-motion: 7.3.5_biqbaboplfbrettd7655fr4n2y
+      lodash: 4.17.21
       mathjs: 11.1.0
       nanoid: 4.0.0
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y

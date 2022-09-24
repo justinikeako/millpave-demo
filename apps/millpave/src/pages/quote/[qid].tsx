@@ -1,10 +1,12 @@
 import { NextPage } from 'next';
+import NextError from 'next/error';
 import Head from 'next/head';
 import { FC, PropsWithChildren, useState } from 'react';
 import Button from '../../components/button';
 import Icon from '../../components/icon';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { trpc } from '../../utils/trpc';
+import { useRouter } from 'next/router';
 
 function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {
@@ -53,11 +55,22 @@ const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 };
 
 const Page: NextPage = () => {
+	const router = useRouter();
+
+	const orderId = router.query.qid as string;
+
 	const [overage, setOverage] = useState('none');
 
-	const order = trpc.useQuery(['order.get', { id: '[ID_GOES_HERE]' }]);
+	const order = trpc.useQuery(['quote.get', { id: orderId }], {
+		refetchOnWindowFocus: false
+	});
 
-	if (!order.data) return null;
+	if (!order.data) {
+		if (order.error?.data?.code === 'NOT_FOUND')
+			return <NextError statusCode={404} />;
+
+		return null;
+	}
 
 	return (
 		<>
@@ -71,27 +84,29 @@ const Page: NextPage = () => {
 				</h1>
 
 				{/* Shapes */}
-				<section className="space-y-4">
-					<SectionHeader title="Shapes" />
+				{order.data.shapes && order.data.shapes.length > 0 && (
+					<section className="space-y-4">
+						<SectionHeader title="Shapes" />
 
-					<ul className="no-scrollbar -mx-8 flex items-center space-x-2 overflow-x-scroll">
-						<li className="h-2 shrink-0 basis-4" />
+						<ul className="no-scrollbar -mx-8 flex items-center space-x-2 overflow-x-scroll">
+							<li className="h-2 shrink-0 basis-4" />
 
-						<li className="flex snap-center rounded-full bg-zinc-100 p-2.5">
-							<Icon name="add" />
-						</li>
-						{order.data.shapes.map((shape) => (
-							<li
-								key={shape.id}
-								className="flex snap-center whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2"
-							>
-								{shape.name}
+							<li className="flex snap-center rounded-full bg-zinc-100 p-2.5">
+								<Icon name="add" />
 							</li>
-						))}
+							{order.data.shapes.map((shape) => (
+								<li
+									key={shape.id}
+									className="flex snap-center whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2"
+								>
+									{shape.name}
+								</li>
+							))}
 
-						<li className="h-2 shrink-0 basis-4" />
-					</ul>
-				</section>
+							<li className="h-2 shrink-0 basis-4" />
+						</ul>
+					</section>
+				)}
 
 				{/* Items */}
 				<section className="space-y-4">
@@ -150,7 +165,7 @@ const Page: NextPage = () => {
 								<div className="h-32 w-32 bg-zinc-100" />
 								<div className="space-y-2 self-stretch">
 									<h3 className="font-display text-lg font-semibold">
-										{item.display_name}
+										{item.displayName}
 									</h3>
 									<div className="flex justify-between">
 										<p className="font-semibold">
@@ -167,7 +182,7 @@ const Page: NextPage = () => {
 											&nbsp;
 											<b>{formatRestockDate(item.closest_restock_date)}</b>
 											&nbsp;at&nbsp;
-											<span className="inline-block text-pink-700">
+											<span className="inline-block text-pink-600">
 												Our St. Thomas Factory
 											</span>
 										</p>
@@ -187,32 +202,26 @@ const Page: NextPage = () => {
 						<li className="flex justify-between py-1">
 							<p>Area Coverage</p>
 							<p className="tabular-nums">
-								{formatNumber(order.data.details.area)} sqft
+								{formatNumber(order.data.area)} sqft
 							</p>
 						</li>
 						<li className="flex justify-between py-1">
 							<p>Estimated Weight</p>
 							<p className="tabular-nums">
-								{formatNumber(order.data.details.weight)} lbs
+								{formatNumber(order.data.weight)} lbs
 							</p>
 						</li>
 						<li className="flex justify-between py-1">
 							<p>Subtotal</p>
-							<p className="tabular-nums">
-								{formatPrice(order.data.details.subtotal)}
-							</p>
+							<p className="tabular-nums">{formatPrice(order.data.subtotal)}</p>
 						</li>
 						<li className="flex justify-between py-1">
 							<p>Tax</p>
-							<p className="tabular-nums">
-								{formatPrice(order.data.details.tax)}
-							</p>
+							<p className="tabular-nums">{formatPrice(order.data.tax)}</p>
 						</li>
 						<li className="flex justify-between py-1 font-semibold text-pink-700">
 							<p>Total</p>
-							<p className="tabular-nums">
-								{formatPrice(order.data.details.total)}
-							</p>
+							<p className="tabular-nums">{formatPrice(order.data.total)}</p>
 						</li>
 					</ul>
 

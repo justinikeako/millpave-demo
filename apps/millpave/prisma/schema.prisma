@@ -47,13 +47,13 @@ enum InvoiceStatus {
 }
 
 model InvoiceItem {
-  id             String  @id @default(uuid())
+  id             String         @id @default(uuid())
   skuId          String
   displayName    String
   quantity       Int
-  pickupLocation String
+  pickupLocation PickupLocation
   price          Float
-  invoice        Invoice @relation(fields: [invoiceId], references: [id])
+  invoice        Invoice        @relation(fields: [invoiceId], references: [id])
   invoiceId      String
 
   @@index(invoiceId)
@@ -63,7 +63,7 @@ model Quote {
   id         String      @id
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
-  overage    String      @default("FIVE")
+  overage    Overage     @default(FIVE)
   shapes     Json        @db.Json
   items      QuoteItem[]
   title      String
@@ -83,17 +83,17 @@ model Quote {
 }
 
 model QuoteItem {
-  id             String @id @default(uuid())
+  id             String         @id @default(uuid())
   skuId          String
   displayName    String
   quantity       Int
   metadata       Json?
-  pickupLocation String
+  pickupLocation PickupLocation
   price          Float
-  quote          Quote  @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  quote          Quote          @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   quoteId        String
 
-  @@index(quoteId)
+  @@unique([quoteId, skuId, pickupLocation], name: "itemIdentifier")
 }
 
 enum PickupLocation {

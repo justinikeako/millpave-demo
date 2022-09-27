@@ -1,9 +1,10 @@
 import { Control, Controller, useFormContext } from 'react-hook-form';
 import { evaluate, number } from 'mathjs';
-import { PickupLocation, ProductDetails } from '../types/product';
+import { ProductDetails } from '../types/product';
 import { useEffect, useState } from 'react';
 import Button from './button';
 import { formatNumber, formatPrice } from '../utils/format';
+import { PickupLocation } from '@prisma/client';
 
 type Unit = 'sqft' | 'sqin' | 'sqm' | 'sqcm' | 'pcs' | 'pal' | 'jmd';
 
@@ -46,12 +47,12 @@ function roundArea(
 	const { sqft_per_pallet, pcs_per_sqft } = productDetails;
 
 	const roundingFunction: TransformerRecord<PickupLocation> = {
-		factory: (sqft) => {
+		FACTORY: (sqft) => {
 			if (unit === 'jmd') return sqft; // Already rounded, pass value onward
 
 			return round(sqft, sqft_per_pallet / 2, 'up'); // Round up to the nearest half pallet
 		},
-		showroom: (sqft) => {
+		SHOWROOM: (sqft) => {
 			if (unit === 'jmd') return sqft; // Already rounded, pass value onward
 
 			return round(sqft, 1 / pcs_per_sqft, 'up'); // Round up to the nearest piece
@@ -77,13 +78,13 @@ function convert(
 		toSqftFrom(unit: Unit) {
 			// For JMD to sqft conversion
 			const sqftFromTotal: TransformerRecord<PickupLocation> = {
-				factory: (total) => {
+				FACTORY: (total) => {
 					const sqft = removeGCT(total / skuPrice); // Divide total by sku price
 					const roundedSqft = round(sqft, sqft_per_pallet / 2, 'down'); // Round Down to nearest half pallet
 
 					return roundedSqft;
 				},
-				showroom: (total) => {
+				SHOWROOM: (total) => {
 					const sqft = removeGCT(total / skuPrice); // Divide total by showroom sku price
 					const roundedSqft = round(sqft, 1 / pcs_per_sqft, 'down'); // Round Down to nearest piece
 
@@ -422,8 +423,8 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 			{/* Delivery Location */}
 			<div className="flex flex-wrap justify-between">
 				<select className="bg-transparent" {...register('pickupLocation')}>
-					<option value="factory">Factory Pickup</option>
-					<option value="showroom">Showroom Pickup</option>
+					<option value="FACTORY">Factory Pickup</option>
+					<option value="SHOWROOM">Showroom Pickup</option>
 				</select>
 				<Button
 					variant="tertiary"
@@ -444,9 +445,9 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 							<label htmlFor="quickcalc-quantity">Calculated Quantity</label>
 							<output id="quickcalc-quantity" htmlFor="quickcalc-value">
 								{convert(quickCalc.area, convertConfig).fromSqftTo(
-									convertConfig.pickupLocation === 'factory' ? 'pal' : 'pcs'
+									convertConfig.pickupLocation === 'FACTORY' ? 'pal' : 'pcs'
 								)}{' '}
-								{convertConfig.pickupLocation === 'factory' ? 'pal' : 'pcs'}
+								{convertConfig.pickupLocation === 'FACTORY' ? 'pal' : 'pcs'}
 							</output>
 						</li>
 						<li className="flex flex-wrap justify-between">

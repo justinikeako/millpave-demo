@@ -61,9 +61,7 @@ const Page: NextPage = () => {
 
 	const [overage, setOverage] = useState('none');
 
-	const order = trpc.useQuery(['quote.get', { id: orderId }], {
-		refetchOnWindowFocus: false
-	});
+	const order = trpc.useQuery(['quote.get', { id: orderId }]);
 
 	if (!order.data) {
 		if (order.error?.data?.code === 'NOT_FOUND')

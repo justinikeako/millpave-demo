@@ -4,6 +4,17 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { generateQuote, generateQuoteItem } from '../quote/generate';
 import { QuoteItem } from '@prisma/client';
+import { roundPrice } from '../../utils/price';
+
+type QuoteItemMetadata = {
+	weight: number;
+	area: number;
+	originalArea: number;
+};
+
+type QuoteItemWithMetadata = QuoteItem & {
+	metadata: QuoteItemMetadata;
+};
 
 type Shape = {
 	id: string;
@@ -14,12 +25,6 @@ type RecommendedItem = {
 	id: string;
 	display_name: string;
 	price: number;
-};
-
-type QuoteItemMetadata = {
-	weight: number;
-	area: number;
-	originalArea: number;
 };
 
 const recommendations: RecommendedItem[] = [
@@ -65,7 +70,10 @@ export const quoteRouter = createRouter()
 	.query('getAll', {
 		async resolve({ ctx }) {
 			const quotes = await ctx.prisma.quote.findMany({
-				take: 20
+				take: 20,
+				include: {
+					items: { take: 5 }
+				}
 			});
 
 			return quotes;
@@ -75,7 +83,7 @@ export const quoteRouter = createRouter()
 		input: z.object({
 			skuId: z.string(),
 			area: z.number(),
-			pickupLocation: z.enum(['showroom', 'factory'])
+			pickupLocation: z.enum(['SHOWROOM', 'FACTORY'])
 		}),
 		async resolve({ ctx, input }) {
 			const authorId = 'justin';
@@ -95,31 +103,66 @@ export const quoteRouter = createRouter()
 			item: z.object({
 				skuId: z.string(),
 				area: z.number(),
-				pickupLocation: z.enum(['showroom', 'factory'])
+				pickupLocation: z.enum(['SHOWROOM', 'FACTORY'])
 			})
 		}),
 		async resolve({ ctx, input }) {
 			// Create new quote item
-			const newItem = (await ctx.prisma.quoteItem.create({
-				data: {
-					quoteId: input.id,
-					...generateQuoteItem(input.item)
+
+			const generatedItem = generateQuoteItem(input.item);
+			const oldItem = (await ctx.prisma.quoteItem.findUnique({
+				where: {
+					itemIdentifier: {
+						skuId: input.item.skuId,
+						quoteId: input.id,
+						pickupLocation: input.item.pickupLocation
+					}
 				}
-			})) as QuoteItem & { metadata: QuoteItemMetadata };
+			})) as QuoteItemWithMetadata;
+
+			if (oldItem) {
+				await ctx.prisma.quoteItem.update({
+					where: {
+						itemIdentifier: {
+							quoteId: input.id,
+							skuId: generatedItem.skuId,
+							pickupLocation: input.item.pickupLocation
+						}
+					},
+					data: {
+						metadata: {
+							area: oldItem.metadata.area + generatedItem.metadata.area,
+							weight: oldItem.metadata.weight + generatedItem.metadata.weight,
+							originalArea:
+								oldItem.metadata.originalArea +
+								generatedItem.metadata.originalArea
+						} as QuoteItemMetadata,
+						price: oldItem.price + generatedItem.price,
+						quantity: oldItem.quantity + generatedItem.quantity
+					}
+				});
+			} else {
+				await ctx.prisma.quoteItem.create({
+					data: {
+						quoteId: input.id,
+						...generatedItem
+					}
+				});
+			}
 
 			// update quote with new details
-			const newQuote = await ctx.prisma.quote.update({
+			const updatedQuote = await ctx.prisma.quote.update({
 				where: { id: input.id },
 				data: {
-					weight: { increment: newItem.metadata.weight },
-					area: { increment: newItem.metadata.area },
-					subtotal: { increment: newItem.price },
-					tax: { increment: newItem.price * 0.15 },
-					total: { increment: newItem.price * 1.15 }
+					weight: { increment: generatedItem.metadata.weight },
+					area: { increment: generatedItem.metadata.area },
+					subtotal: { increment: roundPrice(generatedItem.price) },
+					tax: { increment: roundPrice(generatedItem.price * 0.15) },
+					total: { increment: roundPrice(generatedItem.price * 1.15) }
 				}
 			});
 
-			return newQuote.id;
+			return updatedQuote.id;
 		}
 	})
 	.mutation('delete', {

@@ -1,10 +1,11 @@
-import { Prisma } from '@prisma/client';
+import { PickupLocation, Prisma } from '@prisma/client';
 import { nanoid } from 'nanoid';
+import { roundPrice } from '../../utils/price';
 import { getSku, getSkuDetails } from '../mock-db';
 
 type InputItem = {
 	skuId: string;
-	pickupLocation: 'factory' | 'showroom';
+	pickupLocation: PickupLocation;
 	area: number;
 };
 
@@ -28,12 +29,12 @@ function generateQuoteItem(
 
 	const areaBeforeOverage = inputItem.area;
 
-	const areaWithOverage = inputItem.area * 1.05;
+	const areaWithOverage = inputItem.area * 1;
 
 	const quantity = Math.round(areaWithOverage * skuDetails.pcs_per_sqft);
 
 	const skuPrice =
-		inputItem.pickupLocation === 'factory' ? sku.price : sku.price + 20;
+		inputItem.pickupLocation === 'FACTORY' ? sku.price : sku.price + 20;
 
 	const outputItem: QuoteItemCreateManyQuoteInput = {
 		skuId: sku.id,
@@ -45,7 +46,7 @@ function generateQuoteItem(
 		},
 		quantity: quantity,
 		pickupLocation: inputItem.pickupLocation,
-		price: areaWithOverage * skuPrice
+		price: roundPrice(areaWithOverage * skuPrice)
 	};
 
 	return outputItem;
@@ -105,9 +106,9 @@ function calculateDetails(
 		}, 0);
 	}
 
-	const subtotal = getSum(inputItems, 'price'),
-		tax = subtotal * 0.15,
-		total = subtotal + tax;
+	const subtotal = roundPrice(getSum(inputItems, 'price')),
+		tax = roundPrice(subtotal * 0.15),
+		total = roundPrice(subtotal + tax);
 
 	return {
 		area: getNestedSum(inputItems, 'area'),

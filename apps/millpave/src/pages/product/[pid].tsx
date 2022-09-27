@@ -8,18 +8,15 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { trpc } from '../../utils/trpc';
 import NextError from 'next/error';
-import {
-	PickupLocation,
-	RestockQueueElement,
-	SKU,
-	Stock
-} from '../../types/product';
+import { RestockQueueElement, SKU, Stock } from '../../types/product';
 import Link from 'next/link';
 import SkuPicker from '../../components/sku-picker';
 import QuickCalc from '../../components/quick-calc';
 import { formatNumber, formatPrice } from '../../utils/format';
 import Icon from '../../components/icon';
 import { AnimatePresence, motion } from 'framer-motion';
+import { PickupLocation } from '@prisma/client';
+import { ErrorBoundary } from 'react-error-boundary';
 
 function formatRestockDate(date: number) {
 	const difference = differenceInCalendarDays(date, new Date());
@@ -61,11 +58,11 @@ const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
 	);
 };
 
-const ProductModelViewer = dynamic(
+const ProductViewer = dynamic(
 	() => import('../../components/product-model-viewer'),
 	{
 		ssr: false,
-		loading: () => <p>Loading...</p>
+		loading: () => <p>Loading 3D Model...</p>
 	}
 );
 
@@ -109,6 +106,12 @@ type PopoverProps = PropsWithChildren<{
 }>;
 
 const Popover = ({ show, onDismiss, children }: PopoverProps) => {
+	const transition = {
+		type: 'spring',
+		damping: 25,
+		stiffness: 200
+	};
+
 	return (
 		<AnimatePresence>
 			{show && (
@@ -117,11 +120,7 @@ const Popover = ({ show, onDismiss, children }: PopoverProps) => {
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 0.2 }}
 						exit={{ opacity: 0 }}
-						transition={{
-							type: 'spring',
-							damping: 25,
-							stiffness: 200
-						}}
+						transition={transition}
 						className="fixed inset-0 z-20  bg-black"
 						onClick={() => onDismiss()}
 					/>
@@ -130,11 +129,7 @@ const Popover = ({ show, onDismiss, children }: PopoverProps) => {
 						initial={{ y: '100%' }}
 						animate={{ y: 0 }}
 						exit={{ y: '100%' }}
-						transition={{
-							type: 'spring',
-							damping: 25,
-							stiffness: 200
-						}}
+						transition={transition}
 					>
 						{children}
 					</motion.div>
@@ -170,38 +165,53 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 
 					{recentQuotesRequest.isLoading && <p>Loading</p>}
 					{recentQuotesRequest.data && (
-						<ul className="-mx-4 space-y-1">
-							{recentQuotesRequest.data.map((quote) => (
-								<li
-									key={quote.id}
-									className="flex space-x-2 px-4 py-2"
-									onClick={() => onAdd(quote.id)}
-								>
-									<Icon name="request_quote" weight="normal" />
+						<>
+							<ul className="-mx-4 space-y-1">
+								{recentQuotesRequest.data.map((quote) => (
+									<li
+										key={quote.id}
+										className="flex space-x-2 px-4 py-2"
+										onClick={() => onAdd(quote.id)}
+									>
+										<Icon name="request_quote" weight="normal" />
 
-									<div className="flex-1">
-										<div className="flex items-center justify-between">
-											<h4>{quote.title}</h4>
-											<time className="text-sm">
-												{quote.updatedAt.toISOString()}
-											</time>
+										<div className="w-[calc(100%-32px)]">
+											<div className="flex items-center justify-between">
+												<h4>{quote.title}</h4>
+												<time className="text-sm">
+													{quote.updatedAt.toISOString()}
+												</time>
+											</div>
+
+											<p className="overflow-hidden text-ellipsis whitespace-nowrap text-zinc-500">
+												{quote.items.length > 0
+													? quote.items
+															.map((item) => item.displayName)
+															.toString()
+															.replace(/,/, ', ')
+													: 'No items yet.'}
+											</p>
 										</div>
-										<p className="text-zinc-500">No items yet.</p>
-									</div>
-								</li>
-							))}
-						</ul>
-					)}
+									</li>
+								))}
+							</ul>
 
-					<div className="flex w-full justify-center">
-						<Button
-							variant="tertiary"
-							iconRight="expand_more"
-							className=" text-pink-700"
-						>
-							See more
-						</Button>
-					</div>
+							{recentQuotesRequest.data.length > 2 && (
+								<div className="flex w-full justify-center">
+									<Button
+										variant="tertiary"
+										iconRight="expand_more"
+										className=" text-pink-700"
+									>
+										See more
+									</Button>
+								</div>
+							)}
+							{recentQuotesRequest.data.length === 0 && (
+								<p className="text-slate-500">No recent orders.</p>
+							)}
+						</>
+					)}
 				</div>
 			</div>
 		</>
@@ -227,7 +237,7 @@ const Page: NextPage = () => {
 		defaultValues: {
 			skuId: skuId,
 			area: 0,
-			pickupLocation: 'factory'
+			pickupLocation: 'FACTORY'
 		}
 	});
 
@@ -264,7 +274,7 @@ const Page: NextPage = () => {
 		return null;
 	}
 
-	const skuPrice = currentSKU.price + (pickupLocation === 'showroom' ? 20 : 0);
+	const skuPrice = currentSKU.price + (pickupLocation === 'SHOWROOM' ? 20 : 0);
 
 	return (
 		<>
@@ -301,7 +311,13 @@ const Page: NextPage = () => {
 
 			{/* Canvas */}
 			<main className="flex h-[75vh] flex-col bg-zinc-100 pb-16">
-				<ProductModelViewer sku={currentSKU} />
+				<ErrorBoundary
+					fallbackRender={() => (
+						<p>Model failed to load. Refresh page to try again.</p>
+					)}
+				>
+					<ProductViewer sku={currentSKU} />
+				</ErrorBoundary>
 			</main>
 
 			{/* Bottom Sheet */}

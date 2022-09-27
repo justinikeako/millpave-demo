@@ -208,7 +208,7 @@ const recommend = {
 // Mock Products
 const COLONIAL_CLASSIC: Product = {
 	id: 'colonial_classic',
-	pickup_location_list: ['factory', 'showroom'],
+	pickup_location_list: ['FACTORY', 'SHOWROOM'],
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Colonial Classic',
 	gallery: [
@@ -241,7 +241,7 @@ const COLONIAL_CLASSIC: Product = {
 
 const THIN_CLASSIC: Product = {
 	id: 'thin_classic',
-	pickup_location_list: ['factory', 'showroom'],
+	pickup_location_list: ['FACTORY', 'SHOWROOM'],
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Thin Classic',
 	gallery: [
@@ -274,7 +274,7 @@ const THIN_CLASSIC: Product = {
 
 const BANJO: Product = {
 	id: 'banjo',
-	pickup_location_list: ['factory', 'showroom'],
+	pickup_location_list: ['FACTORY', 'SHOWROOM'],
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Banjo',
 	gallery: [
@@ -307,7 +307,7 @@ const BANJO: Product = {
 
 const OWC: Product = {
 	id: 'owc',
-	pickup_location_list: ['factory'],
+	pickup_location_list: ['FACTORY'],
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Old World Cobble',
 	gallery: [
@@ -340,7 +340,7 @@ const OWC: Product = {
 
 const COBBLE_MIX: Product = {
 	id: 'cobble_mix',
-	pickup_location_list: ['factory'],
+	pickup_location_list: ['FACTORY'],
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Cobble Mix',
 	gallery: [
@@ -383,7 +383,7 @@ const COBBLE_MIX: Product = {
 
 const HERITAGE: Product = {
 	id: 'heritage',
-	pickup_location_list: ['factory'],
+	pickup_location_list: ['FACTORY'],
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Heritage Series',
 	gallery: [
@@ -426,7 +426,7 @@ const HERITAGE: Product = {
 
 const TROPICAL_WAVE: Product = {
 	id: 'tropical_wave',
-	pickup_location_list: ['factory'],
+	pickup_location_list: ['FACTORY'],
 	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
 	display_name: 'Tropical Wave',
 	gallery: [
@@ -566,12 +566,12 @@ function generateStock(
 		return [
 			{
 				sku_id: `${skuIdPrefix}:${colorId}`,
-				location: 'showroom',
+				location: 'SHOWROOM',
 				quantity: doneToOrder ? 0 : coinFlip() ? showroomQuantity : 0
 			},
 			{
 				sku_id: `${skuIdPrefix}:${colorId}`,
-				location: 'factory',
+				location: 'FACTORY',
 				quantity: doneToOrder ? 0 : coinFlip() ? factoryQuantity : 0
 			}
 		];
@@ -600,7 +600,7 @@ function generateRestockElements(
 			? [
 					{
 						sku_id: `${skuIdPrefix}:${colorId}`,
-						location: fromFactory ? 'factory' : 'showroom',
+						location: fromFactory ? 'FACTORY' : 'SHOWROOM',
 						quantity: fromFactory ? factoryQuantity : showroomQuantity,
 						date: fromFactory
 							? addBusinessDays(

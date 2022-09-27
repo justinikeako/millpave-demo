@@ -1,3 +1,5 @@
+import { PickupLocation } from '@prisma/client';
+
 export type ProductDetails = {
 	product_id: string;
 	supports: { index: number; values: string[] | 'all' }[];
@@ -33,8 +35,6 @@ type SkuFragment =
 			display_name: string;
 			fragments: { id: string; display_name: string }[];
 	  };
-
-export type PickupLocation = 'factory' | 'showroom';
 
 export type Product = {
 	id: string;

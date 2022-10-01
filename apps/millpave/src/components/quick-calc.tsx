@@ -4,7 +4,7 @@ import { ProductDetails } from '../types/product';
 import { useEffect, useState } from 'react';
 import Button from './button';
 import { formatNumber, formatPrice } from '../utils/format';
-import { PickupLocation } from '@prisma/client';
+import { PickupLocation } from '../types/location';
 
 type Unit = 'sqft' | 'sqin' | 'sqm' | 'sqcm' | 'pcs' | 'pal' | 'jmd';
 

@@ -1,4 +1,4 @@
-import { PickupLocation } from '@prisma/client';
+import { PickupLocation } from './location';
 
 export type ProductDetails = {
 	product_id: string;

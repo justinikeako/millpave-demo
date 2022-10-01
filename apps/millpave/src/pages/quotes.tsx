@@ -27,9 +27,7 @@ const Page: NextPage = () => {
 					{quotes.data.map((quote) => (
 						<li key={quote.id}>
 							<Link href={`/quote/${quote.id}`}>
-								<a>
-									{quote.id} {quote.title}
-								</a>
+								{quote.id} {quote.title}
 							</Link>
 							<Button
 								variant="primary"

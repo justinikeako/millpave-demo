@@ -94,7 +94,7 @@ export const quoteRouter = createRouter()
 				data: quote
 			});
 
-			return createdQuote;
+			return createdQuote.id;
 		}
 	})
 	.mutation('addItemTo', {

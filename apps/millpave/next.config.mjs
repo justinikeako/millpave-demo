@@ -16,6 +16,10 @@ export default defineNextConfig({
 	reactStrictMode: true,
 	swcMinify: true,
 
+	experimental: {
+		newNextLinkBehavior: true
+	},
+
 	headers: async () => [
 		{
 			source: '/:all*(woff2|png|bin|gltf)',

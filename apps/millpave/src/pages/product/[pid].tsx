@@ -17,6 +17,8 @@ import Icon from '../../components/icon';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PickupLocation } from '@prisma/client';
 import { ErrorBoundary } from 'react-error-boundary';
+import { Toast } from '../../components/toast';
+import { ToastProvider } from '@radix-ui/react-toast';
 
 function formatRestockDate(date: number) {
 	const difference = differenceInCalendarDays(date, new Date());
@@ -100,12 +102,12 @@ const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
 	);
 };
 
-type PopoverProps = PropsWithChildren<{
+type DialogProps = PropsWithChildren<{
 	show: boolean;
 	onDismiss: () => void;
 }>;
 
-const Popover = ({ show, onDismiss, children }: PopoverProps) => {
+const Dialog = ({ show, onDismiss, children }: DialogProps) => {
 	const transition = {
 		type: 'spring',
 		damping: 25,
@@ -142,7 +144,10 @@ const Popover = ({ show, onDismiss, children }: PopoverProps) => {
 type AddToProps = { onCreate: () => void; onAdd: (id: string) => void };
 
 const AddTo = ({ onCreate, onAdd }: AddToProps) => {
-	const recentQuotesRequest = trpc.useQuery(['quote.getAll']);
+	const recentQuotesRequest = trpc.useQuery(['quote.getAll'], {
+		refetchOnMount: false,
+		refetchOnWindowFocus: false
+	});
 
 	return (
 		<>
@@ -161,7 +166,12 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 				</Button>
 
 				<div className="space-y-2">
-					<h3 className="font-bold">Recent Orders</h3>
+					<div className="flex justify-between">
+						<h3 className="font-bold">Recent Orders</h3>
+						<button onClick={() => recentQuotesRequest.refetch()}>
+							<Icon name="refresh" />
+						</button>
+					</div>
 
 					{recentQuotesRequest.isLoading && <p>Loading</p>}
 					{recentQuotesRequest.data && (
@@ -242,6 +252,11 @@ const Page: NextPage = () => {
 	});
 
 	const [showPopover, setShowPopover] = useState(false);
+	const [toastState, setToastState] = useState({
+		open: false,
+		type: 'new',
+		quoteId: ''
+	});
 
 	useEffect(() => {
 		formMethods.reset();
@@ -282,13 +297,36 @@ const Page: NextPage = () => {
 				<title>{`${currentSKU.display_name} — Millennium Paving Stones`}</title>
 			</Head>
 
-			{/* Popover */}
-			<Popover show={showPopover} onDismiss={() => setShowPopover(false)}>
+			<ToastProvider duration={5000} swipeDirection="left">
+				<Toast
+					open={toastState.open}
+					onOpenChange={(isOpen) =>
+						setToastState({ ...toastState, open: isOpen })
+					}
+					title="Added to quote"
+					action={
+						<Link
+							className="font-semibold"
+							href={`/quote/${toastState.quoteId}`}
+						>
+							View
+						</Link>
+					}
+					actionAltText="Go to Quote"
+				/>
+			</ToastProvider>
+
+			{/* Dialog */}
+			<Dialog show={showPopover} onDismiss={() => setShowPopover(false)}>
 				<AddTo
 					onCreate={() => {
 						createQuote.mutate(formMethods.watch(), {
-							onSuccess(data) {
-								console.log(`Successfully created quote: ${data.id}`);
+							onSuccess(quoteId) {
+								setToastState({
+									type: 'new',
+									quoteId: quoteId,
+									open: true
+								});
 
 								setShowPopover(false);
 							}
@@ -298,8 +336,12 @@ const Page: NextPage = () => {
 						addItemToQuote.mutate(
 							{ id, item: formMethods.watch() },
 							{
-								onSuccess(data) {
-									console.log(data);
+								onSuccess(quoteId) {
+									setToastState({
+										type: 'existing',
+										quoteId: quoteId,
+										open: true
+									});
 
 									setShowPopover(false);
 								}
@@ -307,7 +349,7 @@ const Page: NextPage = () => {
 						);
 					}}
 				/>
-			</Popover>
+			</Dialog>
 
 			{/* Canvas */}
 			<main className="flex h-[75vh] flex-col bg-zinc-100 pb-16">
@@ -472,18 +514,16 @@ const Page: NextPage = () => {
 											return skuIdFragmentResult;
 										})()}`}
 									>
-										<a>
-											<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-zinc-100" />
+										<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-zinc-100" />
 
-											<div>
-												<h3 className="text-center font-semibold">
-													{product.display_name}
-												</h3>
-												<p className="text-center text-zinc-500">
-													from {formatPrice(product.price)}
-												</p>
-											</div>
-										</a>
+										<div>
+											<h3 className="text-center font-semibold">
+												{product.display_name}
+											</h3>
+											<p className="text-center text-zinc-500">
+												from {formatPrice(product.price)}
+											</p>
+										</div>
 									</Link>
 								</li>
 							))}

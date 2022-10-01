@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Control, Controller, useFormContext } from 'react-hook-form';
 import { Product } from '../types/product';
-import { PickupLocation } from '../types/location';
+import { PickupLocation } from '@prisma/client';
 
 type FormValues = {
 	skuId: string;

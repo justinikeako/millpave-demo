@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { PickupLocation } from '../../types/location';
+import { PickupLocation } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { roundPrice } from '../../utils/price';
 import { getSku, getSkuDetails } from '../mock-db';

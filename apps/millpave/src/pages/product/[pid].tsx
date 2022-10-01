@@ -15,7 +15,7 @@ import QuickCalc from '../../components/quick-calc';
 import { formatNumber, formatPrice } from '../../utils/format';
 import Icon from '../../components/icon';
 import { AnimatePresence, motion } from 'framer-motion';
-import { PickupLocation } from '../../types/location';
+import { PickupLocation } from '@prisma/client';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Toast } from '../../components/toast';
 import { ToastProvider } from '@radix-ui/react-toast';

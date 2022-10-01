@@ -7,6 +7,9 @@
 		"packages/*"
 	],
 	"license": "UNLICENSED",
+	"prisma": {
+		"schema": "apps/millpave/prisma/schema.prisma"
+	},
 	"scripts": {
 		"build": "turbo run build",
 		"dev": "turbo run dev",

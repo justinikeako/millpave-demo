@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { Control, Controller, useFormContext } from 'react-hook-form';
-import { PickupLocation, Product } from '../types/product';
+import { Product } from '../types/product';
+import { PickupLocation } from '../types/location';
 
 type FormValues = {
 	skuId: string;
 	area: number;
+
 	pickupLocation: PickupLocation;
 };
 

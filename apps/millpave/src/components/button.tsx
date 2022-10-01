@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
+import cx from 'classnames';
 import Icon from './icon';
 
 type ButtonProps = {
@@ -41,7 +42,7 @@ const Button = forwardRef<
 		<button
 			{...props}
 			ref={ref}
-			className={`select-none ${classes[variant]} ${className}`}
+			className={cx('select-none', classes[variant], className)}
 		>
 			{/* Icon Left */}
 			{iconLeft && <Icon name={iconLeft} weight={iconWeight} />}

@@ -1,4 +1,5 @@
-import { DetailedHTMLProps, forwardRef, AnchorHTMLAttributes } from 'react';
+import { forwardRef } from 'react';
+import cx from 'classnames';
 import Icon from './icon';
 
 type LinkButton = {
@@ -6,8 +7,9 @@ type LinkButton = {
 	weight?: 'normal' | 'bold';
 	iconRight?: string;
 	iconLeft?: string;
-} & DetailedHTMLProps<
-	AnchorHTMLAttributes<HTMLAnchorElement>,
+	href: string;
+} & React.DetailedHTMLProps<
+	React.AnchorHTMLAttributes<HTMLAnchorElement>,
 	HTMLAnchorElement
 >;
 
@@ -41,7 +43,7 @@ const LinkButton = forwardRef<
 		<a
 			{...props}
 			ref={ref}
-			className={`select-none ${classes[variant]} ${className}`}
+			className={cx('select-none', classes[variant], className)}
 		>
 			{/* Icon Left */}
 			{iconLeft && <Icon name={iconLeft} weight={iconWeight} />}

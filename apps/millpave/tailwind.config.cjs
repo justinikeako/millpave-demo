@@ -4,9 +4,9 @@ module.exports = {
 	content: ['./src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		fontFamily: {
-			display: ['Inter Display', 'sans-serif'],
-			body: ['Inter', 'sans-serif'],
-			sans: ['Inter', 'sans-serif']
+			display: ['InterVar', 'sans-serif'],
+			body: ['InterVar', 'sans-serif'],
+			sans: ['InterVar', 'sans-serif']
 		},
 
 		fontSize: {
@@ -30,9 +30,27 @@ module.exports = {
 				lg: '1rem',
 				xl: '1.5rem',
 				'2xl': '2rem'
+			},
+
+			colors: {
+				bubblegum: {
+					50: '#FDF2FA',
+					100: '#FCE7F6',
+					200: '#FBCFEF',
+					300: '#F9A8E2',
+					400: '#F472CB',
+					500: '#EC48B5',
+					600: '#DB2796',
+					700: '#BE1879',
+					800: '#9D1763',
+					900: '#831855'
+				}
 			}
 		}
 	},
 
-	plugins: [require('@tailwindcss/aspect-ratio')]
+	plugins: [
+		require('@tailwindcss/aspect-ratio'),
+		require('tailwindcss-radix')()
+	]
 };

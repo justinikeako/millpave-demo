@@ -45,7 +45,11 @@ export const quoteRouter = createRouter()
 				where: { id: input.id },
 				include: {
 					customer: true,
-					items: true
+					items: {
+						orderBy: {
+							createdAt: 'asc'
+						}
+					}
 				}
 			});
 
@@ -72,7 +76,7 @@ export const quoteRouter = createRouter()
 			const quotes = await ctx.prisma.quote.findMany({
 				take: 20,
 				include: {
-					items: { take: 5 }
+					items: { orderBy: { createdAt: 'asc' }, take: 5 }
 				}
 			});
 

@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import Button from '../../components/button';
+import { Button } from '../../components/button';
 import { differenceInCalendarDays, format } from 'date-fns';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -14,11 +14,21 @@ import SkuPicker from '../../components/sku-picker';
 import QuickCalc from '../../components/quick-calc';
 import { formatNumber, formatPrice } from '../../utils/format';
 import Icon from '../../components/icon';
-import { AnimatePresence, motion } from 'framer-motion';
 import { PickupLocation } from '@prisma/client';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Toast } from '../../components/toast';
+import {
+	Toast,
+	ToastAction,
+	ToastTitle,
+	ToastViewport
+} from '../../components/toast';
 import { ToastProvider } from '@radix-ui/react-toast';
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogHeader
+} from '../../components/dialog';
 
 function formatRestockDate(date: number) {
 	const difference = differenceInCalendarDays(date, new Date());
@@ -102,78 +112,34 @@ const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
 	);
 };
 
-type DialogProps = PropsWithChildren<{
-	show: boolean;
-	onDismiss: () => void;
-}>;
-
-const Dialog = ({ show, onDismiss, children }: DialogProps) => {
-	const transition = {
-		type: 'spring',
-		damping: 25,
-		stiffness: 200
-	};
-
-	return (
-		<AnimatePresence>
-			{show && (
-				<>
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 0.2 }}
-						exit={{ opacity: 0 }}
-						transition={transition}
-						className="fixed inset-0 z-20  bg-black"
-						onClick={() => onDismiss()}
-					/>
-					<motion.div
-						className="fixed inset-x-0 bottom-0 z-30 rounded-t-2xl bg-white px-8"
-						initial={{ y: '100%' }}
-						animate={{ y: 0 }}
-						exit={{ y: '100%' }}
-						transition={transition}
-					>
-						{children}
-					</motion.div>
-				</>
-			)}
-		</AnimatePresence>
-	);
-};
-
 type AddToProps = { onCreate: () => void; onAdd: (id: string) => void };
 
 const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 	const recentQuotesRequest = trpc.useQuery(['quote.getAll'], {
-		refetchOnMount: false,
 		refetchOnWindowFocus: false
 	});
 
 	return (
 		<>
-			<div className="pt-8 pb-4">
-				<h2 className="font-display text-lg">Add item to...</h2>
-			</div>
-
 			<div className="space-y-8 pt-4 pb-12">
 				<Button
 					variant="secondary"
-					iconLeft="add"
-					className="w-full text-pink-700"
+					className="w-full text-bubblegum-700"
 					onClick={onCreate}
 				>
-					Create New Order
+					<Icon name="add" />
+					<span className="font-semibold">Create New Order</span>
 				</Button>
 
 				<div className="space-y-2">
 					<div className="flex justify-between">
 						<h3 className="font-bold">Recent Orders</h3>
 						<button onClick={() => recentQuotesRequest.refetch()}>
-							<Icon name="refresh" />
+							<Icon name="refresh" opticalSize={20} className="text-lg" />
 						</button>
 					</div>
 
-					{recentQuotesRequest.isLoading && <p>Loading</p>}
+					{recentQuotesRequest.isLoading && <p>Loading...</p>}
 					{recentQuotesRequest.data && (
 						<>
 							<ul className="-mx-4 space-y-1">
@@ -183,7 +149,7 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 										className="flex space-x-2 px-4 py-2"
 										onClick={() => onAdd(quote.id)}
 									>
-										<Icon name="request_quote" weight="normal" />
+										<Icon name="request_quote" weight={300} />
 
 										<div className="w-[calc(100%-32px)]">
 											<div className="flex items-center justify-between">
@@ -208,13 +174,12 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 
 							{recentQuotesRequest.data.length > 2 && (
 								<div className="flex w-full justify-center">
-									<Button
-										variant="tertiary"
-										iconRight="expand_more"
-										className=" text-pink-700"
-									>
-										See more
-									</Button>
+									<DialogClose>
+										<Button variant="tertiary" className=" text-bubblegum-700">
+											<Icon name="expand_more" />
+											See more
+										</Button>
+									</DialogClose>
 								</div>
 							)}
 							{recentQuotesRequest.data.length === 0 && (
@@ -251,7 +216,7 @@ const Page: NextPage = () => {
 		}
 	});
 
-	const [showPopover, setShowPopover] = useState(false);
+	const [dialogOpen, setDialogOpen] = useState(false);
 	const [toastState, setToastState] = useState({
 		open: false,
 		type: 'new',
@@ -301,58 +266,25 @@ const Page: NextPage = () => {
 				<Toast
 					open={toastState.open}
 					onOpenChange={(isOpen) =>
-						setToastState({ ...toastState, open: isOpen })
+						setToastState((toastState) => ({ ...toastState, open: isOpen }))
 					}
-					title="Added to quote"
-					action={
+				>
+					<ToastTitle>Added to quote</ToastTitle>
+					<ToastAction altText="View Quote" asChild>
 						<Link
 							className="font-semibold"
 							href={`/quote/${toastState.quoteId}`}
 						>
 							View
 						</Link>
-					}
-					actionAltText="Go to Quote"
-				/>
+					</ToastAction>
+				</Toast>
+
+				<ToastViewport />
 			</ToastProvider>
 
-			{/* Dialog */}
-			<Dialog show={showPopover} onDismiss={() => setShowPopover(false)}>
-				<AddTo
-					onCreate={() => {
-						createQuote.mutate(formMethods.watch(), {
-							onSuccess(quoteId) {
-								setToastState({
-									type: 'new',
-									quoteId: quoteId,
-									open: true
-								});
-
-								setShowPopover(false);
-							}
-						});
-					}}
-					onAdd={(id) => {
-						addItemToQuote.mutate(
-							{ id, item: formMethods.watch() },
-							{
-								onSuccess(quoteId) {
-									setToastState({
-										type: 'existing',
-										quoteId: quoteId,
-										open: true
-									});
-
-									setShowPopover(false);
-								}
-							}
-						);
-					}}
-				/>
-			</Dialog>
-
 			{/* Canvas */}
-			<main className="flex h-[75vh] flex-col bg-zinc-100 pb-16">
+			<main className="-z-10 flex h-[75vh] flex-col bg-zinc-100 pb-16">
 				<ErrorBoundary
 					fallbackRender={() => (
 						<p>Model failed to load. Refresh page to try again.</p>
@@ -363,182 +295,227 @@ const Page: NextPage = () => {
 			</main>
 
 			{/* Bottom Sheet */}
-			<aside className="relative z-10 -mt-8 space-y-12 rounded-2xl bg-white px-8 pb-16 pt-12">
-				{/* Header */}
-				<section className="space-y-2">
-					<p>{product.data.category.display_name}</p>
-					<h1 className="font-display text-xl font-semibold leading-tight">
-						{currentSKU.display_name}
-					</h1>
-					<div className="flex flex-wrap justify-between text-zinc-500">
-						<p>{formatPrice(skuPrice)}/sqft</p>
+			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+				<DialogContent open={dialogOpen}>
+					<DialogHeader title="Add item to..." />
+					<AddTo
+						onCreate={() => {
+							createQuote.mutate(formMethods.watch(), {
+								onSuccess(quoteId) {
+									setToastState({
+										type: 'new',
+										quoteId: quoteId,
+										open: true
+									});
 
-						<div className="flex space-x-1">
-							<Stock
-								fulfillment={product.data}
-								pickupLocation={pickupLocation}
-								skuId={skuId}
-							/>
+									setDialogOpen(false);
+								}
+							});
+						}}
+						onAdd={(id) => {
+							addItemToQuote.mutate(
+								{ id, item: formMethods.watch() },
+								{
+									onSuccess(quoteId) {
+										setToastState({
+											type: 'existing',
+											quoteId: quoteId,
+											open: true
+										});
 
-							<div>
-								<Button variant="tertiary" iconLeft="info" weight="normal" />
+										setDialogOpen(false);
+									}
+								}
+							);
+						}}
+					/>
+				</DialogContent>
+
+				<aside className="relative -mt-8 space-y-12 rounded-2xl bg-white px-8 pb-16 pt-12">
+					{/* Header */}
+					<section className="space-y-2">
+						<p>{product.data.category.display_name}</p>
+						<h1 className="font-display text-xl font-semibold leading-tight">
+							{currentSKU.display_name}
+						</h1>
+						<div className="flex flex-wrap justify-between text-zinc-500">
+							<p>{formatPrice(skuPrice)}/sqft</p>
+
+							<div className="flex space-x-1">
+								<Stock
+									fulfillment={product.data}
+									pickupLocation={pickupLocation}
+									skuId={skuId}
+								/>
+
+								<div>
+									<Button variant="tertiary">
+										<Icon name="info" weight={300} />
+									</Button>
+								</div>
 							</div>
 						</div>
-					</div>
-				</section>
+					</section>
 
-				<FormProvider {...formMethods}>
-					<form
-						key={productId}
-						className="space-y-12"
-						onSubmit={formMethods.handleSubmit(() => {
-							setShowPopover(true);
-						})}
-					>
-						{/* Color Picker */}
-						<SkuPicker
-							control={formMethods.control}
-							value={skuId}
-							product={product.data}
-							header={SectionHeader}
-							onChange={(newSkuFragments) => {
-								const newSkuQuery = newSkuFragments.join('+');
-								router.push(
-									`/product/${productId}?sku=${newSkuQuery}`,
-									undefined,
-									{
-										shallow: true,
-										scroll: false
-									}
-								);
-							}}
-						/>
-
-						{/* QuickCalc */}
-						<QuickCalc
-							control={formMethods.control}
-							convertConfig={{
-								skuPrice,
-								productDetails,
-								pickupLocation
-							}}
-							header={SectionHeader}
-						/>
-					</form>
-				</FormProvider>
-
-				{/* Product Details */}
-				<section className="space-y-4">
-					<SectionHeader title="Product Details" />
-
-					<ul className="-mx-4">
-						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
-							<p>Dimensions</p>
-							<p>
-								{productDetails.dimensions[0]} in x{' '}
-								{productDetails.dimensions[1]} in x{' '}
-								{productDetails.dimensions[2]} in
-							</p>
-						</li>
-						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
-							<p>Weight per unit</p>
-							<p>{productDetails.lbs_per_unit} lbs</p>
-						</li>
-						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
-							<p>Area per pallet</p>
-							<p>{productDetails.sqft_per_pallet} sqft</p>
-						</li>
-						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
-							<p>Units per pallet</p>
-							<p>{productDetails.units_per_pallet}</p>
-						</li>
-						<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
-							<p>Pieces per sqft</p>
-							<p>{productDetails.pcs_per_sqft}</p>
-						</li>
-					</ul>
-				</section>
-
-				{/* Product Gallery */}
-				<section className="space-y-4">
-					<SectionHeader title="Product Gallery" />
-
-					<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory space-x-2 overflow-x-scroll px-4">
-						<li className="shrink-0 basis-2"></li>
-
-						{product.data.gallery.map(({ id, img_url }) => (
-							<li
-								key={id}
-								className="relative h-64 shrink-0 basis-full snap-center overflow-hidden rounded-lg bg-zinc-100"
-							>
-								{/* eslint-disable-next-line @next/next/no-img-element */}
-								<img
-									className="min-h-full min-w-full"
-									src={img_url}
-									loading="lazy"
-									alt="Paving Stones"
+					<FormProvider {...formMethods}>
+						<form
+							key={productId}
+							className="space-y-4"
+							onSubmit={formMethods.handleSubmit(() => {
+								setDialogOpen(true);
+							})}
+						>
+							<div className="space-y-12">
+								{/* Color Picker */}
+								<SkuPicker
+									control={formMethods.control}
+									value={skuId}
+									product={product.data}
+									header={SectionHeader}
+									onChange={(newSkuFragments) => {
+										const newSkuQuery = newSkuFragments.join('+');
+										router.replace(
+											`/product/${productId}?sku=${newSkuQuery}`,
+											undefined,
+											{
+												shallow: true,
+												scroll: false
+											}
+										);
+									}}
 								/>
 
-								<Button
-									variant="tertiary"
-									iconLeft="info"
-									className="absolute left-4 bottom-4 text-white drop-shadow-lg"
+								{/* QuickCalc */}
+								<QuickCalc
+									control={formMethods.control}
+									convertConfig={{
+										skuPrice,
+										productDetails,
+										pickupLocation
+									}}
+									header={SectionHeader}
 								/>
+							</div>
+
+							<div className="flex flex-col space-y-2">
+								<Button type="submit" variant="primary">
+									<span className="font-semibold">Add to...</span>
+								</Button>
+							</div>
+						</form>
+					</FormProvider>
+
+					{/* Product Details */}
+					<section className="space-y-4">
+						<SectionHeader title="Product Details" />
+
+						<ul className="-mx-4">
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+								<p>Dimensions</p>
+								<p>
+									{productDetails.dimensions[0]} in x{' '}
+									{productDetails.dimensions[1]} in x{' '}
+									{productDetails.dimensions[2]} in
+								</p>
 							</li>
-						))}
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+								<p>Weight per unit</p>
+								<p>{productDetails.lbs_per_unit} lbs</p>
+							</li>
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+								<p>Area per pallet</p>
+								<p>{productDetails.sqft_per_pallet} sqft</p>
+							</li>
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+								<p>Units per pallet</p>
+								<p>{productDetails.units_per_pallet}</p>
+							</li>
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+								<p>Pieces per sqft</p>
+								<p>{productDetails.pcs_per_sqft}</p>
+							</li>
+						</ul>
+					</section>
 
-						<li className="shrink-0 basis-2"></li>
-					</ul>
-				</section>
+					{/* Product Gallery */}
+					<section className="space-y-4">
+						<SectionHeader title="Product Gallery" />
 
-				{/* Recommendations */}
-				<section className="space-y-4">
-					<SectionHeader title={`Similar to ${product.data.display_name}`} />
+						<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory space-x-2 overflow-x-scroll px-4">
+							<li className="shrink-0 basis-2"></li>
 
-					<div className="-mx-4 flex flex-col items-center space-y-8">
-						<ul className="grid w-full grid-cols-2 gap-2">
-							{product.data.similar_products.map((product) => (
-								<li key={product.id} className="items-center space-y-2">
-									<Link
-										href={`/product/${product.id}?sku=${(() => {
-											const colorId = skuIdFragment.split(':').at(-1);
+							{product.data.gallery.map(({ id, img_url }) => (
+								<li
+									key={id}
+									className="relative h-64 shrink-0 basis-full snap-center overflow-hidden rounded-lg bg-zinc-100"
+								>
+									{/* eslint-disable-next-line @next/next/no-img-element */}
+									<img
+										className="min-h-full min-w-full"
+										src={img_url}
+										loading="lazy"
+										alt="Paving Stones"
+									/>
 
-											const defaultSkuIdFragmentList =
-												product.default_sku_id_fragment.map((val) => {
-													return val === '[color]' ? colorId : val;
-												});
-
-											const skuIdFragmentResult =
-												defaultSkuIdFragmentList.join('+');
-
-											return skuIdFragmentResult;
-										})()}`}
+									<Button
+										variant="tertiary"
+										className="absolute left-4 bottom-4 text-white drop-shadow-lg"
 									>
-										<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-zinc-100" />
-
-										<div>
-											<h3 className="text-center font-semibold">
-												{product.display_name}
-											</h3>
-											<p className="text-center text-zinc-500">
-												from {formatPrice(product.price)}
-											</p>
-										</div>
-									</Link>
+										<Icon name="info" />
+									</Button>
 								</li>
 							))}
-						</ul>
 
-						<Button
-							variant="tertiary"
-							iconRight="expand_more"
-							className="text-pink-700"
-						>
-							Show more products
-						</Button>
-					</div>
-				</section>
-			</aside>
+							<li className="shrink-0 basis-2"></li>
+						</ul>
+					</section>
+
+					{/* Recommendations */}
+					<section className="space-y-4">
+						<SectionHeader title={`Similar to ${product.data.display_name}`} />
+
+						<div className="-mx-4 flex flex-col items-center space-y-8">
+							<ul className="grid w-full grid-cols-2 gap-2">
+								{product.data.similar_products.map((product) => (
+									<li key={product.id} className="items-center space-y-2">
+										<Link
+											href={`/product/${product.id}?sku=${(() => {
+												const colorId = skuIdFragment.split(':').at(-1);
+
+												const defaultSkuIdFragmentList =
+													product.default_sku_id_fragment.map((val) => {
+														return val === '[color]' ? colorId : val;
+													});
+
+												const skuIdFragmentResult =
+													defaultSkuIdFragmentList.join('+');
+
+												return skuIdFragmentResult;
+											})()}`}
+										>
+											<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-zinc-100" />
+
+											<div>
+												<h3 className="text-center font-semibold">
+													{product.display_name}
+												</h3>
+												<p className="text-center text-zinc-500">
+													from {formatPrice(product.price)}
+												</p>
+											</div>
+										</Link>
+									</li>
+								))}
+							</ul>
+
+							<Button variant="tertiary" className="text-bubblegum-700">
+								<Icon name="expand_more" />
+								<span>Show more products</span>
+							</Button>
+						</div>
+					</section>
+				</aside>
+			</Dialog>
 		</>
 	);
 };

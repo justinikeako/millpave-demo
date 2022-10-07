@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import NextError from 'next/error';
 import Head from 'next/head';
 import Link from 'next/link';
-import Button from '../components/button';
+import { Button } from '../components/button';
 import { trpc } from '../utils/trpc';
 
 const Page: NextPage = () => {

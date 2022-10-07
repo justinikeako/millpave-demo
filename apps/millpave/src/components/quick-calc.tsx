@@ -2,9 +2,18 @@ import { Control, Controller, useFormContext } from 'react-hook-form';
 import { evaluate, number } from 'mathjs';
 import { ProductDetails } from '../types/product';
 import { useEffect, useState } from 'react';
-import Button from './button';
+import { Button } from './button';
 import { formatNumber, formatPrice } from '../utils/format';
 import { PickupLocation } from '@prisma/client';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectScrollDownButton,
+	SelectScrollUpButton,
+	SelectTrigger,
+	SelectViewport
+} from './select';
 
 type Unit = 'sqft' | 'sqin' | 'sqm' | 'sqcm' | 'pcs' | 'pal' | 'jmd';
 
@@ -177,7 +186,7 @@ type QuickCalcProps = {
 };
 
 const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
-	const { watch, register, setValue } = useFormContext<FormValues>();
+	const { watch, setValue } = useFormContext<FormValues>();
 
 	const { skuId, area, pickupLocation } = watch();
 	const [showWork, setShowWork] = useState(false);
@@ -210,7 +219,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 			<div className="flex space-x-2">
 				<label
 					htmlFor="quickcalc-value"
-					className="flex flex-1 space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-700"
+					className="flex flex-1 space-x-2 rounded-md p-4 shadow-[inset_0_0_0_1px_#d4d4d8] focus-within:shadow-[inset_0_0_0_2px_#be185d]"
 				>
 					<Controller
 						control={control}
@@ -276,7 +285,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 								<input
 									{...field}
 									id="quickcalc-value"
-									type="text"
+									type="texxt"
 									autoComplete="off"
 									placeholder={quicKCalcPlaceholder[unit]}
 									className="w-[100%] placeholder-zinc-500 outline-none"
@@ -381,59 +390,67 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 					/>
 				</label>
 
-				<label
-					htmlFor="quickcalc-unit"
-					className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-700"
+				<Select
+					value={unit}
+					onValueChange={(newUnit: Unit) => {
+						const oldUnit = unit;
+
+						const parsedInputValue = parseFloat(noEmptyStrings(qcInputValue));
+
+						const inputValueAsSqft = convert(
+							parsedInputValue,
+							convertConfig
+						).toSqftFrom(oldUnit).unroundedArea;
+
+						const convertedValue = convert(
+							inputValueAsSqft,
+							convertConfig
+						).fromSqftTo(newUnit);
+
+						setQcInputValue(convertedValue.toString());
+						setUnit(newUnit);
+					}}
 				>
-					<select
-						value={unit}
-						onChange={(e) => {
-							const oldUnit = unit;
-							const newUnit = e.target.value as Unit;
-
-							const parsedInputValue = parseFloat(noEmptyStrings(qcInputValue));
-
-							const inputValueAsSqft = convert(
-								parsedInputValue,
-								convertConfig
-							).toSqftFrom(oldUnit).unroundedArea;
-
-							const convertedValue = convert(
-								inputValueAsSqft,
-								convertConfig
-							).fromSqftTo(newUnit);
-
-							setQcInputValue(convertedValue.toString());
-							setUnit(newUnit);
-						}}
-						id="quickcalc-unit"
-						className="bg-transparent outline-none"
-					>
-						<option value="pcs">pcs</option>
-						<option value="pal">pal</option>
-						<option value="sqft">sqft</option>
-						<option value="sqin">sqin</option>
-						<option value="sqm">sqm</option>
-						<option value="sqcm">sqcm</option>
-						<option value="jmd">$</option>
-					</select>
-				</label>
+					<SelectTrigger />
+					<SelectContent>
+						<SelectScrollUpButton />
+						<SelectViewport>
+							<SelectItem value="pcs">pcs</SelectItem>
+							<SelectItem value="pal">pal</SelectItem>
+							<SelectItem value="sqft">sqft</SelectItem>
+							<SelectItem value="sqin">sqin</SelectItem>
+							<SelectItem value="sqm">sqm</SelectItem>
+							<SelectItem value="sqcm">sqcm</SelectItem>
+							<SelectItem value="jmd">JMD</SelectItem>
+						</SelectViewport>
+						<SelectScrollDownButton />
+					</SelectContent>
+				</Select>
 			</div>
 
 			{/* Delivery Location */}
 			<div className="flex flex-wrap justify-between">
-				<select className="bg-transparent" {...register('pickupLocation')}>
-					<option value="FACTORY">Factory Pickup</option>
-					<option value="SHOWROOM">Showroom Pickup</option>
-				</select>
+				<Select
+					value={pickupLocation}
+					onValueChange={(newValue) =>
+						setValue('pickupLocation', newValue as PickupLocation)
+					}
+				>
+					<SelectTrigger basic />
+					<SelectContent>
+						<SelectViewport>
+							<SelectItem value="FACTORY">Factory Pickup</SelectItem>
+							<SelectItem value="SHOWROOM">Showroom Pickup</SelectItem>
+						</SelectViewport>
+					</SelectContent>
+				</Select>
 				<Button
 					variant="tertiary"
 					type="button"
-					weight="normal"
 					className="text-zinc-500"
 					onClick={() => setShowWork(!showWork)}
 				>
-					{showWork ? 'Hide Work' : 'Show Work'}
+					<span>{showWork ? 'Hide Work' : 'Show Work'}</span>
 				</Button>
 			</div>
 
@@ -470,19 +487,13 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 						</li>
 					</>
 				)}
-				<li className="flex flex-wrap justify-between font-semibold text-pink-700">
+				<li className="flex flex-wrap justify-between font-semibold text-bubblegum-700">
 					<label htmlFor="quickcalc-total">Total</label>
 					<output id="quickcalc-total" htmlFor="quickcalc-value">
 						{formatPrice(quickCalc.total)}
 					</output>
 				</li>
 			</ul>
-
-			<div className="flex flex-col space-y-2">
-				<Button type="submit" variant="primary">
-					Add to...
-				</Button>
-			</div>
 		</section>
 	);
 };

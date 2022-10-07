@@ -1,11 +1,12 @@
 import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { SKU } from '../types/product';
-import LinkButton from './link-button';
+import { LinkButton } from './link-button';
 import { useGLTF } from '@react-three/drei';
 import { GLTF, USDZExporter } from 'three-stdlib';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import Icon from './icon';
 
 type GLTFResult = GLTF & {
 	nodes: {
@@ -75,7 +76,6 @@ function IOSARLink({ scene, ...props }: iOSARLinkProps) {
 		<LinkButton
 			ref={linkButtonRef}
 			variant="secondary"
-			iconLeft="view_in_ar_new"
 			id="link"
 			rel="ar"
 			download="asset.usdz"
@@ -83,7 +83,8 @@ function IOSARLink({ scene, ...props }: iOSARLinkProps) {
 		>
 			{/* eslint-disable-next-line jsx-a11y/alt-text */}
 			<img />
-			View in Your Space
+			<Icon name="view_in_ar_new" />
+			<span className="font-semibold">View in Your Space</span>
 		</LinkButton>
 	);
 }
@@ -103,10 +104,10 @@ function AndroidARLink({ file, title, link }: AndroidARLinkProps) {
 	return (
 		<LinkButton
 			variant="secondary"
-			iconLeft="view_in_ar_new"
 			href={`intent://arvr.google.com/scene-viewer/1.0?file=${file}&mode=${mode}&title=${encodedTitle}&link=${link}&resizable=${resizable}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${fallback_url};end;`}
 		>
-			View in Your Space
+			<Icon name="view_in_ar_new" />
+			<span className="font-semibold">View in Your Space</span>
 		</LinkButton>
 	);
 }

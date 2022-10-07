@@ -2,11 +2,20 @@ import { NextPage } from 'next';
 import NextError from 'next/error';
 import Head from 'next/head';
 import { FC, PropsWithChildren, useState } from 'react';
-import Button from '../../components/button';
+import { Button } from '../../components/button';
 import Icon from '../../components/icon';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { trpc } from '../../utils/trpc';
 import { useRouter } from 'next/router';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectScrollDownButton,
+	SelectScrollUpButton,
+	SelectTrigger,
+	SelectViewport
+} from '../../components/select';
 
 function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {
@@ -76,7 +85,7 @@ const Page: NextPage = () => {
 				<title>{`${order.data.title} — Millennium Paving Stones`}</title>
 			</Head>
 
-			<main className="space-y-16 px-8 py-24">
+			<main className="space-y-16 px-8 py-16">
 				<h1 className="font-display text-2xl font-semibold">
 					{order.data.title}
 				</h1>
@@ -116,26 +125,28 @@ const Page: NextPage = () => {
 							<span>Area Overage</span>
 
 							<span>
-								<Button variant="tertiary" iconLeft="info" weight="normal" />
+								<Button variant="tertiary">
+									<Icon name="info" weight={300} />
+								</Button>
 							</span>
 						</p>
 
-						<label
-							htmlFor="overage"
-							className="flex space-x-2 rounded-md border border-zinc-300 p-4 focus-within:outline focus-within:outline-2 focus-within:outline-pink-700"
+						<Select
+							value={overage}
+							onValueChange={(newOverage) => setOverage(newOverage)}
 						>
-							<select
-								name="overage"
-								value={overage}
-								onChange={(e) => setOverage(e.currentTarget.value)}
-								className="bg-transparent outline-none"
-							>
-								<option value="10">10%</option>
-								<option value="5">5%</option>
-								<option value="3">3%</option>
-								<option value="none">None</option>
-							</select>
-						</label>
+							<SelectTrigger />
+							<SelectContent>
+								<SelectScrollUpButton />
+								<SelectViewport>
+									<SelectItem value="10">10%</SelectItem>
+									<SelectItem value="5">5%</SelectItem>
+									<SelectItem value="3">3%</SelectItem>
+									<SelectItem value="none">None</SelectItem>
+								</SelectViewport>
+								<SelectScrollDownButton />
+							</SelectContent>
+						</Select>
 					</div>
 
 					{/* Overage Warning */}
@@ -154,7 +165,7 @@ const Page: NextPage = () => {
 					)}
 
 					{/* Item List */}
-					<ul className="!mt-8">
+					<ul className="!mt-8 space-y-12">
 						{order.data.items.map((item) => (
 							<li
 								key={item.id}
@@ -167,7 +178,7 @@ const Page: NextPage = () => {
 									</h3>
 									<div className="flex justify-between">
 										<p className="font-semibold">
-											{formatNumber(item.quantity)} pallets
+											{formatNumber(item.quantity)} pieces
 										</p>
 										<p className="font-semibold">{formatPrice(item.price)}</p>
 									</div>
@@ -180,11 +191,13 @@ const Page: NextPage = () => {
 											&nbsp;
 											<b>{formatRestockDate(item.closest_restock_date)}</b>
 											&nbsp;at&nbsp;
-											<span className="inline-block text-pink-600">
+											<span className="inline-block text-bubblegum-600">
 												Our St. Thomas Factory
 											</span>
 										</p>
-										<Button variant="tertiary" iconLeft="edit" />
+										<Button variant="tertiary">
+											<Icon name="edit" />
+										</Button>
 									</div>
 								</div>
 							</li>
@@ -217,22 +230,19 @@ const Page: NextPage = () => {
 							<p>Tax</p>
 							<p className="tabular-nums">{formatPrice(order.data.tax)}</p>
 						</li>
-						<li className="flex justify-between py-1 font-semibold text-pink-700">
+						<li className="flex justify-between py-1 font-semibold text-bubblegum-700">
 							<p>Total</p>
 							<p className="tabular-nums">{formatPrice(order.data.total)}</p>
 						</li>
 					</ul>
 
 					<div className="space-y-2">
-						<Button
-							variant="primary"
-							iconLeft="point_of_sale"
-							className="w-full"
-						>
-							Check Out
+						<Button variant="primary" className="w-full">
+							<Icon name="point_of_sale" />
+							<span className="font-semibold">Check Out</span>
 						</Button>
-						<Button variant="secondary" className="w-full text-pink-700">
-							Send as Quote
+						<Button variant="secondary" className="w-full text-bubblegum-700">
+							<span className="font-semibold">Send as Quote</span>
 						</Button>
 					</div>
 				</section>
@@ -254,7 +264,7 @@ const Page: NextPage = () => {
 									<p>{formatPrice(item.price)}</p>
 								</div>
 								<Button variant="primary" className="w-full">
-									Add to Order
+									<span className="font-semibold">Add to Order</span>
 								</Button>
 							</li>
 						))}

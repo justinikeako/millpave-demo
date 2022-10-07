@@ -8,39 +8,33 @@
 	}
 
 	@font-face {
-		font-family: 'Inter Display';
-		src: url('/fonts/InterDisplay-SemiBold.woff2') format('woff2');
-		font-weight: 600;
-		font-style: normal;
+		font-family: 'InterVar';
+		font-weight: 100 900;
 		font-display: swap;
-	}
-
-	@font-face {
-		font-family: 'Inter Display';
-		src: url('/fonts/InterDisplay-Bold.woff2') format('woff2');
-		font-weight: 700;
 		font-style: normal;
-		font-display: swap;
-	}
-
-	@font-face {
-		font-family: 'Inter';
-		src: url('/fonts/Inter-Regular.woff2') format('woff2');
-		font-weight: 400;
-		font-style: normal;
-		font-display: block;
-	}
-
-	@font-face {
-		font-family: 'Inter';
-		src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
-		font-weight: 600;
-		font-style: normal;
-		font-display: swap;
+		font-named-instance: 'Regular';
+		src: url('/fonts/Inter.var.woff2?v=3.19') format('woff2-variations'),
+			url('/fonts/Inter.var.woff2?v=3.19') format('woff2');
 	}
 
 	.no-scrollbar::-webkit-scrollbar {
 		display: none;
 		-webkit-appearance: none;
+	}
+}
+
+@layer utilities {
+	.font-display {
+		font-variation-settings: 'opsz' 48;
+	}
+
+	.material-symbols-outlined {
+		--fill: 0;
+		--weight: 400;
+		--grade: 0;
+		--optical-size: 24;
+
+		font-variation-settings: 'FILL' var(--fill), 'wght' var(--weight),
+			'GRAD' var(--grade), 'opsz' var(--optical-size);
 	}
 }

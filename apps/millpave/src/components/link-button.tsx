@@ -1,13 +1,8 @@
 import { forwardRef } from 'react';
 import cx from 'classnames';
-import Icon from './icon';
 
-type LinkButton = {
+type LinkButtonProps = {
 	variant: 'primary' | 'secondary' | 'tertiary';
-	weight?: 'normal' | 'bold';
-	iconRight?: string;
-	iconLeft?: string;
-	href: string;
 } & React.DetailedHTMLProps<
 	React.AnchorHTMLAttributes<HTMLAnchorElement>,
 	HTMLAnchorElement
@@ -15,46 +10,25 @@ type LinkButton = {
 
 const classes = {
 	primary:
-		'flex justify-center space-x-2 rounded-md bg-pink-700 px-6 py-4 text-white',
+		'flex justify-center space-x-1.5 rounded-md bg-bubblegum-700 px-6 py-4 text-white',
 	secondary:
-		'flex justify-center space-x-2 rounded-md border border-neutral-300 px-6 py-4',
+		'flex justify-center space-x-1.5 rounded-md border border-neutral-300 px-6 py-4',
 	tertiary: '-m-4 flex justify-center space-x-2 rounded-md p-4'
 };
 
 const LinkButton = forwardRef<
 	HTMLAnchorElement,
-	React.PropsWithChildren<LinkButton>
->(function Button(
-	{
-		variant,
-		weight = 'bold',
-		iconLeft,
-		iconRight,
-		className,
-		children,
-		...props
-	},
-	ref
-) {
-	const iconWeight = weight === 'normal' ? 'normal' : 'bold';
-	const textWeight = weight === 'normal' ? 'font-normal' : 'font-semibold';
-
+	React.PropsWithChildren<LinkButtonProps>
+>(function LinkButton({ variant, className, children, ...props }, ref) {
 	return (
 		<a
 			{...props}
 			ref={ref}
 			className={cx('select-none', classes[variant], className)}
 		>
-			{/* Icon Left */}
-			{iconLeft && <Icon name={iconLeft} weight={iconWeight} />}
-
-			{/* Button Text */}
-			{children && <span className={textWeight}>{children}</span>}
-
-			{/* Icon Right */}
-			{iconRight && <Icon name={iconRight} weight={iconWeight} />}
+			{children}
 		</a>
 	);
 });
 
-export default LinkButton;
+export { LinkButton };

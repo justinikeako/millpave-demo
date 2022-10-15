@@ -1,12 +1,12 @@
-import { OrbitControls } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { SKU } from '../types/product';
-import { LinkButton } from './link-button';
 import { useGLTF } from '@react-three/drei';
 import { GLTF, USDZExporter } from 'three-stdlib';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import { Button } from './button';
 import Icon from './icon';
+import { motion, MotionValue, useScroll, useTransform } from 'framer-motion';
 
 type GLTFResult = GLTF & {
 	nodes: {
@@ -59,7 +59,7 @@ function IOSARLink({ scene, ...props }: iOSARLinkProps) {
 			const eventWithData = event as unknown as { data: string };
 
 			if (eventWithData.data === '_apple_ar_quicklook_button_tapped') {
-				router.push('/quote');
+				router.push('/quote/create');
 			}
 		}
 
@@ -73,19 +73,22 @@ function IOSARLink({ scene, ...props }: iOSARLinkProps) {
 	}, []);
 
 	return (
-		<LinkButton
-			ref={linkButtonRef}
-			variant="secondary"
-			id="link"
-			rel="ar"
-			download="asset.usdz"
-			href={`${blobLink}#checkoutTitle=${encoded.title}&callToAction=${encoded.callToAction}&customHeight=small`}
-		>
-			{/* eslint-disable-next-line jsx-a11y/alt-text */}
-			<img />
-			<Icon name="view_in_ar_new" />
-			<span className="font-semibold">View in Your Space</span>
-		</LinkButton>
+		<Button asChild variant="secondary" className="relative">
+			<div>
+				<a
+					ref={linkButtonRef}
+					href={`${blobLink}#allowsContentScaling=0&canonicalWebPageURL=https://millpave.com/&callToAction=${encoded.callToAction}&checkoutTitle=${encoded.title}&checkoutSubtitle=Paving%20Stone%20`}
+					rel="ar"
+					className="absolute inset-0"
+					download="asset.usdz"
+				>
+					{/* eslint-disable-next-line jsx-a11y/alt-text */}
+					<img />
+				</a>
+				<Icon name="view_in_ar_new" />
+				<span className="font-semibold">View in Your Space</span>
+			</div>
+		</Button>
 	);
 }
 
@@ -102,26 +105,27 @@ function AndroidARLink({ file, title, link }: AndroidARLinkProps) {
 	const fallback_url = `https://millpave.notprimitive.com/no-ar`;
 
 	return (
-		<LinkButton
-			variant="secondary"
-			href={`intent://arvr.google.com/scene-viewer/1.0?file=${file}&mode=${mode}&title=${encodedTitle}&link=${link}&resizable=${resizable}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${fallback_url};end;`}
-		>
-			<Icon name="view_in_ar_new" />
-			<span className="font-semibold">View in Your Space</span>
-		</LinkButton>
+		<Button variant="secondary" asChild>
+			<a
+				href={`intent://arvr.google.com/scene-viewer/1.0?file=${file}&mode=${mode}&title=${encodedTitle}&link=${link}&resizable=${resizable}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${fallback_url};end;`}
+			>
+				<Icon name="view_in_ar_new" />
+				<span className="font-semibold">View in Your Space</span>
+			</a>
+		</Button>
 	);
 }
 
 type ModelProps = {
 	file: string;
-	onSceneChange: (scene: THREE.Group) => void;
+	onSceneChange?: (scene: THREE.Group) => void;
 };
 
 function Model({ file, onSceneChange }: ModelProps) {
 	const { nodes, materials, scene } = useGLTF(file) as unknown as GLTFResult;
 
 	useEffect(() => {
-		onSceneChange(scene);
+		if (onSceneChange) onSceneChange(scene);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [scene.id]);
@@ -165,6 +169,105 @@ const useMobileDetect = () => {
 	return getMobileDetect(userAgent);
 };
 
+function degreesToRadians(degrees: number) {
+	return (degrees * Math.PI) / 180;
+}
+
+type SceneProps = ModelProps & {
+	scrollProgress: MotionValue<number>;
+};
+
+const Scene = ({ file, scrollProgress, onSceneChange }: SceneProps) => {
+	const yAngle = useTransform(
+		scrollProgress,
+		[0, 0.333, 0.666, 1],
+		[
+			degreesToRadians(0),
+			degreesToRadians(65),
+			degreesToRadians(90),
+			degreesToRadians(90)
+		]
+	);
+	const xAngle = useTransform(
+		scrollProgress,
+		[0, 0.333, 0.666, 1],
+		[0, degreesToRadians(45), degreesToRadians(90), degreesToRadians(180)]
+	);
+
+	const distance = useTransform(
+		scrollProgress,
+		[0, 0.333, 0.666, 1],
+		[0.5, 0.45, 0.45, 0.45]
+	);
+
+	useFrame(({ camera }) => {
+		camera.position.setFromSphericalCoords(
+			distance.get(),
+			yAngle.get(),
+			xAngle.get()
+		);
+
+		camera.updateProjectionMatrix();
+		camera.lookAt(0, 0, 0);
+	});
+
+	return (
+		<>
+			<ambientLight />
+			<pointLight position={[-2, -2, 2]} intensity={0.5} />
+			<pointLight position={[-2, 2, -2]} intensity={1} />
+
+			<Model file={file} onSceneChange={onSceneChange} />
+		</>
+	);
+};
+
+type SlideIndicatorProps = {
+	scrollProgress: MotionValue<number>;
+};
+
+type DotProps = {
+	scrollProgress: MotionValue<number>;
+	index: number;
+};
+
+const Dot = ({ index: dotIndex, scrollProgress }: DotProps) => {
+	const inputArray = [0, 0.333, 0.666, 1];
+
+	const scaleArray = inputArray.map((_, index) => {
+		if (dotIndex === index) return 1;
+		else if (Math.abs(dotIndex - index) === 1) return 0.75;
+		else return 0.5;
+	});
+
+	const opacityArray = inputArray.map((_, index) => {
+		if (dotIndex === index) return 1;
+		else if (Math.abs(dotIndex - index) === 1) return 0.5;
+		else return 0.25;
+	});
+
+	const scale = useTransform(scrollProgress, [0, 0.333, 0.666, 1], scaleArray);
+
+	const opacity = useTransform(scrollProgress, inputArray, opacityArray);
+
+	return (
+		<motion.div
+			className="h-2 w-2 rounded-full bg-zinc-400"
+			style={{ scale, opacity }}
+		/>
+	);
+};
+const SlideIndicator = ({ scrollProgress }: SlideIndicatorProps) => {
+	return (
+		<div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 -translate-y-1/2 space-x-1">
+			<Dot index={0} scrollProgress={scrollProgress} />
+			<Dot index={1} scrollProgress={scrollProgress} />
+			<Dot index={2} scrollProgress={scrollProgress} />
+			<Dot index={3} scrollProgress={scrollProgress} />
+		</div>
+	);
+};
+
 type ProductViewerProps = {
 	sku: SKU;
 };
@@ -181,27 +284,34 @@ function ProductViewer({ sku }: ProductViewerProps) {
 	const { isIos, isAndroid } = useMobileDetect();
 	const [scene, setScene] = useState<THREE.Group>();
 
+	const containerRef = useRef<HTMLDivElement>(null);
+
+	const { scrollXProgress } = useScroll({
+		container: containerRef
+	});
+
 	return (
 		<>
 			<div className="flex-1">
-				<Canvas
-					frameloop="demand"
-					camera={{ position: [0, 0.45, 0], near: 0.01, far: 2, fov: 45 }}
+				<div
+					ref={containerRef}
+					className="no-scrollbar flex h-full snap-x snap-mandatory overflow-x-scroll"
 				>
-					<OrbitControls
-						enablePan={false}
-						minDistance={0.3}
-						maxDistance={0.6}
-						minPolarAngle={0}
-						maxPolarAngle={Math.PI / 2}
-					/>
-
-					<ambientLight />
-					<pointLight position={[-2, -2, 2]} intensity={0.5} />
-					<pointLight position={[-2, 2, -2]} intensity={1} />
-
-					<Model file={file} onSceneChange={(scene) => setScene(scene)} />
-				</Canvas>
+					<div className="sticky left-0 h-full w-screen shrink-0 snap-center">
+						<Canvas camera={{ near: 0.01, far: 2, fov: 45 }}>
+							<Scene
+								scrollProgress={scrollXProgress}
+								file={file}
+								onSceneChange={(scene) => setScene(scene)}
+							/>
+						</Canvas>
+						<SlideIndicator scrollProgress={scrollXProgress} />
+					</div>
+					<div className="z-10 h-full w-screen shrink-0 snap-center"></div>
+					<div className="z-10 h-full w-screen shrink-0 snap-center"></div>
+					<div className="z-10 h-full w-screen shrink-0 snap-center"></div>
+					{/* <div className="z-10 h-full w-screen shrink-0 snap-center border-b-2 border-blue-500"></div> */}
+				</div>
 			</div>
 			<div className="flex flex-col items-center">
 				{isAndroid() && <AndroidARLink file={file} title={title} link={link} />}

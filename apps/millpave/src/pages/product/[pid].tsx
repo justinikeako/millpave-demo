@@ -12,7 +12,11 @@ import { RestockQueueElement, SKU, Stock } from '../../types/product';
 import Link from 'next/link';
 import SkuPicker from '../../components/sku-picker';
 import QuickCalc from '../../components/quick-calc';
-import { formatNumber, formatPrice } from '../../utils/format';
+import {
+	formatNumber,
+	formatPrice,
+	formatRelativeUpdate
+} from '../../utils/format';
 import Icon from '../../components/icon';
 import { PickupLocation } from '@prisma/client';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -74,7 +78,11 @@ const ProductViewer = dynamic(
 	() => import('../../components/product-model-viewer'),
 	{
 		ssr: false,
-		loading: () => <p>Loading 3D Model...</p>
+		loading: () => (
+			<div className="flex w-full flex-1 items-center justify-center">
+				<p>Loading 3D Model...</p>
+			</div>
+		)
 	}
 );
 
@@ -121,7 +129,7 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 
 	return (
 		<>
-			<div className="space-y-8 pt-4 pb-12">
+			<div className="space-y-8 pt-4">
 				<Button
 					variant="secondary"
 					className="w-full text-bubblegum-700"
@@ -134,9 +142,12 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 				<div className="space-y-2">
 					<div className="flex justify-between">
 						<h3 className="font-bold">Recent Orders</h3>
-						<button onClick={() => recentQuotesRequest.refetch()}>
+						<Button
+							variant="tertiary"
+							onClick={() => recentQuotesRequest.refetch()}
+						>
 							<Icon name="refresh" opticalSize={20} className="text-lg" />
-						</button>
+						</Button>
 					</div>
 
 					{recentQuotesRequest.isLoading && <p>Loading...</p>}
@@ -155,7 +166,7 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 											<div className="flex items-center justify-between">
 												<h4>{quote.title}</h4>
 												<time className="text-sm">
-													{quote.updatedAt.toISOString()}
+													{formatRelativeUpdate(quote.updatedAt)}
 												</time>
 											</div>
 
@@ -183,7 +194,7 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 								</div>
 							)}
 							{recentQuotesRequest.data.length === 0 && (
-								<p className="text-slate-500">No recent orders.</p>
+								<p className="text-slate-500">No recent quotes.</p>
 							)}
 						</>
 					)}
@@ -285,9 +296,23 @@ const Page: NextPage = () => {
 
 			{/* Canvas */}
 			<main className="-z-10 flex h-[75vh] flex-col bg-zinc-100 pb-16">
+				<div className="inset-x-0 flex justify-between px-8 pt-8">
+					<Button variant="tertiary" asChild>
+						<Link href="/products">
+							<Icon name="category" />
+						</Link>
+					</Button>
+					<Button variant="tertiary" asChild>
+						<Link href="/quotes">
+							<Icon name="garden_cart" />
+						</Link>
+					</Button>
+				</div>
 				<ErrorBoundary
 					fallbackRender={() => (
-						<p>Model failed to load. Refresh page to try again.</p>
+						<div className="flex w-full flex-1 items-center justify-center">
+							<p>Model failed to load. Refresh page to try again.</p>
+						</div>
 					)}
 				>
 					<ProductViewer sku={currentSKU} />

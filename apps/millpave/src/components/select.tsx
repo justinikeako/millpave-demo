@@ -18,7 +18,7 @@ const SelectTrigger = ({ basic }: SelectTriggerProps) => {
 		>
 			<SelectPrimitive.Value />
 			<SelectPrimitive.Icon asChild>
-				<Icon name="arrow_drop_down" />
+				<Icon name="arrow_drop_down" className="text-zinc-500" />
 			</SelectPrimitive.Icon>
 		</SelectPrimitive.Trigger>
 	);

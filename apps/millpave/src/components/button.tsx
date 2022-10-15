@@ -1,8 +1,10 @@
 import { forwardRef } from 'react';
 import cx from 'classnames';
+import { Slot } from '@radix-ui/react-slot';
 
 type ButtonProps = {
 	variant: 'primary' | 'secondary' | 'tertiary';
+	asChild?: boolean;
 } & React.DetailedHTMLProps<
 	React.ButtonHTMLAttributes<HTMLButtonElement>,
 	HTMLButtonElement
@@ -19,15 +21,17 @@ const classes = {
 const Button = forwardRef<
 	HTMLButtonElement,
 	React.PropsWithChildren<ButtonProps>
->(function Button({ variant, className, children, ...props }, ref) {
+>(function Button({ variant, className, asChild, children, ...props }, ref) {
+	const Comp = asChild ? Slot : 'button';
+
 	return (
-		<button
+		<Comp
 			{...props}
 			ref={ref}
 			className={cx('select-none', classes[variant], className)}
 		>
 			{children}
-		</button>
+		</Comp>
 	);
 });
 

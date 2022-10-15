@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors');
+
 /** @type {import('tailwindcss').Config} */
 
 module.exports = {
@@ -33,18 +35,7 @@ module.exports = {
 			},
 
 			colors: {
-				bubblegum: {
-					50: '#FDF2FA',
-					100: '#FCE7F6',
-					200: '#FBCFEF',
-					300: '#F9A8E2',
-					400: '#F472CB',
-					500: '#EC48B5',
-					600: '#DB2796',
-					700: '#BE1879',
-					800: '#9D1763',
-					900: '#831855'
-				}
+				bubblegum: colors.pink
 			}
 		}
 	},

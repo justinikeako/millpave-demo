@@ -75,8 +75,12 @@ export const quoteRouter = createRouter()
 		async resolve({ ctx }) {
 			const quotes = await ctx.prisma.quote.findMany({
 				take: 20,
-				include: {
-					items: { orderBy: { createdAt: 'asc' }, take: 5 }
+
+				select: {
+					id: true,
+					title: true,
+					updatedAt: true,
+					items: { orderBy: { updatedAt: 'desc' }, take: 5 }
 				}
 			});
 
@@ -167,6 +171,44 @@ export const quoteRouter = createRouter()
 			});
 
 			return updatedQuote.id;
+		}
+	})
+	.mutation('rename', {
+		input: z.object({
+			quoteId: z.string(),
+			newTitle: z.string({})
+		}),
+		async resolve({ ctx, input }) {
+			await ctx.prisma.quote.update({
+				where: { id: input.quoteId },
+				data: { title: input.newTitle }
+			});
+
+			return true;
+		}
+	})
+	.mutation('removeItem', {
+		input: z.object({
+			itemId: z.string()
+		}),
+		async resolve({ ctx, input }) {
+			const deletedItem = (await ctx.prisma.quoteItem.delete({
+				where: { id: input.itemId }
+			})) as QuoteItemWithMetadata;
+
+			console.log(deletedItem);
+			await ctx.prisma.quote.update({
+				where: { id: deletedItem.quoteId },
+				data: {
+					weight: { increment: deletedItem.metadata.weight },
+					area: { increment: deletedItem.metadata.area },
+					subtotal: { increment: roundPrice(deletedItem.price) },
+					tax: { increment: roundPrice(deletedItem.price * 0.15) },
+					total: { increment: roundPrice(deletedItem.price * 1.15) }
+				}
+			});
+
+			return true;
 		}
 	})
 	.mutation('delete', {

@@ -22,7 +22,7 @@ const Content = ({ children, open }: ContentProps) => {
 
 					<DialogPrimitive.Content asChild forceMount>
 						<motion.div
-							className="fixed inset-x-0 bottom-0 z-30 rounded-t-2xl bg-white px-8"
+							className="fixed inset-x-0 bottom-0 z-30 rounded-t-2xl bg-white px-8 pb-8"
 							initial={{ y: '100%' }}
 							animate={{ y: 0 }}
 							exit={{ y: '100%' }}

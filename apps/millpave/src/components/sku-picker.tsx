@@ -6,7 +6,6 @@ import { PickupLocation } from '@prisma/client';
 type FormValues = {
 	skuId: string;
 	area: number;
-
 	pickupLocation: PickupLocation;
 };
 
@@ -28,6 +27,7 @@ const SkuPicker = ({
 	const SectionHeader = header;
 
 	const { setValue } = useFormContext<FormValues>();
+
 	useEffect(() => {
 		setValue('skuId', value);
 	}, [value, setValue]);
@@ -77,7 +77,7 @@ const SkuPicker = ({
 																handleChange(e.target.value, index)
 															}
 														/>
-														<div className="flex items-center justify-center rounded-md px-3 py-2 shadow-[inset_0_0_0_1px_#be185d] peer-checked:bg-bubblegum-50 peer-checked:text-bubblegum-700 peer-checked:shadow-[inset_0_0_0_2px_#be185d]">
+														<div className="flex items-center justify-center rounded-md px-3 py-2 shadow-[inset_0_0_0_1px_#d4d4d8] peer-checked:bg-bubblegum-50 peer-checked:text-bubblegum-700 peer-checked:shadow-[inset_0_0_0_2px_#be185d]">
 															{display_name}
 														</div>
 													</label>

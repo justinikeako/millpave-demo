@@ -1,4 +1,4 @@
-import { addDays, differenceInDays, format } from 'date-fns';
+import { differenceInDays, format } from 'date-fns';
 
 export function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {

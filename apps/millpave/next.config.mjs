@@ -20,6 +20,10 @@ export default defineNextConfig({
 		newNextLinkBehavior: true
 	},
 
+	typescript: {
+		ignoreBuildErrors: true
+	},
+
 	headers: async () => [
 		{
 			source: '/:all*(woff2|png|bin|gltf)',

@@ -533,9 +533,11 @@ const Page: NextPage = () => {
 								))}
 							</ul>
 
-							<Button variant="tertiary" className="text-bubblegum-700">
-								<Icon name="expand_more" />
-								<span>Show more products</span>
+							<Button variant="tertiary" className="text-bubblegum-700" asChild>
+								<Link href="/products">
+									<Icon name="expand_more" />
+									<span>Show more products</span>
+								</Link>
 							</Button>
 						</div>
 					</section>

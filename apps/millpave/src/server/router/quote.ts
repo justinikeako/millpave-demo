@@ -80,8 +80,12 @@ export const quoteRouter = createRouter()
 					id: true,
 					title: true,
 					updatedAt: true,
-					items: { orderBy: { updatedAt: 'desc' }, take: 5 }
-				}
+					items: {
+						orderBy: { updatedAt: 'asc' },
+						take: 5
+					}
+				},
+				orderBy: { updatedAt: 'desc' }
 			});
 
 			return quotes;
@@ -200,11 +204,11 @@ export const quoteRouter = createRouter()
 			await ctx.prisma.quote.update({
 				where: { id: deletedItem.quoteId },
 				data: {
-					weight: { increment: deletedItem.metadata.weight },
-					area: { increment: deletedItem.metadata.area },
-					subtotal: { increment: roundPrice(deletedItem.price) },
-					tax: { increment: roundPrice(deletedItem.price * 0.15) },
-					total: { increment: roundPrice(deletedItem.price * 1.15) }
+					weight: { decrement: deletedItem.metadata.weight },
+					area: { decrement: deletedItem.metadata.area },
+					subtotal: { decrement: roundPrice(deletedItem.price) },
+					tax: { decrement: roundPrice(deletedItem.price * 0.15) },
+					total: { decrement: roundPrice(deletedItem.price * 1.15) }
 				}
 			});
 

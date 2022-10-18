@@ -640,15 +640,18 @@ export function getProductDetails(productId: string) {
 	return DETAILS.filter((item) => item.product_id === productId);
 }
 
-export function getSkuDetails(skuIdFragment: string) {
-	const sku_id_fragment = skuIdFragment.split(':');
+export function getSkuDetails(skuId: string) {
+	const [productId, ...skuIdFragment] = skuId.split(':');
 
 	const details = DETAILS.find((details) => {
-		return details.supports.reduce((matches, { values, index }) => {
-			return matches && values === 'all'
-				? true
-				: values.includes(sku_id_fragment[index] || '');
-		}, true);
+		return (
+			details.product_id === productId &&
+			details.supports.reduce((matches, { values, index }) => {
+				return matches && values === 'all'
+					? true
+					: values.includes(skuIdFragment[index] || '');
+			}, true)
+		);
 	});
 
 	if (!details) throw new Error(`No details found for '${skuIdFragment}'`);

@@ -23,10 +23,8 @@ type QuoteItemCreateManyQuoteInput = Prisma.QuoteItemCreateManyQuoteInput & {
 function generateQuoteItem(
 	inputItem: InputItem
 ): QuoteItemCreateManyQuoteInput {
-	const [productId] = inputItem.skuId.split(':');
-
 	const sku = getSku(inputItem.skuId);
-	const skuDetails = getSkuDetails(productId as string);
+	const skuDetails = getSkuDetails(inputItem.skuId);
 
 	const areaBeforeOverage = inputItem.area;
 

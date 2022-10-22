@@ -120,7 +120,10 @@ const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
 	);
 };
 
-type AddToProps = { onCreate: () => void; onAdd: (id: string) => void };
+type AddToProps = {
+	onCreate: () => void;
+	onAdd: (id: string) => void;
+};
 
 const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 	const recentQuotesRequest = trpc.useQuery(['quote.getAll'], {
@@ -185,7 +188,7 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 
 							{recentQuotesRequest.data.length > 2 && (
 								<div className="flex w-full justify-center">
-									<DialogClose>
+									<DialogClose asChild>
 										<Button variant="tertiary" className=" text-bubblegum-700">
 											<Icon name="expand_more" />
 											See more
@@ -319,10 +322,9 @@ const Page: NextPage = () => {
 				</ErrorBoundary>
 			</main>
 
-			{/* Bottom Sheet */}
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
 				<DialogContent open={dialogOpen}>
-					<DialogHeader title="Add item to..." />
+					<DialogHeader title="Add item to quote" />
 					<AddTo
 						onCreate={() => {
 							createQuote.mutate(formMethods.watch(), {
@@ -356,6 +358,7 @@ const Page: NextPage = () => {
 					/>
 				</DialogContent>
 
+				{/* Bottom Sheet */}
 				<aside className="relative -mt-8 space-y-12 rounded-2xl bg-white px-8 pb-16 pt-12">
 					{/* Header */}
 					<section className="space-y-2">
@@ -423,8 +426,12 @@ const Page: NextPage = () => {
 							</div>
 
 							<div className="flex flex-col space-y-2">
-								<Button type="submit" variant="primary">
-									<span className="font-semibold">Add to...</span>
+								<Button
+									type="submit"
+									variant="primary"
+									disabled={formMethods.watch().area <= 0}
+								>
+									<span className="font-semibold">Add to Quote</span>
 								</Button>
 							</div>
 						</form>

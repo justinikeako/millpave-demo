@@ -29,6 +29,9 @@ function IOSARLink({ scene, ...props }: iOSARLinkProps) {
 
 	const encoded = {
 		title: encodeURIComponent(props.title),
+		subtitle: encodeURIComponent(
+			'Note: This model is an approximation based on the brochures.'
+		),
 		callToAction: encodeURIComponent(props.callToAction)
 	};
 
@@ -77,7 +80,7 @@ function IOSARLink({ scene, ...props }: iOSARLinkProps) {
 			<div>
 				<a
 					ref={linkButtonRef}
-					href={`${blobLink}#allowsContentScaling=0&canonicalWebPageURL=https://millpave.com/&callToAction=${encoded.callToAction}&checkoutTitle=${encoded.title}&checkoutSubtitle=Paving%20Stone%20`}
+					href={`${blobLink}#allowsContentScaling=0&canonicalWebPageURL=https://millpave.com/&callToAction=${encoded.callToAction}&checkoutTitle=${encoded.title}&checkoutSubtitle=${encoded.subtitle}`}
 					rel="ar"
 					className="absolute inset-0"
 					download="asset.usdz"

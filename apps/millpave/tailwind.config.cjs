@@ -42,6 +42,7 @@ module.exports = {
 
 	plugins: [
 		require('@tailwindcss/aspect-ratio'),
-		require('tailwindcss-radix')()
+		require('tailwindcss-inner-border'),
+		require('tailwindcss-radix')('')
 	]
 };

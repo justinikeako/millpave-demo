@@ -77,7 +77,7 @@ const SkuPicker = ({
 																handleChange(e.target.value, index)
 															}
 														/>
-														<div className="flex items-center justify-center rounded-md px-3 py-2 shadow-[inset_0_0_0_1px_#d4d4d8] peer-checked:bg-bubblegum-50 peer-checked:text-bubblegum-700 peer-checked:shadow-[inset_0_0_0_2px_#be185d]">
+														<div className="flex items-center justify-center rounded-md px-3 py-2 inner-border inner-border-zinc-200 peer-checked:bg-bubblegum-50 peer-checked:text-bubblegum-700 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
 															{display_name}
 														</div>
 													</label>
@@ -101,10 +101,12 @@ const SkuPicker = ({
 																handleChange(e.target.value, index)
 															}
 														/>
-														<div
-															className="rounded-full shadow-[inset_0_0_0_1px_#d4d4d8,inset_0_0_0_3px_white] peer-checked:shadow-[inset_0_0_0_2px_#be185d,inset_0_0_0_4px_white]"
-															style={{ background: css }}
-														/>
+														<div className="rounded-full p-1 inner-border inner-border-zinc-300  peer-checked:p-1 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
+															<div
+																className="h-full w-full rounded-full"
+																style={{ background: css }}
+															/>
+														</div>
 													</label>
 												</li>
 											))}

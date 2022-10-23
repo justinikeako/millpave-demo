@@ -130,6 +130,8 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 		refetchOnWindowFocus: false
 	});
 
+	// const [maxShownQuotes, setMaxShownQuotes] = useState(2);
+
 	return (
 		<>
 			<div className="space-y-8 pt-4">

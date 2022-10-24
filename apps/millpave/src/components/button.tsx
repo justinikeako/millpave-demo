@@ -12,9 +12,9 @@ type ButtonProps = {
 
 const classes = {
 	primary:
-		'flex justify-center space-x-1.5 rounded-md bg-bubblegum-700 px-6 py-4 text-white disabled:opacity-50',
+		'flex justify-center space-x-1.5 rounded-md bg-bubblegum-700 px-6 py-4 font-semibold text-white disabled:opacity-50',
 	secondary:
-		'flex justify-center space-x-1.5 rounded-md border border-neutral-300 px-6 py-4',
+		'flex justify-center space-x-1.5 rounded-md border border-neutral-300 px-6 py-4 font-semibold',
 	tertiary: '-m-4 flex justify-center space-x-2 rounded-md p-4'
 };
 

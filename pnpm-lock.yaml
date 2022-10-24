@@ -60,6 +60,7 @@ importers:
       three-stdlib: ^2.17.0
       tsconfig: workspace:*
       typescript: 4.7.4
+      windstitch: ^0.2.1
       zod: ^3.17.3
     dependencies:
       '@prisma/client': 4.3.1_prisma@4.3.1
@@ -90,6 +91,7 @@ importers:
       tailwindcss-radix: 2.6.0
       three: 0.144.0
       three-stdlib: 2.17.0_three@0.144.0
+      windstitch: 0.2.1_react@18.2.0
       zod: 3.18.0
     devDependencies:
       '@tailwindcss/aspect-ratio': 0.4.2_tailwindcss@3.1.8
@@ -4193,6 +4195,15 @@ packages:
     dependencies:
       isexe: 2.0.0
     dev: true
+
+  /windstitch/0.2.1_react@18.2.0:
+    resolution: {integrity: sha512-yTe+0/Ps8oNsm5xpHiwIU7XDNHO9842OO9TufWjUQ6P6x2XEvrYMn7gG9rzU2unfmLzgtibLEuT4/F2OJjhLww==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /word-wrap/1.2.3:
     resolution: {integrity: sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==}

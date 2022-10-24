@@ -219,7 +219,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 			<div className="flex space-x-2">
 				<label
 					htmlFor="quickcalc-value"
-					className="flex flex-1 space-x-2 rounded-md p-4 shadow-[inset_0_0_0_1px_#d4d4d8] focus-within:shadow-[inset_0_0_0_2px_#be185d]"
+					className="flex flex-1 space-x-2 rounded-md p-4 inner-border inner-border-zinc-300 focus-within:inner-border-2 focus-within:inner-border-bubblegum-700"
 				>
 					<Controller
 						control={control}
@@ -285,7 +285,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 								<input
 									{...field}
 									id="quickcalc-value"
-									type="texxt"
+									type="text"
 									autoComplete="off"
 									placeholder={quicKCalcPlaceholder[unit]}
 									className="w-[100%] placeholder-zinc-500 outline-none"

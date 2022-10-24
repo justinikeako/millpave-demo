@@ -255,7 +255,7 @@ const Dot = ({ index: dotIndex, scrollProgress }: DotProps) => {
 
 	return (
 		<motion.div
-			className="h-2 w-2 rounded-full bg-zinc-400"
+			className="h-2 w-2 rounded-full bg-gray-400"
 			style={{ scale, opacity }}
 		/>
 	);

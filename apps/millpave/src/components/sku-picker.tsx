@@ -77,7 +77,7 @@ const SkuPicker = ({
 																handleChange(e.target.value, index)
 															}
 														/>
-														<div className="flex items-center justify-center rounded-md px-3 py-2 inner-border inner-border-zinc-200 peer-checked:bg-bubblegum-50 peer-checked:text-bubblegum-700 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
+														<div className="flex items-center justify-center rounded-md px-3 py-2 inner-border inner-border-gray-200 peer-checked:bg-bubblegum-50 peer-checked:text-bubblegum-700 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
 															{display_name}
 														</div>
 													</label>
@@ -101,7 +101,7 @@ const SkuPicker = ({
 																handleChange(e.target.value, index)
 															}
 														/>
-														<div className="rounded-full p-1 inner-border inner-border-zinc-300  peer-checked:p-1 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
+														<div className="rounded-full p-1 inner-border inner-border-gray-300  peer-checked:p-1 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
 															<div
 																className="h-full w-full rounded-full"
 																style={{ background: css }}

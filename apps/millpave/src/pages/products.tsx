@@ -29,10 +29,10 @@ function ProductLink({ href, name, startingPrice }: ProductLinkProps) {
 	return (
 		<li>
 			<Link href={href}>
-				<div className="aspect-w-3 aspect-h-2 rounded-lg bg-zinc-100" />
+				<div className="aspect-w-3 aspect-h-2 rounded-lg bg-gray-100" />
 				<div className="mt-2">
 					<h3 className="font-semibold">{name}</h3>
-					<p className="text-zinc-500">from {formatPrice(startingPrice)}</p>
+					<p className="text-gray-500">from {formatPrice(startingPrice)}</p>
 				</div>
 			</Link>
 		</li>
@@ -63,17 +63,17 @@ const Page: NextPage = () => {
 					<ul className="no-scrollbar -mx-8 flex items-center space-x-2 overflow-x-scroll">
 						<li className="h-2 shrink-0 basis-4" />
 
-						<li className="flex snap-center rounded-full bg-zinc-100 p-2.5">
+						<li className="flex snap-center rounded-full bg-gray-100 p-2.5">
 							<Icon name="tune" />
 						</li>
 
-						<li className="flex snap-center whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2">
+						<li className="flex snap-center whitespace-nowrap rounded-full bg-gray-100 px-4 py-2">
 							Paving Stones
 						</li>
-						<li className="flex snap-center whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2">
+						<li className="flex snap-center whitespace-nowrap rounded-full bg-gray-100 px-4 py-2">
 							Available in Red
 						</li>
-						<li className="flex snap-center whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2">
+						<li className="flex snap-center whitespace-nowrap rounded-full bg-gray-100 px-4 py-2">
 							Available in Grey
 						</li>
 

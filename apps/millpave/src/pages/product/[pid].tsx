@@ -175,7 +175,7 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 												</time>
 											</div>
 
-											<p className="overflow-hidden text-ellipsis whitespace-nowrap text-zinc-500">
+											<p className="overflow-hidden text-ellipsis whitespace-nowrap text-gray-500">
 												{quote.items.length > 0
 													? quote.items
 															.map((item) => item.displayName)
@@ -300,7 +300,7 @@ const Page: NextPage = () => {
 			</ToastProvider>
 
 			{/* Canvas */}
-			<main className="-z-10 flex h-[75vh] flex-col bg-zinc-100 pb-16">
+			<main className="-z-10 flex h-[75vh] flex-col bg-gray-100 pb-16">
 				<div className="inset-x-0 flex justify-between px-8 pt-8">
 					<Button variant="tertiary" asChild>
 						<Link href="/products">
@@ -368,7 +368,7 @@ const Page: NextPage = () => {
 						<h1 className="font-display text-xl font-semibold leading-tight">
 							{currentSKU.display_name}
 						</h1>
-						<div className="flex flex-wrap justify-between text-zinc-500">
+						<div className="flex flex-wrap justify-between text-gray-500">
 							<p>{formatPrice(skuPrice)}/sqft</p>
 
 							<div className="flex space-x-1">
@@ -444,7 +444,7 @@ const Page: NextPage = () => {
 						<SectionHeader title="Product Details" />
 
 						<ul className="-mx-4">
-							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Dimensions</p>
 								<p>
 									{productDetails.dimensions[0]} in x{' '}
@@ -452,19 +452,19 @@ const Page: NextPage = () => {
 									{productDetails.dimensions[2]} in
 								</p>
 							</li>
-							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Weight per unit</p>
 								<p>{productDetails.lbs_per_unit} lbs</p>
 							</li>
-							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Area per pallet</p>
 								<p>{productDetails.sqft_per_pallet} sqft</p>
 							</li>
-							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Units per pallet</p>
 								<p>{productDetails.units_per_pallet}</p>
 							</li>
-							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-zinc-100">
+							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Pieces per sqft</p>
 								<p>{productDetails.pcs_per_sqft}</p>
 							</li>
@@ -481,7 +481,7 @@ const Page: NextPage = () => {
 							{product.data.gallery.map(({ id, img_url }) => (
 								<li
 									key={id}
-									className="relative h-64 shrink-0 basis-full snap-center overflow-hidden rounded-lg bg-zinc-100"
+									className="relative h-64 shrink-0 basis-full snap-center overflow-hidden rounded-lg bg-gray-100"
 								>
 									{/* eslint-disable-next-line @next/next/no-img-element */}
 									<img
@@ -527,13 +527,13 @@ const Page: NextPage = () => {
 												return skuIdFragmentResult;
 											})()}`}
 										>
-											<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-zinc-100" />
+											<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-gray-100" />
 
 											<div>
 												<h3 className="text-center font-semibold">
 													{product.display_name}
 												</h3>
-												<p className="text-center text-zinc-500">
+												<p className="text-center text-gray-500">
 													from {formatPrice(product.price)}
 												</p>
 											</div>

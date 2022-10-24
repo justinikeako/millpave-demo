@@ -51,7 +51,7 @@ const Page: NextPage = () => {
 									</time>
 								</div>
 
-								<p className="overflow-hidden text-ellipsis whitespace-nowrap text-zinc-500">
+								<p className="overflow-hidden text-ellipsis whitespace-nowrap text-gray-500">
 									{quote.items.length > 0
 										? quote.items
 												.map((item) => item.displayName)

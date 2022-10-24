@@ -9,7 +9,7 @@ function Content({
 		<DropdownMenuPrimitive.Portal>
 			<DropdownMenuPrimitive.Content
 				{...props}
-				className="overflow-hidden rounded-md bg-zinc-100"
+				className="overflow-hidden rounded-md bg-gray-100"
 			>
 				{children}
 			</DropdownMenuPrimitive.Content>
@@ -30,7 +30,7 @@ function Item({ children, ...props }: DropdownMenuPrimitive.MenuItemProps) {
 		<DropdownMenuPrimitive.Item
 			{...props}
 			className={cx(
-				'relative flex select-none items-center space-x-2 rounded-sm p-4 radix-highlighted:bg-zinc-200',
+				'relative flex select-none items-center space-x-2 rounded-sm p-4 radix-highlighted:bg-gray-200',
 				props.className
 			)}
 		>
@@ -41,7 +41,7 @@ function Item({ children, ...props }: DropdownMenuPrimitive.MenuItemProps) {
 
 export const Separator = () => {
 	return (
-		<DropdownMenuPrimitive.Separator className="h-[1px] w-full bg-zinc-500" />
+		<DropdownMenuPrimitive.Separator className="h-[1px] w-full bg-gray-500" />
 	);
 };
 

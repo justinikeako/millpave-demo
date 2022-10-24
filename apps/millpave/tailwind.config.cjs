@@ -35,7 +35,8 @@ module.exports = {
 			},
 
 			colors: {
-				bubblegum: colors.pink
+				bubblegum: colors.pink,
+				gray: colors.zinc
 			}
 		}
 	},

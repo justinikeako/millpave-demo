@@ -109,7 +109,7 @@ const EditableHeader = ({
 				{...props}
 				ref={inputRef}
 				className={cx(
-					'w-full bg-transparent font-display text-2xl font-semibold text-black opacity-100 placeholder:text-zinc-400 disabled:text-black',
+					'w-full bg-transparent font-display text-2xl font-semibold text-black opacity-100 placeholder:text-gray-400 disabled:text-black',
 					className
 				)}
 				value={title}
@@ -243,13 +243,13 @@ const Page: NextPage = () => {
 						<ul className="no-scrollbar -mx-8 flex items-center space-x-2 overflow-x-scroll">
 							<li className="h-2 shrink-0 basis-4" />
 
-							<li className="flex snap-center rounded-full bg-zinc-100 p-2.5">
+							<li className="flex snap-center rounded-full bg-gray-100 p-2.5">
 								<Icon name="add" />
 							</li>
 							{quote.data.shapes.map((shape) => (
 								<li
 									key={shape.id}
-									className="flex snap-center whitespace-nowrap rounded-full bg-zinc-100 px-4 py-2"
+									className="flex snap-center whitespace-nowrap rounded-full bg-gray-100 px-4 py-2"
 								>
 									{shape.name}
 								</li>
@@ -340,7 +340,7 @@ const Page: NextPage = () => {
 										href={`/product/${deriveRouteFromSkuId(item.skuId)}`}
 										className="contents"
 									>
-										<div className="mb-4 h-32 w-32 bg-zinc-100" />
+										<div className="mb-4 h-32 w-32 bg-gray-100" />
 										<div className="space-y-2 self-stretch">
 											<h3 className="font-display text-lg font-semibold">
 												{item.displayName}
@@ -357,7 +357,7 @@ const Page: NextPage = () => {
 									</Link>
 									<div className="space-y-2 self-stretch">
 										<div className="flex items-center justify-between">
-											<p className="text-zinc-500">
+											<p className="text-gray-500">
 												Order Today. Pick up on-site:
 												<br />
 												{getDistanceFromToday(item.closest_restock_date) > 1 &&
@@ -454,7 +454,7 @@ const Page: NextPage = () => {
 								key={item.id}
 								className="flex flex-col items-center space-y-4"
 							>
-								<div className="h-32 w-32 bg-zinc-100" />
+								<div className="h-32 w-32 bg-gray-100" />
 								<div className="space-y-2 self-stretch">
 									<h3 className="font-semibold">{item.display_name}</h3>
 

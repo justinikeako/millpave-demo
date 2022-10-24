@@ -4,7 +4,7 @@
 
 @layer base {
 	html {
-		@apply text-zinc-900;
+		@apply text-gray-900;
 	}
 
 	@font-face {

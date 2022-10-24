@@ -219,7 +219,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 			<div className="flex space-x-2">
 				<label
 					htmlFor="quickcalc-value"
-					className="flex flex-1 space-x-2 rounded-md p-4 inner-border inner-border-zinc-300 focus-within:inner-border-2 focus-within:inner-border-bubblegum-700"
+					className="flex flex-1 space-x-2 rounded-md p-4 inner-border inner-border-gray-300 focus-within:inner-border-2 focus-within:inner-border-bubblegum-700"
 				>
 					<Controller
 						control={control}
@@ -288,7 +288,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 									type="text"
 									autoComplete="off"
 									placeholder={quicKCalcPlaceholder[unit]}
-									className="w-[100%] placeholder-zinc-500 outline-none"
+									className="w-[100%] placeholder-gray-500 outline-none"
 									value={qcInputValue}
 									onChange={(e) => {
 										const inputValue = e.currentTarget.value;
@@ -447,7 +447,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 				<Button
 					variant="tertiary"
 					type="button"
-					className="text-zinc-500"
+					className="text-gray-500"
 					onClick={() => setShowWork(!showWork)}
 				>
 					<span>{showWork ? 'Hide Work' : 'Show Work'}</span>
@@ -455,7 +455,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 			</div>
 
 			{/* The total + how it was calculated */}
-			<ul className="space-y-2 tabular-nums text-zinc-500">
+			<ul className="space-y-2 tabular-nums text-gray-500">
 				{showWork && (
 					<>
 						<li className="flex flex-wrap justify-between">

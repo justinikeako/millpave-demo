@@ -1,20 +1,23 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
+import cx from 'classnames';
 import Icon from './icon';
 
 const Select = SelectPrimitive.Root;
 
 type SelectTriggerProps = {
 	basic?: boolean;
-};
+} & SelectPrimitive.SelectTriggerProps;
 
-const SelectTrigger = ({ basic }: SelectTriggerProps) => {
+const SelectTrigger = ({ basic, ...props }: SelectTriggerProps) => {
 	return (
 		<SelectPrimitive.Trigger
-			className={
+			{...props}
+			className={cx(
 				basic
 					? 'flex outline-none'
-					: 'flex rounded-md p-4 shadow-[inset_0_0_0_1px_#d4d4d8] outline-none focus:shadow-[inset_0_0_0_2px_#be185d]'
-			}
+					: 'flex justify-between rounded-md p-4 outline-none inner-border inner-border-zinc-300  focus:inner-border-2 focus:inner-border-bubblegum-700',
+				props.className
+			)}
 		>
 			<SelectPrimitive.Value />
 			<SelectPrimitive.Icon asChild>
@@ -46,7 +49,7 @@ const SelectItem = ({ value, children }: SelectPrimitive.SelectItemProps) => {
 	return (
 		<SelectPrimitive.Item
 			value={value}
-			className="relative flex select-none items-center space-x-2 rounded-sm p-4 radix-highlighted:bg-zinc-200"
+			className="relative flex select-none items-center justify-between space-x-2 rounded-sm p-4 radix-highlighted:bg-zinc-200"
 		>
 			<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
 			<SelectPrimitive.ItemIndicator>

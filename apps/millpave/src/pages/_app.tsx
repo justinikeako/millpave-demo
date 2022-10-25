@@ -14,8 +14,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 	return (
 		<>
 			{isDesktop() && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black text-white">
-					Open this page on your mobile device to view.
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black p-12 text-white">
+					This demo is not optimized for desktop. Open this page your mobile
+					device to view it.
 				</div>
 			)}
 

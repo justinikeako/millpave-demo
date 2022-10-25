@@ -6,9 +6,22 @@ import type { AppType } from 'next/dist/shared/lib/utils';
 import superjson from 'superjson';
 import type { AppRouter } from '../server/router';
 import '../styles/globals.css';
+import { useMobileDetect } from '../utils/use-mobile-detect';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-	return <Component {...pageProps} />;
+	const { isDesktop } = useMobileDetect();
+
+	return (
+		<>
+			{isDesktop() && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black text-white">
+					Open this page on your mobile device to view.
+				</div>
+			)}
+
+			<Component {...pageProps} />
+		</>
+	);
 };
 
 const getBaseUrl = () => {

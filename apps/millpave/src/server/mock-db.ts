@@ -54,7 +54,7 @@ const DETAILS: ProductDetails[] = [
 		product_id: 'thin_classic',
 		supports: [{ index: 0, values: 'all' }],
 		dimensions: [4, 8, 1.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 4.16,
 		sqft_per_pallet: 154.5,
 		units_per_pallet: 720,
 		pcs_per_sqft: 4.66
@@ -63,7 +63,7 @@ const DETAILS: ProductDetails[] = [
 		product_id: 'banjo',
 		supports: [{ index: 0, values: 'all' }],
 		dimensions: [5.5, 9, 2.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 6.67,
 		sqft_per_pallet: 128.57,
 		units_per_pallet: 450,
 		pcs_per_sqft: 3.5
@@ -72,7 +72,7 @@ const DETAILS: ProductDetails[] = [
 		product_id: 'owc',
 		supports: [{ index: 0, values: 'all' }],
 		dimensions: [5.5, 9, 2.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 3.75,
 		sqft_per_pallet: 125.39,
 		units_per_pallet: 800,
 		pcs_per_sqft: 6.38
@@ -84,7 +84,7 @@ const DETAILS: ProductDetails[] = [
 			{ index: 1, values: 'all' }
 		],
 		dimensions: [7, 9.5, 2.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 11.28,
 		sqft_per_pallet: 119.28,
 		units_per_pallet: 266,
 		pcs_per_sqft: 2.23
@@ -96,7 +96,7 @@ const DETAILS: ProductDetails[] = [
 			{ index: 1, values: 'all' }
 		],
 		dimensions: [4.75, 7, 2.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 5.3,
 		sqft_per_pallet: 126.91,
 		units_per_pallet: 566,
 		pcs_per_sqft: 4.46
@@ -108,7 +108,7 @@ const DETAILS: ProductDetails[] = [
 			{ index: 1, values: 'all' }
 		],
 		dimensions: [4.75, 7, 2.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 3.53,
 		sqft_per_pallet: 130.97,
 		units_per_pallet: 850,
 		pcs_per_sqft: 6.49 // think about how to add supply ratios
@@ -120,7 +120,7 @@ const DETAILS: ProductDetails[] = [
 			{ index: 1, values: 'all' }
 		],
 		dimensions: [6, 9, 2.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 9.15,
 		sqft_per_pallet: 120.59,
 		units_per_pallet: 328,
 		pcs_per_sqft: 2.72
@@ -132,7 +132,7 @@ const DETAILS: ProductDetails[] = [
 			{ index: 1, values: 'all' }
 		],
 		dimensions: [6, 6, 2.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 5.86,
 		sqft_per_pallet: 128,
 		units_per_pallet: 512,
 		pcs_per_sqft: 4
@@ -144,16 +144,16 @@ const DETAILS: ProductDetails[] = [
 			{ index: 1, values: 'all' }
 		],
 		dimensions: [6, 9, 2.375],
-		lbs_per_unit: 5,
+		lbs_per_unit: 5.77,
 		sqft_per_pallet: 130,
 		units_per_pallet: 520,
-		pcs_per_sqft: 4 // think about how to add supply ratios
+		pcs_per_sqft: 4
 	},
 	{
 		product_id: 'tropical_wave',
 		supports: [{ index: 0, values: 'all' }],
 		dimensions: [4.75, 9.5, 3],
-		lbs_per_unit: 5,
+		lbs_per_unit: 9.38,
 		sqft_per_pallet: 102.89,
 		units_per_pallet: 320,
 		pcs_per_sqft: 3.11

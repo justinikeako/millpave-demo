@@ -2,8 +2,8 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { forwardRef, useState } from 'react';
-import { Button } from '../../components/button';
-import { Icon } from '../../components/icon';
+import { Button } from '../components/button';
+import { Icon } from '../components/icon';
 import cx from 'classnames';
 import {
 	Control,
@@ -19,14 +19,14 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectViewport
-} from '../../components/select';
+} from '../components/select';
 import { w } from 'windstitch';
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTrigger
-} from '../../components/dialog';
+} from '../components/dialog';
 
 const stages = [0, 0, 0, 0, 0];
 

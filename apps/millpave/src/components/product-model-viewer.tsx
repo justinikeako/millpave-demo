@@ -63,7 +63,7 @@ function IOSARLink({ scene, ...props }: iOSARLinkProps) {
 			const eventWithData = event as unknown as { data: string };
 
 			if (eventWithData.data === '_apple_ar_quicklook_button_tapped') {
-				router.push('/quote/create');
+				router.push('/create');
 			}
 		}
 

@@ -5,12 +5,8 @@ import { TRPCError } from '@trpc/server';
 import { generateQuote, generateQuoteItem } from '../quote/generate';
 import { QuoteItem } from '@prisma/client';
 import { roundPrice } from '../../utils/price';
-
-type QuoteItemMetadata = {
-	weight: number;
-	area: number;
-	originalArea: number;
-};
+import { QuoteItemMetadata } from '../../types/quote';
+import { quoteInputItem, unitEnum } from '../validators/quote';
 
 type QuoteItemWithMetadata = QuoteItem & {
 	metadata: QuoteItemMetadata;
@@ -94,8 +90,14 @@ export const quoteRouter = createRouter()
 	.mutation('create', {
 		input: z.object({
 			skuId: z.string(),
+			pickupLocation: z.enum(['SHOWROOM', 'FACTORY']),
+			quantity: z.number(),
+
 			area: z.number(),
-			pickupLocation: z.enum(['SHOWROOM', 'FACTORY'])
+			input: z.object({
+				value: z.string(),
+				unit: unitEnum
+			})
 		}),
 		async resolve({ ctx, input }) {
 			const authorId = 'justin';
@@ -112,11 +114,7 @@ export const quoteRouter = createRouter()
 	.mutation('addItemTo', {
 		input: z.object({
 			id: z.string(),
-			item: z.object({
-				skuId: z.string(),
-				area: z.number(),
-				pickupLocation: z.enum(['SHOWROOM', 'FACTORY'])
-			})
+			item: quoteInputItem
 		}),
 		async resolve({ ctx, input }) {
 			// Create new quote item
@@ -145,9 +143,8 @@ export const quoteRouter = createRouter()
 						metadata: {
 							area: oldItem.metadata.area + generatedItem.metadata.area,
 							weight: oldItem.metadata.weight + generatedItem.metadata.weight,
-							originalArea:
-								oldItem.metadata.originalArea +
-								generatedItem.metadata.originalArea
+							unit: generatedItem.metadata.unit,
+							value: generatedItem.metadata.value
 						} as QuoteItemMetadata,
 						price: oldItem.price + generatedItem.price,
 						quantity: oldItem.quantity + generatedItem.quantity

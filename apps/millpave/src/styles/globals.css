@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root,
+body,
+#__next {
+	height: 100%;
+
+	-webkit-tap-highlight-color: transparent;
+}
+
 @layer base {
 	html {
 		@apply text-gray-900;
@@ -16,16 +24,16 @@
 		src: url('/fonts/Inter.var.woff2?v=3.19') format('woff2-variations'),
 			url('/fonts/Inter.var.woff2?v=3.19') format('woff2');
 	}
-
-	.no-scrollbar::-webkit-scrollbar {
-		display: none;
-		-webkit-appearance: none;
-	}
 }
 
 @layer utilities {
 	.font-display {
 		font-variation-settings: 'opsz' 48;
+	}
+
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+		-webkit-appearance: none;
 	}
 
 	.material-symbols-outlined {

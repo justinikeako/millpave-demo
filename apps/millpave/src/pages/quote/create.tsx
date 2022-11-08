@@ -3,9 +3,16 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { forwardRef, useState } from 'react';
 import { Button } from '../../components/button';
-import Icon from '../../components/icon';
+import { Icon } from '../../components/icon';
 import cx from 'classnames';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import {
+	Control,
+	Controller,
+	FieldPath,
+	FormProvider,
+	useForm,
+	useFormContext
+} from 'react-hook-form';
 import {
 	Select,
 	SelectContent,
@@ -14,20 +21,85 @@ import {
 	SelectViewport
 } from '../../components/select';
 import { w } from 'windstitch';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTrigger
+} from '../../components/dialog';
 
 const stages = [0, 0, 0, 0, 0];
 
+type Shape = 'RECTANGLE' | 'CIRCLE' | 'ARBITRARY';
+type Orientation = 'SOLDIER_ROW' | 'TIP_TO_TIP';
+type Unit1D = 'ft' | 'yd' | 'in' | 'm' | 'cm';
+type Unit2D = 'sqft' | 'sqin' | 'sqm' | 'sqcm';
+
+type Measurement1D = {
+	value: number;
+	unit: Unit1D;
+};
+
+type Measurement2D = {
+	value: number;
+	unit: Unit2D;
+};
+
+type FormValues = {
+	shape: Shape;
+	dimensions: {
+		length: Measurement1D;
+		width: Measurement1D;
+	};
+	infill: {
+		stones: never[];
+	};
+	border: {
+		orientation: Orientation;
+		runningFoot: Measurement1D;
+		stones: never[];
+	};
+};
+
+const defaultValues: FormValues = {
+	shape: 'RECTANGLE',
+
+	dimensions: {
+		length: {
+			value: 0,
+			unit: 'ft'
+		},
+		width: {
+			value: 0,
+			unit: 'ft'
+		}
+	},
+
+	infill: {
+		stones: []
+	},
+
+	border: {
+		orientation: 'SOLDIER_ROW',
+		runningFoot: {
+			value: 0,
+			unit: 'ft'
+		},
+		stones: []
+	}
+};
+
 const Label = w.label(
-	'flex space-x-2 rounded-md inner-border inner-border-gray-300 focus-within:inner-border-2 focus-within:inner-border-bubblegum-700',
+	'flex space-x-2 rounded-md inner-border inner-border-gray-300 focus-within:inner-border-2 focus-within:inner-border-bubblegum-',
 	{
 		variants: {
 			size: {
-				regular: 'p-4',
+				medium: 'p-4',
 				large: 'p-6'
 			}
 		},
 		defaultVariants: {
-			size: 'regular'
+			size: 'medium'
 		}
 	}
 );
@@ -39,8 +111,51 @@ type StageProps = {
 	onNext: () => void;
 };
 
+type OptionProps = {
+	title: string;
+	description: string;
+	value: string;
+} & React.DetailedHTMLProps<
+	React.InputHTMLAttributes<HTMLInputElement>,
+	HTMLInputElement
+>;
+
+const Option = forwardRef<HTMLInputElement, OptionProps>(function Option(
+	{ title, description, value, ...props },
+	ref
+) {
+	// Do some value matching here and adjust the styles accordingly
+	return (
+		<li className="relative flex items-center p-6 pr-4">
+			<input
+				ref={ref}
+				type="radio"
+				name="shape"
+				className="peer hidden"
+				id={value}
+				value={value}
+				{...props}
+			/>
+
+			<label
+				htmlFor={value}
+				className="absolute inset-0 rounded-md p-6 pr-4 inner-border inner-border-gray-300 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700"
+			/>
+
+			<div className="flex-1 [.peer:checked~div&>p]:text-bubblegum-700">
+				<p className="font-semibold">{title}</p>
+				<p className="text-sm text-gray-500">{description}</p>
+			</div>
+
+			<div className="h-6 w-6 rounded-full p-1 inner-border inner-border-gray-300 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700" />
+
+			<div className="absolute right-5 h-4 w-4 rounded-full bg-transparent peer-checked:bg-bubblegum-700" />
+		</li>
+	);
+});
+
 const ShapeStage = ({ onNext }: StageProps) => {
-	const { register } = useFormContext();
+	const { register } = useFormContext<FormValues>();
 
 	return (
 		<>
@@ -50,19 +165,19 @@ const ShapeStage = ({ onNext }: StageProps) => {
 				<ul className="flex flex-1 flex-col justify-center space-y-2">
 					<Option
 						{...register('shape')}
-						value="rectangle"
+						value="RECTANGLE"
 						title="Rectangle"
 						description="Requires length and width"
 					/>
 					<Option
 						{...register('shape')}
-						value="circle"
+						value="CIRCLE"
 						title="Circle"
 						description="Requires diameter or circumference"
 					/>
 					<Option
 						{...register('shape')}
-						value="arbitrary"
+						value="ARBITRARY"
 						title="Arbitrary"
 						description="Requires area and/or running length"
 					/>
@@ -76,7 +191,7 @@ const ShapeStage = ({ onNext }: StageProps) => {
 					className="w-full"
 					onClick={onNext}
 				>
-					Next
+					<span>Next</span>
 					<Icon name="arrow_forward" />
 				</Button>
 			</StageFooter>
@@ -84,8 +199,74 @@ const ShapeStage = ({ onNext }: StageProps) => {
 	);
 };
 
+function convert(num: number) {
+	const convertToFtFrom: Record<Unit1D, (num: number) => number> = {
+		ft: (feet) => feet,
+		yd: (yards) => yards * 3,
+		in: (inches) => inches / 12,
+		m: (meters) => meters * 3.281,
+		cm: (centimeters) => centimeters / 30.48
+	};
+
+	return {
+		toFtFrom(unit: Unit1D) {
+			return convertToFtFrom[unit](num);
+		}
+	};
+}
+
+type MeasurementInputProps = {
+	placeholder: string;
+	name: FieldPath<FormValues>;
+	size: 'medium' | 'large';
+	control: Control<FormValues>;
+	className?: string;
+};
+
+const MeasurementInput = ({
+	name,
+	placeholder,
+	size,
+	control,
+	className
+}: MeasurementInputProps) => {
+	const { register } = useFormContext();
+
+	return (
+		<Label htmlFor={name} size={size} className={cx('pr-3', className)}>
+			<input
+				{...register(`${name}.value`)}
+				type="number"
+				id={name}
+				autoComplete="off"
+				placeholder={placeholder}
+				className="w-[100%] font-semibold outline-none placeholder:font-normal placeholder:text-gray-500"
+			/>
+
+			<Controller
+				control={control}
+				name={`${name}.unit` as FieldPath<FormValues>}
+				render={({ field }) => (
+					<Select value={field.value as Unit1D} onValueChange={field.onChange}>
+						<SelectTrigger basic />
+
+						<SelectContent>
+							<SelectViewport>
+								<SelectItem value="in">in</SelectItem>
+								<SelectItem value="ft">ft</SelectItem>
+								<SelectItem value="cm">cm</SelectItem>
+								<SelectItem value="m">m</SelectItem>
+							</SelectViewport>
+						</SelectContent>
+					</Select>
+				)}
+			/>
+		</Label>
+	);
+};
+
 const MeasurementStage = ({ onNext }: StageProps) => {
-	// const { register } = useFormContext();
+	const { control } = useFormContext<FormValues>();
 
 	return (
 		<>
@@ -94,47 +275,23 @@ const MeasurementStage = ({ onNext }: StageProps) => {
 			<div className="flex flex-1 flex-col justify-center space-y-4">
 				<h2 className="font-semibold">Measurements</h2>
 				<div className="flex items-center space-x-2">
-					<Label htmlFor="quickcalc-value" size="large" className="flex-1 pr-3">
-						<input
-							type="number"
-							id="quickcalc-value"
-							autoComplete="off"
-							placeholder="Length"
-							className="w-[100%] font-semibold outline-none placeholder:font-normal placeholder:text-gray-500"
-						/>
-
-						<Select defaultValue="ft">
-							<SelectTrigger basic />
-							<SelectContent>
-								<SelectViewport>
-									<SelectItem value="ft">ft</SelectItem>
-									<SelectItem value="m">m</SelectItem>
-								</SelectViewport>
-							</SelectContent>
-						</Select>
-					</Label>
+					<MeasurementInput
+						size="large"
+						name="dimensions.length"
+						placeholder="Length"
+						control={control}
+						className="flex-1"
+					/>
 
 					<div className="font-semibold text-gray-500">X</div>
 
-					<Label htmlFor="quickcalc-value" size="large" className="flex-1 pr-3">
-						<input
-							type="number"
-							id="quickcalc-value"
-							autoComplete="off"
-							placeholder="Width"
-							className="w-[100%] font-semibold outline-none placeholder:font-normal placeholder:text-gray-500"
-						/>
-
-						<Select defaultValue="ft">
-							<SelectTrigger basic />
-							<SelectContent>
-								<SelectViewport>
-									<SelectItem value="ft">ft</SelectItem>
-									<SelectItem value="m">m</SelectItem>
-								</SelectViewport>
-							</SelectContent>
-						</Select>
-					</Label>
+					<MeasurementInput
+						size="large"
+						name="dimensions.width"
+						placeholder="Width"
+						control={control}
+						className="flex-1"
+					/>
 				</div>
 			</div>
 
@@ -145,7 +302,7 @@ const MeasurementStage = ({ onNext }: StageProps) => {
 					className="w-full"
 					onClick={onNext}
 				>
-					Next
+					<span>Next</span>
 					<Icon name="arrow_forward" />
 				</Button>
 			</StageFooter>
@@ -154,7 +311,12 @@ const MeasurementStage = ({ onNext }: StageProps) => {
 };
 
 const InfillStage = ({ onNext }: StageProps) => {
-	// const { register } = useFormContext();
+	const [dialogOpen, setDialogOpen] = useState(false);
+
+	const [dialogState, setDialogState] = useState({
+		// type of dialog
+		// information about its contents (index of stone or field name)
+	});
 
 	return (
 		<>
@@ -169,32 +331,43 @@ const InfillStage = ({ onNext }: StageProps) => {
 					</Button>
 				</div>
 
-				<ul className="space-y-2">
-					<li className="align-center -mx-2 flex justify-between p-2">
-						<div className="h-6 w-6 self-start bg-gray-100" />
+				<Dialog onOpenChange={setDialogOpen}>
+					<DialogContent open={dialogOpen}>
+						<DialogHeader title="Add item to quote" />
+					</DialogContent>
 
-						<div className="ml-2 flex-1">
-							<p>Banjo Red</p>
-							<p className="text-gray-500">2 parts</p>
-						</div>
+					<ul className="space-y-2">
+						<li
+							className="align-center -mx-2 flex justify-between p-2 active:bg-gray-100 "
+							onClick={() => setDialogOpen(!dialogOpen)}
+						>
+							<DialogTrigger className="contents text-left">
+								<div className="h-6 w-6 self-start bg-gray-100" />
 
-						<Button variant="tertiary" className="self-center text-gray-500">
-							<Icon name="more_horiz" />
-						</Button>
-					</li>
-					<li className="align-center -mx-2 flex justify-between p-2">
-						<div className="h-6 w-6 self-start bg-gray-100" />
+								<div className="ml-2 flex-1">
+									<p>Banjo Grey</p>
+									<p className="text-gray-500">5 parts</p>
+								</div>
+								<Icon name="edit" className="self-center text-gray-500" />
+							</DialogTrigger>
+						</li>
 
-						<div className="ml-2 flex-1">
-							<p>Banjo Red</p>
-							<p className="text-gray-500">2 parts</p>
-						</div>
+						<li
+							className="align-center -mx-2 flex justify-between p-2 active:bg-gray-100 "
+							onClick={() => setDialogOpen(!dialogOpen)}
+						>
+							<DialogTrigger className="contents text-left">
+								<div className="h-6 w-6 self-start bg-gray-100" />
 
-						<Button variant="tertiary" className="self-center text-gray-500">
-							<Icon name="more_horiz" />
-						</Button>
-					</li>
-				</ul>
+								<div className="ml-2 flex-1">
+									<p>Banjo Red</p>
+									<p className="text-gray-500">1 part</p>
+								</div>
+								<Icon name="edit" className="self-center text-gray-500" />
+							</DialogTrigger>
+						</li>
+					</ul>
+				</Dialog>
 			</div>
 
 			<StageFooter>
@@ -221,7 +394,9 @@ const InfillStage = ({ onNext }: StageProps) => {
 };
 
 const BorderStage = ({ onNext }: StageProps) => {
-	// const { register } = useFormContext();
+	const { register, control } = useFormContext<FormValues>();
+
+	const [unit, setUnit] = useState<Unit1D>('ft');
 
 	return (
 		<div className="space-y-12">
@@ -231,41 +406,61 @@ const BorderStage = ({ onNext }: StageProps) => {
 				<div className="space-y-4">
 					<h2 className="font-semibold">Running Length</h2>
 					<div className="flex space-x-2">
-						<Label htmlFor="nubi" size="regular" className="flex-1">
+						<Label htmlFor="border.runningFoot" className="flex-1">
 							<input
+								{...register('border.runningFoot.value')}
 								type="number"
-								name="nuber"
-								id="nubi"
 								placeholder="Length of border"
 								autoComplete="off"
+								id="border.runningFoot"
 								className="w-[100%] font-semibold outline-none placeholder:font-normal placeholder:text-gray-500"
 							/>
 						</Label>
 
-						<Select defaultValue="ft">
-							<SelectTrigger />
-							<SelectContent>
-								<SelectViewport>
-									<SelectItem value="ft">ft</SelectItem>
-									<SelectItem value="m">m</SelectItem>
-								</SelectViewport>
-							</SelectContent>
-						</Select>
+						<Controller
+							control={control}
+							name="border.runningFoot.unit"
+							render={({ field }) => (
+								<Select value={field.value} onValueChange={field.onChange}>
+									<SelectTrigger />
+
+									<SelectContent>
+										<SelectViewport>
+											<SelectItem value="in">in</SelectItem>
+											<SelectItem value="ft">ft</SelectItem>
+											<SelectItem value="cm">cm</SelectItem>
+											<SelectItem value="m">m</SelectItem>
+										</SelectViewport>
+									</SelectContent>
+								</Select>
+							)}
+						/>
 					</div>
 				</div>
 
 				<div className="space-y-4">
 					<h2 className="font-semibold">Stone Orientation</h2>
 
-					<Select defaultValue="SOLDIER_ROW">
-						<SelectTrigger className="w-full" />
-						<SelectContent>
-							<SelectViewport>
-								<SelectItem value="SOLDIER_ROW">Soldier Row</SelectItem>
-								<SelectItem value="TIP_TO_TIP">Tip to Tip</SelectItem>
-							</SelectViewport>
-						</SelectContent>
-					</Select>
+					<Controller
+						control={control}
+						name="border.orientation"
+						render={({ field }) => (
+							<Select
+								value={field.value}
+								onValueChange={(newOrientation) =>
+									field.onChange(newOrientation)
+								}
+							>
+								<SelectTrigger className="w-full" />
+								<SelectContent>
+									<SelectViewport>
+										<SelectItem value="SOLDIER_ROW">Soldier Row</SelectItem>
+										<SelectItem value="TIP_TO_TIP">Tip to Tip</SelectItem>
+									</SelectViewport>
+								</SelectContent>
+							</Select>
+						)}
+					/>
 				</div>
 
 				<div className="space-y-4">
@@ -331,7 +526,7 @@ const BorderStage = ({ onNext }: StageProps) => {
 };
 
 const ReviewStage = ({ onNext }: StageProps) => {
-	// const { register } = useFormContext();
+	// const { register } = useFormContext<FormValues>();
 
 	return (
 		<>
@@ -394,7 +589,7 @@ const ReviewStage = ({ onNext }: StageProps) => {
 							<div className="ml-2 flex-1">
 								<p>Banjo Red</p>
 								<div className="flex space-x-1 text-gray-500">
-									<Icon name="factory" opticalSize={20} />
+									<Icon name="factory" opticalSize={20} weight={300} />
 
 									<p className="text-gray-500">193.13 sqft / 1.5 pallets</p>
 								</div>
@@ -425,9 +620,7 @@ const ReviewStage = ({ onNext }: StageProps) => {
 
 const Form = ({ children }: React.PropsWithChildren) => {
 	const formMethods = useForm({
-		defaultValues: {
-			shape: 'rectangle'
-		}
+		defaultValues
 	});
 
 	return (
@@ -457,7 +650,7 @@ const Page: NextPage = () => {
 				<title>Create your Quote — Millennium Paving Stones</title>
 			</Head>
 
-			<main className="absolute inset-0 flex flex-col space-y-4">
+			<main className="flex h-full flex-col space-y-4">
 				<nav className="flex items-center space-x-6 bg-white px-8 pt-12 pb-8">
 					<Button variant="tertiary" onClick={() => router.back()}>
 						<Icon name="arrow_back" />
@@ -490,48 +683,5 @@ const Page: NextPage = () => {
 		</>
 	);
 };
-
-type OptionProps = {
-	title: string;
-	description: string;
-	value: string;
-} & React.DetailedHTMLProps<
-	React.InputHTMLAttributes<HTMLInputElement>,
-	HTMLInputElement
->;
-
-const Option = forwardRef<HTMLInputElement, OptionProps>(function Option(
-	{ title, description, value, ...props },
-	ref
-) {
-	// Do some value matching here and adjust the styles accordingly
-	return (
-		<li className="relative flex items-center p-6 pr-4">
-			<input
-				ref={ref}
-				type="radio"
-				name="shape"
-				className="peer hidden"
-				id={value}
-				value={value}
-				{...props}
-			/>
-
-			<label
-				htmlFor={value}
-				className="absolute inset-0 rounded-md p-6 pr-4 inner-border inner-border-gray-300 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700"
-			/>
-
-			<div className="flex-1 [.peer:checked~div&>p]:text-bubblegum-700">
-				<p className="font-semibold">{title}</p>
-				<p className="text-sm text-gray-500">{description}</p>
-			</div>
-
-			<div className="h-6 w-6 rounded-full p-1 inner-border inner-border-gray-300 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700" />
-
-			<div className="absolute right-5 h-4 w-4 rounded-full bg-transparent peer-checked:bg-bubblegum-700" />
-		</li>
-	);
-});
 
 export default Page;

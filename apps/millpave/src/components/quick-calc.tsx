@@ -1,5 +1,4 @@
 import { Control, Controller, useFormContext } from 'react-hook-form';
-import { evaluate, number } from 'mathjs';
 import { ProductDetails } from '../types/product';
 import { useEffect, useState } from 'react';
 import { Button } from './button';
@@ -14,8 +13,8 @@ import {
 	SelectTrigger,
 	SelectViewport
 } from './select';
-
-type Unit = 'sqft' | 'sqin' | 'sqm' | 'sqcm' | 'pcs' | 'pal' | 'jmd';
+import { QuoteInputItem, Unit } from '../types/quote';
+import { EvaluatableInput } from './evaluatable-input';
 
 function round(value: number, multpile: number, direction?: 'up' | 'down') {
 	let roundingFunction: (num: number) => number;
@@ -86,20 +85,6 @@ function convert(
 	return {
 		toSqftFrom(unit: Unit) {
 			// For JMD to sqft conversion
-			const sqftFromTotal: TransformerRecord<PickupLocation> = {
-				FACTORY: (total) => {
-					const sqft = removeGCT(total / skuPrice); // Divide total by sku price
-					const roundedSqft = round(sqft, sqft_per_pallet / 2, 'down'); // Round Down to nearest half pallet
-
-					return roundedSqft;
-				},
-				SHOWROOM: (total) => {
-					const sqft = removeGCT(total / skuPrice); // Divide total by showroom sku price
-					const roundedSqft = round(sqft, 1 / pcs_per_sqft, 'down'); // Round Down to nearest piece
-
-					return roundedSqft;
-				}
-			};
 
 			const convertToSqftFrom: TransformerRecord<Unit> = {
 				sqft: (squarefeet) => squarefeet,
@@ -108,7 +93,19 @@ function convert(
 				sqcm: (squareCentimeters) => squareCentimeters / 30.48,
 				pal: (pallets) => pallets * sqft_per_pallet,
 				pcs: (pieces) => pieces / pcs_per_sqft,
-				jmd: (price) => sqftFromTotal[pickupLocation](price)
+				jmd: (total) => {
+					if (pickupLocation === 'FACTORY') {
+						const sqft = removeGCT(total / skuPrice); // Divide total by sku price
+						const roundedSqft = round(sqft, sqft_per_pallet / 2, 'down'); // Round Down to nearest half pallet
+
+						return roundedSqft;
+					} else {
+						const sqft = removeGCT(total / skuPrice); // Divide total by showroom sku price
+						const roundedSqft = round(sqft, 1 / pcs_per_sqft, 'down'); // Round Down to nearest piece
+
+						return roundedSqft;
+					}
+				}
 			};
 
 			const unroundedArea = convertToSqftFrom[unit](value);
@@ -117,6 +114,7 @@ function convert(
 				pickupLocation,
 				unit
 			});
+
 			return { unroundedArea, roundedArea };
 		},
 		fromSqftTo(unit: Unit) {
@@ -128,12 +126,12 @@ function convert(
 				pal: (sqft) => round(sqft / sqft_per_pallet, 0.5),
 				pcs: (sqft) => round(sqft * pcs_per_sqft, 1),
 				jmd: (sqft) => {
-					const roundedSqft = roundArea(sqft, {
+					const roundedArea = roundArea(sqft, {
 						productDetails,
 						pickupLocation,
 						unit
 					});
-					return calculateTotal(roundedSqft, skuPrice).total;
+					return calculateTotal(roundedArea, skuPrice).total;
 				}
 			};
 
@@ -143,23 +141,11 @@ function convert(
 	};
 }
 
-function isNumeric(value: string | number) {
-	try {
-		number(value);
-
-		if (isNaN(parseFloat(value as string))) return false;
-
-		return true;
-	} catch {
-		return false;
-	}
-}
-
 function noEmptyStrings(str: string) {
 	return str === '' ? '0' : str;
 }
 
-const quicKCalcPlaceholder: Record<Unit, string> = {
+const quickCalcPlaceholder: Record<Unit, string> = {
 	pcs: 'Quantity',
 	pal: 'Quantity',
 	sqft: 'Area',
@@ -169,14 +155,8 @@ const quicKCalcPlaceholder: Record<Unit, string> = {
 	jmd: 'Amount'
 };
 
-type FormValues = {
-	skuId: string;
-	area: number;
-	pickupLocation: PickupLocation;
-};
-
 type QuickCalcProps = {
-	control: Control<FormValues>;
+	control: Control<QuoteInputItem>;
 	header: React.FC<React.PropsWithChildren<{ title: string }>>;
 	convertConfig: {
 		skuPrice: number;
@@ -186,12 +166,12 @@ type QuickCalcProps = {
 };
 
 const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
-	const { watch, setValue } = useFormContext<FormValues>();
+	const SectionHeader = header;
 
-	const { skuId, area, pickupLocation } = watch();
+	const { watch, setValue } = useFormContext<QuoteInputItem>();
+
+	const { skuId, area, pickupLocation, input } = watch();
 	const [showWork, setShowWork] = useState(false);
-	const [qcInputValue, setQcInputValue] = useState('');
-	const [unit, setUnit] = useState<Unit>('sqft');
 
 	const quickCalc = {
 		area,
@@ -201,15 +181,13 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 	// Sync derived area with new convertConfigs only when skus change
 	useEffect(() => {
 		const { roundedArea } = convert(
-			parseFloat(noEmptyStrings(qcInputValue)),
+			parseFloat(noEmptyStrings(input.value)),
 			convertConfig
-		).toSqftFrom(unit);
+		).toSqftFrom(input.unit);
 
 		setValue('area', roundedArea);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [skuId, pickupLocation]);
-
-	const SectionHeader = header;
 
 	return (
 		<section className="space-y-4">
@@ -225,164 +203,36 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 						control={control}
 						name="area"
 						render={({ field }) => {
-							function hijackInputValue(newValue: string) {
-								setQcInputValue(newValue);
-							}
-
-							function setQcValue(number: number) {
-								const { roundedArea } = convert(
-									number,
-									convertConfig
-								).toSqftFrom(unit);
-
-								setValue('area', roundedArea);
-							}
-
-							function commitChange(value: number, shouldRound?: boolean) {
-								let valueToCommit = value;
-
-								if (shouldRound) valueToCommit = round(value, 0.01);
-
-								// Committed value is always rounded to nearest hundredth
-								valueToCommit = parseFloat(valueToCommit.toFixed(2));
-
-								hijackInputValue(valueToCommit.toString());
-
-								if (valueToCommit > 0) setQcValue(valueToCommit);
-								else setQcValue(0);
-							}
-
-							function evaluateInputValue(inputValue: string): number {
-								// Replace invalid math symbols with valid ones
-								const parsedInputValue = inputValue
-									.replace(/(×|x)/g, '*')
-									.replace(/÷/g, '/');
-
-								// Evaluate parsed input value
-								const transpiledInputValue = evaluate(parsedInputValue);
-
-								// Throw if `evaluate` returns an object
-								if (isNaN(transpiledInputValue)) {
-									throw new Error(
-										'Got an object. Restoring last valid qcValue'
-									);
-								}
-
-								// Return transpiled value otherwise
-								return transpiledInputValue;
-							}
-
-							function restoreLastValid() {
-								const convertedValue = convert(
-									quickCalc.area,
-									convertConfig
-								).fromSqftTo(unit);
-
-								setQcInputValue(convertedValue.toString());
-							}
-
 							return (
-								<input
-									{...field}
-									id="quickcalc-value"
-									type="text"
-									autoComplete="off"
-									placeholder={quicKCalcPlaceholder[unit]}
-									className="w-[100%] placeholder-gray-500 outline-none"
-									value={qcInputValue}
-									onChange={(e) => {
-										const inputValue = e.currentTarget.value;
-										const inputValueIsNumeric = isNumeric(inputValue);
+								<EvaluatableInput
+									inputValue={input.value}
+									placeholder={quickCalcPlaceholder[input.unit]}
+									onBlur={field.onBlur}
+									onChange={(number) => {
+										const { roundedArea } = convert(
+											number,
+											convertConfig
+										).toSqftFrom(input.unit);
+										const quantity = convert(
+											roundedArea,
+											convertConfig
+										).fromSqftTo(
+											convertConfig.pickupLocation === 'FACTORY' ? 'pal' : 'pcs'
+										);
 
-										// Don't hijack the input
-										setQcInputValue(e.currentTarget.value);
-
-										if (inputValueIsNumeric === true) {
-											// Turn inputValue into a number
-											const inputValueAsNumber = parseFloat(inputValue);
-
-											// Commit that number as qcValue
-											setQcValue(inputValueAsNumber);
-										} else if (inputValue === '') {
-											// If the input is empty, set qcValue to 0
-											setQcValue(0);
-										} else {
-											try {
-												// Otherwise, try to evaluate the inputValue as an expression
-												const evaluatedValue = evaluateInputValue(inputValue);
-
-												// Set calculated value as qcValue
-												setQcValue(round(evaluatedValue, 0.01));
-											} catch {}
-										}
+										setValue('area', roundedArea);
+										setValue('quantity', quantity);
 									}}
-									onBlur={(e) => {
-										field.onBlur(); // Let the form know when this input was touched
-
-										const inputValue = e.currentTarget.value;
-										const inputValueIsNumeric = isNumeric(inputValue);
-
-										// Numbers don't need to be evaluated
-										if (inputValueIsNumeric === false) {
-											// If the input is empty, avoid NaN by setting value to 0
-											if (inputValue === '') setQcValue(0);
-											else {
-												try {
-													// Otherwise evalutate input as an expression
-													const evaluatedValue = evaluateInputValue(inputValue);
-
-													// Set calculated value as qcValue
-													commitChange(round(evaluatedValue, 0.01));
-												} catch {
-													// Evaluation failed, restore the last valid value
-													restoreLastValid();
-												}
-											}
-										}
+									onInputChange={(newValue) => {
+										setValue('input.value', newValue);
 									}}
-									onKeyDown={(e) => {
-										const inputValue = e.currentTarget.value;
-										const inputValueIsNumeric = isNumeric(inputValue);
+									onRestoreLastValidValue={() => {
+										const convertedValue = convert(
+											quickCalc.area,
+											convertConfig
+										).fromSqftTo(input.unit);
 
-										// Allow nudge only if the input value is a number
-										if (
-											(inputValueIsNumeric || inputValue === '') &&
-											(e.key === 'ArrowUp' || e.key === 'ArrowDown')
-										) {
-											e.preventDefault();
-
-											const parsedInputValue = parseFloat(
-												noEmptyStrings(e.currentTarget.value)
-											);
-
-											if (e.key === 'ArrowUp') {
-												// Nudge up 1 step
-												commitChange(parsedInputValue + 1);
-											} else if (
-												e.key === 'ArrowDown' &&
-												parsedInputValue >= 1
-											) {
-												// Nudge down 1 step if current value is greater than 1
-												commitChange(parsedInputValue - 1);
-											}
-										} else if (!inputValueIsNumeric && e.key === 'Enter') {
-											e.preventDefault();
-
-											// If input is empty, avoid NaN by setting qcValue to 0
-											if (inputValue === '') setQcValue(0);
-											else {
-												try {
-													// Otherwise evalutate input as an expression
-													const evaluatedValue = evaluateInputValue(inputValue);
-
-													// Set calculated value as qcValue
-													commitChange(round(evaluatedValue, 0.01));
-												} catch {
-													// Evaluation failed, restore the last valid qcValue
-													restoreLastValid();
-												}
-											}
-										}
+										return convertedValue;
 									}}
 								/>
 							);
@@ -391,11 +241,11 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 				</label>
 
 				<Select
-					value={unit}
+					value={input.unit}
 					onValueChange={(newUnit: Unit) => {
-						const oldUnit = unit;
+						const oldUnit = input.unit;
 
-						const parsedInputValue = parseFloat(noEmptyStrings(qcInputValue));
+						const parsedInputValue = parseFloat(noEmptyStrings(input.value));
 
 						const inputValueAsSqft = convert(
 							parsedInputValue,
@@ -407,8 +257,8 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 							convertConfig
 						).fromSqftTo(newUnit);
 
-						setQcInputValue(convertedValue.toString());
-						setUnit(newUnit);
+						setValue('input.value', convertedValue.toString());
+						setValue('input.unit', newUnit);
 					}}
 				>
 					<SelectTrigger />

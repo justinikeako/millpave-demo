@@ -17,7 +17,7 @@ import {
 	formatPrice,
 	formatRelativeUpdate
 } from '../../utils/format';
-import Icon from '../../components/icon';
+import { Icon } from '../../components/icon';
 import { PickupLocation } from '@prisma/client';
 import { ErrorBoundary } from 'react-error-boundary';
 import {
@@ -33,6 +33,7 @@ import {
 	DialogContent,
 	DialogHeader
 } from '../../components/dialog';
+import { QuoteInputItem } from '../../types/quote';
 
 function formatRestockDate(date: number) {
 	const difference = differenceInCalendarDays(date, new Date());
@@ -43,12 +44,6 @@ function formatRestockDate(date: number) {
 
 	return format(date, "'Restocks' EEE, LLL d");
 }
-
-type FormValues = {
-	skuId: string;
-	area: number;
-	pickupLocation: PickupLocation;
-};
 
 function findSKU(searchId: string, skuList?: SKU[]) {
 	if (!skuList) return;
@@ -224,11 +219,16 @@ const Page: NextPage = () => {
 	const createQuote = trpc.useMutation(['quote.create']);
 	const addItemToQuote = trpc.useMutation(['quote.addItemTo']);
 
-	const formMethods = useForm<FormValues>({
+	const formMethods = useForm<QuoteInputItem>({
 		defaultValues: {
 			skuId: skuId,
 			area: 0,
-			pickupLocation: 'FACTORY'
+			pickupLocation: 'FACTORY',
+			quantity: 0,
+			input: {
+				value: '',
+				unit: 'sqft'
+			}
 		}
 	});
 
@@ -391,13 +391,16 @@ const Page: NextPage = () => {
 						<form
 							key={productId}
 							className="space-y-4"
-							onSubmit={formMethods.handleSubmit(() => {
+							onSubmit={formMethods.handleSubmit((values) => {
+								console.log(values);
+
 								setDialogOpen(true);
 							})}
 						>
 							<div className="space-y-12">
 								{/* Color Picker */}
 								<SkuPicker
+									name="skuId"
 									control={formMethods.control}
 									value={skuId}
 									product={product.data}
@@ -433,7 +436,8 @@ const Page: NextPage = () => {
 									variant="primary"
 									disabled={formMethods.watch().area <= 0}
 								>
-									<span className="font-semibold">Add to Quote</span>
+									<Icon name="add_shopping_cart" />
+									<span>Add to Quote</span>
 								</Button>
 							</div>
 						</form>

@@ -1,11 +1,15 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Button } from './button';
+import { Icon } from './icon';
 
 type ContentProps = React.PropsWithChildren<{
 	open: boolean;
 }>;
 
 const Content = ({ children, open }: ContentProps) => {
+	const transition = { type: 'spring', mass: 1, damping: 20, stiffness: 120 };
+
 	return (
 		<AnimatePresence>
 			{open && (
@@ -15,7 +19,7 @@ const Content = ({ children, open }: ContentProps) => {
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 0.2 }}
 							exit={{ opacity: 0 }}
-							transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+							transition={transition}
 							className="fixed inset-0 z-20  bg-black"
 						/>
 					</DialogPrimitive.Overlay>
@@ -26,7 +30,7 @@ const Content = ({ children, open }: ContentProps) => {
 							initial={{ y: '100%' }}
 							animate={{ y: 0 }}
 							exit={{ y: '100%' }}
-							transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+							transition={transition}
 						>
 							{children}
 						</motion.div>
@@ -43,10 +47,16 @@ type DialogHeader = {
 
 const DialogHeader = ({ title }: DialogHeader) => {
 	return (
-		<div className="pt-8 pb-4">
+		<div className="flex items-center justify-between pt-8 pb-4">
 			<DialogPrimitive.Title className="font-display text-lg">
 				{title}
 			</DialogPrimitive.Title>
+
+			<DialogPrimitive.Close asChild>
+				<Button variant="tertiary" className="text-gray-500">
+					<Icon name="close" />
+				</Button>
+			</DialogPrimitive.Close>
 		</div>
 	);
 };

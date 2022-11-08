@@ -42,4 +42,4 @@ const Icon = forwardRef<HTMLSpanElement, React.PropsWithChildren<IconProps>>(
 	}
 );
 
-export default Icon;
+export { Icon };

@@ -3,7 +3,7 @@ import NextError from 'next/error';
 import Head from 'next/head';
 import { FC, PropsWithChildren, useRef, useState } from 'react';
 import { Button } from '../../components/button';
-import Icon from '../../components/icon';
+import { Icon } from '../../components/icon';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { trpc } from '../../utils/trpc';
 import { useRouter } from 'next/router';
@@ -25,6 +25,8 @@ import {
 } from '../../components/dialog';
 import Link from 'next/link';
 import cx from 'classnames';
+import { ProductPicker } from '../../components/sku-picker';
+import { Controller, useForm } from 'react-hook-form';
 
 function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {
@@ -156,6 +158,9 @@ type ItemEditorProps = {
 };
 
 const ItemEditor = ({ onSave, onDelete }: ItemEditorProps) => {
+	const formMethods = useForm({
+		defaultValues: {}
+	});
 	return (
 		<>
 			<DialogHeader title="Edit Item" />
@@ -163,6 +168,18 @@ const ItemEditor = ({ onSave, onDelete }: ItemEditorProps) => {
 			{/* <QuickCalc control={} /> */}
 
 			<div className="flex flex-col space-y-2">
+				<section>
+					<ProductPicker
+						products={[
+							{ display_name: 'Colonial Classic', id: 'colonial_classic' },
+							{ display_name: 'Banjo', id: 'banjo' },
+							{ display_name: 'Old World Cobble', id: 'owc' }
+						]}
+						currentProduct="colonial_classic"
+						onChange={() => null}
+					/>
+				</section>
+
 				<Button variant="primary" onClick={onSave}>
 					<Icon name="save" />
 					Save Changes

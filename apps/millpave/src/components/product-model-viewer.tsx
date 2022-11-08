@@ -5,7 +5,7 @@ import { GLTF, USDZExporter } from 'three-stdlib';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from './button';
-import Icon from './icon';
+import { Icon } from './icon';
 import { motion, MotionValue, useScroll, useTransform } from 'framer-motion';
 import { useMobileDetect } from '../utils/use-mobile-detect';
 

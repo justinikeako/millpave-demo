@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from '../components/button';
-import Icon from '../components/icon';
+import { Icon } from '../components/icon';
 import { formatPrice } from '../utils/format';
 
 type SectionHeaderProps = React.PropsWithChildren<{

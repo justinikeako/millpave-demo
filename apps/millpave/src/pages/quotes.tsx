@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import NextError from 'next/error';
 import Head from 'next/head';
 import Link from 'next/link';
-import Icon from '../components/icon';
+import { Icon } from '../components/icon';
 import { formatRelativeUpdate } from '../utils/format';
 import { trpc } from '../utils/trpc';
 import * as Dropdown from '../components/dropdown';

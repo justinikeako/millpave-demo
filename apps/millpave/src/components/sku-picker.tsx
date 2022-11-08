@@ -1,16 +1,10 @@
 import { useEffect } from 'react';
 import { Control, Controller, useFormContext } from 'react-hook-form';
 import { Product } from '../types/product';
-import { PickupLocation } from '@prisma/client';
-
-type FormValues = {
-	skuId: string;
-	area: number;
-	pickupLocation: PickupLocation;
-};
 
 type SkuPickerProps = {
-	control: Control<FormValues>;
+	name: string;
+	control: Control<any>;
 	product: Product;
 	header: React.FC<React.PropsWithChildren<{ title: string }>>;
 	value: string;
@@ -18,6 +12,7 @@ type SkuPickerProps = {
 };
 
 const SkuPicker = ({
+	name,
 	control,
 	product,
 	header,
@@ -26,15 +21,15 @@ const SkuPicker = ({
 }: SkuPickerProps) => {
 	const SectionHeader = header;
 
-	const { setValue } = useFormContext<FormValues>();
+	const { setValue } = useFormContext();
 
 	useEffect(() => {
-		setValue('skuId', value);
+		setValue(name, value);
 	}, [value, setValue]);
 
 	return (
 		<Controller
-			name="skuId"
+			name={name}
 			control={control}
 			render={({ field }) => {
 				const [, ...skuFragments] = value.split(':');
@@ -62,55 +57,18 @@ const SkuPicker = ({
 									</SectionHeader>
 
 									{type === 'variant' && (
-										<ul className="grid grid-cols-3 gap-2">
-											{fragments.map(({ id, display_name }) => (
-												<li key={id} className="contents">
-													<label htmlFor={id} className="contents">
-														<input
-															className="peer hidden"
-															type="radio"
-															name={type}
-															value={id}
-															id={id}
-															checked={skuFragments[index] === id}
-															onChange={(e) =>
-																handleChange(e.target.value, index)
-															}
-														/>
-														<div className="flex items-center justify-center rounded-md px-3 py-2 inner-border inner-border-gray-200 peer-checked:bg-bubblegum-50 peer-checked:text-bubblegum-700 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
-															{display_name}
-														</div>
-													</label>
-												</li>
-											))}
-										</ul>
+										<VariantPicker
+											variants={fragments}
+											currentVariant={skuFragments[index] as string}
+											onChange={(e) => handleChange(e.target.value, index)}
+										/>
 									)}
 									{type === 'color' && (
-										<ul className="grid grid-cols-8 gap-2 [@media(max-width:320px)]:grid-cols-7">
-											{fragments.map(({ id, css }) => (
-												<li key={id} className="contents">
-													<label htmlFor={id} className="aspect-w-1 aspect-h-1">
-														<input
-															className="peer hidden"
-															type="radio"
-															name={type}
-															value={id}
-															id={id}
-															checked={skuFragments[index] === id}
-															onChange={(e) =>
-																handleChange(e.target.value, index)
-															}
-														/>
-														<div className="rounded-full p-1 inner-border inner-border-gray-300  peer-checked:p-1 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
-															<div
-																className="h-full w-full rounded-full"
-																style={{ background: css }}
-															/>
-														</div>
-													</label>
-												</li>
-											))}
-										</ul>
+										<ColorPicker
+											colors={fragments}
+											currentColor={skuFragments[index] as string}
+											onChange={(e) => handleChange(e.target.value, index)}
+										/>
 									)}
 								</section>
 							)
@@ -122,4 +80,126 @@ const SkuPicker = ({
 	);
 };
 
-export default SkuPicker;
+type ProductPickerProps = {
+	products: {
+		id: string;
+		display_name: string;
+	}[];
+	currentProduct: string;
+	name?: string;
+	onChange: React.ChangeEventHandler<HTMLInputElement>;
+};
+
+function ProductPicker({
+	products,
+	currentProduct,
+	onChange,
+	...props
+}: ProductPickerProps) {
+	return (
+		<ul className="flex space-x-2">
+			{products.map(({ id, display_name }) => (
+				<li key={id}>
+					<label htmlFor={id}>
+						<input
+							className="peer hidden"
+							type="radio"
+							name={props.name || 'variant'}
+							value={id}
+							id={id}
+							checked={currentProduct === id}
+							onChange={onChange}
+						/>
+
+						<div className="flex w-[100px] flex-col items-center justify-center rounded-md px-3 py-2 text-center text-sm inner-border inner-border-gray-200 peer-checked:bg-bubblegum-50 peer-checked:font-semibold peer-checked:text-bubblegum-700 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
+							<div className="aspect-w-1 aspect-h-1 w-full">
+								{/* <ProductIcon name={id} style="outline" color="inherit" /> */}
+							</div>
+							<span>{display_name}</span>
+						</div>
+					</label>
+				</li>
+			))}
+		</ul>
+	);
+}
+
+type VariantPickerProps = {
+	variants: {
+		id: string;
+		display_name: string;
+	}[];
+	currentVariant: string;
+	name?: string;
+	onChange: React.ChangeEventHandler<HTMLInputElement>;
+};
+
+function VariantPicker({
+	variants,
+	currentVariant,
+	onChange,
+	...props
+}: VariantPickerProps) {
+	return (
+		<ul className="flex space-x-2">
+			{variants.map(({ id, display_name }) => (
+				<li key={id}>
+					<label htmlFor={id}>
+						<input
+							className="peer hidden"
+							type="radio"
+							name={props.name || 'variant'}
+							value={id}
+							id={id}
+							checked={currentVariant === id}
+							onChange={onChange}
+						/>
+
+						<div className="flex items-center justify-center rounded-md px-3 py-2 text-center inner-border inner-border-gray-200 peer-checked:bg-bubblegum-50 peer-checked:font-semibold  peer-checked:text-bubblegum-700 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
+							{display_name}
+						</div>
+					</label>
+				</li>
+			))}
+		</ul>
+	);
+}
+
+type ColorPickerProps = {
+	colors: {
+		id: string;
+		css: string;
+	}[];
+	currentColor: string;
+	onChange: React.ChangeEventHandler<HTMLInputElement>;
+};
+
+function ColorPicker({ colors, currentColor, onChange }: ColorPickerProps) {
+	return (
+		<ul className="grid grid-cols-8 gap-2 [@media(max-width:320px)]:grid-cols-7">
+			{colors.map(({ id, css }) => (
+				<li key={id} className="contents">
+					<label htmlFor={id} className="aspect-w-1 aspect-h-1">
+						<input
+							className="peer hidden"
+							type="radio"
+							name="color"
+							value={id}
+							id={id}
+							checked={currentColor === id}
+							onChange={onChange}
+						/>
+						<div className="rounded-full p-1 inner-border inner-border-gray-300  peer-checked:p-1 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
+							<div
+								className="h-full w-full rounded-full"
+								style={{ background: css }}
+							/>
+						</div>
+					</label>
+				</li>
+			))}
+		</ul>
+	);
+}
+
+export { SkuPicker as default, ProductPicker, VariantPicker, ColorPicker };

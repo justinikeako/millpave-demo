@@ -11,81 +11,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Invoice {
-  id         String        @id @default(uuid())
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  overage    Overage       @default(FIVE)
-  items      InvoiceItem[]
-  subtotal   Float
-  tax        Float
-  total      Float
-  balance    Float
-  status     InvoiceStatus
-  quote      Quote         @relation(fields: [quoteId], references: [id])
-  quoteId    String        @unique
-  author     User          @relation(fields: [authorId], references: [id])
-  authorId   String
-  customer   Customer      @relation(fields: [customerId], references: [id])
-  customerId String
-
-  @@index(customerId)
-  @@index(authorId)
-}
-
-enum Overage {
-  ZERO
-  THREE
-  FIVE
-  TEN
-}
-
-enum InvoiceStatus {
-  PAID
-  PARTIAL
-  UNPAID
-}
-
-model InvoiceItem {
-  id             String         @id @default(uuid())
-  skuId          String
-  displayName    String
-  quantity       Int
-  pickupLocation PickupLocation
-  price          Float
-  invoice        Invoice        @relation(fields: [invoiceId], references: [id])
-  invoiceId      String
-
-  @@index(invoiceId)
-}
-
 model Quote {
-  id         String      @id
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  overage    Overage     @default(FIVE)
-  shapes     Json        @db.Json
-  items      QuoteItem[]
-  title      String
-  area       Float
-  weight     Float
-  subtotal   Float
-  tax        Float
-  total      Float
-  author     User        @relation(fields: [authorId], references: [id])
-  authorId   String
-  customer   Customer?   @relation(fields: [customerId], references: [id])
-  customerId String?
-  invoice    Invoice?
+  id        String      @id
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  items     QuoteItem[]
+  title     String
+  area      Float
+  weight    Float
+  subtotal  Float
+  tax       Float
+  total     Float
 
-  @@index(customerId)
-  @@index(authorId)
+  @@index(title)
 }
 
 model QuoteItem {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-  id             String         @id @default(uuid())
   skuId          String
   displayName    String
   quantity       Int
@@ -95,38 +38,10 @@ model QuoteItem {
   quote          Quote          @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   quoteId        String
 
-  @@unique([quoteId, skuId, pickupLocation], name: "itemIdentifier")
+  @@id(fields: [quoteId, skuId, pickupLocation], name: "id")
 }
 
 enum PickupLocation {
   SHOWROOM
   FACTORY
-}
-
-model User {
-  id               String    @id @default(uuid())
-  name             String
-  role             UserRole
-  authoredInvoices Invoice[]
-  authoredQuotes   Quote[]
-}
-
-enum UserRole {
-  SALES
-  ADMIN
-}
-
-model Customer {
-  id       String       @id @default(uuid())
-  name     String
-  email    String?
-  phone    String?
-  type     CustomerType
-  invoices Invoice[]
-  quotes   Quote[]
-}
-
-enum CustomerType {
-  INDIVIDUAL
-  ORGANIZATION
 }

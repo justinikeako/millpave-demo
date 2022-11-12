@@ -14,7 +14,7 @@ importers:
 
   apps/millpave:
     specifiers:
-      '@prisma/client': ^4.3.1
+      '@prisma/client': ^4.6.0
       '@radix-ui/react-dialog': ^1.0.0
       '@radix-ui/react-dropdown-menu': ^1.0.0
       '@radix-ui/react-select': ^1.0.0
@@ -47,7 +47,7 @@ importers:
       postcss: ^8.4.16
       prettier: ^2.7.1
       prettier-plugin-tailwindcss: ^0.1.13
-      prisma: ^4.3.1
+      prisma: ^4.6.1
       react: 18.2.0
       react-dom: 18.2.0
       react-error-boundary: ^3.1.4
@@ -64,7 +64,7 @@ importers:
       windstitch: ^0.2.1
       zod: ^3.17.3
     dependencies:
-      '@prisma/client': 4.3.1_prisma@4.3.1
+      '@prisma/client': 4.6.0_prisma@4.6.1
       '@radix-ui/react-dialog': 1.0.0_twyhzqqpkwvvgrmyeapdo6i4my
       '@radix-ui/react-dropdown-menu': 1.0.0_twyhzqqpkwvvgrmyeapdo6i4my
       '@radix-ui/react-select': 1.0.0_twyhzqqpkwvvgrmyeapdo6i4my
@@ -109,7 +109,7 @@ importers:
       postcss: 8.4.16
       prettier: 2.7.1
       prettier-plugin-tailwindcss: 0.1.13_prettier@2.7.1
-      prisma: 4.3.1
+      prisma: 4.6.1
       tailwindcss: 3.1.8_postcss@8.4.16
       tailwindcss-inner-border: 0.2.0_tailwindcss@3.1.8
       tsconfig: link:../../packages/tsconfig
@@ -481,8 +481,8 @@ packages:
       fastq: 1.13.0
     dev: true
 
-  /@prisma/client/4.3.1_prisma@4.3.1:
-    resolution: {integrity: sha512-FA0/d1VMJNWqzU7WVWTNWJ+lGOLR9JUBnF73GdIPAEVo/6dWk4gHx0EmgeU+SMv4MZoxgOeTBJF2azhg7x0hMw==}
+  /@prisma/client/4.6.0_prisma@4.6.1:
+    resolution: {integrity: sha512-D9LaQinDxOHinRpcJTw2tjMtjhc9HTP+aF1IRd2oLldp/8TiwIfxK8x17OhBBiX4y1PzbJXXET7kS+5wB3es/w==}
     engines: {node: '>=14.17'}
     requiresBuild: true
     peerDependencies:
@@ -491,16 +491,16 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b
-      prisma: 4.3.1
+      '@prisma/engines-version': 4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3
+      prisma: 4.6.1
     dev: false
 
-  /@prisma/engines-version/4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b:
-    resolution: {integrity: sha512-8yWpXkQRmiSfsi2Wb/ZS5D3RFbeu/btL9Pm/gdF4phB0Lo5KGsDFMxFMgaD64mwED2nHc8ZaEJg/+4Jymb9Znw==}
+  /@prisma/engines-version/4.6.0-53.2e719efb80b56a3f32d18a62489de95bb9c130e3:
+    resolution: {integrity: sha512-0CTnfEuUbLlO6n1fM89ERDbSwI4LoyZn+1OKVSwG+aVqohj34+mXRfwOWIM0ONtYtLGGBpddvQAnAZkg+cgS6g==}
     dev: false
 
-  /@prisma/engines/4.3.1:
-    resolution: {integrity: sha512-4JF/uMaEDAPdcdZNOrnzE3BvrbGpjgV0FcPT3EVoi6I86fWkloqqxBt+KcK/+fIRR0Pxj66uGR9wVH8U1Y13JA==}
+  /@prisma/engines/4.6.1:
+    resolution: {integrity: sha512-3u2/XxvxB+Q7cMXHnKU0CpBiUK1QWqpgiBv28YDo1zOIJE3FCF8DI2vrp6vuwjGt5h0JGXDSvmSf4D4maVjJdw==}
     requiresBuild: true
 
   /@radix-ui/number/1.0.0:
@@ -3359,13 +3359,13 @@ packages:
     hasBin: true
     dev: true
 
-  /prisma/4.3.1:
-    resolution: {integrity: sha512-90xo06wtqil76Xsi3mNpc4Js3SdDRR5g4qb9h+4VWY4Y8iImJY6xc3PX+C9xxTSt1lr0Q89A0MLkJjd8ax6KiQ==}
+  /prisma/4.6.1:
+    resolution: {integrity: sha512-BR4itMCuzrDV4tn3e2TF+nh1zIX/RVU0isKtKoN28ADeoJ9nYaMhiuRRkFd2TZN8+l/XfYzoRKyHzUFXLQhmBQ==}
     engines: {node: '>=14.17'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 4.3.1
+      '@prisma/engines': 4.6.1
 
   /prop-types/15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}

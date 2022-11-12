@@ -10,7 +10,7 @@
 		"start": "next start"
 	},
 	"dependencies": {
-		"@prisma/client": "^4.3.1",
+		"@prisma/client": "^4.6.0",
 		"@radix-ui/react-dialog": "^1.0.0",
 		"@radix-ui/react-dropdown-menu": "^1.0.0",
 		"@radix-ui/react-select": "^1.0.0",
@@ -56,7 +56,7 @@
 		"postcss": "^8.4.16",
 		"prettier": "^2.7.1",
 		"prettier-plugin-tailwindcss": "^0.1.13",
-		"prisma": "^4.3.1",
+		"prisma": "^4.6.1",
 		"tailwindcss": "^3.1.8",
 		"tailwindcss-inner-border": "^0.2.0",
 		"tsconfig": "workspace:*",

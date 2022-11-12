@@ -7,16 +7,15 @@ import { Icon } from '../../components/icon';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { trpc } from '../../utils/trpc';
 import { useRouter } from 'next/router';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectScrollDownButton,
-	SelectScrollUpButton,
-	SelectTrigger,
-	SelectViewport
-} from '../../components/select';
-import { Overage } from '@prisma/client';
+// import {
+// 	Select,
+// 	SelectContent,
+// 	SelectItem,
+// 	SelectScrollDownButton,
+// 	SelectScrollUpButton,
+// 	SelectTrigger,
+// 	SelectViewport
+// } from '../../components/select';
 import {
 	Dialog,
 	DialogContent,
@@ -25,8 +24,12 @@ import {
 } from '../../components/dialog';
 import Link from 'next/link';
 import cx from 'classnames';
-import { ProductPicker } from '../../components/sku-picker';
-import { Controller, useForm } from 'react-hook-form';
+import SkuPicker, { ProductPicker } from '../../components/sku-picker';
+import { SKU } from '../../types/product';
+import { PickupLocation } from '@prisma/client';
+import QuickCalc from '../../components/quick-calc';
+import { FormProvider, useForm } from 'react-hook-form';
+import { QuoteInputItem } from '../../types/quote';
 
 function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {
@@ -124,33 +127,45 @@ const EditableHeader = ({
 	);
 };
 
-type OverageSelectProps = {
-	defaultValue: string;
-	onChange: (newValue: Overage) => void | Promise<void>;
-};
+// type OverageSelectProps = {
+// 	defaultValue: string;
+// 	onChange: (newValue: Overage) => void | Promise<void>;
+// };
 
-const OverageSelect = ({ defaultValue }: OverageSelectProps) => {
-	const [overage, setOverage] = useState(defaultValue);
+// const OverageSelect = ({ defaultValue }: OverageSelectProps) => {
+// 	const [overage, setOverage] = useState(defaultValue);
 
+// 	return (
+// 		<Select
+// 			value={overage}
+// 			onValueChange={(newOverage) => setOverage(newOverage)}
+// 		>
+// 			<SelectTrigger />
+// 			<SelectContent>
+// 				<SelectScrollUpButton />
+// 				<SelectViewport>
+// 					<SelectItem value="TEN">10%</SelectItem>
+// 					<SelectItem value="FIVE">5%</SelectItem>
+// 					<SelectItem value="THREE">3%</SelectItem>
+// 					<SelectItem value="ZERO">None</SelectItem>
+// 				</SelectViewport>
+// 				<SelectScrollDownButton />
+// 			</SelectContent>
+// 		</Select>
+// 	);
+// };
+
+function SectionHeader2({
+	title,
+	children
+}: React.PropsWithChildren<SectionHeaderProps>) {
 	return (
-		<Select
-			value={overage}
-			onValueChange={(newOverage) => setOverage(newOverage)}
-		>
-			<SelectTrigger />
-			<SelectContent>
-				<SelectScrollUpButton />
-				<SelectViewport>
-					<SelectItem value="TEN">10%</SelectItem>
-					<SelectItem value="FIVE">5%</SelectItem>
-					<SelectItem value="THREE">3%</SelectItem>
-					<SelectItem value="ZERO">None</SelectItem>
-				</SelectViewport>
-				<SelectScrollDownButton />
-			</SelectContent>
-		</Select>
+		<div className="flex items-center justify-between">
+			<h3 className="font-display font-semibold">{title}</h3>
+			{children}
+		</div>
 	);
-};
+}
 
 type ItemEditorProps = {
 	onSave: () => Promise<void>;
@@ -158,37 +173,136 @@ type ItemEditorProps = {
 };
 
 const ItemEditor = ({ onSave, onDelete }: ItemEditorProps) => {
-	const formMethods = useForm({
-		defaultValues: {}
+	const [skuId, setSkuId] = useState('colonial_classic:grey');
+
+	const [productId] = skuId.split(':');
+
+	const productList = trpc.useQuery(['product.getList'], {
+		refetchOnWindowFocus: false
 	});
+	const product = trpc.useQuery(
+		['product.get', { productId: productId as string }],
+		{ refetchOnWindowFocus: false, keepPreviousData: true }
+	);
+
+	const formMethods = useForm<QuoteInputItem>({
+		defaultValues: {
+			area: 0,
+			input: {
+				value: '',
+				unit: 'sqft'
+			},
+			pickupLocation: 'FACTORY',
+			quantity: 9,
+			skuId: skuId
+		}
+	});
+
+	function findSKU(searchId: string, skuList?: SKU[]) {
+		if (!skuList) return;
+
+		const sku = skuList.find((currentSKU) => currentSKU.id === searchId);
+
+		return sku;
+	}
+
+	const { pickupLocation } = formMethods.watch();
+	const sku = findSKU(skuId, product.data?.skuList);
+
+	const findDetails = (skuId: string) => {
+		return product.data?.details.find((details) => {
+			return skuId.includes(details.matcher);
+		});
+	};
+
+	const productDetails = findDetails(skuId);
+
+	function handleProductChange(newProductId: string) {
+		setSkuId((currentSkuId) => {
+			const colorId = currentSkuId.split(':').at(-1) as string;
+
+			const incomingProduct = productList.data?.find(
+				(candidate) => candidate.id === newProductId
+			);
+
+			const newSkuIdFragment = incomingProduct?.defaultSkuIdTemplate.replace(
+				'[color]',
+				colorId
+			) as string;
+
+			return `${newProductId}:${newSkuIdFragment}`;
+		});
+	}
+
 	return (
 		<>
 			<DialogHeader title="Edit Item" />
+			{(productList.isLoading || product.isLoading) && <p>Loading...</p>}
+			{productList.data && (
+				<FormProvider {...formMethods}>
+					<form
+						className="h-[50vh] space-y-8 overflow-y-auto px-8 pt-4 pb-8"
+						onSubmit={formMethods.handleSubmit((values) => {
+							console.log(values);
+						})}
+					>
+						<section className="space-y-4">
+							<SectionHeader2 title="Model" />
+							<ProductPicker
+								products={productList.data}
+								currentProduct={productId as string}
+								onChange={handleProductChange}
+							/>
+						</section>
+						{product.data && sku && productDetails && (
+							<>
+								<SkuPicker
+									product={product.data}
+									header={SectionHeader2}
+									value={skuId}
+									onChange={(fragmentedSkuId) => {
+										const skuId = fragmentedSkuId.join(':');
 
-			{/* <QuickCalc control={} /> */}
+										setSkuId(skuId);
+									}}
+								/>
 
-			<div className="flex flex-col space-y-2">
-				<section>
-					<ProductPicker
-						products={[
-							{ display_name: 'Colonial Classic', id: 'colonial_classic' },
-							{ display_name: 'Banjo', id: 'banjo' },
-							{ display_name: 'Old World Cobble', id: 'owc' }
-						]}
-						currentProduct="colonial_classic"
-						onChange={() => null}
-					/>
-				</section>
+								<QuickCalc
+									control={formMethods.control}
+									convertConfig={{
+										skuPrice:
+											sku.price + (pickupLocation === 'FACTORY' ? 0 : 20),
+										pickupLocation: pickupLocation,
+										productDetails: productDetails
+									}}
+									header={SectionHeader2}
+								/>
+							</>
+						)}
 
-				<Button variant="primary" onClick={onSave}>
-					<Icon name="save" />
-					Save Changes
-				</Button>
-				<Button variant="secondary" className="text-red-600" onClick={onDelete}>
-					<Icon name="delete" />
-					Remove from Quote
-				</Button>
-			</div>
+						<div className="space-y-2">
+							<Button
+								variant="primary"
+								type="submit"
+								onClick={onSave}
+								className="w-full"
+							>
+								<Icon name="save" />
+								Save Changes
+							</Button>
+							<Button
+								variant="secondary"
+								type="button"
+								className="w-full text-red-600"
+								onClick={onDelete}
+							>
+								<Icon name="delete" />
+								Remove from Quote
+							</Button>
+						</div>
+					</form>
+				</FormProvider>
+			)}
 		</>
 	);
 };
@@ -198,7 +312,7 @@ const deriveRouteFromSkuId = (skuId: string) => {
 
 	const skuQuery = skuIdFragments.join().replace(/,/g, '+');
 
-	return `${productId}?sku=${skuQuery}`;
+	return `/product/${productId}?sku=${skuQuery}`;
 };
 
 const Page: NextPage = () => {
@@ -208,11 +322,12 @@ const Page: NextPage = () => {
 
 	const [editDialogState, setEditDialogState] = useState({
 		open: false,
-		itemId: ''
+		skuId: '',
+		pickupLocation: 'FACTORY' as PickupLocation
 	});
 
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
-	const [showOverageWarning, setShowOverageWarning] = useState(false);
+	// const [showOverageWarning, setShowOverageWarning] = useState(false);
 
 	const quote = trpc.useQuery(['quote.get', { id: quoteId }]);
 	const renameQuote = trpc.useMutation(['quote.rename']);
@@ -253,7 +368,7 @@ const Page: NextPage = () => {
 				/>
 
 				{/* Shapes */}
-				{quote.data.shapes && quote.data.shapes.length > 0 && (
+				{/* {quote.data.shapes && quote.data.shapes.length > 0 && (
 					<section className="space-y-4">
 						<SectionHeader title="Shapes" />
 
@@ -275,14 +390,15 @@ const Page: NextPage = () => {
 							<li className="h-2 shrink-0 basis-4" />
 						</ul>
 					</section>
-				)}
+				)} */}
 
 				{/* Items */}
 				<section className="space-y-4">
 					<SectionHeader title={`Items (${quote.data.items.length})`} />
 
 					{/* Overage */}
-					<div className="flex items-center justify-between">
+
+					{/* <div className="flex items-center justify-between">
 						<p className="flex space-x-1">
 							<span>Area Overage</span>
 
@@ -297,13 +413,12 @@ const Page: NextPage = () => {
 							defaultValue={quote.data.overage}
 							onChange={(newOverage) => {
 								setShowOverageWarning(newOverage === 'ZERO');
-								console.log(newOverage);
 							}}
 						/>
-					</div>
+					</div>*/}
 
 					{/* Overage Warning */}
-					{(showOverageWarning || quote.data.overage === 'ZERO') && (
+					{/* {(showOverageWarning || quote.data.overage === 'ZERO') && (
 						<div className="flex space-x-4 rounded-md bg-red-50 px-4 py-6 text-red-500">
 							<Icon name="warning" />
 							<div className="flex-1 space-y-2">
@@ -315,7 +430,7 @@ const Page: NextPage = () => {
 								</p>
 							</div>
 						</div>
-					)}
+					)} */}
 
 					{/* Item List */}
 					<Dialog
@@ -334,7 +449,9 @@ const Page: NextPage = () => {
 								}}
 								onDelete={async () => {
 									await removeItem.mutateAsync({
-										itemId: editDialogState.itemId
+										quoteId: quoteId,
+										pickupLocation: editDialogState.pickupLocation,
+										skuId: editDialogState.skuId
 									});
 
 									await quote.refetch();
@@ -350,11 +467,11 @@ const Page: NextPage = () => {
 						<ul className="!mt-8 space-y-12">
 							{quote.data.items.map((item) => (
 								<li
-									key={item.id}
+									key={`${item.skuId}_${item.pickupLocation}`}
 									className="flex flex-col items-center space-y-4"
 								>
 									<Link
-										href={`/product/${deriveRouteFromSkuId(item.skuId)}`}
+										href={deriveRouteFromSkuId(item.skuId)}
 										className="contents"
 									>
 										<div className="mb-4 h-32 w-32 bg-gray-100" />
@@ -393,7 +510,8 @@ const Page: NextPage = () => {
 													onClick={() => {
 														setEditDialogState((oldState) => ({
 															...oldState,
-															itemId: item.id
+															pickupLocation: item.pickupLocation,
+															skuId: item.skuId
 														}));
 													}}
 												>
@@ -473,7 +591,7 @@ const Page: NextPage = () => {
 							>
 								<div className="h-32 w-32 bg-gray-100" />
 								<div className="space-y-2 self-stretch">
-									<h3 className="font-semibold">{item.display_name}</h3>
+									<h3 className="font-semibold">{item.displayName}</h3>
 
 									<p>{formatPrice(item.price)}</p>
 								</div>

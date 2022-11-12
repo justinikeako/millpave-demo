@@ -26,7 +26,7 @@ function generateQuoteItem(inputItem: QuoteInputItem) {
 
 	const outputItem: QuoteItemCreateManyQuoteInput = {
 		skuId: sku.id,
-		displayName: sku.display_name,
+		displayName: sku.displayName,
 		quantity: quantity,
 		pickupLocation: inputItem.pickupLocation,
 		price: roundPrice(area * skuPrice),
@@ -36,14 +36,12 @@ function generateQuoteItem(inputItem: QuoteInputItem) {
 	return outputItem;
 }
 
-function generateQuote(inputItems: QuoteInputItem[], authorId: string) {
+function generateQuote(inputItems: QuoteInputItem[]) {
 	const outputItems = inputItems.map(generateQuoteItem);
 
 	const generatedQuote: Prisma.QuoteCreateInput = {
 		id: nanoid(8),
 		title: 'Draft Quote',
-		author: { connect: { id: authorId } },
-		shapes: [],
 		items: { create: outputItems },
 		...calculateDetails(outputItems)
 	};

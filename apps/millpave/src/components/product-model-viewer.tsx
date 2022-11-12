@@ -257,7 +257,7 @@ function ProductViewer({ sku }: ProductViewerProps) {
 	// Spooky regex. replaces ':' with '+' and separates the product ID
 	const [productId, skuId] = sku.id.replace(/:/g, '+').split(/\+(.*)/s); // Not sure how it works 😔
 	const link = `https://beta.millpave.notprimitive.com/product/${productId}?sku=${skuId}`;
-	const title = sku.display_name;
+	const title = sku.displayName;
 	const file = `https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/${slug}`;
 
 	const { isIos, isAndroid } = useMobileDetect();

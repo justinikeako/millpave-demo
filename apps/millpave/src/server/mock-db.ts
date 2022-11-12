@@ -9,41 +9,41 @@ import {
 } from '../types/product';
 
 const color_fragments = [
-	{ id: 'grey', display_name: 'Grey', css: '#D9D9D9' },
-	{ id: 'ash', display_name: 'Ash', css: '#B1B1B1' },
-	{ id: 'charcoal', display_name: 'Charcoal', css: '#696969' },
+	{ id: 'grey', displayName: 'Grey', css: '#D9D9D9' },
+	{ id: 'ash', displayName: 'Ash', css: '#B1B1B1' },
+	{ id: 'charcoal', displayName: 'Charcoal', css: '#696969' },
 	{
 		id: 'slate',
-		display_name: 'Slate',
+		displayName: 'Slate',
 		css: 'linear-gradient(45deg, #696969 50%, #D9D9D9 50%)'
 	},
-	{ id: 'spanish_brown', display_name: 'Spanish Brown', css: '#95816D' },
-	{ id: 'sunset_taupe', display_name: 'Sunset Taupe', css: '#C9B098' },
-	{ id: 'tan', display_name: 'Tan', css: '#DDCCBB' },
-	{ id: 'shale_brown', display_name: 'Shale Brown', css: '#907A7A' },
-	{ id: 'sunset_clay', display_name: 'Sunset Clay', css: '#E7A597' },
-	{ id: 'red', display_name: 'Red', css: '#EF847A' },
+	{ id: 'spanish_brown', displayName: 'Spanish Brown', css: '#95816D' },
+	{ id: 'sunset_taupe', displayName: 'Sunset Taupe', css: '#C9B098' },
+	{ id: 'tan', displayName: 'Tan', css: '#DDCCBB' },
+	{ id: 'shale_brown', displayName: 'Shale Brown', css: '#907A7A' },
+	{ id: 'sunset_clay', displayName: 'Sunset Clay', css: '#E7A597' },
+	{ id: 'red', displayName: 'Red', css: '#EF847A' },
 	{
 		id: 'charcoal_red',
-		display_name: 'Charcoal Red',
+		displayName: 'Charcoal Red',
 		css: 'linear-gradient(45deg, #696969 50%, #EF847A 50%)'
 	},
 	{
 		id: 'red_yellow',
-		display_name: 'Red Yellow',
+		displayName: 'Red Yellow',
 		css: 'linear-gradient(45deg, #EF847A 50%, #E7DD69 50%)'
 	},
-	{ id: 'terracotta', display_name: 'Terracotta', css: '#EFA17A' },
-	{ id: 'orange', display_name: 'Orange', css: '#EBB075' },
-	{ id: 'sunset_tangerine', display_name: 'Sunset Tangerine', css: '#E7C769' },
-	{ id: 'yellow', display_name: 'Yellow', css: '#E7DD69' },
-	{ id: 'green', display_name: 'Green', css: '#A9D786' }
+	{ id: 'terracotta', displayName: 'Terracotta', css: '#EFA17A' },
+	{ id: 'orange', displayName: 'Orange', css: '#EBB075' },
+	{ id: 'sunset_tangerine', displayName: 'Sunset Tangerine', css: '#E7C769' },
+	{ id: 'yellow', displayName: 'Yellow', css: '#E7DD69' },
+	{ id: 'green', displayName: 'Green', css: '#A9D786' }
 ];
 
 const DETAILS: ProductDetails[] = [
 	{
 		product_id: 'colonial_classic',
-		supports: [{ index: 0, values: 'all' }],
+		matcher: 'colonial_classic',
 		dimensions: [4, 8, 2.375],
 		lbs_per_unit: 5,
 		sqft_per_pallet: 128.75,
@@ -52,7 +52,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'thin_classic',
-		supports: [{ index: 0, values: 'all' }],
+		matcher: 'thin_classic',
 		dimensions: [4, 8, 1.375],
 		lbs_per_unit: 4.16,
 		sqft_per_pallet: 154.5,
@@ -61,7 +61,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'banjo',
-		supports: [{ index: 0, values: 'all' }],
+		matcher: 'banjo',
 		dimensions: [5.5, 9, 2.375],
 		lbs_per_unit: 6.67,
 		sqft_per_pallet: 128.57,
@@ -70,7 +70,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'owc',
-		supports: [{ index: 0, values: 'all' }],
+		matcher: 'owc',
 		dimensions: [5.5, 9, 2.375],
 		lbs_per_unit: 3.75,
 		sqft_per_pallet: 125.39,
@@ -79,10 +79,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'cobble_mix',
-		supports: [
-			{ index: 0, values: ['double'] },
-			{ index: 1, values: 'all' }
-		],
+		matcher: 'cobble_mix:double',
 		dimensions: [7, 9.5, 2.375],
 		lbs_per_unit: 11.28,
 		sqft_per_pallet: 119.28,
@@ -91,10 +88,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'cobble_mix',
-		supports: [
-			{ index: 0, values: ['oblong'] },
-			{ index: 1, values: 'all' }
-		],
+		matcher: 'cobble_mix:oblong',
 		dimensions: [4.75, 7, 2.375],
 		lbs_per_unit: 5.3,
 		sqft_per_pallet: 126.91,
@@ -103,10 +97,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'cobble_mix',
-		supports: [
-			{ index: 0, values: ['two_part'] },
-			{ index: 1, values: 'all' }
-		],
+		matcher: 'cobble_mix:two_part',
 		dimensions: [4.75, 7, 2.375],
 		lbs_per_unit: 3.53,
 		sqft_per_pallet: 130.97,
@@ -115,10 +106,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'heritage',
-		supports: [
-			{ index: 0, values: ['regular'] },
-			{ index: 1, values: 'all' }
-		],
+		matcher: 'heritage:regular',
 		dimensions: [6, 9, 2.375],
 		lbs_per_unit: 9.15,
 		sqft_per_pallet: 120.59,
@@ -127,10 +115,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'heritage',
-		supports: [
-			{ index: 0, values: ['square'] },
-			{ index: 1, values: 'all' }
-		],
+		matcher: 'heritage:square',
 		dimensions: [6, 6, 2.375],
 		lbs_per_unit: 5.86,
 		sqft_per_pallet: 128,
@@ -139,10 +124,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'heritage',
-		supports: [
-			{ index: 0, values: ['two_part'] },
-			{ index: 1, values: 'all' }
-		],
+		matcher: 'heritage:two_part',
 		dimensions: [6, 9, 2.375],
 		lbs_per_unit: 5.77,
 		sqft_per_pallet: 130,
@@ -151,7 +133,7 @@ const DETAILS: ProductDetails[] = [
 	},
 	{
 		product_id: 'tropical_wave',
-		supports: [{ index: 0, values: 'all' }],
+		matcher: 'tropical_wave',
 		dimensions: [4.75, 9.5, 3],
 		lbs_per_unit: 9.38,
 		sqft_per_pallet: 102.89,
@@ -160,80 +142,36 @@ const DETAILS: ProductDetails[] = [
 	}
 ];
 
-const recommend = {
-	colonial_classic: {
-		id: 'colonial_classic',
-		display_name: 'Colonial Classic',
-		default_sku_id_fragment: ['[color]'],
-		price: 203
-	},
-	thin_classic: {
-		id: 'thin_classic',
-		display_name: 'Thin Classic',
-		default_sku_id_fragment: ['[color]'],
-		price: 188
-	},
-	banjo: {
-		id: 'banjo',
-		display_name: 'Banjo',
-		default_sku_id_fragment: ['[color]'],
-		price: 219
-	},
-	owc: {
-		id: 'owc',
-		display_name: 'Old World Cobble',
-		default_sku_id_fragment: ['[color]'],
-		price: 203
-	},
-	cobble_mix: {
-		id: 'cobble_mix',
-		display_name: 'Cobble Mix',
-		default_sku_id_fragment: ['oblong', '[color]'],
-		price: 219
-	},
-	heritage: {
-		id: 'heritage',
-		display_name: 'Heritage Series',
-		default_sku_id_fragment: ['regular', '[color]'],
-		price: 203
-	},
-	tropical_wave: {
-		id: 'tropical_wave',
-		display_name: 'Tropical Wave',
-		default_sku_id_fragment: ['[color]'],
-		price: 203
-	}
-};
-
 // Mock Products
 const COLONIAL_CLASSIC: Product = {
 	id: 'colonial_classic',
-	pickup_location_list: ['FACTORY', 'SHOWROOM'],
-	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
-	display_name: 'Colonial Classic',
+	defaultSkuIdTemplate: '[color]',
+	lowestPrice: 203,
+	pickupLocations: ['FACTORY', 'SHOWROOM'],
+	category: { id: 'concret_pavers', displayName: 'Concrete Pavers' },
+	displayName: 'Colonial Classic',
 	gallery: [
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
 		}
 	],
-	similar_products: [recommend.thin_classic, recommend.banjo],
-	sku_id_fragments: [
+	similarProducts: ['thin_classic', 'banjo'],
+	skuIdFragments: [
 		{
-			index: 0,
 			type: 'color',
-			display_name: 'Color',
+			displayName: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -241,32 +179,33 @@ const COLONIAL_CLASSIC: Product = {
 
 const THIN_CLASSIC: Product = {
 	id: 'thin_classic',
-	pickup_location_list: ['FACTORY', 'SHOWROOM'],
-	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
-	display_name: 'Thin Classic',
+	defaultSkuIdTemplate: '[color]',
+	lowestPrice: 188,
+	pickupLocations: ['FACTORY', 'SHOWROOM'],
+	category: { id: 'concret_pavers', displayName: 'Concrete Pavers' },
+	displayName: 'Thin Classic',
 	gallery: [
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
 		}
 	],
-	similar_products: [recommend.colonial_classic, recommend.banjo],
-	sku_id_fragments: [
+	similarProducts: ['colonial_classic', 'banjo'],
+	skuIdFragments: [
 		{
-			index: 0,
 			type: 'color',
-			display_name: 'Color',
+			displayName: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -274,32 +213,33 @@ const THIN_CLASSIC: Product = {
 
 const BANJO: Product = {
 	id: 'banjo',
-	pickup_location_list: ['FACTORY', 'SHOWROOM'],
-	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
-	display_name: 'Banjo',
+	defaultSkuIdTemplate: '[color]',
+	lowestPrice: 219,
+	pickupLocations: ['FACTORY', 'SHOWROOM'],
+	category: { id: 'concret_pavers', displayName: 'Concrete Pavers' },
+	displayName: 'Banjo',
 	gallery: [
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
 		}
 	],
-	similar_products: [recommend.colonial_classic, recommend.owc],
-	sku_id_fragments: [
+	similarProducts: ['colonial_classic', 'owc'],
+	skuIdFragments: [
 		{
-			index: 0,
 			type: 'color',
-			display_name: 'Color',
+			displayName: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -307,32 +247,33 @@ const BANJO: Product = {
 
 const OWC: Product = {
 	id: 'owc',
-	pickup_location_list: ['FACTORY'],
-	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
-	display_name: 'Old World Cobble',
+	defaultSkuIdTemplate: '[color]',
+	lowestPrice: 203,
+	pickupLocations: ['FACTORY'],
+	category: { id: 'concret_pavers', displayName: 'Concrete Pavers' },
+	displayName: 'Old World Cobble',
 	gallery: [
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
 		}
 	],
-	similar_products: [recommend.colonial_classic, recommend.cobble_mix],
-	sku_id_fragments: [
+	similarProducts: ['colonial_classic', 'cobble_mix'],
+	skuIdFragments: [
 		{
-			index: 0,
 			type: 'color',
-			display_name: 'Color',
+			displayName: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -340,42 +281,42 @@ const OWC: Product = {
 
 const COBBLE_MIX: Product = {
 	id: 'cobble_mix',
-	pickup_location_list: ['FACTORY'],
-	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
-	display_name: 'Cobble Mix',
+	defaultSkuIdTemplate: 'oblong:[color]',
+	lowestPrice: 219,
+	pickupLocations: ['FACTORY'],
+	category: { id: 'concret_pavers', displayName: 'Concrete Pavers' },
+	displayName: 'Cobble Mix',
 	gallery: [
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
 		}
 	],
-	similar_products: [recommend.heritage, recommend.owc],
-	sku_id_fragments: [
+	similarProducts: ['heritage', 'owc'],
+	skuIdFragments: [
 		{
-			index: 0,
 			type: 'variant',
-			display_name: 'Variant',
+			displayName: 'Variant',
 			fragments: [
-				{ id: 'double', display_name: 'Double' },
-				{ id: 'oblong', display_name: 'Oblong' },
-				{ id: 'two_part', display_name: 'Two Part' }
+				{ id: 'double', displayName: 'Double' },
+				{ id: 'oblong', displayName: 'Oblong' },
+				{ id: 'two_part', displayName: 'Two Part' }
 			]
 		},
 		{
-			index: 1,
 			type: 'color',
-			display_name: 'Color',
+			displayName: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -383,42 +324,42 @@ const COBBLE_MIX: Product = {
 
 const HERITAGE: Product = {
 	id: 'heritage',
-	pickup_location_list: ['FACTORY'],
-	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
-	display_name: 'Heritage Series',
+	defaultSkuIdTemplate: 'regular:[color]',
+	lowestPrice: 203,
+	pickupLocations: ['FACTORY'],
+	category: { id: 'concret_pavers', displayName: 'Concrete Pavers' },
+	displayName: 'Heritage Series',
 	gallery: [
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
 		}
 	],
-	similar_products: [recommend.cobble_mix, recommend.owc],
-	sku_id_fragments: [
+	similarProducts: ['cobble_mix', 'owc'],
+	skuIdFragments: [
 		{
-			index: 0,
 			type: 'variant',
-			display_name: 'Variant',
+			displayName: 'Variant',
 			fragments: [
-				{ id: 'regular', display_name: 'Regular' },
-				{ id: 'square', display_name: 'Square' },
-				{ id: 'two_part', display_name: 'Two Part' }
+				{ id: 'regular', displayName: 'Regular' },
+				{ id: 'square', displayName: 'Square' },
+				{ id: 'two_part', displayName: 'Two Part' }
 			]
 		},
 		{
-			index: 1,
 			type: 'color',
-			display_name: 'Color',
+			displayName: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -426,32 +367,33 @@ const HERITAGE: Product = {
 
 const TROPICAL_WAVE: Product = {
 	id: 'tropical_wave',
-	pickup_location_list: ['FACTORY'],
-	category: { id: 'concret_pavers', display_name: 'Concrete Pavers' },
-	display_name: 'Tropical Wave',
+	defaultSkuIdTemplate: '[color]',
+	lowestPrice: 203,
+	pickupLocations: ['FACTORY'],
+	category: { id: 'concret_pavers', displayName: 'Concrete Pavers' },
+	displayName: 'Tropical Wave',
 	gallery: [
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
 		},
 		{
 			id: nanoid(),
-			img_url:
+			imgUrl:
 				'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
 		}
 	],
-	similar_products: [recommend.colonial_classic, recommend.cobble_mix],
-	sku_id_fragments: [
+	similarProducts: ['colonial_classic', 'cobble_mix'],
+	skuIdFragments: [
 		{
-			index: 0,
 			type: 'color',
-			display_name: 'Color',
+			displayName: 'Color',
 			fragments: color_fragments
 		}
 	]
@@ -481,7 +423,7 @@ function generateSKUList(
 
 		return {
 			id: `${product.id}:${color.id}`,
-			display_name: `${product.displayName} ${color.display_name}`,
+			displayName: `${product.displayName} ${color.displayName}`,
 			price: price[color.id] || prices[1]
 		} as SKU;
 	});
@@ -565,12 +507,12 @@ function generateStock(
 
 		return [
 			{
-				sku_id: `${skuIdPrefix}:${colorId}`,
+				skuId: `${skuIdPrefix}:${colorId}`,
 				location: 'SHOWROOM',
 				quantity: doneToOrder ? 0 : coinFlip() ? showroomQuantity : 0
 			},
 			{
-				sku_id: `${skuIdPrefix}:${colorId}`,
+				skuId: `${skuIdPrefix}:${colorId}`,
 				location: 'FACTORY',
 				quantity: doneToOrder ? 0 : coinFlip() ? factoryQuantity : 0
 			}
@@ -599,7 +541,7 @@ function generateRestockElements(
 		return coinFlip(popularity / 2)
 			? [
 					{
-						sku_id: `${skuIdPrefix}:${colorId}`,
+						skuId: `${skuIdPrefix}:${colorId}`,
 						location: fromFactory ? 'FACTORY' : 'SHOWROOM',
 						quantity: fromFactory ? factoryQuantity : showroomQuantity,
 						date: fromFactory
@@ -636,6 +578,10 @@ export function getProduct(productId: string) {
 	return foundProduct;
 }
 
+export function getProducts() {
+	return PRODUCTS;
+}
+
 export function getProductDetails(productId: string) {
 	return DETAILS.filter((item) => item.product_id === productId);
 }
@@ -644,14 +590,7 @@ export function getSkuDetails(skuId: string) {
 	const [productId, ...skuIdFragment] = skuId.split(':');
 
 	const details = DETAILS.find((details) => {
-		return (
-			details.product_id === productId &&
-			details.supports.reduce((matches, { values, index }) => {
-				return matches && values === 'all'
-					? true
-					: values.includes(skuIdFragment[index] || '');
-			}, true)
-		);
+		return details.product_id === productId && skuId.includes(details.matcher);
 	});
 
 	if (!details) throw new Error(`No details found for '${skuIdFragment}'`);
@@ -681,7 +620,7 @@ export function getSku(skuId: string) {
 
 export function getProductStock(productId: string) {
 	return STOCK.filter((item) => {
-		const extractedProductId = item.sku_id.split(':').at(0);
+		const extractedProductId = item.skuId.split(':').at(0);
 
 		const matchesProductId = extractedProductId === productId;
 
@@ -691,7 +630,7 @@ export function getProductStock(productId: string) {
 
 export function getProductRestockQueue(productId: string) {
 	return RESTOCK_QUEUE.filter((item) => {
-		const extractedProductId = item.sku_id.split(':').at(0);
+		const extractedProductId = item.skuId.split(':').at(0);
 
 		const matchesProductId = extractedProductId === productId;
 

@@ -6,27 +6,26 @@ import { generateQuote, generateQuoteItem } from '../quote/generate';
 import { QuoteItem } from '@prisma/client';
 import { roundPrice } from '../../utils/price';
 import { QuoteItemMetadata } from '../../types/quote';
-import { quoteInputItem, unitEnum } from '../validators/quote';
+import {
+	pickupLocationEnum,
+	quoteInputItem,
+	unitEnum
+} from '../../validators/quote';
 
 type QuoteItemWithMetadata = QuoteItem & {
 	metadata: QuoteItemMetadata;
 };
 
-type Shape = {
-	id: string;
-	name: string;
-};
-
 type RecommendedItem = {
 	id: string;
-	display_name: string;
+	displayName: string;
 	price: number;
 };
 
 const recommendations: RecommendedItem[] = [
 	{
 		id: 'eff_cleaner',
-		display_name: 'DynaMatrix Efflorescence Cleaner',
+		displayName: 'DynaMatrix Efflorescence Cleaner',
 		price: 4000
 	}
 ];
@@ -40,16 +39,13 @@ export const quoteRouter = createRouter()
 			const quote = await ctx.prisma.quote.findUnique({
 				where: { id: input.id },
 				include: {
-					customer: true,
 					items: {
-						orderBy: {
-							createdAt: 'asc'
-						}
+						orderBy: { createdAt: 'asc' }
 					}
 				}
 			});
 
-			const shapes = quote?.shapes as Shape[] | null;
+			// const shapes = quote?.shapes as Shape[] | null;
 			const items = quote?.items.map((item) => {
 				return {
 					...item,
@@ -62,7 +58,6 @@ export const quoteRouter = createRouter()
 			return {
 				...quote,
 				items,
-				shapes,
 				recommendations
 			};
 		}
@@ -100,9 +95,7 @@ export const quoteRouter = createRouter()
 			})
 		}),
 		async resolve({ ctx, input }) {
-			const authorId = 'justin';
-
-			const quote = generateQuote([input], authorId);
+			const quote = generateQuote([input]);
 
 			const createdQuote = await ctx.prisma.quote.create({
 				data: quote
@@ -111,7 +104,7 @@ export const quoteRouter = createRouter()
 			return createdQuote.id;
 		}
 	})
-	.mutation('addItemTo', {
+	.mutation('addItemToQuote', {
 		input: z.object({
 			id: z.string(),
 			item: quoteInputItem
@@ -122,9 +115,9 @@ export const quoteRouter = createRouter()
 			const generatedItem = generateQuoteItem(input.item);
 			const oldItem = (await ctx.prisma.quoteItem.findUnique({
 				where: {
-					itemIdentifier: {
-						skuId: input.item.skuId,
+					id: {
 						quoteId: input.id,
+						skuId: input.item.skuId,
 						pickupLocation: input.item.pickupLocation
 					}
 				}
@@ -133,9 +126,9 @@ export const quoteRouter = createRouter()
 			if (oldItem) {
 				await ctx.prisma.quoteItem.update({
 					where: {
-						itemIdentifier: {
+						id: {
 							quoteId: input.id,
-							skuId: generatedItem.skuId,
+							skuId: input.item.skuId,
 							pickupLocation: input.item.pickupLocation
 						}
 					},
@@ -190,11 +183,13 @@ export const quoteRouter = createRouter()
 	})
 	.mutation('removeItem', {
 		input: z.object({
-			itemId: z.string()
+			quoteId: z.string(),
+			skuId: z.string(),
+			pickupLocation: pickupLocationEnum
 		}),
 		async resolve({ ctx, input }) {
 			const deletedItem = (await ctx.prisma.quoteItem.delete({
-				where: { id: input.itemId }
+				where: { id: input }
 			})) as QuoteItemWithMetadata;
 
 			console.log(deletedItem);

@@ -2,7 +2,7 @@ import { PickupLocation } from '@prisma/client';
 
 export type ProductDetails = {
 	product_id: string;
-	supports: { index: number; values: string[] | 'all' }[];
+	matcher: string;
 	dimensions: [number, number, number];
 	lbs_per_unit: number;
 	sqft_per_pallet: number;
@@ -12,54 +12,47 @@ export type ProductDetails = {
 
 type GalleryItem = {
 	id: string;
-	img_url: string;
+	imgUrl: string;
 };
 
-type RelatedProduct = {
-	id: string;
-	display_name: string;
-	default_sku_id_fragment: string[];
-	price: number;
-};
-
-type SkuFragment =
+export type SkuFragment =
 	| {
-			index: number;
 			type: 'color';
-			display_name: string;
-			fragments: { id: string; display_name: string; css: string }[];
+			displayName: string;
+			fragments: { id: string; displayName: string; css: string }[];
 	  }
 	| {
-			index: number;
 			type: 'variant';
-			display_name: string;
-			fragments: { id: string; display_name: string }[];
+			displayName: string;
+			fragments: { id: string; displayName: string }[];
 	  };
 
 export type Product = {
 	id: string;
-	pickup_location_list: PickupLocation[];
-	category: { id: string; display_name: string };
-	display_name: string;
+	defaultSkuIdTemplate: string;
+	lowestPrice: number;
+	pickupLocations: PickupLocation[];
+	category: { id: string; displayName: string };
+	displayName: string;
 	gallery: GalleryItem[];
-	similar_products: RelatedProduct[];
-	sku_id_fragments: SkuFragment[];
+	similarProducts: string[];
+	skuIdFragments: SkuFragment[];
 };
 
 export type SKU = {
 	id: string;
-	display_name: string;
+	displayName: string;
 	price: number;
 };
 
 export type Stock = {
-	sku_id: string;
+	skuId: string;
 	location: PickupLocation;
 	quantity: number;
 };
 
 export type RestockQueueElement = {
-	sku_id: string;
+	skuId: string;
 	location: PickupLocation;
 	quantity: number;
 	date: number;

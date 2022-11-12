@@ -216,9 +216,7 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 										const quantity = convert(
 											roundedArea,
 											convertConfig
-										).fromSqftTo(
-											convertConfig.pickupLocation === 'FACTORY' ? 'pal' : 'pcs'
-										);
+										).fromSqftTo('pcs');
 
 										setValue('area', roundedArea);
 										setValue('quantity', quantity);

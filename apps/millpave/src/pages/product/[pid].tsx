@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { FC, PropsWithChildren, useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '../../components/button';
 import { differenceInCalendarDays, format } from 'date-fns';
 import dynamic from 'next/dynamic';
@@ -82,28 +82,27 @@ const ProductViewer = dynamic(
 );
 
 type StockProps = {
-	fulfillment: { stock: Stock[]; queue: RestockQueueElement[] };
+	fulfillment: { stock: Stock[]; restockQueue: RestockQueueElement[] };
 	pickupLocation: PickupLocation;
 	skuId: string;
 };
 
 const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
-	// get stock
+	// Get stock
 	const currentStock =
 		fulfillment.stock.find((item) => {
-			const matchesSkuId = item.sku_id === skuId;
+			const matchesSkuId = item.skuId === skuId;
 			const matchesPickupLocation = item.location === pickupLocation;
 
 			return matchesSkuId && matchesPickupLocation;
 		})?.quantity || 0;
 
-	const matchedQueueElements = fulfillment.queue.filter(
-		(queueElement) =>
-			queueElement.sku_id === skuId && queueElement.location === pickupLocation
+	const matchedRestocks = fulfillment.restockQueue.filter(
+		(restock) => restock.skuId === skuId && restock.location === pickupLocation
 	);
 
-	const closestRestock = matchedQueueElements.length
-		? matchedQueueElements.reduce((prev, curr) => {
+	const closestRestock = matchedRestocks.length
+		? matchedRestocks.reduce((prev, curr) => {
 				return prev.date < curr.date ? prev : curr;
 		  }).date
 		: -1;
@@ -128,7 +127,7 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 	// const [maxShownQuotes, setMaxShownQuotes] = useState(2);
 
 	return (
-		<>
+		<div className="px-8 pb-8">
 			<div className="space-y-8 pt-4">
 				<Button
 					variant="secondary"
@@ -200,7 +199,7 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 					)}
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
@@ -212,12 +211,12 @@ const Page: NextPage = () => {
 	const skuIdFragment = (router.query.sku as string).replace(/ /gs, ':');
 	const skuId = `${productId}:${skuIdFragment}`;
 
-	const product = trpc.useQuery(['product.get', { productId }], {
+	const product = trpc.useQuery(['product.getPageData', { productId }], {
 		refetchOnWindowFocus: false
 	});
 
 	const createQuote = trpc.useMutation(['quote.create']);
-	const addItemToQuote = trpc.useMutation(['quote.addItemTo']);
+	const addItemToQuote = trpc.useMutation(['quote.addItemToQuote']);
 
 	const formMethods = useForm<QuoteInputItem>({
 		defaultValues: {
@@ -247,19 +246,13 @@ const Page: NextPage = () => {
 
 	const currentSKU = findSKU(skuId, product.data?.skuList);
 
-	const findDetails = (skuIdFragment: string) => {
-		const sku_id_fragment = skuIdFragment.split(':');
-
+	const findDetails = (skuId: string) => {
 		return product.data?.details.find((details) => {
-			return details.supports.reduce((matches, { values, index }) => {
-				return matches && values === 'all'
-					? true
-					: values.includes(sku_id_fragment[index] || '');
-			}, true);
+			return skuId.includes(details.matcher);
 		});
 	};
 
-	const productDetails = findDetails(skuIdFragment);
+	const productDetails = findDetails(skuId);
 
 	if (!product.data || !currentSKU || !productDetails) {
 		const productNotFound = product.error?.data?.code === 'NOT_FOUND';
@@ -275,7 +268,7 @@ const Page: NextPage = () => {
 	return (
 		<>
 			<Head>
-				<title>{`${currentSKU.display_name} — Millennium Paving Stones`}</title>
+				<title>{`${currentSKU.displayName} — Millennium Paving Stones`}</title>
 			</Head>
 
 			<ToastProvider duration={5000} swipeDirection="left">
@@ -364,9 +357,9 @@ const Page: NextPage = () => {
 				<aside className="relative -mt-8 space-y-12 rounded-2xl bg-white px-8 pb-16 pt-12">
 					{/* Header */}
 					<section className="space-y-2">
-						<p>{product.data.category.display_name}</p>
+						<p>{product.data.category.displayName}</p>
 						<h1 className="font-display text-xl font-semibold leading-tight">
-							{currentSKU.display_name}
+							{currentSKU.displayName}
 						</h1>
 						<div className="flex flex-wrap justify-between text-gray-500">
 							<p>{formatPrice(skuPrice)}/sqft</p>
@@ -399,23 +392,35 @@ const Page: NextPage = () => {
 						>
 							<div className="space-y-12">
 								{/* Color Picker */}
-								<SkuPicker
+
+								<Controller
 									name="skuId"
 									control={formMethods.control}
-									value={skuId}
-									product={product.data}
-									header={SectionHeader}
-									onChange={(newSkuFragments) => {
-										const newSkuQuery = newSkuFragments.join('+');
-										router.replace(
-											`/product/${productId}?sku=${newSkuQuery}`,
-											undefined,
-											{
-												shallow: true,
-												scroll: false
-											}
-										);
-									}}
+									render={({ field }) => (
+										<SkuPicker
+											value={skuId}
+											product={product.data}
+											header={SectionHeader}
+											onChange={(fragmentedSkuId) => {
+												const newSkuId = fragmentedSkuId.join(':');
+
+												field.onChange(newSkuId);
+
+												const [, ...skuIdFragment] = fragmentedSkuId;
+
+												const newSkuQuery = skuIdFragment.join('+');
+
+												router.replace(
+													`/product/${productId}?sku=${newSkuQuery}`,
+													undefined,
+													{
+														shallow: true,
+														scroll: false
+													}
+												);
+											}}
+										/>
+									)}
 								/>
 
 								{/* QuickCalc */}
@@ -482,7 +487,7 @@ const Page: NextPage = () => {
 						<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory space-x-2 overflow-x-scroll px-4">
 							<li className="shrink-0 basis-2"></li>
 
-							{product.data.gallery.map(({ id, img_url }) => (
+							{product.data.gallery.map(({ id, imgUrl }) => (
 								<li
 									key={id}
 									className="relative h-64 shrink-0 basis-full snap-center overflow-hidden rounded-lg bg-gray-100"
@@ -490,7 +495,7 @@ const Page: NextPage = () => {
 									{/* eslint-disable-next-line @next/next/no-img-element */}
 									<img
 										className="min-h-full min-w-full"
-										src={img_url}
+										src={imgUrl}
 										loading="lazy"
 										alt="Paving Stones"
 									/>
@@ -510,35 +515,33 @@ const Page: NextPage = () => {
 
 					{/* Recommendations */}
 					<section className="space-y-4">
-						<SectionHeader title={`Similar to ${product.data.display_name}`} />
+						<SectionHeader title={`Similar to ${product.data.displayName}`} />
 
 						<div className="-mx-4 flex flex-col items-center space-y-8">
 							<ul className="grid w-full grid-cols-2 gap-2">
-								{product.data.similar_products.map((product) => (
+								{product.data.similarProducts.map((product) => (
 									<li key={product.id} className="items-center space-y-2">
 										<Link
 											href={`/product/${product.id}?sku=${(() => {
-												const colorId = skuIdFragment.split(':').at(-1);
+												const colorId = skuIdFragment
+													.split(':')
+													.at(-1) as string;
 
-												const defaultSkuIdFragmentList =
-													product.default_sku_id_fragment.map((val) => {
-														return val === '[color]' ? colorId : val;
-													});
+												const skuId = product.defaultSkuIdTemplate
+													.replace('[color]', colorId)
+													.replace(':', '+');
 
-												const skuIdFragmentResult =
-													defaultSkuIdFragmentList.join('+');
-
-												return skuIdFragmentResult;
+												return skuId;
 											})()}`}
 										>
 											<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-gray-100" />
 
 											<div>
 												<h3 className="text-center font-semibold">
-													{product.display_name}
+													{product.displayName}
 												</h3>
 												<p className="text-center text-gray-500">
-													from {formatPrice(product.price)}
+													from {formatPrice(product.lowestPrice)}
 												</p>
 											</div>
 										</Link>

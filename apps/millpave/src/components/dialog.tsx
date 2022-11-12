@@ -20,13 +20,13 @@ const Content = ({ children, open }: ContentProps) => {
 							animate={{ opacity: 0.2 }}
 							exit={{ opacity: 0 }}
 							transition={transition}
-							className="fixed inset-0 z-20  bg-black"
+							className="fixed inset-0 z-auto bg-black"
 						/>
 					</DialogPrimitive.Overlay>
 
 					<DialogPrimitive.Content asChild forceMount>
 						<motion.div
-							className="fixed inset-x-0 bottom-0 z-30 rounded-t-2xl bg-white px-8 pb-8"
+							className="fixed inset-x-0 bottom-0 z-auto rounded-t-2xl bg-white"
 							initial={{ y: '100%' }}
 							animate={{ y: 0 }}
 							exit={{ y: '100%' }}
@@ -47,7 +47,7 @@ type DialogHeader = {
 
 const DialogHeader = ({ title }: DialogHeader) => {
 	return (
-		<div className="flex items-center justify-between pt-8 pb-4">
+		<div className="flex items-center justify-between px-8 pt-8 pb-4">
 			<DialogPrimitive.Title className="font-display text-lg">
 				{title}
 			</DialogPrimitive.Title>

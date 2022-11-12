@@ -1,5 +1,5 @@
 import z from 'zod';
-import { quoteInputItem, unitEnum } from '../server/validators/quote';
+import { quoteInputItem, unitEnum } from '../validators/quote';
 
 export type Unit = z.infer<typeof unitEnum>;
 

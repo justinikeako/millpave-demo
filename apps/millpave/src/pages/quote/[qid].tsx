@@ -1,7 +1,6 @@
-import { NextPage } from 'next';
 import NextError from 'next/error';
 import Head from 'next/head';
-import { FC, PropsWithChildren, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '../../components/button';
 import { Icon } from '../../components/icon';
 import { differenceInCalendarDays, format } from 'date-fns';
@@ -61,33 +60,30 @@ function formatRestockDate(date: number) {
 	return format(date, 'EEE, LLL d');
 }
 
-type SectionHeaderProps = {
+type SectionHeaderProps = React.PropsWithChildren<{
 	title: string;
-};
+}>;
 
-const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
-	title,
-	children
-}) => {
+function SectionHeader({ title, children }: SectionHeaderProps) {
 	return (
 		<div className="flex items-center justify-between">
 			<h2 className="font-display text-xl font-semibold">{title}</h2>
 			{children}
 		</div>
 	);
-};
+}
 
 type EditableHeaderProps = {
 	defaultValue: string;
 	onSave: (newValue: string) => Promise<void>;
 } & React.HTMLProps<HTMLInputElement>;
 
-const EditableHeader = ({
+function EditableHeader({
 	defaultValue,
 	onSave,
 	className,
 	...props
-}: EditableHeaderProps) => {
+}: EditableHeaderProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const [title, setTitle] = useState(defaultValue);
@@ -125,14 +121,14 @@ const EditableHeader = ({
 			/>
 		</form>
 	);
-};
+}
 
 // type OverageSelectProps = {
 // 	defaultValue: string;
 // 	onChange: (newValue: Overage) => void | Promise<void>;
 // };
 
-// const OverageSelect = ({ defaultValue }: OverageSelectProps) => {
+// function OverageSelect ({ defaultValue }: OverageSelectProps) {
 // 	const [overage, setOverage] = useState(defaultValue);
 
 // 	return (
@@ -153,7 +149,7 @@ const EditableHeader = ({
 // 			</SelectContent>
 // 		</Select>
 // 	);
-// };
+// }
 
 function SectionHeader2({
 	title,
@@ -172,7 +168,7 @@ type ItemEditorProps = {
 	onDelete: () => Promise<void>;
 };
 
-const ItemEditor = ({ onSave, onDelete }: ItemEditorProps) => {
+function ItemEditor({ onSave, onDelete }: ItemEditorProps) {
 	const [skuId, setSkuId] = useState('colonial_classic:grey');
 
 	const [productId] = skuId.split(':');
@@ -305,7 +301,7 @@ const ItemEditor = ({ onSave, onDelete }: ItemEditorProps) => {
 			)}
 		</>
 	);
-};
+}
 
 const deriveRouteFromSkuId = (skuId: string) => {
 	const [productId, ...skuIdFragments] = skuId.split(':');
@@ -315,7 +311,7 @@ const deriveRouteFromSkuId = (skuId: string) => {
 	return `/product/${productId}?sku=${skuQuery}`;
 };
 
-const Page: NextPage = () => {
+function Page() {
 	const router = useRouter();
 
 	const quoteId = router.query.qid as string;
@@ -605,6 +601,6 @@ const Page: NextPage = () => {
 			</main>
 		</>
 	);
-};
+}
 
 export default Page;

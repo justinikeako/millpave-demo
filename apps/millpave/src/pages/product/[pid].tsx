@@ -1,6 +1,5 @@
-import type { NextPage } from 'next';
 import Head from 'next/head';
-import { FC, PropsWithChildren, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '../../components/button';
 import { differenceInCalendarDays, format } from 'date-fns';
@@ -53,21 +52,18 @@ function findSKU(searchId: string, skuList?: SKU[]) {
 	return found;
 }
 
-type SectionHeaderProps = {
+type SectionHeaderProps = React.PropsWithChildren<{
 	title: string;
-};
+}>;
 
-const SectionHeader: FC<PropsWithChildren<SectionHeaderProps>> = ({
-	title,
-	children
-}) => {
+function SectionHeader({ title, children }: SectionHeaderProps) {
 	return (
 		<div className="flex items-center justify-between">
 			<h2 className="font-display text-lg font-semibold">{title}</h2>
 			{children}
 		</div>
 	);
-};
+}
 
 const ProductViewer = dynamic(
 	() => import('../../components/product-model-viewer'),
@@ -87,7 +83,7 @@ type StockProps = {
 	skuId: string;
 };
 
-const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
+function Stock({ fulfillment, skuId, pickupLocation }: StockProps) {
 	// Get stock
 	const currentStock =
 		fulfillment.stock.find((item) => {
@@ -112,14 +108,14 @@ const Stock = ({ fulfillment, skuId, pickupLocation }: StockProps) => {
 	) : (
 		<p>{formatRestockDate(closestRestock)}</p>
 	);
-};
+}
 
 type AddToProps = {
 	onCreate: () => void;
 	onAdd: (id: string) => void;
 };
 
-const AddTo = ({ onCreate, onAdd }: AddToProps) => {
+function AddTo({ onCreate, onAdd }: AddToProps) {
 	const recentQuotesRequest = trpc.useQuery(['quote.getAll'], {
 		refetchOnWindowFocus: false
 	});
@@ -201,9 +197,9 @@ const AddTo = ({ onCreate, onAdd }: AddToProps) => {
 			</div>
 		</div>
 	);
-};
+}
 
-const Page: NextPage = () => {
+function Page() {
 	const router = useRouter();
 
 	const productId = router.query.pid as string;
@@ -561,6 +557,6 @@ const Page: NextPage = () => {
 			</Dialog>
 		</>
 	);
-};
+}
 
 export default Page;

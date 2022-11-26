@@ -6,7 +6,7 @@ type ToastProps = ToastPrimitive.ToastProps & {
 	onOpenChange: (open: boolean) => void;
 };
 
-const Toast = ({ children, ...props }: ToastProps) => {
+function Toast({ children, ...props }: ToastProps) {
 	const nubz = useRef<HTMLLIElement>(null);
 
 	return (
@@ -31,7 +31,7 @@ const Toast = ({ children, ...props }: ToastProps) => {
 			)}
 		</AnimatePresence>
 	);
-};
+}
 
 const ToastTitle = ToastPrimitive.Title;
 const ToastAction = ToastPrimitive.Action;

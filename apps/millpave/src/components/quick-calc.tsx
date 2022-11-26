@@ -165,7 +165,7 @@ type QuickCalcProps = {
 	};
 };
 
-const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
+function QuickCalc({ control, convertConfig, header }: QuickCalcProps) {
 	const SectionHeader = header;
 
 	const { watch, setValue } = useFormContext<QuoteInputItem>();
@@ -344,6 +344,6 @@ const QuickCalc = ({ control, convertConfig, header }: QuickCalcProps) => {
 			</ul>
 		</section>
 	);
-};
+}
 
 export default QuickCalc;

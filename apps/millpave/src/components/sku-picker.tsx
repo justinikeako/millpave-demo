@@ -7,7 +7,7 @@ type SkuPickerProps = {
 	onChange: (fragmentedSkuId: string[]) => void;
 };
 
-const SkuPicker = ({ product, header, value, onChange }: SkuPickerProps) => {
+function SkuPicker({ product, header, value, onChange }: SkuPickerProps) {
 	const SectionHeader = header;
 
 	const [productId, ...skuIdFragments] = value.split(':');
@@ -53,7 +53,7 @@ const SkuPicker = ({ product, header, value, onChange }: SkuPickerProps) => {
 			))}
 		</>
 	);
-};
+}
 
 type ProductPickerProps = {
 	products: {

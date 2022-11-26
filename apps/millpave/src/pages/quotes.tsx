@@ -1,4 +1,3 @@
-import { NextPage } from 'next';
 import NextError from 'next/error';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -8,7 +7,7 @@ import { trpc } from '../utils/trpc';
 import * as Dropdown from '../components/dropdown';
 import { Button } from '../components/button';
 
-const Page: NextPage = () => {
+function Page() {
 	const quotes = trpc.useQuery(['quote.getAll']);
 	const deleteQuote = trpc.useMutation(['quote.delete']);
 
@@ -91,6 +90,6 @@ const Page: NextPage = () => {
 			</main>
 		</>
 	);
-};
+}
 
 export default Page;

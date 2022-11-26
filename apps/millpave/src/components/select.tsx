@@ -8,7 +8,7 @@ type SelectTriggerProps = {
 	basic?: boolean;
 } & SelectPrimitive.SelectTriggerProps;
 
-const SelectTrigger = ({ basic, ...props }: SelectTriggerProps) => {
+function SelectTrigger({ basic, ...props }: SelectTriggerProps) {
 	return (
 		<SelectPrimitive.Trigger
 			{...props}
@@ -25,9 +25,9 @@ const SelectTrigger = ({ basic, ...props }: SelectTriggerProps) => {
 			</SelectPrimitive.Icon>
 		</SelectPrimitive.Trigger>
 	);
-};
+}
 
-const SelectContent = ({ children }: SelectPrimitive.SelectContentProps) => {
+function SelectContent({ children }: SelectPrimitive.SelectContentProps) {
 	return (
 		<SelectPrimitive.Portal>
 			<SelectPrimitive.Content className="overflow-hidden rounded-md bg-gray-100">
@@ -35,17 +35,17 @@ const SelectContent = ({ children }: SelectPrimitive.SelectContentProps) => {
 			</SelectPrimitive.Content>
 		</SelectPrimitive.Portal>
 	);
-};
+}
 
-const SelectViewport = ({ children }: SelectPrimitive.SelectViewportProps) => {
+function SelectViewport({ children }: SelectPrimitive.SelectViewportProps) {
 	return (
 		<SelectPrimitive.Viewport className="p-1">
 			{children}
 		</SelectPrimitive.Viewport>
 	);
-};
+}
 
-const SelectItem = ({ value, children }: SelectPrimitive.SelectItemProps) => {
+function SelectItem({ value, children }: SelectPrimitive.SelectItemProps) {
 	return (
 		<SelectPrimitive.Item
 			value={value}
@@ -57,23 +57,23 @@ const SelectItem = ({ value, children }: SelectPrimitive.SelectItemProps) => {
 			</SelectPrimitive.ItemIndicator>
 		</SelectPrimitive.Item>
 	);
-};
+}
 
-const SelectScrollUpButton = () => {
+function SelectScrollUpButton() {
 	return (
 		<SelectPrimitive.ScrollUpButton className="flex cursor-default items-center justify-center bg-gray-100 py-4">
 			<Icon name="keyboard_arrow_up" />
 		</SelectPrimitive.ScrollUpButton>
 	);
-};
+}
 
-const SelectScrollDownButton = () => {
+function SelectScrollDownButton() {
 	return (
 		<SelectPrimitive.ScrollDownButton className="flex cursor-default items-center justify-center bg-gray-100 py-4">
 			<Icon name="keyboard_arrow_down" />
 		</SelectPrimitive.ScrollDownButton>
 	);
-};
+}
 
 export {
 	Select,

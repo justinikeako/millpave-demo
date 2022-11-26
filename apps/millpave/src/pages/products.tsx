@@ -1,5 +1,3 @@
-import { NextPage } from 'next';
-// import NextError from 'next/error';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from '../components/button';
@@ -39,7 +37,7 @@ function ProductLink({ href, name, startingPrice }: ProductLinkProps) {
 	);
 }
 
-const Page: NextPage = () => {
+function Page() {
 	return (
 		<>
 			<Head>
@@ -125,6 +123,6 @@ const Page: NextPage = () => {
 			</main>
 		</>
 	);
-};
+}
 
 export default Page;

@@ -156,7 +156,7 @@ type SceneProps = ModelProps & {
 	scrollProgress: MotionValue<number>;
 };
 
-const Scene = ({ file, scrollProgress, onSceneChange }: SceneProps) => {
+function Scene({ file, scrollProgress, onSceneChange }: SceneProps) {
 	const yAngle = useTransform(
 		scrollProgress,
 		[0, 0.333, 0.666, 1],
@@ -199,7 +199,7 @@ const Scene = ({ file, scrollProgress, onSceneChange }: SceneProps) => {
 			<Model file={file} onSceneChange={onSceneChange} />
 		</>
 	);
-};
+}
 
 type SlideIndicatorProps = {
 	scrollProgress: MotionValue<number>;
@@ -210,7 +210,7 @@ type DotProps = {
 	index: number;
 };
 
-const Dot = ({ index: dotIndex, scrollProgress }: DotProps) => {
+function Dot({ index: dotIndex, scrollProgress }: DotProps) {
 	const inputArray = [0, 0.333, 0.666, 1];
 
 	const scaleArray = inputArray.map((_, index) => {
@@ -235,8 +235,9 @@ const Dot = ({ index: dotIndex, scrollProgress }: DotProps) => {
 			style={{ scale, opacity }}
 		/>
 	);
-};
-const SlideIndicator = ({ scrollProgress }: SlideIndicatorProps) => {
+}
+
+function SlideIndicator({ scrollProgress }: SlideIndicatorProps) {
 	return (
 		<div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 -translate-y-1/2 space-x-1">
 			<Dot index={0} scrollProgress={scrollProgress} />
@@ -245,7 +246,7 @@ const SlideIndicator = ({ scrollProgress }: SlideIndicatorProps) => {
 			<Dot index={3} scrollProgress={scrollProgress} />
 		</div>
 	);
-};
+}
 
 type ProductViewerProps = {
 	sku: SKU;

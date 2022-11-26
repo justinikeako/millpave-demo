@@ -154,7 +154,7 @@ const Option = forwardRef<HTMLInputElement, OptionProps>(function Option(
 	);
 });
 
-const ShapeStage = ({ onNext }: StageProps) => {
+function ShapeStage({ onNext }: StageProps) {
 	const { register } = useFormContext<FormValues>();
 
 	return (
@@ -197,7 +197,7 @@ const ShapeStage = ({ onNext }: StageProps) => {
 			</StageFooter>
 		</>
 	);
-};
+}
 
 function convert(num: number) {
 	const convertToFtFrom: Record<Unit1D, (num: number) => number> = {
@@ -223,13 +223,13 @@ type MeasurementInputProps = {
 	className?: string;
 };
 
-const MeasurementInput = ({
+function MeasurementInput({
 	name,
 	placeholder,
 	size,
 	control,
 	className
-}: MeasurementInputProps) => {
+}: MeasurementInputProps) {
 	const { register } = useFormContext();
 
 	return (
@@ -263,9 +263,9 @@ const MeasurementInput = ({
 			/>
 		</Label>
 	);
-};
+}
 
-const MeasurementStage = ({ onNext }: StageProps) => {
+function MeasurementStage({ onNext }: StageProps) {
 	const { control } = useFormContext<FormValues>();
 
 	return (
@@ -308,9 +308,9 @@ const MeasurementStage = ({ onNext }: StageProps) => {
 			</StageFooter>
 		</>
 	);
-};
+}
 
-const InfillStage = ({ onNext }: StageProps) => {
+function InfillStage({ onNext }: StageProps) {
 	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const [dialogState, setDialogState] = useState({
@@ -391,9 +391,9 @@ const InfillStage = ({ onNext }: StageProps) => {
 			</StageFooter>
 		</>
 	);
-};
+}
 
-const BorderStage = ({ onNext }: StageProps) => {
+function BorderStage({ onNext }: StageProps) {
 	const { register, control } = useFormContext<FormValues>();
 
 	const [unit, setUnit] = useState<Unit1D>('ft');
@@ -523,9 +523,9 @@ const BorderStage = ({ onNext }: StageProps) => {
 			</StageFooter>
 		</div>
 	);
-};
+}
 
-const ReviewStage = ({ onNext }: StageProps) => {
+function ReviewStage({ onNext }: StageProps) {
 	// const { register } = useFormContext<FormValues>();
 
 	return (
@@ -616,9 +616,9 @@ const ReviewStage = ({ onNext }: StageProps) => {
 			</StageFooter>
 		</>
 	);
-};
+}
 
-const Form = ({ children }: React.PropsWithChildren) => {
+function Form({ children }: React.PropsWithChildren) {
 	const formMethods = useForm({
 		defaultValues
 	});
@@ -633,9 +633,9 @@ const Form = ({ children }: React.PropsWithChildren) => {
 			</form>
 		</FormProvider>
 	);
-};
+}
 
-const Page: NextPage = () => {
+function Page() {
 	const router = useRouter();
 
 	const [currentStage, setStage] = useState(0);
@@ -682,6 +682,6 @@ const Page: NextPage = () => {
 			</main>
 		</>
 	);
-};
+}
 
 export default Page;

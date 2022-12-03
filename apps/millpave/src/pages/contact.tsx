@@ -50,13 +50,13 @@ function Page() {
 						<h2 className="font-display text-xl">Millennium Locations</h2>
 						<ul className="flex gap-4">
 							<li>
-								<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 text-white">
+								<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 font-semibold text-white">
 									R
 								</span>
 								&nbsp;Retail
 							</li>
 							<li>
-								<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 text-white">
+								<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 font-semibold text-white">
 									M
 								</span>
 								&nbsp;Manufacturing

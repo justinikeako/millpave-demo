@@ -112,21 +112,21 @@ function Page() {
 
 					<div className="-mx-8 flex flex-col space-y-4 md:-mx-32 md:space-y-8">
 						<div className="flex h-[40vmin] justify-center space-x-4 overflow-hidden md:space-x-8">
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
 						</div>
 						<div className="flex h-[40vmin] justify-center space-x-4 overflow-hidden md:space-x-8">
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
 						</div>
 					</div>
 				</section>
@@ -148,7 +148,9 @@ function Page() {
 							Hill Road, Kingston.
 						</p>
 						<br />
-						<Button variant="primary">Get a Quote</Button>
+						<Button variant="primary" asChild className="w-fit">
+							<Link href="/contact">Get a Quote</Link>
+						</Button>
 					</div>
 
 					<div className="aspect-square bg-gray-200 lg:h-[60vmin]" />

@@ -168,7 +168,7 @@ function ColorPicker({ colors, currentColor, onChange }: ColorPickerProps) {
 							checked={currentColor === id}
 							onChange={(e) => onChange(e.target.value)}
 						/>
-						<div className="h-8 w-8 rounded-full p-1 inner-border inner-border-gray-300 peer-checked:p-1 peer-checked:inner-border-2  peer-checked:inner-border-gray-900 md:h-12 md:w-12">
+						<div className="h-12 w-12 rounded-full p-1 inner-border inner-border-gray-300 peer-checked:p-1 peer-checked:inner-border-2  peer-checked:inner-border-gray-900">
 							<div
 								className="h-full w-full rounded-full"
 								style={{ background: css }}

@@ -12,7 +12,7 @@ function GalleryFilter({ children, selected }: GalleryFilterProps) {
 	return (
 		<li
 			className={classNames(
-				'aspect-[3/4] w-full shrink-0 snap-center p-2 sm:h-[40vh] sm:w-auto',
+				'aspect-[4/3] w-full shrink-0 snap-center p-2 sm:h-[40vh] sm:w-auto',
 				selected
 					? 'inner-border-2 inner-border-black'
 					: 'inner-border inner-border-gray-200'
@@ -58,7 +58,7 @@ function Page() {
 
 				<section className="space-y-4 md:space-y-8">
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
-						<div className="mb-16 flex items-center md:col-span-3 md:mb-0 lg:col-span-2">
+						<div className="mb-8 flex items-center md:col-span-3 md:mb-0 lg:col-span-2">
 							<p className="font-display text-2xl">
 								Get inspiration for your new driveway.
 							</p>

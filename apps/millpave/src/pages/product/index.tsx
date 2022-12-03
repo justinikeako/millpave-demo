@@ -54,17 +54,17 @@ function Page() {
 					{/* Gallery */}
 					<div className="flex flex-col items-center gap-2 lg:sticky lg:top-8 lg:flex-[3]">
 						<div className="aspect-square w-full bg-gray-200" />
-						<div className="flex gap-2">
-							<div className="relative aspect-square w-20 p-2 inner-border-2 inner-border-black">
+						<div className="flex items-start gap-2">
+							<div className="relative h-20 w-20 shrink-0 p-2 inner-border-2 inner-border-black">
 								<div className="h-full w-full bg-gray-200" />
 							</div>
-							<div className="relative aspect-square w-20 p-1 inner-border inner-border-gray-200">
+							<div className="relative h-20 w-20 shrink-0 p-1 inner-border inner-border-gray-200">
 								<div className="h-full w-full bg-gray-200" />
 							</div>
-							<div className="relative aspect-square w-20 p-1 inner-border inner-border-gray-200">
+							<div className="relative h-20 w-20 shrink-0 p-1 inner-border inner-border-gray-200">
 								<div className="h-full w-full bg-gray-200" />
 							</div>
-							<div className="relative aspect-square w-20 p-1 inner-border inner-border-gray-200">
+							<div className="relative h-20 w-20 shrink-0 p-1 inner-border inner-border-gray-200">
 								<div className="h-full w-full bg-gray-200" />
 							</div>
 						</div>
@@ -235,21 +235,21 @@ function Page() {
 
 					<div className="-mx-8 flex flex-col space-y-4 md:-mx-24 md:space-y-8 lg:-mx-32">
 						<div className="flex h-[40vmin] justify-center space-x-4 overflow-hidden md:space-x-8">
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
 						</div>
 						<div className="flex h-[40vmin] justify-center space-x-4 overflow-hidden md:space-x-8">
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
-							<div className="flex aspect-square bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
+							<div className="flex aspect-square shrink-0 bg-gray-200" />
 						</div>
 					</div>
 				</section>

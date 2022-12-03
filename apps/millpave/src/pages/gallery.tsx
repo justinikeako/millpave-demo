@@ -29,7 +29,7 @@ function Page() {
 	return (
 		<>
 			<Head>
-				<title>Inspiration Gallery</title>
+				<title>Inspiration Gallery — Millennium Paving Stones</title>
 			</Head>
 
 			<Header />

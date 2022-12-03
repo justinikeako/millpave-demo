@@ -41,7 +41,7 @@ function Page() {
 	return (
 		<>
 			<Head>
-				<title>Product Catalogue</title>
+				<title>Product Catalogue — Millennium Paving Stones</title>
 			</Head>
 
 			<Header />

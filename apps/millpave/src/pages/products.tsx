@@ -1,126 +1,163 @@
 import Head from 'next/head';
-import Link from 'next/link';
-import { Button } from '../components/button';
+import { Footer } from '../components/footer';
+import { Header } from '../components/header';
+import { ProductCard } from '../components/product-card';
+import * as Select from '../components/select';
+import { w } from 'windstitch';
 import { Icon } from '../components/icon';
-import { formatPrice } from '../utils/format';
 
-type SectionHeaderProps = React.PropsWithChildren<{
-	title: string;
+type ProductCategoryProps = React.PropsWithChildren<{
+	name: string;
 }>;
 
-function SectionHeader({ title, children }: SectionHeaderProps) {
+function ProductCategory({ name, children }: ProductCategoryProps) {
 	return (
-		<div className="flex items-center justify-between">
-			<h2 className="font-display text-lg font-semibold">{title}</h2>
-			{children}
-		</div>
-	);
-}
+		<li className="space-y-8">
+			<h2 className="font-display text-xl">{name}</h2>
 
-type ProductLinkProps = {
-	href: string;
-	name: string;
-	startingPrice: number;
-};
-
-function ProductLink({ href, name, startingPrice }: ProductLinkProps) {
-	return (
-		<li>
-			<Link href={href}>
-				<div className="aspect-w-3 aspect-h-2 rounded-lg bg-gray-100" />
-				<div className="mt-2">
-					<h3 className="font-semibold">{name}</h3>
-					<p className="text-gray-500">from {formatPrice(startingPrice)}</p>
-				</div>
-			</Link>
+			<ul className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
+				{children}
+			</ul>
 		</li>
 	);
 }
+
+function Chip({ children }: React.PropsWithChildren) {
+	return (
+		<li>
+			<button className="flex gap-1 whitespace-nowrap rounded-full bg-gray-100 px-4 py-2 font-semibold active:bg-gray-300">
+				{children}
+				<Icon name="edit" opticalSize={20} />
+			</button>
+		</li>
+	);
+}
+
+const StyledProductCard = w(ProductCard, {
+	className: 'md:col-span-3 lg:col-span-2'
+});
 
 function Page() {
 	return (
 		<>
 			<Head>
-				<title>Product Catalog</title>
+				<title>Product Catalogue</title>
 			</Head>
 
-			<main className="space-y-8 px-8 pb-8">
-				<div className="space-y-4">
-					<nav className="flex justify-between pt-12 pb-8">
-						<Button variant="tertiary">
-							<Icon name="search" />
-						</Button>
-						<Button variant="tertiary" asChild>
-							<Link href="/quotes">
-								<Icon name="request_quote" />
-							</Link>
-						</Button>
-					</nav>
+			<Header />
 
-					<h1 className="font-display text-2xl font-semibold">Products</h1>
-					<ul className="no-scrollbar -mx-8 flex items-center space-x-2 overflow-x-scroll">
-						<li className="h-2 shrink-0 basis-4" />
+			<main className="space-y-8 px-8 md:px-24 lg:space-y-16 lg:px-32">
+				<h1 className="text-center font-display text-4xl">Product Catalogue</h1>
 
-						<li className="flex snap-center rounded-full bg-gray-100 p-2.5">
-							<Icon name="tune" />
+				<div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
+					{/* Filters */}
+					<div className="top-8 hidden flex-[1] space-y-8 self-start lg:sticky lg:block">
+						<h2 className="font-display text-xl">Filters</h2>
+
+						<div className="space-y-4">
+							<h3 className="font-display text-lg">Sort By</h3>
+
+							<Select.Root defaultValue="RELEVANCE">
+								<Select.Trigger className="w-full" />
+
+								<Select.Content>
+									<Select.ScrollUpButton />
+									<Select.Viewport>
+										<Select.Item value="RELEVANCE">Relevance</Select.Item>
+										<Select.Item value="HIGH_TO_LOW">
+											Price (High to Low)
+										</Select.Item>
+										<Select.Item value="LOW_TO_HIGH">
+											Price (Low to High)
+										</Select.Item>
+									</Select.Viewport>
+									<Select.ScrollDownButton />
+								</Select.Content>
+							</Select.Root>
+						</div>
+
+						<div className="space-y-4">
+							<h3 className="font-display text-lg">Category</h3>
+
+							<div className="flex space-x-2">
+								<input type="checkbox" />
+								<span>All Categories (16)</span>
+							</div>
+						</div>
+
+						<div className="space-y-4">
+							<h3 className="font-display text-lg">Colors</h3>
+
+							<div className="flex space-x-2">
+								<input type="checkbox" />
+								<span>All Colors (10)</span>
+							</div>
+						</div>
+					</div>
+
+					<ul className="no-scrollbar -mx-8 flex items-center space-x-2 overflow-x-scroll px-8 lg:hidden">
+						<li>
+							<button className="flex rounded-full bg-gray-100 p-2.5 active:bg-gray-300">
+								<Icon name="tune" weight={400} />
+							</button>
 						</li>
 
-						<li className="flex snap-center whitespace-nowrap rounded-full bg-gray-100 px-4 py-2">
-							Paving Stones
-						</li>
-						<li className="flex snap-center whitespace-nowrap rounded-full bg-gray-100 px-4 py-2">
-							Available in Red
-						</li>
-						<li className="flex snap-center whitespace-nowrap rounded-full bg-gray-100 px-4 py-2">
-							Available in Grey
-						</li>
+						<Chip>All Categories</Chip>
+						<Chip>All Colors</Chip>
+					</ul>
 
-						<li className="h-2 shrink-0 basis-4" />
+					{/* Categories */}
+					<ul className="flex-[4] space-y-16">
+						{/* Pavers */}
+						<ProductCategory name="Pavers">
+							<StyledProductCard name="Colonial Classic" startingPrice={203} />
+							<StyledProductCard name="Thin Classic" startingPrice={203} />
+							<StyledProductCard name="Banjo" startingPrice={219} />
+							<StyledProductCard name="Heritage Series" startingPrice={203} />
+							<StyledProductCard name="Cobble Mix" startingPrice={203} />
+							<StyledProductCard name="Old World Cobble" startingPrice={203} />
+							<StyledProductCard name="Circle Bundle" startingPrice={203} />
+							<StyledProductCard name="Tropical Wave" startingPrice={203} />
+						</ProductCategory>
+
+						{/* Slabs */}
+						<ProductCategory name="Slabs">
+							<StyledProductCard name="Savannah" startingPrice={203} />
+						</ProductCategory>
+
+						{/* Installation */}
+						<ProductCategory name="Materials for Installation">
+							<StyledProductCard name="Polymeric Sand" startingPrice={203} />
+							<StyledProductCard
+								name="Dynamatrix Oil-Based Sealant"
+								startingPrice={203}
+							/>
+							<StyledProductCard
+								name="Dynamatrix Water-Based Sealant"
+								startingPrice={203}
+							/>
+						</ProductCategory>
+
+						{/* Cleaning */}
+						<ProductCategory name="Concrete Cleaning">
+							<StyledProductCard
+								name="Dynamatrix Effloressence Cleaner"
+								startingPrice={203}
+							/>
+							<StyledProductCard
+								name="Dynamatrix Gum Paint & Tar Stripper"
+								startingPrice={203}
+							/>
+							<StyledProductCard
+								name="Dynamatrix Stone Soap"
+								startingPrice={203}
+							/>
+						</ProductCategory>
 					</ul>
 				</div>
-
-				<section className="space-y-8">
-					<SectionHeader title="Pavers" />
-
-					<ul className="space-y-4">
-						<ProductLink
-							name="Colonial Classic"
-							startingPrice={203}
-							href="/product/colonial_classic?sku=grey"
-						/>
-						<ProductLink
-							name="Thin Classic"
-							startingPrice={188}
-							href="/product/thin_classic?sku=grey"
-						/>
-						<ProductLink
-							name="Banjo"
-							startingPrice={219}
-							href="/product/banjo?sku=grey"
-						/>
-						<ProductLink
-							name="Old World Cobble"
-							startingPrice={203}
-							href="/product/owc?sku=grey"
-						/>
-						<ProductLink
-							name="Heritage Series"
-							startingPrice={219}
-							href="/product/heritage?sku=regular+grey"
-						/>
-						<ProductLink
-							name="Cobble Mix"
-							startingPrice={219}
-							href="/product/cobble_mix?sku=oblong+grey"
-						/>
-						<ProductLink
-							name="Tropical Wave"
-							startingPrice={228.5}
-							href="/product/tropical_wave?sku=grey"
-						/>
-					</ul>
-				</section>
 			</main>
+
+			<Footer />
 		</>
 	);
 }

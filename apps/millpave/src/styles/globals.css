@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	font-size: 14px;
+	min-height: 0vw;
+}
+
 :root,
 body,
 #__next {
@@ -40,8 +45,9 @@ body,
 		--fill: 0;
 		--weight: 400;
 		--grade: 0;
-		--optical-size: 24;
+		--optical-size: 20;
 
+		font-size: 1.5rem;
 		font-variation-settings: 'FILL' var(--fill), 'wght' var(--weight),
 			'GRAD' var(--grade), 'opsz' var(--optical-size);
 	}

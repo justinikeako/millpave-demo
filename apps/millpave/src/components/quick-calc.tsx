@@ -4,15 +4,7 @@ import { useEffect, useState } from 'react';
 import { Button } from './button';
 import { formatNumber, formatPrice } from '../utils/format';
 import { PickupLocation } from '@prisma/client';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectScrollDownButton,
-	SelectScrollUpButton,
-	SelectTrigger,
-	SelectViewport
-} from './select';
+import * as Select from './select';
 import { QuoteInputItem, Unit } from '../types/quote';
 import { EvaluatableInput } from './evaluatable-input';
 
@@ -36,7 +28,15 @@ function calculateTotal(area: number, skuPrice: number) {
 
 	return { total, tax, subtotal };
 }
-
+// {
+// 	Select,
+// 	Select.Content,
+// 	Select.Item,
+// 	Select.ScrollDownButton,
+// 	Select.ScrollUpButton,
+// 	Select.Trigger,
+// 	Select.Viewport
+// }
 type TransformerRecord<TKey extends string> = Record<
 	TKey,
 	(num: number) => number
@@ -238,7 +238,7 @@ function QuickCalc({ control, convertConfig, header }: QuickCalcProps) {
 					/>
 				</label>
 
-				<Select
+				<Select.Root
 					value={input.unit}
 					onValueChange={(newUnit: Unit) => {
 						const oldUnit = input.unit;
@@ -259,39 +259,39 @@ function QuickCalc({ control, convertConfig, header }: QuickCalcProps) {
 						setValue('input.unit', newUnit);
 					}}
 				>
-					<SelectTrigger />
-					<SelectContent>
-						<SelectScrollUpButton />
-						<SelectViewport>
-							<SelectItem value="pcs">pcs</SelectItem>
-							<SelectItem value="pal">pal</SelectItem>
-							<SelectItem value="sqft">sqft</SelectItem>
-							<SelectItem value="sqin">sqin</SelectItem>
-							<SelectItem value="sqm">sqm</SelectItem>
-							<SelectItem value="sqcm">sqcm</SelectItem>
-							<SelectItem value="jmd">JMD</SelectItem>
-						</SelectViewport>
-						<SelectScrollDownButton />
-					</SelectContent>
-				</Select>
+					<Select.Trigger />
+					<Select.Content>
+						<Select.ScrollUpButton />
+						<Select.Viewport>
+							<Select.Item value="pcs">pcs</Select.Item>
+							<Select.Item value="pal">pal</Select.Item>
+							<Select.Item value="sqft">sqft</Select.Item>
+							<Select.Item value="sqin">sqin</Select.Item>
+							<Select.Item value="sqm">sqm</Select.Item>
+							<Select.Item value="sqcm">sqcm</Select.Item>
+							<Select.Item value="jmd">JMD</Select.Item>
+						</Select.Viewport>
+						<Select.ScrollDownButton />
+					</Select.Content>
+				</Select.Root>
 			</div>
 
 			{/* Delivery Location */}
 			<div className="flex flex-wrap justify-between">
-				<Select
+				<Select.Root
 					value={pickupLocation}
 					onValueChange={(newValue) =>
 						setValue('pickupLocation', newValue as PickupLocation)
 					}
 				>
-					<SelectTrigger basic />
-					<SelectContent>
-						<SelectViewport>
-							<SelectItem value="FACTORY">Factory Pickup</SelectItem>
-							<SelectItem value="SHOWROOM">Showroom Pickup</SelectItem>
-						</SelectViewport>
-					</SelectContent>
-				</Select>
+					<Select.Trigger basic />
+					<Select.Content>
+						<Select.Viewport>
+							<Select.Item value="FACTORY">Factory Pickup</Select.Item>
+							<Select.Item value="SHOWROOM">Showroom Pickup</Select.Item>
+						</Select.Viewport>
+					</Select.Content>
+				</Select.Root>
 				<Button
 					variant="tertiary"
 					type="button"

@@ -6,20 +6,10 @@ import type { AppType } from 'next/dist/shared/lib/utils';
 import superjson from 'superjson';
 import type { AppRouter } from '../server/router';
 import '../styles/globals.css';
-import { useMobileDetect } from '../utils/use-mobile-detect';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-	const { isDesktop } = useMobileDetect();
-
 	return (
 		<>
-			{isDesktop() && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black p-12 text-white">
-					This demo is not optimized for desktop. Open this page your mobile
-					device to view it.
-				</div>
-			)}
-
 			<Component {...pageProps} />
 		</>
 	);

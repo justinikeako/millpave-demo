@@ -155,10 +155,10 @@ type ColorPickerProps = {
 
 function ColorPicker({ colors, currentColor, onChange }: ColorPickerProps) {
 	return (
-		<ul className="grid grid-cols-8 gap-2 [@media(max-width:320px)]:grid-cols-7">
+		<ul className="flex flex-wrap gap-2">
 			{colors.map(({ id, css }) => (
 				<li key={id} className="contents">
-					<label htmlFor={id} className="aspect-w-1 aspect-h-1">
+					<label htmlFor={id} className="contents">
 						<input
 							className="peer hidden"
 							type="radio"
@@ -168,7 +168,7 @@ function ColorPicker({ colors, currentColor, onChange }: ColorPickerProps) {
 							checked={currentColor === id}
 							onChange={(e) => onChange(e.target.value)}
 						/>
-						<div className="rounded-full p-1 inner-border inner-border-gray-300  peer-checked:p-1 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
+						<div className="h-8 w-8 rounded-full p-1 inner-border inner-border-gray-300 peer-checked:p-1 peer-checked:inner-border-2  peer-checked:inner-border-gray-900 md:h-12 md:w-12">
 							<div
 								className="h-full w-full rounded-full"
 								style={{ background: css }}

@@ -13,7 +13,7 @@ const Icon = forwardRef<HTMLSpanElement, React.PropsWithChildren<IconProps>>(
 	function Icon(
 		{
 			weight = 400,
-			opticalSize = 24,
+			opticalSize = 20,
 			fill = false,
 			grade = 0,
 			name,

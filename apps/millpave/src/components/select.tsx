@@ -2,20 +2,18 @@ import * as SelectPrimitive from '@radix-ui/react-select';
 import cx from 'classnames';
 import { Icon } from './icon';
 
-const Select = SelectPrimitive.Root;
-
-type SelectTriggerProps = {
+type TriggerProps = {
 	basic?: boolean;
 } & SelectPrimitive.SelectTriggerProps;
 
-function SelectTrigger({ basic, ...props }: SelectTriggerProps) {
+function Trigger({ basic, ...props }: TriggerProps) {
 	return (
 		<SelectPrimitive.Trigger
 			{...props}
 			className={cx(
 				basic
 					? 'flex outline-none'
-					: 'flex justify-between rounded-md p-4 outline-none inner-border inner-border-gray-300  focus:inner-border-2 focus:inner-border-bubblegum-700',
+					: 'flex justify-between rounded-sm bg-gray-200 p-4 outline-none focus:inner-border-2 focus:inner-border-gray-900',
 				props.className
 			)}
 		>
@@ -27,7 +25,7 @@ function SelectTrigger({ basic, ...props }: SelectTriggerProps) {
 	);
 }
 
-function SelectContent({ children }: SelectPrimitive.SelectContentProps) {
+function Content({ children }: SelectPrimitive.SelectContentProps) {
 	return (
 		<SelectPrimitive.Portal>
 			<SelectPrimitive.Content className="overflow-hidden rounded-md bg-gray-100">
@@ -37,7 +35,7 @@ function SelectContent({ children }: SelectPrimitive.SelectContentProps) {
 	);
 }
 
-function SelectViewport({ children }: SelectPrimitive.SelectViewportProps) {
+function Viewport({ children }: SelectPrimitive.SelectViewportProps) {
 	return (
 		<SelectPrimitive.Viewport className="p-1">
 			{children}
@@ -45,7 +43,7 @@ function SelectViewport({ children }: SelectPrimitive.SelectViewportProps) {
 	);
 }
 
-function SelectItem({ value, children }: SelectPrimitive.SelectItemProps) {
+function Item({ value, children }: SelectPrimitive.SelectItemProps) {
 	return (
 		<SelectPrimitive.Item
 			value={value}
@@ -59,7 +57,7 @@ function SelectItem({ value, children }: SelectPrimitive.SelectItemProps) {
 	);
 }
 
-function SelectScrollUpButton() {
+function ScrollUpButton() {
 	return (
 		<SelectPrimitive.ScrollUpButton className="flex cursor-default items-center justify-center bg-gray-100 py-4">
 			<Icon name="keyboard_arrow_up" />
@@ -67,7 +65,7 @@ function SelectScrollUpButton() {
 	);
 }
 
-function SelectScrollDownButton() {
+function ScrollDownButton() {
 	return (
 		<SelectPrimitive.ScrollDownButton className="flex cursor-default items-center justify-center bg-gray-100 py-4">
 			<Icon name="keyboard_arrow_down" />
@@ -75,12 +73,14 @@ function SelectScrollDownButton() {
 	);
 }
 
+const Root = SelectPrimitive.Root;
+
 export {
-	Select,
-	SelectTrigger,
-	SelectViewport,
-	SelectContent,
-	SelectItem,
-	SelectScrollUpButton,
-	SelectScrollDownButton
+	Root,
+	Trigger,
+	Viewport,
+	Content,
+	Item,
+	ScrollUpButton,
+	ScrollDownButton
 };

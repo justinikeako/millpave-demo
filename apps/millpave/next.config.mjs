@@ -26,13 +26,5 @@ export default defineNextConfig({
 				}
 			]
 		}
-	],
-
-	redirects: async () => [
-		{
-			source: '/',
-			destination: '/product/colonial_classic?sku=grey',
-			permanent: false
-		}
 	]
 });

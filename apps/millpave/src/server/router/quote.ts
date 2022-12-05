@@ -123,44 +123,50 @@ export const quoteRouter = createRouter()
 				}
 			})) as QuoteItemWithMetadata;
 
-			if (oldItem) {
-				await ctx.prisma.quoteItem.update({
-					where: {
-						id: {
-							quoteId: input.id,
-							skuId: input.item.skuId,
-							pickupLocation: input.item.pickupLocation
-						}
-					},
-					data: {
-						metadata: {
-							area: oldItem.metadata.area + generatedItem.metadata.area,
-							weight: oldItem.metadata.weight + generatedItem.metadata.weight,
-							unit: generatedItem.metadata.unit,
-							value: generatedItem.metadata.value
-						} as QuoteItemMetadata,
-						price: oldItem.price + generatedItem.price,
-						quantity: oldItem.quantity + generatedItem.quantity
-					}
-				});
-			} else {
-				await ctx.prisma.quoteItem.create({
-					data: {
+			await ctx.prisma.quoteItem.upsert({
+				where: {
+					id: {
 						quoteId: input.id,
-						...generatedItem
+						skuId: input.item.skuId,
+						pickupLocation: input.item.pickupLocation
 					}
-				});
-			}
+				},
+				create: {
+					quoteId: input.id,
+					...generatedItem
+				},
+				update: {
+					metadata: {
+						area: oldItem.metadata.area + generatedItem.metadata.area,
+						weight: oldItem.metadata.weight + generatedItem.metadata.weight,
+						unit: generatedItem.metadata.unit,
+						value: generatedItem.metadata.value
+					} as QuoteItemMetadata,
+					price: { increment: generatedItem.price },
+					quantity: { increment: generatedItem.quantity }
+				}
+			});
 
-			// update quote with new details
+			const priceAggregate = await ctx.prisma.quoteItem.aggregate({
+				_sum: { price: true },
+
+				where: { quoteId: input.id }
+			});
+
+			const subtotal = roundPrice(priceAggregate._sum.price || 0);
+			const tax = roundPrice(subtotal * 0.15);
+			const total = roundPrice(subtotal + tax);
+
 			const updatedQuote = await ctx.prisma.quote.update({
-				where: { id: input.id },
+				where: {
+					id: input.id
+				},
 				data: {
 					weight: { increment: generatedItem.metadata.weight },
 					area: { increment: generatedItem.metadata.area },
-					subtotal: { increment: roundPrice(generatedItem.price) },
-					tax: { increment: roundPrice(generatedItem.price * 0.15) },
-					total: { increment: roundPrice(generatedItem.price * 1.15) }
+					subtotal,
+					tax,
+					total
 				}
 			});
 
@@ -192,15 +198,24 @@ export const quoteRouter = createRouter()
 				where: { id: input }
 			})) as QuoteItemWithMetadata;
 
+			const priceAggregate = await ctx.prisma.quoteItem.aggregate({
+				_sum: { price: true },
+				where: { quoteId: input.quoteId }
+			});
+
+			const subtotal = roundPrice(priceAggregate._sum.price || 0);
+			const tax = roundPrice(subtotal * 0.15);
+			const total = roundPrice(subtotal + tax);
+
 			console.log(deletedItem);
 			await ctx.prisma.quote.update({
 				where: { id: deletedItem.quoteId },
 				data: {
 					weight: { decrement: deletedItem.metadata.weight },
 					area: { decrement: deletedItem.metadata.area },
-					subtotal: { decrement: roundPrice(deletedItem.price) },
-					tax: { decrement: roundPrice(deletedItem.price * 0.15) },
-					total: { decrement: roundPrice(deletedItem.price * 1.15) }
+					subtotal,
+					tax,
+					total
 				}
 			});
 

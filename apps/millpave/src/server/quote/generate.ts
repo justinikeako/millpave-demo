@@ -57,24 +57,32 @@ type QuoteDetails = {
 	weight: number;
 };
 
+function sumNestedKeys<T>(objects: T[], keys: string): number {
+	let sum = 0;
+
+	for (const obj of objects) {
+		// Use the lodash.get() method to retrieve the value of the nested key.
+		const value = get(obj, keys);
+
+		// If the value is a number, add it to the sum.
+		if (typeof value === 'number') {
+			sum += value;
+		}
+	}
+
+	return sum;
+}
+
 function calculateDetails(
 	inputItems: QuoteItemCreateManyQuoteInput[]
 ): QuoteDetails {
-	function getSum(items: QuoteItemCreateManyQuoteInput[], key: string) {
-		return items.reduce((total: number, currentItem) => {
-			const addend = get(currentItem, key) as number;
-
-			return total + addend;
-		}, 0);
-	}
-
-	const subtotal = roundPrice(getSum(inputItems, 'price')),
+	const subtotal = roundPrice(sumNestedKeys(inputItems, 'price')),
 		tax = roundPrice(subtotal * 0.15),
 		total = roundPrice(subtotal + tax);
 
 	return {
-		area: getSum(inputItems, 'metadata.area'),
-		weight: getSum(inputItems, 'metadata.weight'),
+		area: sumNestedKeys(inputItems, 'metadata.area'),
+		weight: sumNestedKeys(inputItems, 'metadata.weight'),
 		subtotal: subtotal,
 		tax: tax,
 		total: total

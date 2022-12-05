@@ -14,25 +14,17 @@ import {
 	SelectViewport
 } from './select';
 import { QuoteInputItem, Unit } from '../types/quote';
-import { EvaluatableInput } from './evaluatable-input';
-
-function round(value: number, multpile: number, direction?: 'up' | 'down') {
-	let roundingFunction: (num: number) => number;
-
-	if (direction === 'up') roundingFunction = Math.ceil;
-	else if (direction === 'down') roundingFunction = Math.floor;
-	else roundingFunction = Math.round;
-
-	return roundingFunction(value / multpile) * multpile;
-}
+import { MathInput } from './math-input';
+import { roundPrice } from '../utils/price';
+import { isNumeric, roundTo } from '../utils/number';
 
 const getGCT = (subtotal: number) => subtotal * 0.15;
 const removeGCT = (total: number) => total / 1.15;
 
 function calculateTotal(area: number, skuPrice: number) {
-	const subtotal = round(area * skuPrice, 0.01);
-	const tax = round(getGCT(subtotal), 0.01);
-	const total = round(subtotal + tax, 0.01);
+	const subtotal = roundPrice(area * skuPrice);
+	const tax = roundPrice(getGCT(subtotal));
+	const total = roundPrice(subtotal + tax);
 
 	return { total, tax, subtotal };
 }
@@ -42,30 +34,23 @@ type TransformerRecord<TKey extends string> = Record<
 	(num: number) => number
 >;
 
-type RoundAreaConfig = {
-	pickupLocation: PickupLocation;
-	productDetails: ProductDetails;
-	unit: Unit;
-};
-
 function roundArea(
 	area: number,
-	{ productDetails, pickupLocation, unit }: RoundAreaConfig
+	unit: Unit,
+	{ productDetails, pickupLocation }: ConvertConfig
 ) {
 	const { sqft_per_pallet, pcs_per_sqft } = productDetails;
 
 	const roundingFunction: TransformerRecord<PickupLocation> = {
 		FACTORY: (sqft) => {
-			if (unit === 'jmd') return sqft; // Already rounded, pass value onward
-
-			return round(sqft, sqft_per_pallet / 2, 'up'); // Round up to the nearest half pallet
+			return roundTo(sqft, sqft_per_pallet / 2, 'up'); // Round up to the nearest half pallet
 		},
 		SHOWROOM: (sqft) => {
-			if (unit === 'jmd') return sqft; // Already rounded, pass value onward
-
-			return round(sqft, 1 / pcs_per_sqft, 'up'); // Round up to the nearest piece
+			return roundTo(sqft, 1 / pcs_per_sqft, 'up'); // Round up to the nearest piece
 		}
 	};
+
+	if (unit === 'jmd') return area; // Already rounded, pass value onward
 
 	return roundingFunction[pickupLocation](area);
 }
@@ -76,68 +61,58 @@ type ConvertConfig = {
 	skuPrice: number;
 };
 
-function convert(
-	value: number,
-	{ skuPrice, productDetails, pickupLocation }: ConvertConfig
-) {
-	const { sqft_per_pallet, pcs_per_sqft } = productDetails;
+// Define the conversion functions
+const convertToSqft = (value: number, unit: Unit, config: ConvertConfig) => {
+	// Define constants for the conversion factors and rounding rules
+	const { sqft_per_pallet, pcs_per_sqft } = config.productDetails;
+	const round_to_half_pallet = 0.5;
 
-	return {
-		toSqftFrom(unit: Unit) {
-			// For JMD to sqft conversion
+	const convertToSqft: TransformerRecord<Unit> = {
+		sqft: (squarefeet) => squarefeet,
+		sqin: (inches) => inches / 12,
+		sqm: (squareMeters) => squareMeters * 3.281,
+		sqcm: (squareCentimeters) => squareCentimeters / 30.48,
+		pal: (pallets) => pallets * sqft_per_pallet,
+		pcs: (pieces) => pieces / pcs_per_sqft,
+		jmd: (total) => {
+			const sqft = removeGCT(total / config.skuPrice); // Divide total by sku price
+			const roundedSqft = roundTo(sqft, round_to_half_pallet, 'down'); // Round Down to nearest half pallet
 
-			const convertToSqftFrom: TransformerRecord<Unit> = {
-				sqft: (squarefeet) => squarefeet,
-				sqin: (inches) => inches / 12,
-				sqm: (squareMeters) => squareMeters * 3.281,
-				sqcm: (squareCentimeters) => squareCentimeters / 30.48,
-				pal: (pallets) => pallets * sqft_per_pallet,
-				pcs: (pieces) => pieces / pcs_per_sqft,
-				jmd: (total) => {
-					if (pickupLocation === 'FACTORY') {
-						const sqft = removeGCT(total / skuPrice); // Divide total by sku price
-						const roundedSqft = round(sqft, sqft_per_pallet / 2, 'down'); // Round Down to nearest half pallet
-
-						return roundedSqft;
-					} else {
-						const sqft = removeGCT(total / skuPrice); // Divide total by showroom sku price
-						const roundedSqft = round(sqft, 1 / pcs_per_sqft, 'down'); // Round Down to nearest piece
-
-						return roundedSqft;
-					}
-				}
-			};
-
-			const unroundedArea = convertToSqftFrom[unit](value);
-			const roundedArea = roundArea(unroundedArea, {
-				productDetails,
-				pickupLocation,
-				unit
-			});
-
-			return { unroundedArea, roundedArea };
-		},
-		fromSqftTo(unit: Unit) {
-			const convertFromSqftTo: TransformerRecord<Unit> = {
-				sqft: (sqft) => round(sqft, 0.01),
-				sqin: (sqft) => round(sqft * 12, 1),
-				sqm: (sqft) => round(sqft / 3.281, 0.01),
-				sqcm: (sqft) => round(sqft * 30.48, 1),
-				pal: (sqft) => round(sqft / sqft_per_pallet, 0.5),
-				pcs: (sqft) => round(sqft * pcs_per_sqft, 1),
-				jmd: (sqft) => {
-					const roundedArea = roundArea(sqft, {
-						productDetails,
-						pickupLocation,
-						unit
-					});
-					return calculateTotal(roundedArea, skuPrice).total;
-				}
-			};
-
-			// Ensure value has a maximum of 2 fraction digits
-			return parseFloat(convertFromSqftTo[unit](value).toFixed(2));
+			return roundedSqft;
 		}
+	};
+
+	return convertToSqft[unit](value);
+};
+
+const convertFromSqft = (value: number, unit: Unit, config: ConvertConfig) => {
+	// Define constants for the conversion factors and rounding rules
+	const { sqft_per_pallet, pcs_per_sqft } = config.productDetails;
+	const round_to_piece = 1 / pcs_per_sqft;
+
+	const convertFromSqft: TransformerRecord<Unit> = {
+		sqft: (sqft) => roundTo(sqft, 0.01),
+		sqin: (sqft) => roundTo(sqft * 12, 1),
+		sqm: (sqft) => roundTo(sqft / 3.281, 0.01),
+		sqcm: (sqft) => roundTo(sqft * 30.48, 1),
+		pal: (sqft) => roundTo(sqft / sqft_per_pallet, 0.5),
+		pcs: (sqft) => roundTo(sqft * pcs_per_sqft, 1),
+		jmd: (sqft) => roundTo(sqft, round_to_piece, 'down')
+	};
+
+	// Ensure value has a maximum of 2 fraction digits
+	return parseFloat(convertFromSqft[unit](value).toFixed(2));
+};
+
+function convert(value: number, config: ConvertConfig) {
+	return {
+		toSqftFrom: (unit: Unit) => {
+			const unroundedArea = convertToSqft(value, unit, config);
+			const roundedArea = roundArea(unroundedArea, unit, config);
+
+			return { roundedArea, unroundedArea };
+		},
+		fromSqftTo: (unit: Unit) => convertFromSqft(value, unit, config)
 	};
 }
 
@@ -201,40 +176,39 @@ function QuickCalc({ control, convertConfig, header }: QuickCalcProps) {
 				>
 					<Controller
 						control={control}
-						name="area"
-						render={({ field }) => {
-							return (
-								<EvaluatableInput
-									inputValue={input.value}
-									placeholder={quickCalcPlaceholder[input.unit]}
-									onBlur={field.onBlur}
-									onChange={(number) => {
-										const { roundedArea } = convert(
-											number,
-											convertConfig
-										).toSqftFrom(input.unit);
-										const quantity = convert(
-											roundedArea,
-											convertConfig
-										).fromSqftTo('pcs');
+						name="input.value"
+						render={({ field: inputField }) => (
+							<Controller
+								control={control}
+								name="area"
+								render={({ field: resultField }) => (
+									<MathInput
+										value={inputField.value}
+										result={resultField.value}
+										onChange={(newValue) => inputField.onChange(newValue)}
+										onResultChange={(newResult) => {
+											const { roundedArea } = convert(
+												newResult,
+												convertConfig
+											).toSqftFrom(input.unit);
+											const quantity = convert(
+												roundedArea,
+												convertConfig
+											).fromSqftTo('pcs');
 
-										setValue('area', roundedArea);
-										setValue('quantity', quantity);
-									}}
-									onInputChange={(newValue) => {
-										setValue('input.value', newValue);
-									}}
-									onRestoreLastValidValue={() => {
-										const convertedValue = convert(
-											quickCalc.area,
-											convertConfig
-										).fromSqftTo(input.unit);
-
-										return convertedValue;
-									}}
-								/>
-							);
-						}}
+											resultField.onChange(roundedArea);
+											setValue('quantity', quantity);
+										}}
+										canDecrement={
+											isNumeric(inputField.value) &&
+											parseFloat(inputField.value) >= 1
+										}
+										className="w-[100%] placeholder-gray-500 outline-none"
+										placeholder={quickCalcPlaceholder[input.unit]}
+									/>
+								)}
+							/>
+						)}
 					/>
 				</label>
 

@@ -8,15 +8,13 @@ import {
 	getProductStock,
 	getProductRestockQueue
 } from '../mock-db';
-import { SkuFragment } from '../../types/product';
-import { TRPCError } from '@trpc/server';
 
 export const productRouter = createRouter()
 	.query('getPageData', {
 		input: z.object({
 			productId: z.string()
 		}),
-		async resolve({ input, ctx }) {
+		async resolve({ input }) {
 			const product = getProduct(input.productId);
 			const productDetails = getProductDetails(input.productId);
 			const productSkuList = getProductSkus(input.productId);

@@ -110,7 +110,7 @@ function Page() {
 						</Button>
 					</div>
 
-					<div className="-mx-8 flex flex-col space-y-4 md:-mx-32 md:space-y-8">
+					<div className="-mx-8 flex flex-col space-y-4 md:-mx-24 md:space-y-8 lg:-mx-32">
 						<div className="flex h-[40vmin] justify-center space-x-4 overflow-hidden md:space-x-8">
 							<div className="flex aspect-square shrink-0 bg-gray-200" />
 							<div className="flex aspect-square shrink-0 bg-gray-200" />
@@ -153,7 +153,7 @@ function Page() {
 						</Button>
 					</div>
 
-					<div className="aspect-square bg-gray-200 lg:h-[60vmin]" />
+					<div className="aspect-square bg-gray-200 lg:w-[30vw]" />
 				</section>
 
 				{/* Process */}
@@ -179,7 +179,7 @@ function Page() {
 						<Button variant="primary">Find an Installer</Button>
 					</div>
 
-					<div className="aspect-video w-full bg-gray-200 lg:w-[70vmin]"></div>
+					<div className="aspect-video w-full bg-gray-200 lg:w-[30vw]"></div>
 				</section>
 
 				{/* About */}
@@ -209,7 +209,7 @@ function Page() {
 						</div>
 					</div>
 
-					<div className="aspect-square bg-gray-200 lg:h-[60vmin]" />
+					<div className="aspect-square bg-gray-200  lg:w-[30vw]" />
 				</section>
 			</main>
 

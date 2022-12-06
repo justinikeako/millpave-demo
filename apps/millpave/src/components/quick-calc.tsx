@@ -1,6 +1,6 @@
-import { Control, Controller, useFormContext } from 'react-hook-form';
+import { Control, useFormContext } from 'react-hook-form';
 import { ProductDetails } from '../types/product';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from './button';
 import { formatNumber, formatPrice } from '../utils/format';
 import { PickupLocation } from '@prisma/client';
@@ -16,17 +16,21 @@ import {
 import { QuoteInputItem, Unit } from '../types/quote';
 import { MathInput } from './math-input';
 import { roundPrice } from '../utils/price';
-import { isNumeric, roundTo } from '../utils/number';
+import { roundTo } from '../utils/number';
 
 const getGCT = (subtotal: number) => subtotal * 0.15;
 const removeGCT = (total: number) => total / 1.15;
 
-function calculateTotal(area: number, skuPrice: number) {
-	const subtotal = roundPrice(area * skuPrice);
+function calculateDetails(config: {
+	area: number;
+	productDetails: ProductDetails;
+	skuPrice: number;
+}) {
+	const subtotal = roundPrice(config.area * config.skuPrice);
 	const tax = roundPrice(getGCT(subtotal));
 	const total = roundPrice(subtotal + tax);
 
-	return { total, tax, subtotal };
+	return { area: config.area, total, tax, subtotal };
 }
 
 type TransformerRecord<TKey extends string> = Record<
@@ -116,10 +120,6 @@ function convert(value: number, config: ConvertConfig) {
 	};
 }
 
-function noEmptyStrings(str: string) {
-	return str === '' ? '0' : str;
-}
-
 const quickCalcPlaceholder: Record<Unit, string> = {
 	pcs: 'Quantity',
 	pal: 'Quantity',
@@ -140,29 +140,25 @@ type QuickCalcProps = {
 	};
 };
 
-function QuickCalc({ control, convertConfig, header }: QuickCalcProps) {
+function QuickCalc({ convertConfig, header }: QuickCalcProps) {
 	const SectionHeader = header;
 
-	const { watch, setValue } = useFormContext<QuoteInputItem>();
+	const { setValue } = useFormContext<QuoteInputItem>();
 
-	const { skuId, area, pickupLocation, input } = watch();
 	const [showWork, setShowWork] = useState(false);
+	const [inputValue, setInputValue] = useState('');
+	const [rawArea, setRawArea] = useState(0);
+	const [unit, setUnit] = useState<Unit>('sqft');
 
-	const quickCalc = {
-		area,
-		...calculateTotal(area, convertConfig.skuPrice)
-	};
+	const roundedArea = convert(rawArea, convertConfig).toSqftFrom(
+		unit
+	).roundedArea;
 
-	// Sync derived area with new convertConfigs only when skus change
-	useEffect(() => {
-		const { roundedArea } = convert(
-			parseFloat(noEmptyStrings(input.value)),
-			convertConfig
-		).toSqftFrom(input.unit);
-
-		setValue('area', roundedArea);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [skuId, pickupLocation]);
+	const quickCalc = calculateDetails({
+		area: roundedArea,
+		skuPrice: convertConfig.skuPrice,
+		productDetails: convertConfig.productDetails
+	});
 
 	return (
 		<section className="space-y-4">
@@ -174,63 +170,35 @@ function QuickCalc({ control, convertConfig, header }: QuickCalcProps) {
 					htmlFor="quickcalc-value"
 					className="flex flex-1 space-x-2 rounded-md p-4 inner-border inner-border-gray-300 focus-within:inner-border-2 focus-within:inner-border-bubblegum-700"
 				>
-					<Controller
-						control={control}
-						name="input.value"
-						render={({ field: inputField }) => (
-							<Controller
-								control={control}
-								name="area"
-								render={({ field: resultField }) => (
-									<MathInput
-										value={inputField.value}
-										result={resultField.value}
-										onChange={(newValue) => inputField.onChange(newValue)}
-										onResultChange={(newResult) => {
-											const { roundedArea } = convert(
-												newResult,
-												convertConfig
-											).toSqftFrom(input.unit);
-											const quantity = convert(
-												roundedArea,
-												convertConfig
-											).fromSqftTo('pcs');
+					<MathInput
+						value={inputValue}
+						result={rawArea}
+						onChange={(newValue) => setInputValue(newValue)}
+						onResultChange={(newResult) => {
+							setRawArea(newResult);
 
-											resultField.onChange(roundedArea);
-											setValue('quantity', quantity);
-										}}
-										canDecrement={
-											isNumeric(inputField.value) &&
-											parseFloat(inputField.value) >= 1
-										}
-										className="w-[100%] placeholder-gray-500 outline-none"
-										placeholder={quickCalcPlaceholder[input.unit]}
-									/>
-								)}
-							/>
-						)}
+							const roundedArea = roundArea(newResult, unit, convertConfig);
+							const quantity = convert(roundedArea, convertConfig).fromSqftTo(
+								'pcs'
+							);
+							setValue('quantity', quantity);
+						}}
+						canDecrement={rawArea >= 1}
+						className="w-[100%] placeholder-gray-500 outline-none"
+						placeholder={quickCalcPlaceholder[unit]}
 					/>
 				</label>
 
 				<Select
-					value={input.unit}
+					value={unit}
 					onValueChange={(newUnit: Unit) => {
-						const oldUnit = input.unit;
+						const convertedValue = convert(rawArea, convertConfig).fromSqftTo(
+							newUnit
+						);
 
-						const parsedInputValue = parseFloat(noEmptyStrings(input.value));
-
-						const inputValueAsSqft = convert(
-							parsedInputValue,
-							convertConfig
-						).toSqftFrom(oldUnit).unroundedArea;
-
-						const convertedValue = convert(
-							inputValueAsSqft,
-							convertConfig
-						).fromSqftTo(newUnit);
-
-						setValue('input.value', convertedValue.toString());
-						setValue('input.unit', newUnit);
+						setInputValue(convertedValue.toString());
+						setRawArea(convertedValue);
+						setUnit(newUnit);
 					}}
 				>
 					<SelectTrigger />
@@ -253,7 +221,7 @@ function QuickCalc({ control, convertConfig, header }: QuickCalcProps) {
 			{/* Delivery Location */}
 			<div className="flex flex-wrap justify-between">
 				<Select
-					value={pickupLocation}
+					value={convertConfig.pickupLocation}
 					onValueChange={(newValue) =>
 						setValue('pickupLocation', newValue as PickupLocation)
 					}

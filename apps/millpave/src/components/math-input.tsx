@@ -1,7 +1,8 @@
 import { evaluate } from 'mathjs';
-import { isNumeric, roundTo } from '../utils/number';
+import { isNumeric } from '../utils/number';
 
-type MathInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+type CustomProps = {
 	value: string;
 	result: number;
 	onChange: (newValue: string) => void;
@@ -9,6 +10,8 @@ type MathInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
 	canIncrement?: boolean;
 	canDecrement?: boolean;
 };
+
+type MathInputProps = CustomProps & Omit<InputProps, keyof CustomProps>;
 
 function MathInput({
 	value,
@@ -19,12 +22,15 @@ function MathInput({
 	canDecrement = true,
 	...props
 }: MathInputProps) {
-	function handleEvaluate(value: string) {
+	function handleEvaluate(input: string) {
 		try {
-			const _result = evaluate(value);
+			// Replace characters associated with multiplication and division the * and / characters
+			const parsedInput = input.replace(/[×x]/g, '*').replace(/÷/g, '/');
 
-			if (typeof _result === 'number') {
-				return _result;
+			const finalResult = evaluate(parsedInput);
+
+			if (typeof finalResult === 'number') {
+				return finalResult;
 			} else {
 				// If the result is not a number, return the last valid result
 				const lastValidResult = result;
@@ -32,7 +38,7 @@ function MathInput({
 				return lastValidResult;
 			}
 		} catch {
-			// If an error occurs while evaluating the value, return the last valid result
+			// If an error occurs while evaluating the input, return the last valid result
 			const lastValidResult = result;
 
 			return lastValidResult;
@@ -40,19 +46,28 @@ function MathInput({
 	}
 
 	function handleChange(newValue: string) {
-		// Call the onChange prop function with the new value
+		// Trigger onChange preserving expected behavior
 		onChange(newValue);
 
-		const newResult = handleEvaluate(newValue);
-		onResultChange(newResult);
+		// If the value is numeric, parse it and trigger the onResultChange
+		if (isNumeric(value)) {
+			const newResult = parseFloat(newValue);
+
+			onResultChange(newResult);
+		} else {
+			// If the value isn't numeric, evaluate it it and trigger the onResultChange
+			const newResult = handleEvaluate(newValue);
+
+			onResultChange(newResult);
+		}
 	}
 
 	function handleBlur() {
-		const finalResult = handleEvaluate(value);
+		if (!isNumeric(value)) {
+			const finalResult = handleEvaluate(value);
 
-		// If the final result is not a number, restore the last valid result
-		if (typeof finalResult !== 'number') {
-			restoreLastValidResult();
+			onChange(String(finalResult));
+			onResultChange(finalResult);
 		}
 	}
 
@@ -65,13 +80,13 @@ function MathInput({
 			// Increment the value on up arrow key if the parsed value is numeric
 			// or if the value prop is an empty string, and if canIncrement is true
 			if (isNumeric(nonEmptyValue) && canIncrement) {
-				handleChange(String(parsedValue + 1));
+				handleChange((parsedValue + 1).toFixed(2));
 			}
 		} else if (event.key === 'ArrowDown') {
 			// Decrement the value on down arrow key if the parsed value is numeric
 			// or if the value prop is an empty string, and if canDecrement is true
 			if (isNumeric(nonEmptyValue) && canDecrement) {
-				handleChange(String(parsedValue - 1));
+				handleChange((parsedValue - 1).toFixed(2));
 			}
 		} else if (event.key === 'Enter') {
 			// If the parsed value isn't numeric, prevent default form
@@ -88,7 +103,7 @@ function MathInput({
 	}
 
 	function restoreLastValidResult() {
-		const lastValidResult = roundTo(result, 0.01);
+		const lastValidResult = result;
 
 		onChange(String(lastValidResult));
 	}

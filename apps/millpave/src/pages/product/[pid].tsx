@@ -116,11 +116,7 @@ type AddToProps = {
 };
 
 function AddTo({ onCreate, onAdd }: AddToProps) {
-	const recentQuotesRequest = trpc.useQuery(['quote.getAll'], {
-		refetchOnWindowFocus: false
-	});
-
-	// const [maxShownQuotes, setMaxShownQuotes] = useState(2);
+	const recentQuotesRequest = trpc.quote.getMany.useQuery();
 
 	return (
 		<div className="px-8 pb-8">
@@ -207,23 +203,19 @@ function Page() {
 	const skuIdFragment = (router.query.sku as string).replace(/ /gs, ':');
 	const skuId = `${productId}:${skuIdFragment}`;
 
-	const product = trpc.useQuery(['product.getPageData', { productId }], {
-		refetchOnWindowFocus: false
-	});
+	const product = trpc.product.getById.useQuery(
+		{ productId },
+		{ refetchOnWindowFocus: false }
+	);
 
-	const createQuote = trpc.useMutation(['quote.create']);
-	const addItemToQuote = trpc.useMutation(['quote.addItemToQuote']);
+	const createQuote = trpc.quote.create.useMutation();
+	const addItemToQuote = trpc.quote.addItem.useMutation();
 
 	const formMethods = useForm<QuoteInputItem>({
 		defaultValues: {
 			skuId: skuId,
-			area: 0,
 			pickupLocation: 'FACTORY',
-			quantity: 0,
-			input: {
-				value: '',
-				unit: 'sqft'
-			}
+			quantity: 0
 		}
 	});
 
@@ -330,9 +322,9 @@ function Page() {
 								}
 							});
 						}}
-						onAdd={(id) => {
+						onAdd={(quoteId) => {
 							addItemToQuote.mutate(
-								{ id, item: formMethods.watch() },
+								{ quoteId, item: formMethods.watch() },
 								{
 									onSuccess(quoteId) {
 										setToastState({
@@ -435,7 +427,7 @@ function Page() {
 								<Button
 									type="submit"
 									variant="primary"
-									disabled={formMethods.watch().area <= 0}
+									disabled={formMethods.watch().quantity <= 0}
 								>
 									<Icon name="add_shopping_cart" />
 									<span>Add to Quote</span>

@@ -9,31 +9,24 @@ type QuoteItemCreateManyQuoteInput = {
 	metadata: QuoteItemMetadata;
 } & Prisma.QuoteItemCreateManyQuoteInput;
 
-function generateQuoteItem(inputItem: QuoteInputItem) {
-	const sku = getSku(inputItem.skuId);
-	const skuDetails = getSkuDetails(inputItem.skuId);
-
-	const { area, quantity } = inputItem;
+function generateQuoteItem(input: QuoteInputItem) {
+	const sku = getSku(input.skuId);
+	const skuDetails = getSkuDetails(input.skuId);
 
 	const skuPrice =
-		inputItem.pickupLocation === 'FACTORY' ? sku.price : sku.price + 20;
+		input.pickupLocation === 'FACTORY' ? sku.price : sku.price + 20;
+	const areaFromQuantity = input.quantity * skuDetails.pcs_per_sqft;
 
-	const outputMetadata: QuoteItemMetadata = {
-		area: area,
-		weight: quantity * skuDetails.lbs_per_unit,
-		...inputItem.input
-	};
-
-	const outputItem: QuoteItemCreateManyQuoteInput = {
+	const generatedItem: QuoteItemCreateManyQuoteInput = {
 		skuId: sku.id,
 		displayName: sku.displayName,
-		quantity: quantity,
-		pickupLocation: inputItem.pickupLocation,
-		price: roundPrice(area * skuPrice),
-		metadata: outputMetadata
+		quantity: input.quantity,
+		pickupLocation: input.pickupLocation,
+		price: roundPrice(areaFromQuantity * skuPrice),
+		metadata: {}
 	};
 
-	return outputItem;
+	return generatedItem;
 }
 
 function generateQuote(inputItems: QuoteInputItem[]) {

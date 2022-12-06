@@ -1,4 +1,4 @@
-import { createRouter } from './context';
+import { router, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import {
 	getProduct,
@@ -7,14 +7,16 @@ import {
 	getProductSkus,
 	getProductStock,
 	getProductRestockQueue
-} from '../mock-db';
+} from '../../mock-db';
 
-export const productRouter = createRouter()
-	.query('getPageData', {
-		input: z.object({
-			productId: z.string()
-		}),
-		async resolve({ input }) {
+export const productRouter = router({
+	getById: publicProcedure
+		.input(
+			z.object({
+				productId: z.string()
+			})
+		)
+		.query(({ input }) => {
 			const product = getProduct(input.productId);
 			const productDetails = getProductDetails(input.productId);
 			const productSkuList = getProductSkus(input.productId);
@@ -33,28 +35,11 @@ export const productRouter = createRouter()
 					return similarProduct;
 				})
 			};
-		}
-	})
-	.query('get', {
-		input: z.object({
-			productId: z.string()
 		}),
-		resolve({ input }) {
-			const product = getProduct(input.productId);
-			const productDetails = getProductDetails(input.productId);
-			const productSkuList = getProductSkus(input.productId);
 
-			return {
-				...product,
-				skuList: productSkuList,
-				details: productDetails
-			};
-		}
+	getList: publicProcedure.query(() => {
+		const products = getProducts();
+
+		return products;
 	})
-	.query('getList', {
-		resolve() {
-			const products = getProducts();
-
-			return products;
-		}
-	});
+});

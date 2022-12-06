@@ -2,13 +2,53 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Category {
+  id          String    @id
+  displayName String
+  products    Product[]
+}
+
+model Product {
+  category             Category         @relation(fields: [categoryId], references: [id])
+  id                   String           @id
+  displayName          String
+  description          String           @db.Text
+  defaultSkuIdTemplate String
+  pickupLocations      PickupLocation[]
+  similarProducts      SimilarProduct[]
+  skus                 Sku[]
+  skuIdFragments       Json
+  categoryId           String
+
+  @@index([categoryId])
+}
+
+model SimilarProduct {
+  productId String  @id
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+}
+
+model Sku {
+  id          String      @id
+  displayName String
+  price       Float
+  unit        String
+  product     Product     @relation(fields: [productId], references: [id])
+  productId   String
+  quoteItems  QuoteItem[]
+
+  @@index([productId])
 }
 
 model Quote {
@@ -27,21 +67,30 @@ model Quote {
 }
 
 model QuoteItem {
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  skuId          String
-  displayName    String
-  quantity       Int
-  metadata       Json?
-  pickupLocation PickupLocation
-  price          Float
-  quote          Quote          @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  quoteId        String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  quantity         Int
+  price            Float
+  sku              Sku            @relation(fields: [skuId], references: [id])
+  pickupLocation   PickupLocation @relation(fields: [pickupLocationId], references: [id])
+  quote            Quote          @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  skuId            String
+  pickupLocationId String
+  quoteId          String
+  metadata         Json?
 
-  @@id(fields: [quoteId, skuId, pickupLocation], name: "id")
+  @@id(fields: [quoteId, skuId, pickupLocationId], name: "id")
+  @@index([quoteId])
+  @@index([skuId])
+  @@index([pickupLocationId])
 }
 
-enum PickupLocation {
-  SHOWROOM
-  FACTORY
+model PickupLocation {
+  id          String      @id
+  displayName String
+  quoteItems  QuoteItem[]
+  product     Product?    @relation(fields: [productId], references: [id])
+  productId   String?
+
+  @@index([productId])
 }

@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { trpc } from '../../utils/trpc';
 import NextError from 'next/error';
-import { RestockQueueElement, SKU, Stock } from '../../types/product';
 import Link from 'next/link';
 import SkuPicker from '../../components/sku-picker';
 import QuickCalc from '../../components/quick-calc';
@@ -17,7 +16,7 @@ import {
 	formatRelativeUpdate
 } from '../../utils/format';
 import { Icon } from '../../components/icon';
-import { PickupLocation } from '@prisma/client';
+import { Restock, Sku, Stock } from '@prisma/client';
 import { ErrorBoundary } from 'react-error-boundary';
 import {
 	Toast,
@@ -33,23 +32,18 @@ import {
 	DialogHeader
 } from '../../components/dialog';
 import { QuoteInputItem } from '../../types/quote';
+import { ExtendedPaverDetails } from '../../types/product';
+import { nanoid } from 'nanoid';
 
-function formatRestockDate(date: number) {
+function formatRestockDate(date: Date | null) {
+	if (date === null) return 'Out of Stock';
+
 	const difference = differenceInCalendarDays(date, new Date());
 
-	if (date === -1) return 'Out of Stock';
-	else if (difference === 0) return format(date, "'Restocks at' h:mm bbb");
+	if (difference === 0) return format(date, "'Restocks at' h:mm bbb");
 	else if (difference === 1) return 'Restocks Tomorrow';
 
 	return format(date, "'Restocks' EEE, LLL d");
-}
-
-function findSKU(searchId: string, skuList?: SKU[]) {
-	if (!skuList) return;
-
-	const found = skuList.find((currentSKU) => currentSKU.id === searchId);
-
-	return found;
 }
 
 type SectionHeaderProps = React.PropsWithChildren<{
@@ -78,30 +72,32 @@ const ProductViewer = dynamic(
 );
 
 type StockProps = {
-	fulfillment: { stock: Stock[]; restockQueue: RestockQueueElement[] };
-	pickupLocation: PickupLocation;
+	fulfillment: { stock: Stock[]; restock: Restock[] };
+	pickupLocationId: string;
 	skuId: string;
 };
 
-function Stock({ fulfillment, skuId, pickupLocation }: StockProps) {
+function Stock({ fulfillment, skuId, pickupLocationId }: StockProps) {
 	// Get stock
 	const currentStock =
 		fulfillment.stock.find((item) => {
 			const matchesSkuId = item.skuId === skuId;
-			const matchesPickupLocation = item.location === pickupLocation;
+			const matchesPickupLocation = item.locationId === pickupLocationId;
 
 			return matchesSkuId && matchesPickupLocation;
 		})?.quantity || 0;
 
-	const matchedRestocks = fulfillment.restockQueue.filter(
-		(restock) => restock.skuId === skuId && restock.location === pickupLocation
+	const matchedRestocks = fulfillment.restock.filter(
+		(restock) =>
+			restock.skuId === skuId && restock.locationId === pickupLocationId
 	);
 
-	const closestRestock = matchedRestocks.length
-		? matchedRestocks.reduce((prev, curr) => {
-				return prev.date < curr.date ? prev : curr;
-		  }).date
-		: -1;
+	const closestRestock =
+		matchedRestocks.length > 0
+			? matchedRestocks.reduce((prev, curr) => {
+					return prev.date < curr.date ? prev : curr;
+			  }).date
+			: null;
 
 	return currentStock > 0 ? (
 		<p>{formatNumber(currentStock)} sqft Available</p>
@@ -164,7 +160,7 @@ function AddTo({ onCreate, onAdd }: AddToProps) {
 											<p className="overflow-hidden text-ellipsis whitespace-nowrap text-gray-500">
 												{quote.items.length > 0
 													? quote.items
-															.map((item) => item.displayName)
+															.map((item) => item.sku.displayName)
 															.toString()
 															.replace(/,/, ', ')
 													: 'No items yet.'}
@@ -195,6 +191,46 @@ function AddTo({ onCreate, onAdd }: AddToProps) {
 	);
 }
 
+const findDetails = (skuId: string, details?: ExtendedPaverDetails[]) => {
+	return details?.find((details) => {
+		return skuId.includes(details.matcher);
+	});
+};
+
+function findSKU(searchId: string, skus?: Sku[]) {
+	return skus?.find((currentSKU) => currentSKU.id === searchId);
+}
+
+const gallery = [
+	{
+		id: nanoid(),
+		imgUrl:
+			'http://mobileimages.lowes.com/productimages/e17627ec-4502-40ad-8f2c-21d1f7e53c11/43213000.jpg'
+	},
+	{
+		id: nanoid(),
+		imgUrl:
+			'https://i.pinimg.com/originals/e7/f7/4d/e7f74d6f1a90cc47068e96baa67868f1.jpg'
+	},
+	{
+		id: nanoid(),
+		imgUrl:
+			'https://i.pinimg.com/originals/b0/65/13/b06513eb47b0917940f8930b98c0021e.jpg'
+	}
+];
+
+function pathFromSkuIdTemplate(
+	skuIdTemplate: string,
+	search: string,
+	replace: string
+) {
+	const [productId, ...skuIdFragments] = skuIdTemplate.split(':');
+
+	const skuIdFragment = skuIdFragments.join('+').replace(search, replace);
+
+	return `/product/${productId}?sku=${skuIdFragment}`;
+}
+
 function Page() {
 	const router = useRouter();
 
@@ -214,7 +250,7 @@ function Page() {
 	const formMethods = useForm<QuoteInputItem>({
 		defaultValues: {
 			skuId: skuId,
-			pickupLocation: 'FACTORY',
+			pickupLocationId: 'STT_FACTORY',
 			quantity: 0
 		}
 	});
@@ -230,17 +266,10 @@ function Page() {
 		formMethods.reset();
 	}, [formMethods, productId]);
 
-	const { pickupLocation } = formMethods.watch();
+	const { pickupLocationId } = formMethods.watch();
 
-	const currentSKU = findSKU(skuId, product.data?.skuList);
-
-	const findDetails = (skuId: string) => {
-		return product.data?.details.find((details) => {
-			return skuId.includes(details.matcher);
-		});
-	};
-
-	const productDetails = findDetails(skuId);
+	const currentSKU = findSKU(skuId, product.data?.skus);
+	const productDetails = findDetails(skuId, product.data?.details);
 
 	if (!product.data || !currentSKU || !productDetails) {
 		const productNotFound = product.error?.data?.code === 'NOT_FOUND';
@@ -251,7 +280,10 @@ function Page() {
 		return null;
 	}
 
-	const skuPrice = currentSKU.price + (pickupLocation === 'SHOWROOM' ? 20 : 0);
+	const skuPrice =
+		pickupLocationId === 'KNG_SHOWROOM'
+			? currentSKU.price + 20
+			: currentSKU.price;
 
 	return (
 		<>
@@ -355,7 +387,7 @@ function Page() {
 							<div className="flex space-x-1">
 								<Stock
 									fulfillment={product.data}
-									pickupLocation={pickupLocation}
+									pickupLocationId={pickupLocationId}
 									skuId={skuId}
 								/>
 
@@ -416,9 +448,10 @@ function Page() {
 									control={formMethods.control}
 									convertConfig={{
 										skuPrice,
-										productDetails,
-										pickupLocation
+										productDetails: productDetails.data,
+										pickupLocationId
 									}}
+									skuId={skuId}
 									header={SectionHeader}
 								/>
 							</div>
@@ -444,26 +477,26 @@ function Page() {
 							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Dimensions</p>
 								<p>
-									{productDetails.dimensions[0]} in x{' '}
-									{productDetails.dimensions[1]} in x{' '}
-									{productDetails.dimensions[2]} in
+									{productDetails.data.dimensions[0]} in x{' '}
+									{productDetails.data.dimensions[1]} in x{' '}
+									{productDetails.data.dimensions[2]} in
 								</p>
 							</li>
 							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Weight per unit</p>
-								<p>{productDetails.lbs_per_unit} lbs</p>
+								<p>{productDetails.data.lbs_per_unit} lbs</p>
 							</li>
 							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Area per pallet</p>
-								<p>{productDetails.sqft_per_pallet} sqft</p>
+								<p>{productDetails.data.sqft_per_pallet} sqft</p>
 							</li>
 							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Units per pallet</p>
-								<p>{productDetails.units_per_pallet}</p>
+								<p>{productDetails.data.units_per_pallet}</p>
 							</li>
 							<li className="flex justify-between rounded-md px-4 py-3 odd:bg-white even:bg-gray-100">
 								<p>Pieces per sqft</p>
-								<p>{productDetails.pcs_per_sqft}</p>
+								<p>{productDetails.data.pcs_per_sqft}</p>
 							</li>
 						</ul>
 					</section>
@@ -475,7 +508,7 @@ function Page() {
 						<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory space-x-2 overflow-x-scroll px-4">
 							<li className="shrink-0 basis-2"></li>
 
-							{product.data.gallery.map(({ id, imgUrl }) => (
+							{gallery.map(({ id, imgUrl }) => (
 								<li
 									key={id}
 									className="relative h-64 shrink-0 basis-full snap-center overflow-hidden rounded-lg bg-gray-100"
@@ -507,20 +540,14 @@ function Page() {
 
 						<div className="-mx-4 flex flex-col items-center space-y-8">
 							<ul className="grid w-full grid-cols-2 gap-2">
-								{product.data.similarProducts.map((product) => (
+								{product.data.similar.map((product) => (
 									<li key={product.id} className="items-center space-y-2">
 										<Link
-											href={`/product/${product.id}?sku=${(() => {
-												const colorId = skuIdFragment
-													.split(':')
-													.at(-1) as string;
-
-												const skuId = product.defaultSkuIdTemplate
-													.replace('[color]', colorId)
-													.replace(':', '+');
-
-												return skuId;
-											})()}`}
+											href={pathFromSkuIdTemplate(
+												product.defaultSkuIdTemplate,
+												'[color]',
+												skuIdFragment.split(':').at(-1) as string // colorId
+											)}
 										>
 											<div className="aspect-w-1 aspect-h-1 w-full rounded-lg bg-gray-100" />
 

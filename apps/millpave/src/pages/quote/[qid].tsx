@@ -14,7 +14,6 @@ import {
 } from '../../components/dialog';
 import Link from 'next/link';
 import cx from 'classnames';
-import { PickupLocation } from '@prisma/client';
 
 function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {
@@ -37,7 +36,7 @@ function getDistanceFromToday(date: Date | number) {
 	return differenceInCalendarDays(date, new Date());
 }
 
-function formatRestockDate(date: number) {
+function formatRestockDate(date: Date | number) {
 	const distanceFromToday = getDistanceFromToday(date);
 
 	if (distanceFromToday === 0) return format(date, "'at' h:mm bbb");
@@ -119,7 +118,7 @@ function ItemEditor({ onSave, onDelete }: ItemEditorProps) {
 		<>
 			<DialogHeader title="Edit Item" />
 
-			<div className="h-[50vh] space-y-8 overflow-y-auto px-8 pt-4 pb-8">
+			<div className="max-h-[50vh] space-y-8 overflow-y-auto px-8 pt-4 pb-8">
 				<div className="space-y-2">
 					<Button
 						variant="primary"
@@ -161,7 +160,7 @@ function Page() {
 	const [editDialogState, setEditDialogState] = useState({
 		open: false,
 		skuId: '',
-		pickupLocation: 'FACTORY' as PickupLocation
+		pickupLocationId: 'STT_FACTORY'
 	});
 
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
@@ -227,7 +226,7 @@ function Page() {
 								onDelete={async () => {
 									await removeItem.mutateAsync({
 										quoteId: quoteId,
-										pickupLocation: editDialogState.pickupLocation,
+										pickupLocationId: editDialogState.pickupLocationId,
 										skuId: editDialogState.skuId
 									});
 
@@ -244,7 +243,7 @@ function Page() {
 						<ul className="!mt-8 space-y-12">
 							{quote.data.items.map((item) => (
 								<li
-									key={`${item.skuId}_${item.pickupLocation}`}
+									key={`${item.skuId}_${item.pickupLocationId}`}
 									className="flex flex-col items-center space-y-4"
 								>
 									<Link
@@ -254,7 +253,7 @@ function Page() {
 										<div className="mb-4 h-32 w-32 bg-gray-100" />
 										<div className="space-y-2 self-stretch">
 											<h3 className="font-display text-lg font-semibold">
-												{item.displayName}
+												{item.sku.displayName}
 											</h3>
 											<div className="flex justify-between">
 												<p className="font-semibold">
@@ -272,12 +271,11 @@ function Page() {
 												Order Today. Pick up on-site:
 												<br />
 												{getDistanceFromToday(item.closest_restock_date) > 1 &&
-													'Available'}
-												&nbsp;
+													'Available '}
 												<b>{formatRestockDate(item.closest_restock_date)}</b>
 												&nbsp;at&nbsp;
 												<span className="inline-block text-bubblegum-600">
-													Our St. Thomas Factory
+													Our {item.pickupLocation.displayName}
 												</span>
 											</p>
 
@@ -287,7 +285,7 @@ function Page() {
 													onClick={() => {
 														setEditDialogState((oldState) => ({
 															...oldState,
-															pickupLocation: item.pickupLocation,
+															pickupLocationId: item.pickupLocationId,
 															skuId: item.skuId
 														}));
 													}}

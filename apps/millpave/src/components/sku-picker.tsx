@@ -1,7 +1,7 @@
-import { Product } from '../types/product';
+import { FullPaver } from '../types/product';
 
 type SkuPickerProps = {
-	product: Pick<Product, 'skuIdFragments'>;
+	product: Pick<FullPaver, 'skuIdFragments'>;
 	header: React.FC<React.PropsWithChildren<{ title: string }>>;
 	value: string;
 	onChange: (fragmentedSkuId: string[]) => void;

@@ -1,5 +1,4 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { SKU } from '../types/product';
 import { useGLTF } from '@react-three/drei';
 import { GLTF, USDZExporter } from 'three-stdlib';
 import { useEffect, useRef, useState } from 'react';
@@ -8,6 +7,7 @@ import { Button } from './button';
 import { Icon } from './icon';
 import { motion, MotionValue, useScroll, useTransform } from 'framer-motion';
 import { useMobileDetect } from '../utils/use-mobile-detect';
+import { Sku } from '@prisma/client';
 
 type GLTFResult = GLTF & {
 	nodes: {
@@ -249,7 +249,7 @@ function SlideIndicator({ scrollProgress }: SlideIndicatorProps) {
 }
 
 type ProductViewerProps = {
-	sku: SKU;
+	sku: Sku;
 };
 
 function ProductViewer({ sku }: ProductViewerProps) {

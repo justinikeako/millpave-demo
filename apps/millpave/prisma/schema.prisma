@@ -18,36 +18,104 @@ model Category {
 }
 
 model Product {
-  category             Category         @relation(fields: [categoryId], references: [id])
-  id                   String           @id
+  id                   String                    @id
   displayName          String
-  description          String           @db.Text
+  description          String                    @db.Text
+  defaultSkuId         String
   defaultSkuIdTemplate String
-  pickupLocations      PickupLocation[]
-  similarProducts      SimilarProduct[]
-  skus                 Sku[]
-  skuIdFragments       Json
+  category             Category                  @relation(fields: [categoryId], references: [id])
   categoryId           String
+  skus                 Sku[]
+  details              ProductDetails[]
+  skuIdFragments       Json
+  stock                Stock[]
+  restock              Restock[]
+  pickupLocations      PickupLocationOnProduct[]
+  similar              SimilarProduct[]          @relation("similar")
+  similarTo            SimilarProduct[]          @relation("similarTo")
 
   @@index([categoryId])
 }
 
 model SimilarProduct {
-  productId String  @id
+  relevance Int
+  product   Product @relation("similar", fields: [productId], references: [id])
+  productId String
+  similar   Product @relation("similarTo", fields: [similarId], references: [id])
+  similarId String
+
+  @@id([productId, similarId])
+  @@index([productId])
+  @@index([similarId])
+}
+
+model PickupLocationOnProduct {
+  product          Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId        String
+  pickupLocation   PickupLocation @relation(fields: [pickupLocationId], references: [id])
+  pickupLocationId String
+
+  @@id([productId, pickupLocationId])
+  @@index([productId])
+  @@index([pickupLocationId])
+}
+
+model ProductDetails {
+  matcher   String  @id
   product   Product @relation(fields: [productId], references: [id])
+  productId String
+  data      Json
+  sku       Sku[]
 
   @@index([productId])
 }
 
 model Sku {
-  id          String      @id
-  displayName String
-  price       Float
-  unit        String
-  product     Product     @relation(fields: [productId], references: [id])
-  productId   String
-  quoteItems  QuoteItem[]
+  id             String         @id
+  displayName    String
+  price          Float
+  unit           String
+  product        Product        @relation(fields: [productId], references: [id])
+  productId      String
+  quoteItems     QuoteItem[]
+  stock          Stock[]
+  details        ProductDetails @relation(fields: [detailsMatcher], references: [matcher])
+  detailsMatcher String
+  restockQueue   Restock[]
 
+  @@index([productId])
+  @@index([detailsMatcher])
+}
+
+model Stock {
+  sku        Sku            @relation(fields: [skuId], references: [id])
+  skuId      String
+  quantity   Int
+  location   PickupLocation @relation(fields: [locationId], references: [id])
+  locationId String
+  product    Product        @relation(fields: [productId], references: [id])
+  productId  String
+
+  @@id(fields: [skuId, locationId], name: "id")
+  @@index([skuId])
+  @@index([locationId])
+  @@index([productId])
+}
+
+model Restock {
+  sku        Sku            @relation(fields: [skuId], references: [id])
+  skuId      String
+  quantity   Int
+  date       DateTime
+  fulfilled  Boolean        @default(false)
+  location   PickupLocation @relation(fields: [locationId], references: [id])
+  locationId String
+  product    Product        @relation(fields: [productId], references: [id])
+  productId  String
+
+  @@id(fields: [skuId, locationId], name: "id")
+  @@index([skuId])
+  @@index([locationId])
   @@index([productId])
 }
 
@@ -72,12 +140,13 @@ model QuoteItem {
   quantity         Int
   price            Float
   sku              Sku            @relation(fields: [skuId], references: [id])
-  pickupLocation   PickupLocation @relation(fields: [pickupLocationId], references: [id])
-  quote            Quote          @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   skuId            String
+  pickupLocation   PickupLocation @relation(fields: [pickupLocationId], references: [id])
   pickupLocationId String
+  quote            Quote          @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   quoteId          String
-  metadata         Json?
+
+  metadata Json?
 
   @@id(fields: [quoteId, skuId, pickupLocationId], name: "id")
   @@index([quoteId])
@@ -86,11 +155,10 @@ model QuoteItem {
 }
 
 model PickupLocation {
-  id          String      @id
-  displayName String
-  quoteItems  QuoteItem[]
-  product     Product?    @relation(fields: [productId], references: [id])
-  productId   String?
-
-  @@index([productId])
+  id           String                    @id
+  displayName  String
+  quoteItems   QuoteItem[]
+  stock        Stock[]
+  restockQueue Restock[]
+  products     PickupLocationOnProduct[]
 }

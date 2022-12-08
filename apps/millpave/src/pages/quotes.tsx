@@ -8,8 +8,8 @@ import * as Dropdown from '../components/dropdown';
 import { Button } from '../components/button';
 
 function Page() {
-	const quotes = trpc.useQuery(['quote.getAll']);
-	const deleteQuote = trpc.useMutation(['quote.delete']);
+	const quotes = trpc.quote.getMany.useQuery();
+	const deleteQuote = trpc.quote.delete.useMutation();
 
 	if (!quotes.data) {
 		if (quotes.error?.data?.code === 'NOT_FOUND')
@@ -53,7 +53,7 @@ function Page() {
 								<p className="overflow-hidden text-ellipsis whitespace-nowrap text-gray-500">
 									{quote.items.length > 0
 										? quote.items
-												.map((item) => item.displayName)
+												.map((item) => item.sku.displayName)
 												.toString()
 												.replace(/,/, ', ')
 										: 'No items yet.'}
@@ -70,7 +70,7 @@ function Page() {
 								<Dropdown.MenuContent
 									sideOffset={-8}
 									onClick={async () => {
-										await deleteQuote.mutateAsync({ id: quote.id });
+										await deleteQuote.mutateAsync({ quoteId: quote.id });
 
 										await quotes.refetch();
 									}}

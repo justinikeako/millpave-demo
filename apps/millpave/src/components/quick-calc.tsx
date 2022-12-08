@@ -1,9 +1,8 @@
 import { Control, useFormContext } from 'react-hook-form';
-import { ProductDetails } from '../types/product';
-import { useState } from 'react';
+import { PaverDetails } from '../types/product';
+import { useEffect, useState } from 'react';
 import { Button } from './button';
 import { formatNumber, formatPrice } from '../utils/format';
-import { PickupLocation } from '@prisma/client';
 import {
 	Select,
 	SelectContent,
@@ -23,7 +22,7 @@ const removeGCT = (total: number) => total / 1.15;
 
 function calculateDetails(config: {
 	area: number;
-	productDetails: ProductDetails;
+	productDetails: PaverDetails;
 	skuPrice: number;
 }) {
 	const subtotal = roundPrice(config.area * config.skuPrice);
@@ -41,27 +40,34 @@ type TransformerRecord<TKey extends string> = Record<
 function roundArea(
 	area: number,
 	unit: Unit,
-	{ productDetails, pickupLocation }: ConvertConfig
+	{ productDetails, pickupLocationId }: ConvertConfig
 ) {
 	const { sqft_per_pallet, pcs_per_sqft } = productDetails;
 
-	const roundingFunction: TransformerRecord<PickupLocation> = {
-		FACTORY: (sqft) => {
+	const roundingFunction: TransformerRecord<string> = {
+		STT_FACTORY: (sqft) => {
 			return roundTo(sqft, sqft_per_pallet / 2, 'up'); // Round up to the nearest half pallet
 		},
-		SHOWROOM: (sqft) => {
+		KNG_SHOWROOM: (sqft) => {
 			return roundTo(sqft, 1 / pcs_per_sqft, 'up'); // Round up to the nearest piece
 		}
 	};
 
 	if (unit === 'jmd') return area; // Already rounded, pass value onward
 
-	return roundingFunction[pickupLocation](area);
+	const round = roundingFunction[pickupLocationId];
+
+	if (!round)
+		throw new Error(
+			`No rounding function was found for location '${pickupLocationId}'`
+		);
+
+	return round(area);
 }
 
 type ConvertConfig = {
-	pickupLocation: PickupLocation;
-	productDetails: ProductDetails;
+	pickupLocationId: string;
+	productDetails: PaverDetails;
 	skuPrice: number;
 };
 
@@ -114,7 +120,7 @@ function convert(value: number, config: ConvertConfig) {
 			const unroundedArea = convertToSqft(value, unit, config);
 			const roundedArea = roundArea(unroundedArea, unit, config);
 
-			return { roundedArea, unroundedArea };
+			return roundedArea;
 		},
 		fromSqftTo: (unit: Unit) => convertFromSqft(value, unit, config)
 	};
@@ -133,14 +139,11 @@ const quickCalcPlaceholder: Record<Unit, string> = {
 type QuickCalcProps = {
 	control: Control<QuoteInputItem>;
 	header: React.FC<React.PropsWithChildren<{ title: string }>>;
-	convertConfig: {
-		skuPrice: number;
-		productDetails: ProductDetails;
-		pickupLocation: PickupLocation;
-	};
+	convertConfig: ConvertConfig;
+	skuId: string;
 };
 
-function QuickCalc({ convertConfig, header }: QuickCalcProps) {
+function QuickCalc({ convertConfig, header, skuId }: QuickCalcProps) {
 	const SectionHeader = header;
 
 	const { setValue } = useFormContext<QuoteInputItem>();
@@ -150,15 +153,22 @@ function QuickCalc({ convertConfig, header }: QuickCalcProps) {
 	const [rawArea, setRawArea] = useState(0);
 	const [unit, setUnit] = useState<Unit>('sqft');
 
-	const roundedArea = convert(rawArea, convertConfig).toSqftFrom(
-		unit
-	).roundedArea;
+	const roundedArea = convert(rawArea, convertConfig).toSqftFrom(unit);
 
 	const quickCalc = calculateDetails({
 		area: roundedArea,
 		skuPrice: convertConfig.skuPrice,
 		productDetails: convertConfig.productDetails
 	});
+
+	// Recalculate quantity when sku changes (find a better way to do this)
+	useEffect(() => {
+		const quantity = convert(roundedArea, convertConfig).fromSqftTo('pcs');
+
+		setValue('quantity', quantity);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [skuId]);
 
 	return (
 		<section className="space-y-4">
@@ -177,10 +187,13 @@ function QuickCalc({ convertConfig, header }: QuickCalcProps) {
 						onResultChange={(newResult) => {
 							setRawArea(newResult);
 
-							const roundedArea = roundArea(newResult, unit, convertConfig);
+							const roundedArea = convert(newResult, convertConfig).toSqftFrom(
+								unit
+							);
 							const quantity = convert(roundedArea, convertConfig).fromSqftTo(
 								'pcs'
 							);
+
 							setValue('quantity', quantity);
 						}}
 						canDecrement={rawArea >= 1}
@@ -197,7 +210,6 @@ function QuickCalc({ convertConfig, header }: QuickCalcProps) {
 						);
 
 						setInputValue(convertedValue.toString());
-						setRawArea(convertedValue);
 						setUnit(newUnit);
 					}}
 				>
@@ -221,16 +233,30 @@ function QuickCalc({ convertConfig, header }: QuickCalcProps) {
 			{/* Delivery Location */}
 			<div className="flex flex-wrap justify-between">
 				<Select
-					value={convertConfig.pickupLocation}
-					onValueChange={(newValue) =>
-						setValue('pickupLocation', newValue as PickupLocation)
-					}
+					value={convertConfig.pickupLocationId}
+					onValueChange={(newLocation) => {
+						setValue('pickupLocationId', newLocation);
+
+						const newConvertConfig = {
+							...convertConfig,
+							pickupLocationId: newLocation
+						};
+
+						const roundedArea = convert(rawArea, newConvertConfig).toSqftFrom(
+							unit
+						);
+						const quantity = convert(roundedArea, newConvertConfig).fromSqftTo(
+							'pcs'
+						);
+
+						setValue('quantity', quantity);
+					}}
 				>
 					<SelectTrigger basic />
 					<SelectContent>
 						<SelectViewport>
-							<SelectItem value="FACTORY">Factory Pickup</SelectItem>
-							<SelectItem value="SHOWROOM">Showroom Pickup</SelectItem>
+							<SelectItem value="STT_FACTORY">Factory Pickup</SelectItem>
+							<SelectItem value="KNG_SHOWROOM">Showroom Pickup</SelectItem>
 						</SelectViewport>
 					</SelectContent>
 				</Select>
@@ -252,9 +278,9 @@ function QuickCalc({ convertConfig, header }: QuickCalcProps) {
 							<label htmlFor="quickcalc-quantity">Calculated Quantity</label>
 							<output id="quickcalc-quantity" htmlFor="quickcalc-value">
 								{convert(quickCalc.area, convertConfig).fromSqftTo(
-									convertConfig.pickupLocation === 'FACTORY' ? 'pal' : 'pcs'
+									convertConfig.pickupLocationId === 'FACTORY' ? 'pal' : 'pcs'
 								)}{' '}
-								{convertConfig.pickupLocation === 'FACTORY' ? 'pal' : 'pcs'}
+								{convertConfig.pickupLocationId === 'FACTORY' ? 'pal' : 'pcs'}
 							</output>
 						</li>
 						<li className="flex flex-wrap justify-between">

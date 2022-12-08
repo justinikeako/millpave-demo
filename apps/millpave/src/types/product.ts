@@ -1,8 +1,41 @@
-import { PickupLocation } from '@prisma/client';
+import {
+	Category,
+	Prisma,
+	Product,
+	ProductDetails,
+	Restock,
+	Sku,
+	Stock
+} from '@prisma/client';
 
-export type ProductDetails = {
-	product_id: string;
-	matcher: string;
+type ExtendedProductDetails<TDetails extends Prisma.JsonObject> =
+	ProductDetails & { data: TDetails };
+
+type SkuWithDetails<TDetails extends Prisma.JsonObject> = Sku & {
+	details: ExtendedProductDetails<TDetails>;
+};
+
+type Similar = Pick<
+	Product,
+	'id' | 'defaultSkuId' | 'displayName' | 'defaultSkuIdTemplate'
+> & {
+	lowestPrice: number;
+};
+
+type FullProduct<
+	TDetails extends Prisma.JsonObject,
+	TSkuIdFragments extends Prisma.JsonArray
+> = Product & {
+	details: ExtendedProductDetails<TDetails>[];
+	skus: Sku[];
+	category: Category;
+	stock: Stock[];
+	restock: Restock[];
+	similar: Similar[];
+	skuIdFragments: TSkuIdFragments;
+};
+
+export type PaverDetails = {
 	dimensions: [number, number, number];
 	lbs_per_unit: number;
 	sqft_per_pallet: number;
@@ -10,12 +43,7 @@ export type ProductDetails = {
 	pcs_per_sqft: number;
 };
 
-type GalleryItem = {
-	id: string;
-	imgUrl: string;
-};
-
-export type SkuFragment =
+type PaverSkuIdFragments =
 	| {
 			type: 'color';
 			displayName: string;
@@ -27,34 +55,7 @@ export type SkuFragment =
 			fragments: { id: string; displayName: string }[];
 	  };
 
-export type Product = {
-	id: string;
-	defaultSkuIdTemplate: string;
-	lowestPrice: number;
-	pickupLocations: PickupLocation[];
-	category: { id: string; displayName: string };
-	displayName: string;
-	gallery: GalleryItem[];
-	similarProducts: string[];
-	skuIdFragments: SkuFragment[];
-};
+export type FullPaver = FullProduct<PaverDetails, PaverSkuIdFragments[]>;
 
-export type SKU = {
-	id: string;
-	displayName: string;
-	price: number;
-};
-
-export type Stock = {
-	skuId: string;
-	location: PickupLocation;
-	quantity: number;
-};
-
-export type RestockQueueElement = {
-	skuId: string;
-	location: PickupLocation;
-	quantity: number;
-	date: number;
-	fulfilled: boolean;
-};
+export type ExtendedPaverDetails = ExtendedProductDetails<PaverDetails>;
+export type PaverSkuWithDetails = SkuWithDetails<PaverDetails>;

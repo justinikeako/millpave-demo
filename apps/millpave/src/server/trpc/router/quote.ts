@@ -6,7 +6,8 @@ import { generateQuote, generateQuoteItem } from '../../quote/generate';
 import { QuoteItem } from '@prisma/client';
 import { roundPrice } from '../../../utils/price';
 import { QuoteItemMetadata } from '../../../types/quote';
-import { pickupLocationEnum, quoteInputItem } from '../../../validators/quote';
+import { quoteInputItem } from '../../../validators/quote';
+import { PaverSkuWithDetails } from '../../../types/product';
 
 type QuoteItemWithMetadata = QuoteItem & {
 	metadata: QuoteItemMetadata;
@@ -38,7 +39,20 @@ export const quoteRouter = router({
 				where: { id: input.quoteId },
 				include: {
 					items: {
-						orderBy: { createdAt: 'asc' }
+						orderBy: { createdAt: 'asc' },
+						include: {
+							sku: {
+								select: {
+									displayName: true,
+									restockQueue: {
+										take: 1,
+										where: { fulfilled: false },
+										orderBy: { date: 'desc' }
+									}
+								}
+							},
+							pickupLocation: true
+						}
 					}
 				}
 			});
@@ -47,7 +61,8 @@ export const quoteRouter = router({
 			const items = quote?.items.map((item) => {
 				return {
 					...item,
-					closest_restock_date: addDays(new Date(), 2).getTime()
+					closest_restock_date:
+						item.sku.restockQueue[0]?.date || addDays(new Date(), 21)
 				};
 			});
 
@@ -68,8 +83,12 @@ export const quoteRouter = router({
 				title: true,
 				updatedAt: true,
 				items: {
+					distinct: ['skuId', 'pickupLocationId'],
 					orderBy: { updatedAt: 'asc' },
-					take: 5
+					take: 5,
+					select: {
+						sku: { select: { displayName: true } }
+					}
 				}
 			},
 			orderBy: { updatedAt: 'desc' }
@@ -97,7 +116,12 @@ export const quoteRouter = router({
 	create: publicProcedure
 		.input(quoteInputItem)
 		.mutation(async ({ ctx, input }) => {
-			const quote = generateQuote([input]);
+			const sku = await ctx.prisma.sku.findUnique({
+				where: { id: input.skuId },
+				include: { details: true }
+			});
+
+			const quote = generateQuote(input, sku as PaverSkuWithDetails);
 
 			const createdQuote = await ctx.prisma.quote.create({
 				data: quote
@@ -114,14 +138,22 @@ export const quoteRouter = router({
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
-			const generatedItem = generateQuoteItem(input.item);
+			const sku = await ctx.prisma.sku.findUnique({
+				where: { id: input.item.skuId },
+				include: { details: true }
+			});
+
+			const generatedItem = generateQuoteItem(
+				input.item,
+				sku as PaverSkuWithDetails
+			);
 
 			await ctx.prisma.quoteItem.upsert({
 				where: {
 					id: {
 						quoteId: input.quoteId,
 						skuId: input.item.skuId,
-						pickupLocation: input.item.pickupLocation
+						pickupLocationId: input.item.pickupLocationId
 					}
 				},
 				create: {
@@ -163,7 +195,7 @@ export const quoteRouter = router({
 			z.object({
 				quoteId: z.string(),
 				skuId: z.string(),
-				pickupLocation: pickupLocationEnum
+				pickupLocationId: z.string()
 			})
 		)
 		.mutation(async ({ ctx, input }) => {

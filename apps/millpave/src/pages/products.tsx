@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Button } from '../components/button';
 import { Icon } from '../components/icon';
 import { formatPrice } from '../utils/format';
+import { trpc } from '../utils/trpc';
+import NextError from 'next/error';
 
 type SectionHeaderProps = React.PropsWithChildren<{
 	title: string;
@@ -38,6 +40,17 @@ function ProductLink({ href, name, startingPrice }: ProductLinkProps) {
 }
 
 function Page() {
+	const category = trpc.category.getById.useQuery({
+		categoryId: 'concrete_pavers'
+	});
+
+	if (!category.data) {
+		if (category.error?.data?.code === 'NOT_FOUND')
+			return <NextError statusCode={404} />;
+
+		return null;
+	}
+
 	return (
 		<>
 			<Head>
@@ -83,41 +96,14 @@ function Page() {
 					<SectionHeader title="Pavers" />
 
 					<ul className="space-y-4">
-						<ProductLink
-							name="Colonial Classic"
-							startingPrice={203}
-							href="/product/colonial_classic?sku=grey"
-						/>
-						<ProductLink
-							name="Thin Classic"
-							startingPrice={188}
-							href="/product/thin_classic?sku=grey"
-						/>
-						<ProductLink
-							name="Banjo"
-							startingPrice={219}
-							href="/product/banjo?sku=grey"
-						/>
-						<ProductLink
-							name="Old World Cobble"
-							startingPrice={203}
-							href="/product/owc?sku=grey"
-						/>
-						<ProductLink
-							name="Heritage Series"
-							startingPrice={219}
-							href="/product/heritage?sku=regular+grey"
-						/>
-						<ProductLink
-							name="Cobble Mix"
-							startingPrice={219}
-							href="/product/cobble_mix?sku=oblong+grey"
-						/>
-						<ProductLink
-							name="Tropical Wave"
-							startingPrice={228.5}
-							href="/product/tropical_wave?sku=grey"
-						/>
+						{category.data.products.map((product) => (
+							<ProductLink
+								key={product.id}
+								name={product.displayName}
+								startingPrice={product.startingPrice}
+								href="/product/colonial_classic?sku=grey"
+							/>
+						))}
 					</ul>
 				</section>
 			</main>

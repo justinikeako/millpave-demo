@@ -31,7 +31,7 @@ function Header() {
 
 				<ul
 					className={classNames(
-						'inset-0 z-10 hidden flex-col items-start justify-center gap-8 bg-gray-900 px-16 text-3xl text-white md:px-24 lg:static lg:flex lg:flex-row lg:items-center lg:bg-transparent lg:font-body lg:text-base lg:font-normal lg:text-gray-900',
+						'inset-0 z-10 hidden flex-col items-start justify-center gap-8 bg-gray-900 px-16 text-3xl  text-white md:px-24 lg:static lg:flex lg:flex-row lg:items-center lg:bg-transparent lg:px-0 lg:font-body lg:text-base lg:font-normal lg:text-gray-900',
 						showMenu && 'fixed !flex'
 					)}
 				>
@@ -48,7 +48,10 @@ function Header() {
 
 				<Button
 					variant="tertiary"
-					className="z-20 lg:hidden"
+					className={classNames(
+						'z-20 lg:hidden',
+						showMenu && 'active:bg-gray-800'
+					)}
 					onClick={() => setShowMenu(!showMenu)}
 				>
 					<Icon name="menu" />

@@ -211,7 +211,7 @@ async function addPavers() {
 				}))
 			},
 
-			description: `Create a traditional feel to your garden with our ${product.displayName} Paver. As one of the most sought after styles of stone paving, it displays a beautiful range of light tones which will brighten up any exterior to create an added sense of space! Using aggregates sourced from the St. Thomas River, ${product.displayName} promises an outdoor area filled with character and is a household favourite providing a wealth of design opportunities.`
+			description: `Create a traditional feel to your garden with our ${product.displayName} Paver. As one of the most sought after styles of stone paving, it displays a beautiful range of colors which will brighten up any exterior to create an added sense of space! Using aggregates sourced from the St. Thomas River, ${product.displayName} promises an outdoor area filled with character and is a household favourite providing a wealth of design opportunities.`
 		})
 	);
 

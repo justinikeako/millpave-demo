@@ -59,31 +59,31 @@ function Page() {
 					<div className="flex flex-col space-y-8">
 						<ul className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
 							<ProductCard
-								displayVersion
+								variant="display"
 								name="Colonial Classic"
 								startingPrice={203}
 								className="md:col-span-3"
 							/>
 							<ProductCard
-								displayVersion
+								variant="display"
 								name="Banjo"
 								startingPrice={219}
 								className="md:col-span-3"
 							/>
 							<ProductCard
-								displayVersion
+								variant="display"
 								name="Heritage Series"
 								startingPrice={219}
 								className="md:col-span-6 lg:col-span-2"
 							/>
 							<ProductCard
-								displayVersion
+								variant="display"
 								name="Cobble Mix"
 								startingPrice={219}
 								className="md:col-span-3 lg:col-span-2"
 							/>
 							<ProductCard
-								displayVersion
+								variant="display"
 								name="Old World Cobble"
 								startingPrice={203}
 								className="md:col-span-3 lg:col-span-2"

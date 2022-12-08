@@ -6,14 +6,15 @@ import Link from 'next/link';
 type ProductCardProps = {
 	name: string;
 	startingPrice: number;
-	className?: string;
-	displayVersion?: boolean;
-};
+	link?: string;
+	variant?: 'display' | 'normal';
+} & React.LiHTMLAttributes<HTMLLIElement>;
 
 function ProductCard({
 	name,
 	startingPrice,
-	displayVersion = false,
+	link = '/product/colonial_classic?sku=grey',
+	variant = 'normal',
 	...props
 }: ProductCardProps) {
 	return (
@@ -25,7 +26,7 @@ function ProductCard({
 		>
 			{/*  eslint-disable-next-line @next/next/no-img-element */}
 			<div className="space-y-2">
-				{displayVersion ? (
+				{variant === 'display' ? (
 					<h3 className="text-xl">{name}</h3>
 				) : (
 					<h3 className="text-lg">{name}</h3>
@@ -34,7 +35,7 @@ function ProductCard({
 					Starting at {formatPrice(startingPrice)} per ft<sup>2</sup>
 				</p>
 				<Button variant="secondary" className="w-fit" asChild>
-					<Link href="/product">Learn More</Link>
+					<Link href={link}>Learn More</Link>
 				</Button>
 			</div>
 		</li>

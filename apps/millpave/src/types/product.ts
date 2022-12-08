@@ -19,7 +19,10 @@ type Similar = Pick<
 	Product,
 	'id' | 'defaultSkuId' | 'displayName' | 'defaultSkuIdTemplate'
 > & {
-	lowestPrice: number;
+	startingSku: {
+		price: number;
+		unit: string;
+	};
 };
 
 type FullProduct<

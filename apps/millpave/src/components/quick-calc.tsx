@@ -23,15 +23,7 @@ function calculateDetails(config: {
 
 	return { area: config.area, total, tax, subtotal };
 }
-// {
-// 	Select,
-// 	Select.Content,
-// 	Select.Item,
-// 	Select.ScrollDownButton,
-// 	Select.ScrollUpButton,
-// 	Select.Trigger,
-// 	Select.Viewport
-// }
+
 type TransformerRecord<TKey extends string> = Record<
 	TKey,
 	(num: number) => number
@@ -138,13 +130,13 @@ const quickCalcPlaceholder: Record<Unit, string> = {
 
 type QuickCalcProps = {
 	control: Control<QuoteInputItem>;
-	header: React.FC<React.PropsWithChildren<{ title: string }>>;
+	header: React.FC<React.PropsWithChildren>;
 	convertConfig: ConvertConfig;
 	skuId: string;
 };
 
 function QuickCalc({ convertConfig, header, skuId }: QuickCalcProps) {
-	const SectionHeader = header;
+	const SectionHeading = header;
 
 	const { setValue } = useFormContext<QuoteInputItem>();
 
@@ -172,7 +164,7 @@ function QuickCalc({ convertConfig, header, skuId }: QuickCalcProps) {
 
 	return (
 		<section className="space-y-4">
-			<SectionHeader title="Quick Calculator" />
+			<SectionHeading>Quick Calculator</SectionHeading>
 
 			{/* Input */}
 			<div className="flex space-x-2">

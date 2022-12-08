@@ -20,16 +20,17 @@ export const productRouter = router({
 					stock: true,
 					restock: true,
 					similar: {
+						orderBy: { relevance: 'desc' },
 						include: {
 							similar: {
 								select: {
 									id: true,
 									displayName: true,
-									defaultSkuIdTemplate: true,
+									defaultSkuId: true,
 									skus: {
 										orderBy: { price: 'asc' },
 										take: 1,
-										select: { price: true }
+										select: { price: true, unit: true }
 									}
 								}
 							}
@@ -43,7 +44,8 @@ export const productRouter = router({
 			const similarProducts = product.similar.map(({ similar }) => {
 				const { skus, ...product } = similar;
 
-				return { ...product, lowestPrice: skus[0]?.price || 0 };
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				return { ...product, startingSku: skus[0]! };
 			});
 
 			return {

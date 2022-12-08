@@ -1,4 +1,4 @@
-import { differenceInDays, format } from 'date-fns';
+import { differenceInCalendarDays, differenceInDays, format } from 'date-fns';
 
 export function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {
@@ -24,4 +24,15 @@ export function formatRelativeUpdate(date: Date) {
 	else if (difference === -1) return format(date, "'Yesterday at' h:mm aaa");
 
 	return format(date, 'EEE, LLL d');
+}
+
+export function formatRestockDate(date?: Date) {
+	if (!date) return 'Done to order';
+
+	const difference = differenceInCalendarDays(date, new Date());
+
+	if (difference === 0) return format(date, "'Restocks at' h:mm bbb");
+	else if (difference === 1) return 'Restocks tomorrow';
+
+	return format(date, "'Restocks' EEE, LLL d");
 }

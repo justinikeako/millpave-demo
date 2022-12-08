@@ -1,14 +1,19 @@
 import { FullPaver } from '../types/product';
 
 type SkuPickerProps = {
-	product: Pick<FullPaver, 'skuIdFragments'>;
-	header: React.FC<React.PropsWithChildren<{ title: string }>>;
+	skuIdTemplateFragments: FullPaver['skuIdFragments'];
+	section: React.FC<React.PropsWithChildren<{ heading: string }>>;
 	value: string;
-	onChange: (fragmentedSkuId: string[]) => void;
+	onChange: (newSkuId: string) => void;
 };
 
-function SkuPicker({ product, header, value, onChange }: SkuPickerProps) {
-	const SectionHeader = header;
+function SkuPicker({
+	skuIdTemplateFragments,
+	section,
+	value,
+	onChange
+}: SkuPickerProps) {
+	const Section = section;
 
 	const [productId, ...skuIdFragments] = value.split(':');
 
@@ -20,37 +25,41 @@ function SkuPicker({ product, header, value, onChange }: SkuPickerProps) {
 			return indexDidChange ? newFragment : oldFragment;
 		});
 
-		const fragmentedSkuId = [productId, ...newSkuIdFragments] as string[];
+		const newSkuId = [productId, ...newSkuIdFragments].join(':');
 
-		onChange(fragmentedSkuId);
+		onChange(newSkuId);
 	};
 
 	return (
 		<>
-			{product.skuIdFragments.map(({ type, fragments, displayName }, index) => (
-				<section key={index} className="space-y-4">
-					<SectionHeader title={displayName}>
-						{type === 'color' && (
-							<p className="text-sm text-bubblegum-700">Color Guide</p>
-						)}
-					</SectionHeader>
+			{skuIdTemplateFragments.map(({ type, fragments, displayName }, index) => {
+				const currentValue = skuIdFragments[index] as string;
+				const currentValueDisplayName = skuIdTemplateFragments[
+					index
+				]?.fragments?.find(({ id }) => id === currentValue)?.displayName;
 
-					{type === 'variant' && (
-						<VariantPicker
-							variants={fragments}
-							currentVariant={skuIdFragments[index] as string}
-							onChange={(newVariant) => handleChange(newVariant, index)}
-						/>
-					)}
-					{type === 'color' && (
-						<ColorPicker
-							colors={fragments}
-							currentColor={skuIdFragments[index] as string}
-							onChange={(newColor) => handleChange(newColor, index)}
-						/>
-					)}
-				</section>
-			))}
+				return (
+					<Section
+						key={index}
+						heading={`${displayName} — ${currentValueDisplayName}`}
+					>
+						{type === 'variant' && (
+							<VariantPicker
+								variants={fragments}
+								currentVariant={currentValue}
+								onChange={(newVariant) => handleChange(newVariant, index)}
+							/>
+						)}
+						{type === 'color' && (
+							<ColorPicker
+								colors={fragments}
+								currentColor={currentValue}
+								onChange={(newColor) => handleChange(newColor, index)}
+							/>
+						)}
+					</Section>
+				);
+			})}
 		</>
 	);
 }
@@ -134,7 +143,7 @@ function VariantPicker({
 							onChange={(e) => onChange(e.target.value)}
 						/>
 
-						<div className="flex items-center justify-center rounded-md px-3 py-2 text-center inner-border inner-border-gray-200 peer-checked:bg-bubblegum-50 peer-checked:font-semibold  peer-checked:text-bubblegum-700 peer-checked:inner-border-2 peer-checked:inner-border-bubblegum-700">
+						<div className="flex items-center justify-center rounded-md px-4 py-4 text-center inner-border inner-border-gray-200 peer-checked:bg-gray-100 peer-checked:font-semibold  peer-checked:text-gray-700 peer-checked:inner-border-2 peer-checked:inner-border-gray-700">
 							{displayName}
 						</div>
 					</label>
@@ -168,12 +177,10 @@ function ColorPicker({ colors, currentColor, onChange }: ColorPickerProps) {
 							checked={currentColor === id}
 							onChange={(e) => onChange(e.target.value)}
 						/>
-						<div className="h-12 w-12 rounded-full p-1 inner-border inner-border-gray-300 peer-checked:p-1 peer-checked:inner-border-2  peer-checked:inner-border-gray-900">
-							<div
-								className="h-full w-full rounded-full"
-								style={{ background: css }}
-							/>
-						</div>
+						<div
+							className="h-10 w-10 rounded-full border border-gray-300 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-gray-900  peer-checked:p-1"
+							style={{ background: css }}
+						/>
 					</label>
 				</li>
 			))}

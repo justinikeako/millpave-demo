@@ -1,4 +1,4 @@
-import { evaluate } from 'mathjs';
+import { evaluate, round } from 'mathjs';
 import { isNumeric } from '../utils/number';
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
@@ -46,17 +46,20 @@ function MathInput({
 	}
 
 	function handleChange(newValue: string) {
-		// Trigger onChange preserving expected behavior
+		// Trigger onChange preserving expected input behavior
 		onChange(newValue);
+
+		// Prevent parsing to NaN
+		const nonEmptyValue = newValue.trim() || '0';
 
 		// If the value is numeric, parse it and trigger the onResultChange
 		if (isNumeric(value)) {
-			const newResult = parseFloat(newValue);
+			const newResult = parseFloat(nonEmptyValue);
 
 			onResultChange(newResult);
 		} else {
 			// If the value isn't numeric, evaluate it it and trigger the onResultChange
-			const newResult = handleEvaluate(newValue);
+			const newResult = handleEvaluate(nonEmptyValue);
 
 			onResultChange(newResult);
 		}
@@ -72,21 +75,22 @@ function MathInput({
 	}
 
 	function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-		// Parse the value prop to a number
-		const nonEmptyValue = value || '0';
+		// Prevent parsing to NaN
+		const nonEmptyValue = event.currentTarget.value.trim() || '0';
+		// Turn the the input value to a number
 		const parsedValue = parseFloat(nonEmptyValue);
 
 		if (event.key === 'ArrowUp') {
 			// Increment the value on up arrow key if the parsed value is numeric
 			// or if the value prop is an empty string, and if canIncrement is true
 			if (isNumeric(nonEmptyValue) && canIncrement) {
-				handleChange((parsedValue + 1).toFixed(2));
+				handleChange(String(round(parsedValue + 1, 2)));
 			}
 		} else if (event.key === 'ArrowDown') {
 			// Decrement the value on down arrow key if the parsed value is numeric
 			// or if the value prop is an empty string, and if canDecrement is true
 			if (isNumeric(nonEmptyValue) && canDecrement) {
-				handleChange((parsedValue - 1).toFixed(2));
+				handleChange(String(round(parsedValue - 1, 2)));
 			}
 		} else if (event.key === 'Enter') {
 			// If the parsed value isn't numeric, prevent default form

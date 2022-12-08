@@ -1,6 +1,4 @@
 import Head from 'next/head';
-import { Footer } from '../../components/footer';
-import { Header } from '../../components/header';
 import SkuPicker from '../../components/sku-picker';
 import { ProductCard } from '../../components/product-card';
 import { Button } from '../../components/button';
@@ -84,8 +82,6 @@ function Page() {
 					{`${product.data.displayName} — Millennium Paving Stones`}{' '}
 				</title>
 			</Head>
-
-			<Header />
 
 			<div className="space-y-32 px-8 md:px-24 lg:px-32">
 				{/* Main Content */}
@@ -253,8 +249,6 @@ function Page() {
 					</div>
 				</section>
 			</div>
-
-			<Footer />
 		</>
 	);
 }

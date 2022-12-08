@@ -1,6 +1,4 @@
 import Head from 'next/head';
-import { Footer } from '../components/footer';
-import { Header } from '../components/header';
 import classNames from 'classnames';
 import { Button } from '../components/button';
 
@@ -31,8 +29,6 @@ function Page() {
 			<Head>
 				<title>Inspiration Gallery — Millennium Paving Stones</title>
 			</Head>
-
-			<Header />
 
 			<main className="space-y-32 px-8 md:px-24 lg:space-y-48 lg:px-32">
 				<section className="space-y-24">
@@ -106,8 +102,6 @@ function Page() {
 					<div className="aspect-video w-full bg-gray-200 lg:w-[70vmin]"></div>
 				</section>
 			</main>
-
-			<Footer />
 		</>
 	);
 }

@@ -41,7 +41,7 @@ function Header() {
 					<NavLink href="/contact">Contact Us</NavLink>
 					<li>
 						<Button variant="primary" asChild className="max-lg:!p-0">
-							<Link href="/contact">Get A Quote</Link>
+							<Link href="/contact?form=quote">Get A Quote</Link>
 						</Button>
 					</li>
 				</ul>

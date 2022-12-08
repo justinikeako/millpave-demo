@@ -1,7 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Footer } from '../components/footer';
-import { Header } from '../components/header';
 import { Button } from '../components/button';
 import { ProductCard } from '../components/product-card';
 
@@ -11,8 +9,6 @@ function Page() {
 			<Head>
 				<title>Millennium Paving Stones</title>
 			</Head>
-
-			<Header />
 
 			<main className="space-y-48 px-8 pt-16 md:px-24 lg:px-32">
 				{/* Hero */}
@@ -212,8 +208,6 @@ function Page() {
 					<div className="aspect-square bg-gray-200  lg:w-[30vw]" />
 				</section>
 			</main>
-
-			<Footer />
 		</>
 	);
 }

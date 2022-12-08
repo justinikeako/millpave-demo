@@ -1,17 +1,23 @@
 import Head from 'next/head';
-import { Footer } from '../components/footer';
-import { Header } from '../components/header';
 import * as Select from '../components/select';
 import { Button } from '../components/button';
+import { useRouter } from 'next/router';
+
+type FormType = 'general' | 'quote';
 
 function Page() {
+	const router = useRouter();
+	const formType = (router.query.form as FormType | undefined) || 'general';
+
+	function handleFormTypeChange(newFormType: FormType) {
+		router.replace(`/contact?form=${newFormType}`);
+	}
+
 	return (
 		<>
 			<Head>
 				<title>Contact — Millennium Paving Stones</title>
 			</Head>
-
-			<Header />
 
 			<main className="space-y-16 px-8 md:px-24 lg:space-y-32 lg:px-32">
 				<h1 className="text-center font-display text-4xl">Get in touch.</h1>
@@ -22,17 +28,18 @@ function Page() {
 						<h2 className="font-display text-xl">Contact Form</h2>
 
 						<form className="space-y-8">
-							<Select.Root defaultValue="QUOTE">
+							<Select.Root
+								value={formType}
+								onValueChange={handleFormTypeChange}
+							>
 								<Select.Trigger className="w-full" />
 
 								<Select.Content>
 									<Select.ScrollUpButton />
 									<Select.Viewport>
-										<Select.Item value="QUOTE">
+										<Select.Item value="general">General Inquiry</Select.Item>
+										<Select.Item value="quote">
 											I want to get a quote
-										</Select.Item>
-										<Select.Item value="PRESS">
-											I&apos;m from the media
 										</Select.Item>
 									</Select.Viewport>
 									<Select.ScrollDownButton />
@@ -132,8 +139,6 @@ function Page() {
 					</div>
 				</div>
 			</main>
-
-			<Footer />
 		</>
 	);
 }

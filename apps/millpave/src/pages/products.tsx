@@ -1,6 +1,4 @@
 import Head from 'next/head';
-import { Footer } from '../components/footer';
-import { Header } from '../components/header';
 import { ProductCard } from '../components/product-card';
 import * as Select from '../components/select';
 import { w } from 'windstitch';
@@ -43,8 +41,6 @@ function Page() {
 			<Head>
 				<title>Product Catalogue — Millennium Paving Stones</title>
 			</Head>
-
-			<Header />
 
 			<main className="space-y-8 px-8 md:px-24 lg:space-y-16 lg:px-32">
 				<h1 className="text-center font-display text-4xl">Product Catalogue</h1>
@@ -156,8 +152,6 @@ function Page() {
 					</ul>
 				</div>
 			</main>
-
-			<Footer />
 		</>
 	);
 }

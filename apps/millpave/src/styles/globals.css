@@ -10,6 +10,10 @@ body,
 	-webkit-tap-highlight-color: transparent;
 }
 
+b {
+	@apply font-semibold;
+}
+
 @layer base {
 	html {
 		@apply text-gray-900;

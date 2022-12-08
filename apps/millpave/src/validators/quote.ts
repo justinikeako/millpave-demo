@@ -10,16 +10,8 @@ export const unitEnum = z.enum([
 	'jmd'
 ]);
 
-export const pickupLocationEnum = z.enum(['SHOWROOM', 'FACTORY']);
-
 export const quoteInputItem = z.object({
 	skuId: z.string(),
-	pickupLocation: pickupLocationEnum,
-	quantity: z.number(),
-
-	area: z.number(),
-	input: z.object({
-		value: z.string(),
-		unit: unitEnum
-	})
+	pickupLocationId: z.string(),
+	quantity: z.number()
 });

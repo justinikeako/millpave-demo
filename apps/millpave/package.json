@@ -3,6 +3,10 @@
 	"version": "0.0.19",
 	"private": true,
 	"license": "UNLICENSED",
+	"type": "module",
+	"prisma": {
+		"seed": "node --loader ts-node/esm prisma\\seed.ts"
+	},
 	"scripts": {
 		"build": "next build",
 		"dev": "next dev",
@@ -10,7 +14,7 @@
 		"start": "next start"
 	},
 	"dependencies": {
-		"@prisma/client": "^4.6.0",
+		"@prisma/client": "^4.7.1",
 		"@radix-ui/react-dialog": "^1.0.0",
 		"@radix-ui/react-dropdown-menu": "^1.0.0",
 		"@radix-ui/react-select": "^1.0.0",
@@ -18,10 +22,11 @@
 		"@radix-ui/react-toast": "^1.0.0",
 		"@react-three/drei": "^9.23.8",
 		"@react-three/fiber": "^8.6.0",
-		"@trpc/client": "^9.27.0",
-		"@trpc/next": "^9.27.0",
-		"@trpc/react": "^9.27.0",
-		"@trpc/server": "^9.27.0",
+		"@tanstack/react-query": "^4.19.1",
+		"@trpc/client": "^10.4.3",
+		"@trpc/next": "^10.4.3",
+		"@trpc/react-query": "^10.4.3",
+		"@trpc/server": "^10.4.3",
 		"classnames": "^2.3.2",
 		"date-fns": "^2.29.2",
 		"framer-motion": "^7.3.5",
@@ -33,7 +38,6 @@
 		"react-dom": "18.2.0",
 		"react-error-boundary": "^3.1.4",
 		"react-hook-form": "^7.34.2",
-		"react-query": "3.39.2",
 		"superjson": "^1.9.1",
 		"tailwindcss-radix": "^2.6.0",
 		"three": "^0.144.0",
@@ -56,9 +60,10 @@
 		"postcss": "^8.4.16",
 		"prettier": "^2.7.1",
 		"prettier-plugin-tailwindcss": "^0.1.13",
-		"prisma": "^4.6.1",
+		"prisma": "^4.7.1",
 		"tailwindcss": "^3.2.4",
 		"tailwindcss-inner-border": "^0.2.0",
+		"ts-node": "^10.9.1",
 		"tsconfig": "workspace:*",
 		"typescript": "4.7.4"
 	}

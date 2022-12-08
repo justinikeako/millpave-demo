@@ -1,49 +1,38 @@
 import { Prisma } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import { roundPrice } from '../../utils/price';
-import { getSku, getSkuDetails } from '../mock-db';
 import { get } from 'lodash-es';
 import { QuoteInputItem, QuoteItemMetadata } from '../../types/quote';
+import { PaverSkuWithDetails } from '../../types/product';
 
 type QuoteItemCreateManyQuoteInput = {
 	metadata: QuoteItemMetadata;
 } & Prisma.QuoteItemCreateManyQuoteInput;
 
-function generateQuoteItem(inputItem: QuoteInputItem) {
-	const sku = getSku(inputItem.skuId);
-	const skuDetails = getSkuDetails(inputItem.skuId);
-
-	const { area, quantity } = inputItem;
-
+function generateQuoteItem(input: QuoteInputItem, sku: PaverSkuWithDetails) {
 	const skuPrice =
-		inputItem.pickupLocation === 'FACTORY' ? sku.price : sku.price + 20;
+		input.pickupLocationId === 'KNG_SHOWROOM' ? sku.price + 20 : sku.price;
+	const areaFromQuantity = input.quantity / sku.details.data.pcs_per_sqft;
 
-	const outputMetadata: QuoteItemMetadata = {
-		area: area,
-		weight: quantity * skuDetails.lbs_per_unit,
-		...inputItem.input
-	};
-
-	const outputItem: QuoteItemCreateManyQuoteInput = {
+	const generatedItem: QuoteItemCreateManyQuoteInput = {
 		skuId: sku.id,
-		displayName: sku.displayName,
-		quantity: quantity,
-		pickupLocation: inputItem.pickupLocation,
-		price: roundPrice(area * skuPrice),
-		metadata: outputMetadata
+		quantity: input.quantity,
+		pickupLocationId: input.pickupLocationId,
+		price: roundPrice(areaFromQuantity * skuPrice),
+		metadata: {}
 	};
 
-	return outputItem;
+	return generatedItem;
 }
 
-function generateQuote(inputItems: QuoteInputItem[]) {
-	const outputItems = inputItems.map(generateQuoteItem);
+function generateQuote(inputItem: QuoteInputItem, sku: PaverSkuWithDetails) {
+	const outputItem = generateQuoteItem(inputItem, sku);
 
 	const generatedQuote: Prisma.QuoteCreateInput = {
 		id: nanoid(8),
 		title: 'Draft Quote',
-		items: { create: outputItems },
-		...calculateDetails(outputItems)
+		items: { create: [outputItem] },
+		...calculateDetails([outputItem])
 	};
 
 	return generatedQuote;

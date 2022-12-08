@@ -6,15 +6,6 @@ import { Icon } from '../../components/icon';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { trpc } from '../../utils/trpc';
 import { useRouter } from 'next/router';
-// import {
-// 	Select,
-// 	SelectContent,
-// 	SelectItem,
-// 	SelectScrollDownButton,
-// 	SelectScrollUpButton,
-// 	SelectTrigger,
-// 	SelectViewport
-// } from '../../components/select';
 import {
 	Dialog,
 	DialogContent,
@@ -23,12 +14,6 @@ import {
 } from '../../components/dialog';
 import Link from 'next/link';
 import cx from 'classnames';
-import SkuPicker, { ProductPicker } from '../../components/sku-picker';
-import { SKU } from '../../types/product';
-import { PickupLocation } from '@prisma/client';
-import QuickCalc from '../../components/quick-calc';
-import { FormProvider, useForm } from 'react-hook-form';
-import { QuoteInputItem } from '../../types/quote';
 
 function formatPrice(price: number) {
 	const priceFormatter = new Intl.NumberFormat('en', {
@@ -51,7 +36,7 @@ function getDistanceFromToday(date: Date | number) {
 	return differenceInCalendarDays(date, new Date());
 }
 
-function formatRestockDate(date: number) {
+function formatRestockDate(date: Date | number) {
 	const distanceFromToday = getDistanceFromToday(date);
 
 	if (distanceFromToday === 0) return format(date, "'at' h:mm bbb");
@@ -123,182 +108,38 @@ function EditableHeader({
 	);
 }
 
-// type OverageSelectProps = {
-// 	defaultValue: string;
-// 	onChange: (newValue: Overage) => void | Promise<void>;
-// };
-
-// function OverageSelect ({ defaultValue }: OverageSelectProps) {
-// 	const [overage, setOverage] = useState(defaultValue);
-
-// 	return (
-// 		<Select
-// 			value={overage}
-// 			onValueChange={(newOverage) => setOverage(newOverage)}
-// 		>
-// 			<SelectTrigger />
-// 			<SelectContent>
-// 				<SelectScrollUpButton />
-// 				<SelectViewport>
-// 					<SelectItem value="TEN">10%</SelectItem>
-// 					<SelectItem value="FIVE">5%</SelectItem>
-// 					<SelectItem value="THREE">3%</SelectItem>
-// 					<SelectItem value="ZERO">None</SelectItem>
-// 				</SelectViewport>
-// 				<SelectScrollDownButton />
-// 			</SelectContent>
-// 		</Select>
-// 	);
-// }
-
-function SectionHeader2({
-	title,
-	children
-}: React.PropsWithChildren<SectionHeaderProps>) {
-	return (
-		<div className="flex items-center justify-between">
-			<h3 className="font-display font-semibold">{title}</h3>
-			{children}
-		</div>
-	);
-}
-
 type ItemEditorProps = {
 	onSave: () => Promise<void>;
 	onDelete: () => Promise<void>;
 };
 
 function ItemEditor({ onSave, onDelete }: ItemEditorProps) {
-	const [skuId, setSkuId] = useState('colonial_classic:grey');
-
-	const [productId] = skuId.split(':');
-
-	const productList = trpc.useQuery(['product.getList'], {
-		refetchOnWindowFocus: false
-	});
-	const product = trpc.useQuery(
-		['product.get', { productId: productId as string }],
-		{ refetchOnWindowFocus: false, keepPreviousData: true }
-	);
-
-	const formMethods = useForm<QuoteInputItem>({
-		defaultValues: {
-			area: 0,
-			input: {
-				value: '',
-				unit: 'sqft'
-			},
-			pickupLocation: 'FACTORY',
-			quantity: 9,
-			skuId: skuId
-		}
-	});
-
-	function findSKU(searchId: string, skuList?: SKU[]) {
-		if (!skuList) return;
-
-		const sku = skuList.find((currentSKU) => currentSKU.id === searchId);
-
-		return sku;
-	}
-
-	const { pickupLocation } = formMethods.watch();
-	const sku = findSKU(skuId, product.data?.skuList);
-
-	const findDetails = (skuId: string) => {
-		return product.data?.details.find((details) => {
-			return skuId.includes(details.matcher);
-		});
-	};
-
-	const productDetails = findDetails(skuId);
-
-	function handleProductChange(newProductId: string) {
-		setSkuId((currentSkuId) => {
-			const colorId = currentSkuId.split(':').at(-1) as string;
-
-			const incomingProduct = productList.data?.find(
-				(candidate) => candidate.id === newProductId
-			);
-
-			const newSkuIdFragment = incomingProduct?.defaultSkuIdTemplate.replace(
-				'[color]',
-				colorId
-			) as string;
-
-			return `${newProductId}:${newSkuIdFragment}`;
-		});
-	}
-
 	return (
 		<>
 			<DialogHeader title="Edit Item" />
-			{(productList.isLoading || product.isLoading) && <p>Loading...</p>}
-			{productList.data && (
-				<FormProvider {...formMethods}>
-					<form
-						className="h-[50vh] space-y-8 overflow-y-auto px-8 pt-4 pb-8"
-						onSubmit={formMethods.handleSubmit((values) => {
-							console.log(values);
-						})}
+
+			<div className="max-h-[50vh] space-y-8 overflow-y-auto px-8 pt-4 pb-8">
+				<div className="space-y-2">
+					<Button
+						variant="primary"
+						type="submit"
+						onClick={onSave}
+						className="w-full"
 					>
-						<section className="space-y-4">
-							<SectionHeader2 title="Model" />
-							<ProductPicker
-								products={productList.data}
-								currentProduct={productId as string}
-								onChange={handleProductChange}
-							/>
-						</section>
-						{product.data && sku && productDetails && (
-							<>
-								<SkuPicker
-									product={product.data}
-									header={SectionHeader2}
-									value={skuId}
-									onChange={(fragmentedSkuId) => {
-										const skuId = fragmentedSkuId.join(':');
-
-										setSkuId(skuId);
-									}}
-								/>
-
-								<QuickCalc
-									control={formMethods.control}
-									convertConfig={{
-										skuPrice:
-											sku.price + (pickupLocation === 'FACTORY' ? 0 : 20),
-										pickupLocation: pickupLocation,
-										productDetails: productDetails
-									}}
-									header={SectionHeader2}
-								/>
-							</>
-						)}
-
-						<div className="space-y-2">
-							<Button
-								variant="primary"
-								type="submit"
-								onClick={onSave}
-								className="w-full"
-							>
-								<Icon name="save" />
-								Save Changes
-							</Button>
-							<Button
-								variant="secondary"
-								type="button"
-								className="w-full text-red-600"
-								onClick={onDelete}
-							>
-								<Icon name="delete" />
-								Remove from Quote
-							</Button>
-						</div>
-					</form>
-				</FormProvider>
-			)}
+						<Icon name="save" />
+						Save Changes
+					</Button>
+					<Button
+						variant="secondary"
+						type="button"
+						className="w-full text-red-600"
+						onClick={onDelete}
+					>
+						<Icon name="delete" />
+						Remove from Quote
+					</Button>
+				</div>
+			</div>
 		</>
 	);
 }
@@ -319,15 +160,15 @@ function Page() {
 	const [editDialogState, setEditDialogState] = useState({
 		open: false,
 		skuId: '',
-		pickupLocation: 'FACTORY' as PickupLocation
+		pickupLocationId: 'STT_FACTORY'
 	});
 
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
 	// const [showOverageWarning, setShowOverageWarning] = useState(false);
 
-	const quote = trpc.useQuery(['quote.get', { id: quoteId }]);
-	const renameQuote = trpc.useMutation(['quote.rename']);
-	const removeItem = trpc.useMutation(['quote.removeItem']);
+	const quote = trpc.quote.getById.useQuery({ quoteId });
+	const renameQuote = trpc.quote.rename.useMutation();
+	const removeItem = trpc.quote.removeItem.useMutation();
 
 	if (!quote.data) {
 		if (quote.error?.data?.code === 'NOT_FOUND')
@@ -363,70 +204,9 @@ function Page() {
 					}}
 				/>
 
-				{/* Shapes */}
-				{/* {quote.data.shapes && quote.data.shapes.length > 0 && (
-					<section className="space-y-4">
-						<SectionHeader title="Shapes" />
-
-						<ul className="no-scrollbar -mx-8 flex items-center space-x-2 overflow-x-scroll">
-							<li className="h-2 shrink-0 basis-4" />
-
-							<li className="flex snap-center rounded-full bg-gray-100 p-2.5">
-								<Icon name="add" />
-							</li>
-							{quote.data.shapes.map((shape) => (
-								<li
-									key={shape.id}
-									className="flex snap-center whitespace-nowrap rounded-full bg-gray-100 px-4 py-2"
-								>
-									{shape.name}
-								</li>
-							))}
-
-							<li className="h-2 shrink-0 basis-4" />
-						</ul>
-					</section>
-				)} */}
-
 				{/* Items */}
 				<section className="space-y-4">
 					<SectionHeader title={`Items (${quote.data.items.length})`} />
-
-					{/* Overage */}
-
-					{/* <div className="flex items-center justify-between">
-						<p className="flex space-x-1">
-							<span>Area Overage</span>
-
-							<span>
-								<Button variant="tertiary">
-									<Icon name="info" weight={300} />
-								</Button>
-							</span>
-						</p>
-
-						<OverageSelect
-							defaultValue={quote.data.overage}
-							onChange={(newOverage) => {
-								setShowOverageWarning(newOverage === 'ZERO');
-							}}
-						/>
-					</div>*/}
-
-					{/* Overage Warning */}
-					{/* {(showOverageWarning || quote.data.overage === 'ZERO') && (
-						<div className="flex space-x-4 rounded-md bg-red-50 px-4 py-6 text-red-500">
-							<Icon name="warning" />
-							<div className="flex-1 space-y-2">
-								<p className="font-semibold">Declining an overage?</p>
-								<p>
-									Your job could be put on hold or delayed. Likely higher
-									contractor time and material costs. And the next batch of
-									pavers may not be an exact color match.
-								</p>
-							</div>
-						</div>
-					)} */}
 
 					{/* Item List */}
 					<Dialog
@@ -446,7 +226,7 @@ function Page() {
 								onDelete={async () => {
 									await removeItem.mutateAsync({
 										quoteId: quoteId,
-										pickupLocation: editDialogState.pickupLocation,
+										pickupLocationId: editDialogState.pickupLocationId,
 										skuId: editDialogState.skuId
 									});
 
@@ -463,7 +243,7 @@ function Page() {
 						<ul className="!mt-8 space-y-12">
 							{quote.data.items.map((item) => (
 								<li
-									key={`${item.skuId}_${item.pickupLocation}`}
+									key={`${item.skuId}_${item.pickupLocationId}`}
 									className="flex flex-col items-center space-y-4"
 								>
 									<Link
@@ -473,7 +253,7 @@ function Page() {
 										<div className="mb-4 h-32 w-32 bg-gray-100" />
 										<div className="space-y-2 self-stretch">
 											<h3 className="font-display text-lg font-semibold">
-												{item.displayName}
+												{item.sku.displayName}
 											</h3>
 											<div className="flex justify-between">
 												<p className="font-semibold">
@@ -491,12 +271,11 @@ function Page() {
 												Order Today. Pick up on-site:
 												<br />
 												{getDistanceFromToday(item.closest_restock_date) > 1 &&
-													'Available'}
-												&nbsp;
+													'Available '}
 												<b>{formatRestockDate(item.closest_restock_date)}</b>
 												&nbsp;at&nbsp;
 												<span className="inline-block text-bubblegum-600">
-													Our St. Thomas Factory
+													Our {item.pickupLocation.displayName}
 												</span>
 											</p>
 
@@ -506,7 +285,7 @@ function Page() {
 													onClick={() => {
 														setEditDialogState((oldState) => ({
 															...oldState,
-															pickupLocation: item.pickupLocation,
+															pickupLocationId: item.pickupLocationId,
 															skuId: item.skuId
 														}));
 													}}

@@ -79,7 +79,7 @@ function Page() {
 		<>
 			<Head>
 				<title>
-					{`${product.data.displayName} — Millennium Paving Stones`}{' '}
+					{`${product.data.displayName} — Millennium Paving Stones`}
 				</title>
 			</Head>
 

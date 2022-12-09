@@ -29,7 +29,7 @@
 		"@trpc/server": "^10.4.3",
 		"classnames": "^2.3.2",
 		"date-fns": "^2.29.2",
-		"framer-motion": "^7.3.5",
+		"framer-motion": "^7.6.19",
 		"lodash-es": "^4.17.21",
 		"mathjs": "^11.1.0",
 		"nanoid": "^4.0.0",

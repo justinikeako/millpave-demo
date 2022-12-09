@@ -1,6 +1,4 @@
-import classNames from 'classnames';
 import Link from 'next/link';
-import { useState } from 'react';
 import { Button } from './button';
 import { Icon } from './icon';
 
@@ -15,26 +13,19 @@ function NavLink({ href, children }: NavLinkProps) {
 }
 
 function Header() {
-	const [showMenu, setShowMenu] = useState(false);
-
 	return (
-		<header
-			className={classNames(
-				' mb-12 px-8 py-8 md:px-24 lg:px-32 lg:text-black',
-				showMenu && 'text-white'
-			)}
-		>
+		<header className=" mb-12 px-8 py-8 md:px-24 lg:px-32 lg:text-black">
 			<nav className="flex items-center justify-between">
-				<Link href="/" className="z-20 text-lg font-bold">
+				<input type="checkbox" id="menu-toggle" className="peer hidden" />
+
+				<Link
+					href="/"
+					className="z-20 text-lg font-bold peer-checked:text-white"
+				>
 					Logo
 				</Link>
 
-				<ul
-					className={classNames(
-						'inset-0 z-10 hidden flex-col items-start justify-center gap-8 bg-gray-900 px-16 text-3xl  text-white md:px-24 lg:static lg:flex lg:flex-row lg:items-center lg:bg-transparent lg:px-0 lg:font-body lg:text-base lg:font-normal lg:text-gray-900',
-						showMenu && 'fixed !flex'
-					)}
-				>
+				<ul className="inset-0 z-10 hidden flex-col items-start justify-center gap-8 bg-gray-900 px-16 text-3xl  text-white peer-checked:fixed peer-checked:flex md:px-24 lg:static lg:flex lg:flex-row lg:items-center lg:bg-transparent lg:px-0 lg:font-body lg:text-base lg:font-normal lg:text-gray-900">
 					<NavLink href="/products">Products</NavLink>
 					<NavLink href="/gallery">Get Inspired</NavLink>
 					<NavLink href="/#where-to-buy">Where to Buy</NavLink>
@@ -48,13 +39,12 @@ function Header() {
 
 				<Button
 					variant="tertiary"
-					className={classNames(
-						'z-20 lg:hidden',
-						showMenu && 'active:bg-gray-800'
-					)}
-					onClick={() => setShowMenu(!showMenu)}
+					className="z-20 peer-checked:text-white peer-checked:active:bg-gray-800 lg:hidden"
+					asChild
 				>
-					<Icon name="menu" />
+					<label htmlFor="menu-toggle">
+						<Icon name="menu" />
+					</label>
 				</Button>
 			</nav>
 		</header>

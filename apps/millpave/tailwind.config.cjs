@@ -40,6 +40,10 @@ module.exports = {
 		},
 
 		extend: {
+			screens: {
+				md: '640px'
+			},
+
 			lineHeight: {
 				tight: '1.15'
 			},

@@ -32,7 +32,7 @@ function Chip({ children }: React.PropsWithChildren) {
 }
 
 const StyledProductCard = w(ProductCard, {
-	className: 'md:col-span-3 lg:col-span-2'
+	className: 'md:col-span-3 xl:col-span-2'
 });
 
 function Page() {

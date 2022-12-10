@@ -14,7 +14,7 @@ function NavLink({ href, children }: NavLinkProps) {
 
 function Header() {
 	return (
-		<header className=" mb-12 px-8 py-8 md:px-24 lg:px-32 lg:text-black">
+		<header className=" mb-12 select-none px-8 py-8 md:px-24 lg:px-32 lg:text-black">
 			<nav className="flex items-center justify-between">
 				<input type="checkbox" id="menu-toggle" className="peer hidden" />
 

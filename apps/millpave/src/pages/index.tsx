@@ -2,20 +2,14 @@ import {
 	AnimatePresence,
 	AnimateSharedLayout,
 	motion,
-	Transition,
-	useAnimationFrame,
-	useMotionValue,
-	useScroll,
-	useSpring,
-	useTransform,
-	useVelocity,
-	wrap
+	Transition
 } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../components/button';
 import { ProductCard } from '../components/product-card';
+import { InspirationSection } from '../sections/inspiration';
 
 function getMiddleIndex(arr: unknown[]) {
 	const middleIndex = Math.floor(arr.length / 2);
@@ -146,73 +140,6 @@ function Hero() {
 	);
 }
 
-type MarqueeProps = React.PropsWithChildren<{
-	baseVelocity: number;
-}>;
-
-function Marquee({ children, baseVelocity = 100 }: MarqueeProps) {
-	const baseX = useMotionValue(0);
-	const { scrollY } = useScroll();
-	const scrollVelocity = useVelocity(scrollY);
-	const smoothVelocity = useSpring(scrollVelocity, {
-		damping: 50,
-		stiffness: 400
-	});
-	const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], {
-		clamp: false
-	});
-
-	/**
-	 * This is a magic wrapping for the length of the text - you
-	 * have to replace for wrapping that works for you or dynamically
-	 * calculate
-	 */
-	const x = useTransform(baseX, (v) => `${wrap(0, -44.5, v)}%`);
-
-	const directionFactor = useRef<number>(1);
-	useAnimationFrame((t, delta) => {
-		let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
-
-		/**
-		 * This is what changes the direction of the scroll once we
-		 * switch scrolling directions.
-		 */
-		if (velocityFactor.get() < 0) {
-			directionFactor.current = -1;
-		} else if (velocityFactor.get() > 0) {
-			directionFactor.current = 1;
-		}
-
-		moveBy += directionFactor.current * moveBy * velocityFactor.get();
-
-		baseX.set(baseX.get() + moveBy);
-	});
-
-	/**
-	 * The number of times to repeat the child text should be dynamically calculated
-	 * based on the size of the text and viewport. Likewise, the x motion value is
-	 * currently wrapped between -20 and -45% - this 25% is derived from the fact
-	 * we have four children (100% / 4). This would also want deriving from the
-	 * dynamically generated number of children.
-	 */
-	return (
-		<div className=" overflow-hidden">
-			<motion.div
-				className="flex h-[40vmin] space-x-4  md:space-x-8"
-				style={{ x }}
-			>
-				{children}
-				{children}
-				{children}
-				{children}
-				{children}
-				{children}
-				{children}
-			</motion.div>
-		</div>
-	);
-}
-
 function Page() {
 	return (
 		<>
@@ -238,35 +165,35 @@ function Page() {
 								variant="display"
 								name="Colonial Classic"
 								startingPrice={203}
-								link="/colonial_classic?sku=grey"
+								link="/product/colonial_classic?sku=grey"
 								className="md:col-span-3"
 							/>
 							<ProductCard
 								variant="display"
 								name="Banjo"
 								startingPrice={219}
-								link="/banjo?sku=grey"
+								link="/product/banjo?sku=grey"
 								className="md:col-span-3"
 							/>
 							<ProductCard
 								variant="display"
 								name="Heritage Series"
 								startingPrice={219}
-								link="/heritage?sku=regular+grey"
+								link="/product/heritage?sku=regular+grey"
 								className="md:col-span-6 lg:col-span-2"
 							/>
 							<ProductCard
 								variant="display"
 								name="Cobble Mix"
 								startingPrice={219}
-								link="/cobble_mix?sku=oblong+grey"
+								link="/product/cobble_mix?sku=oblong+grey"
 								className="md:col-span-3 lg:col-span-2"
 							/>
 							<ProductCard
 								variant="display"
 								name="Old World Cobble"
 								startingPrice={203}
-								link="/owc?sku=grey"
+								link="/product/owc?sku=grey"
 								className="md:col-span-3 lg:col-span-2"
 							/>
 						</ul>
@@ -277,34 +204,12 @@ function Page() {
 				</section>
 
 				{/* Inspiration */}
-				<section className="flex flex-col space-y-16">
-					<div className="flex flex-col items-center">
-						<p className="font-display text-lg">Inspiration</p>
-						<h2 className="max-w-[20ch] text-center font-display text-3xl">
-							Don&apos;t know where to start? Look at our best projects.
-						</h2>
-
-						<br />
-
-						<Button variant="primary">
-							<Link href="/gallery">Get Inspired</Link>
-						</Button>
-					</div>
-
-					<div className="-mx-8 flex flex-col space-y-4 md:-mx-24 md:space-y-8 lg:-mx-32">
-						<Marquee baseVelocity={2}>
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-						</Marquee>
-						<Marquee baseVelocity={-2}>
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-						</Marquee>
-					</div>
-				</section>
+				<InspirationSection />
 
 				{/* Locations */}
 				<section
 					id="where-to-buy"
-					className="flex scroll-m-16 flex-col gap-8 lg:flex-row lg:items-center lg:gap-32"
+					className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
 				>
 					<div className="flex-1">
 						<p className="font-display text-lg">Our Locations</p>
@@ -323,12 +228,12 @@ function Page() {
 						</Button>
 					</div>
 
-					<div className="aspect-square bg-gray-200 lg:w-[30vw]" />
+					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
 				</section>
 
 				{/* Process */}
-				<section className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-32">
-					<div className="flex-1 lg:order-2">
+				<section className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
+					<div className="flex-1 md:order-2">
 						<p className="font-display text-lg">Our Process</p>
 						<h2 className="max-w-[20ch] font-display text-3xl">
 							Starting from zero.
@@ -349,11 +254,11 @@ function Page() {
 						<Button variant="primary">Find an Installer</Button>
 					</div>
 
-					<div className="aspect-video w-full bg-gray-200 lg:w-[30vw]"></div>
+					<div className="aspect-video w-full bg-gray-200 md:w-[30vw]"></div>
 				</section>
 
 				{/* About */}
-				<section className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-32">
+				<section className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
 					<div className="flex-1 space-y-8">
 						<div>
 							<p className="font-display text-lg">About Us</p>
@@ -379,7 +284,7 @@ function Page() {
 						</div>
 					</div>
 
-					<div className="aspect-square bg-gray-200  lg:w-[30vw]" />
+					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
 				</section>
 			</main>
 		</>

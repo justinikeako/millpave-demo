@@ -12,6 +12,9 @@ import classNames from 'classnames';
 import { formatPrice } from '../../utils/format';
 import { Stock } from '../../components/stock';
 import { PaverEstimator } from '../../components/estimator';
+import { useState } from 'react';
+import { Icon } from '../../components/icon';
+import { InspirationSection } from '../../sections/inspiration';
 
 function pathFromSkuId(skuId: string) {
 	const [productId, ...skuIdFragments] = skuId.split(':');
@@ -44,6 +47,46 @@ function Section({
 			<h2 className="text-lg">{heading}</h2>
 			{children}
 		</section>
+	);
+}
+
+function Gallery() {
+	const images = [0, 0, 0, 0];
+
+	const [selectedIndex, setSelectedIndex] = useState(0);
+
+	return (
+		<main className="flex flex-col items-center gap-2 md:sticky md:top-8 md:flex-[2] lg:flex-[3]">
+			<div className="flex aspect-square w-full items-end justify-end gap-2 bg-gray-200 p-4">
+				<Button variant="secondary">View in 3D</Button>
+				<Button variant="secondary" className="px-2">
+					<Icon name="fullscreen" />
+				</Button>
+			</div>
+			<div className="flex w-full justify-center gap-2">
+				{images.map((_, index) => {
+					const id = 'image-' + index;
+
+					return (
+						<div key={id} className="contents">
+							<input
+								type="radio"
+								name="currentImage"
+								id={id}
+								className="peer hidden"
+								checked={index === selectedIndex}
+								onChange={() => setSelectedIndex(index)}
+							/>
+
+							<label
+								htmlFor={id}
+								className="aspect-square max-w-[80px] flex-1 shrink-0 border border-gray-200 bg-gray-200 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-black"
+							/>
+						</div>
+					);
+				})}
+			</div>
+		</main>
 	);
 }
 
@@ -85,28 +128,12 @@ function Page() {
 
 			<div className="space-y-32 px-8 md:px-24 lg:px-32">
 				{/* Main Content */}
-				<div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-32">
+				<div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
 					{/* Gallery */}
-					<main className="flex flex-col items-center gap-2 lg:sticky lg:top-8 lg:flex-[3]">
-						<div className="aspect-square w-full bg-gray-200" />
-						<div className="flex items-start gap-2">
-							<div className="relative h-20 w-20 shrink-0 p-2 inner-border-2 inner-border-black">
-								<div className="h-full w-full bg-gray-200" />
-							</div>
-							<div className="relative h-20 w-20 shrink-0 p-1 inner-border inner-border-gray-200">
-								<div className="h-full w-full bg-gray-200" />
-							</div>
-							<div className="relative h-20 w-20 shrink-0 p-1 inner-border inner-border-gray-200">
-								<div className="h-full w-full bg-gray-200" />
-							</div>
-							<div className="relative h-20 w-20 shrink-0 p-1 inner-border inner-border-gray-200">
-								<div className="h-full w-full bg-gray-200" />
-							</div>
-						</div>
-					</main>
+					<Gallery />
 
 					{/* Supporting Details */}
-					<aside className="space-y-8 lg:flex-[4] lg:space-y-12">
+					<aside className="space-y-8 md:flex-[3] lg:flex-[4] lg:space-y-12">
 						{/* Basic Info */}
 						<section className="space-y-2">
 							<h1 className="font-display text-4xl">
@@ -214,40 +241,7 @@ function Page() {
 				</section>
 
 				{/* Inspiration */}
-				<section className="flex flex-col space-y-16">
-					<div className="flex flex-col items-center">
-						<p className="font-display text-lg">Inspiration</p>
-						<h2 className="max-w-[20ch] text-center font-display text-3xl">
-							Don&apos;t know where to start? Look at our best projects.
-						</h2>
-
-						<br />
-
-						<Button variant="primary">
-							<Link href="/gallery">Get Inspired</Link>
-						</Button>
-					</div>
-
-					<div className="-mx-8 flex flex-col space-y-4 md:-mx-24 md:space-y-8 lg:-mx-32">
-						<div className="flex h-[40vmin] justify-center space-x-4 overflow-hidden md:space-x-8">
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-						</div>
-						<div className="flex h-[40vmin] justify-center space-x-4 overflow-hidden md:space-x-8">
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-							<div className="flex aspect-square shrink-0 bg-gray-200" />
-						</div>
-					</div>
-				</section>
+				<InspirationSection />
 			</div>
 		</>
 	);

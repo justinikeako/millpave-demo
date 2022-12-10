@@ -17,7 +17,7 @@ type SkuWithDetails<TDetails extends Prisma.JsonObject> = Sku & {
 
 type Similar = Pick<
 	Product,
-	'id' | 'defaultSkuId' | 'displayName' | 'defaultSkuIdTemplate'
+	'id' | 'defaultSkuId' | 'displayName' | 'defaultSkuId'
 > & {
 	startingSku: {
 		price: number;

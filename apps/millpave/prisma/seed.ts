@@ -80,63 +80,58 @@ async function addPavers() {
 	const PAVERS: Product[] = [
 		{
 			id: 'colonial_classic',
-			defaultSkuIdTemplate: 'colonial_classic:[color]',
 			defaultSkuId: 'colonial_classic:grey',
 			displayName: 'Colonial Classic',
 			similar: ['banjo', 'thin_classic', 'heritage'],
 			skuIdFragments: [
 				{
 					type: 'color',
-					displayName: 'Color',
+					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		},
 		{
 			id: 'thin_classic',
-			defaultSkuIdTemplate: 'thin_classic:[color]',
 			defaultSkuId: 'thin_classic:grey',
 			displayName: 'Thin Classic',
 			similar: ['colonial_classic', 'banjo', 'heritage'],
 			skuIdFragments: [
 				{
 					type: 'color',
-					displayName: 'Color',
+					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		},
 		{
 			id: 'banjo',
-			defaultSkuIdTemplate: 'banjo:[color]',
 			defaultSkuId: 'banjo:grey',
 			displayName: 'Banjo',
 			similar: ['colonial_classic', 'heritage', 'cobble_mix'],
 			skuIdFragments: [
 				{
 					type: 'color',
-					displayName: 'Color',
+					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		},
 		{
 			id: 'owc',
-			defaultSkuIdTemplate: 'owc:[color]',
 			defaultSkuId: 'owc:grey',
 			displayName: 'Old World Cobble',
 			similar: ['cobble_mix', 'tropical_wave', 'colonial_classic'],
 			skuIdFragments: [
 				{
 					type: 'color',
-					displayName: 'Color',
+					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		},
 		{
 			id: 'cobble_mix',
-			defaultSkuIdTemplate: 'cobble_mix:oblong:[color]',
 			defaultSkuId: 'cobble_mix:oblong:grey',
 			displayName: 'Cobble Mix',
 			similar: ['owc', 'heritage', 'colonial_classic'],
@@ -152,14 +147,13 @@ async function addPavers() {
 				},
 				{
 					type: 'color',
-					displayName: 'Color',
+					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		},
 		{
 			id: 'heritage',
-			defaultSkuIdTemplate: 'heritage:regular:[color]',
 			defaultSkuId: 'heritage:regular:grey',
 			displayName: 'Heritage Series',
 			similar: ['colonial_classic', 'cobble_mix', 'owc'],
@@ -175,21 +169,20 @@ async function addPavers() {
 				},
 				{
 					type: 'color',
-					displayName: 'Color',
+					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		},
 		{
 			id: 'tropical_wave',
-			defaultSkuIdTemplate: 'tropical_wave:[color]',
 			defaultSkuId: 'tropical_wave:grey',
 			displayName: 'Tropical Wave',
 			similar: ['owc', 'cobble_mix', 'colonial_classic'],
 			skuIdFragments: [
 				{
 					type: 'color',
-					displayName: 'Color',
+					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]

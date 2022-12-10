@@ -12,7 +12,7 @@ export const categoryRouter = router({
 					products: {
 						select: {
 							id: true,
-							defaultSkuIdTemplate: true,
+							defaultSkuId: true,
 							displayName: true,
 							skus: {
 								orderBy: { price: 'asc' },

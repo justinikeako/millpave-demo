@@ -18,21 +18,20 @@ model Category {
 }
 
 model Product {
-  id                   String                    @id
-  displayName          String
-  description          String                    @db.Text
-  defaultSkuId         String
-  defaultSkuIdTemplate String
-  category             Category                  @relation(fields: [categoryId], references: [id])
-  categoryId           String
-  skus                 Sku[]
-  details              ProductDetails[]
-  skuIdFragments       Json
-  stock                Stock[]
-  restock              Restock[]
-  pickupLocations      PickupLocationOnProduct[]
-  similar              SimilarProduct[]          @relation("similar")
-  similarTo            SimilarProduct[]          @relation("similarTo")
+  id              String                    @id
+  displayName     String
+  description     String                    @db.Text
+  defaultSkuId    String
+  category        Category                  @relation(fields: [categoryId], references: [id])
+  categoryId      String
+  skus            Sku[]
+  details         ProductDetails[]
+  skuIdFragments  Json
+  stock           Stock[]
+  restock         Restock[]
+  pickupLocations PickupLocationOnProduct[]
+  similar         SimilarProduct[]          @relation("similar")
+  similarTo       SimilarProduct[]          @relation("similarTo")
 
   @@index([categoryId])
 }

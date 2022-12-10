@@ -109,7 +109,7 @@ const Page: NextPage = () => {
 							So I asked the third dimension for some help.
 						</p>
 						<p>
-							High fidelity 3D models let prospects view any paver in any color
+							High fidelity 3D models let prospects view any paver in any colour
 							at any angle.
 						</p>
 						<p>

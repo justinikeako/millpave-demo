@@ -13,7 +13,7 @@ type ProductCardProps = {
 function ProductCard({
 	name,
 	startingPrice,
-	link = '/product/colonial_classic?sku=grey',
+	link = '/product/colonial_classic',
 	variant = 'normal',
 	...props
 }: ProductCardProps) {

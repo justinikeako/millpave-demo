@@ -7,48 +7,25 @@ import NextError from 'next/error';
 import { Sku } from '@prisma/client';
 import { ExtendedPaverDetails } from '../../types/product';
 import { trpc } from '../../utils/trpc';
-import { useRouter } from 'next/router';
 import classNames from 'classnames';
-import { formatPrice } from '../../utils/format';
-import { Stock } from '../../components/stock';
 import { PaverEstimator } from '../../components/estimator';
 import { useState } from 'react';
 import { Icon } from '../../components/icon';
 import { InspirationSection } from '../../sections/inspiration';
-
-function pathFromSkuId(skuId: string) {
-	const [productId, ...skuIdFragments] = skuId.split(':');
-	const skuQuery = skuIdFragments.join('+');
-
-	return `/product/${productId}?sku=${skuQuery}`;
-}
-
-const findDetails = (skuId: string, details?: ExtendedPaverDetails[]) => {
-	return details?.find((details) => {
-		return skuId.includes(details.matcher);
-	});
-};
-
-function findSKU(searchId: string, skus?: Sku[]) {
-	return skus?.find((currentSku) => currentSku.id === searchId);
-}
-
-type SectionProps = {
-	heading: string;
-} & React.HTMLAttributes<HTMLElement>;
-
-function Section({
-	heading,
-	children,
-	...props
-}: React.PropsWithChildren<SectionProps>) {
-	return (
-		<section className={classNames('space-y-2', props.className)}>
-			<h2 className="text-lg">{heading}</h2>
-			{children}
-		</section>
-	);
-}
+import { createProxySSGHelpers } from '@trpc/react-query/ssg';
+import superjson from 'superjson';
+import {
+	formatPrice,
+	formatNumber,
+	formatRestockDate
+} from '../../utils/format';
+import { createContextInner } from '../../server/trpc/context';
+import {
+	GetStaticPaths,
+	GetStaticPropsContext,
+	InferGetStaticPropsType
+} from 'next';
+import { appRouter } from '../../server/trpc/router/_app';
 
 function Gallery() {
 	const images = [0, 0, 0, 0];
@@ -90,30 +67,91 @@ function Gallery() {
 	);
 }
 
-function Page() {
-	const router = useRouter();
+type ProductStockProps = {
+	productId: string;
+	skuId: string;
+};
 
-	const productId = router.query.id as string;
+function ProductStock({ productId, skuId }: ProductStockProps) {
+	const fulfillmentQuery = trpc.product.getFulfillmentData.useQuery({
+		productId
+	});
 
-	const skuIdFragment = (router.query.sku as string | undefined)?.replace(
-		/ /gs,
-		':'
+	const fulfillment = fulfillmentQuery.data;
+
+	if (!fulfillment) {
+		return <p>Loading Stock Info...</p>;
+	}
+
+	const currentStock = fulfillment.stock.reduce((totalQuantity, item) => {
+		if (item.skuId !== skuId) return totalQuantity;
+
+		return totalQuantity + item.quantity;
+	}, 0);
+
+	const closestRestock = fulfillment.restock
+		.filter((restock) => restock.skuId === skuId)
+		.reduce<Date | undefined>((closestDate, curr) => {
+			// If closestDate isn't defined or the current item's date is closer, return the current date.
+			if (!closestDate || curr.date < closestDate) {
+				return curr.date;
+			}
+
+			// Otherwise the
+			return closestDate;
+		}, undefined);
+
+	return currentStock > 0 ? (
+		<p>{formatNumber(currentStock)} units available</p>
+	) : (
+		<p>{formatRestockDate(closestRestock)}</p>
 	);
-	const skuId = `${productId}:${skuIdFragment}`;
+}
 
-	const product = trpc.product.getById.useQuery(
+type SectionProps = {
+	heading: string;
+} & React.HTMLAttributes<HTMLElement>;
+
+function Section({
+	heading,
+	children,
+	...props
+}: React.PropsWithChildren<SectionProps>) {
+	return (
+		<section className={classNames('space-y-2', props.className)}>
+			<h2 className="text-lg">{heading}</h2>
+			{children}
+		</section>
+	);
+}
+
+const findDetails = (skuId?: string, details?: ExtendedPaverDetails[]) => {
+	return details?.find((details) => skuId?.includes(details.matcher));
+};
+
+function findSKU(searchId?: string, skus?: Sku[]) {
+	return skus?.find((currentSku) => currentSku.id === searchId);
+}
+
+function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
+	const { productId } = props;
+
+	const productQuery = trpc.product.getById.useQuery(
 		{ productId },
 		{ refetchOnWindowFocus: false }
 	);
 
-	const currentSku = findSKU(skuId, product.data?.skus);
-	const productDetails = findDetails(skuId, product.data?.details);
+	const product = productQuery.data;
 
-	if (!product.data || !currentSku || !productDetails) {
-		const productNotFound = product.error?.data?.code === 'NOT_FOUND';
-		const skuNotFound = product.isSuccess && !currentSku;
+	const [skuId, setSkuId] = useState(product?.defaultSkuId);
 
-		if (productNotFound || skuNotFound) return <NextError statusCode={404} />;
+	const currentSku = findSKU(skuId, product?.skus);
+	const productDetails = findDetails(skuId, product?.details);
+
+	if (!product || !currentSku || !productDetails || !skuId) {
+		const productNotFound = productQuery.error?.data?.code === 'NOT_FOUND';
+
+		if (productNotFound) return <NextError statusCode={404} />;
 
 		return null;
 	}
@@ -121,9 +159,7 @@ function Page() {
 	return (
 		<>
 			<Head>
-				<title>
-					{`${product.data.displayName} — Millennium Paving Stones`}
-				</title>
+				<title>{`${product.displayName} — Millennium Paving Stones`}</title>
 			</Head>
 
 			<div className="space-y-32 px-8 md:px-24 lg:px-32">
@@ -136,9 +172,7 @@ function Page() {
 					<aside className="space-y-8 md:flex-[3] lg:flex-[4] lg:space-y-12">
 						{/* Basic Info */}
 						<section className="space-y-2">
-							<h1 className="font-display text-4xl">
-								{product.data.displayName}
-							</h1>
+							<h1 className="font-display text-4xl">{product.displayName}</h1>
 							<div className="flex flex-wrap justify-between text-lg">
 								<div className="flex items-center gap-4">
 									<p>
@@ -153,27 +187,22 @@ function Page() {
 									</p>
 								</div>
 
-								<Stock fulfillment={product.data} skuId={skuId} />
+								<ProductStock productId={productId} skuId={skuId} />
 							</div>
 						</section>
 
 						{/* Description */}
 						<Section heading="Description">
-							<p>{product.data.description}</p>
+							<p>{product.description}</p>
 						</Section>
 
 						{/* Sku Picker */}
 						<SkuPicker
 							value={skuId}
-							skuIdTemplateFragments={product.data.skuIdFragments}
+							skuIdTemplateFragments={product.skuIdFragments}
 							section={Section}
 							onChange={(newSkuId) => {
-								const path = pathFromSkuId(newSkuId);
-
-								router.replace(path, undefined, {
-									shallow: true,
-									scroll: false
-								});
+								setSkuId(newSkuId);
 							}}
 						/>
 
@@ -218,17 +247,17 @@ function Page() {
 				{/* Similar Products */}
 				<section className="flex flex-col space-y-8">
 					<h2 className="max-w-[28ch] self-center text-center font-display text-2xl">
-						Similar to {product.data.displayName}
+						Similar to {product.displayName}
 					</h2>
 
 					<div className="flex flex-col space-y-8">
 						<ul className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
-							{product.data.similar.map((similarProduct) => (
+							{product.similar.map((similarProduct) => (
 								<ProductCard
 									key={similarProduct.id}
 									name={similarProduct.displayName}
 									startingPrice={similarProduct.startingSku.price}
-									link={pathFromSkuId(similarProduct.defaultSkuId)}
+									link={`product/${similarProduct.id}`}
 									className="md:col-span-3 lg:col-span-2"
 									variant="display"
 								/>
@@ -246,5 +275,47 @@ function Page() {
 		</>
 	);
 }
+
+export const getStaticProps = async (
+	context: GetStaticPropsContext<{ id: string }>
+) => {
+	const { prisma } = await createContextInner({});
+
+	const ssr = await createProxySSGHelpers({
+		router: appRouter,
+		ctx: { prisma },
+		transformer: superjson // optional - adds superjson serialization
+	});
+
+	const productId = context.params?.id as string;
+
+	// prefetch `product.getById`
+	await ssr.product.getById.prefetch({ productId });
+
+	return {
+		props: {
+			trpcState: ssr.dehydrate(),
+			productId
+		},
+		revalidate: 10
+	};
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	const { prisma } = await createContextInner({});
+
+	const products = await prisma.product.findMany({
+		select: { id: true }
+	});
+
+	return {
+		paths: products.map((product) => ({
+			params: { id: product.id }
+		})),
+
+		// https://nextjs.org/docs/api-reference/data-fetching/get-static-paths#fallback-blocking
+		fallback: 'blocking'
+	};
+};
 
 export default Page;

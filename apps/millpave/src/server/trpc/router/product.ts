@@ -17,8 +17,6 @@ export const productRouter = router({
 					category: true,
 					details: true,
 					skus: true,
-					stock: true,
-					restock: true,
 					similar: {
 						orderBy: { relevance: 'desc' },
 						include: {
@@ -52,5 +50,24 @@ export const productRouter = router({
 				...product,
 				similar: similarProducts
 			} as FullPaver;
+		}),
+	getFulfillmentData: publicProcedure
+		.input(
+			z.object({
+				productId: z.string()
+			})
+		)
+		.query(async ({ ctx, input }) => {
+			const fulfillment = await ctx.prisma.product.findUnique({
+				where: { id: input.productId },
+				include: {
+					stock: true,
+					restock: true
+				}
+			});
+
+			if (!fulfillment) throw new TRPCError({ code: 'NOT_FOUND' });
+
+			return fulfillment;
 		})
 });

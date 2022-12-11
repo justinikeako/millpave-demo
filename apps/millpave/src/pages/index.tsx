@@ -165,35 +165,35 @@ function Page() {
 								variant="display"
 								name="Colonial Classic"
 								startingPrice={203}
-								link="/product/colonial_classic?sku=grey"
+								link="/product/colonial_classic"
 								className="md:col-span-3"
 							/>
 							<ProductCard
 								variant="display"
 								name="Banjo"
 								startingPrice={219}
-								link="/product/banjo?sku=grey"
+								link="/product/banjo"
 								className="md:col-span-3"
 							/>
 							<ProductCard
 								variant="display"
 								name="Heritage Series"
 								startingPrice={219}
-								link="/product/heritage?sku=regular+grey"
+								link="/product/heritage"
 								className="md:col-span-6 lg:col-span-2"
 							/>
 							<ProductCard
 								variant="display"
 								name="Cobble Mix"
 								startingPrice={219}
-								link="/product/cobble_mix?sku=oblong+grey"
+								link="/product/cobble_mix"
 								className="md:col-span-3 lg:col-span-2"
 							/>
 							<ProductCard
 								variant="display"
 								name="Old World Cobble"
 								startingPrice={203}
-								link="/product/owc?sku=grey"
+								link="/product/owc"
 								className="md:col-span-3 lg:col-span-2"
 							/>
 						</ul>

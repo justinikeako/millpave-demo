@@ -149,7 +149,7 @@ const deriveRouteFromSkuId = (skuId: string) => {
 
 	const skuQuery = skuIdFragments.join().replace(/,/g, '+');
 
-	return `/product/${productId}?sku=${skuQuery}`;
+	return `/product/${productId}`;
 };
 
 function Page() {

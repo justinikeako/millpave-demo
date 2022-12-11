@@ -20,12 +20,9 @@ import {
 	formatRestockDate
 } from '../../utils/format';
 import { createContextInner } from '../../server/trpc/context';
-import {
-	GetStaticPaths,
-	GetStaticPropsContext,
-	InferGetStaticPropsType
-} from 'next';
+import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { appRouter } from '../../server/trpc/router/_app';
+import { useRouter } from 'next/router';
 
 function Gallery() {
 	const images = [0, 0, 0, 0];
@@ -133,8 +130,8 @@ function findSKU(searchId?: string, skus?: Sku[]) {
 	return skus?.find((currentSku) => currentSku.id === searchId);
 }
 
-function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
-	const { productId } = props;
+function Page() {
+	const productId = useRouter().query.id as string;
 
 	const productQuery = trpc.product.getById.useQuery(
 		{ productId },
@@ -144,7 +141,6 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 	const product = productQuery.data;
 
 	const [skuId, setSkuId] = useState(product?.defaultSkuId);
-
 	const currentSku = findSKU(skuId, product?.skus);
 	const productDetails = findDetails(skuId, product?.details);
 
@@ -294,8 +290,7 @@ export const getStaticProps = async (
 
 	return {
 		props: {
-			trpcState: ssr.dehydrate(),
-			productId
+			trpcState: ssr.dehydrate()
 		},
 		revalidate: 10
 	};

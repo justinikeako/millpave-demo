@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from './button';
 import { Icon } from './icon';
+import { motion } from 'framer-motion';
 
 type NavLinkProps = React.PropsWithChildren<{ href: string }>;
 
@@ -14,7 +15,12 @@ function NavLink({ href, children }: NavLinkProps) {
 
 function Header() {
 	return (
-		<header className=" mb-12 select-none px-8 py-8 md:px-24 lg:px-32 lg:text-black">
+		<motion.header
+			initial={{ y: 100, opacity: 0 }}
+			animate={{ y: 0, opacity: 1 }}
+			transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+			className=" mb-12 select-none px-8 py-8 md:px-24 lg:px-32 lg:text-black"
+		>
 			<nav className="flex items-center justify-between">
 				<input type="checkbox" id="menu-toggle" className="peer hidden" />
 
@@ -51,7 +57,7 @@ function Header() {
 					</label>
 				</Button>
 			</nav>
-		</header>
+		</motion.header>
 	);
 }
 

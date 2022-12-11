@@ -55,7 +55,7 @@ function Hero() {
 					className="text-center text-4xl font-bold"
 					initial={{ y: 100, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
-					transition={slowTransition}
+					transition={{ delay: 0.1, ...slowTransition }}
 				>
 					<span className="block">Transform Your</span>
 					<AnimatePresence initial={false} mode="wait">
@@ -89,7 +89,7 @@ function Hero() {
 
 				<motion.div
 					className="flex space-x-2"
-					transition={{ delay: 0.1, ...slowTransition }}
+					transition={{ delay: 0.2, ...slowTransition }}
 					initial={{ y: 100, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 				>
@@ -108,7 +108,7 @@ function Hero() {
 
 			<motion.div
 				className="-mx-8 flex h-[55vmin] items-center justify-center space-x-4 overflow-hidden md:-mx-24 lg:-mx-32 lg:space-x-8"
-				transition={{ delay: 0.2, ...slowTransition }}
+				transition={{ delay: 0.3, ...slowTransition }}
 				initial={{ y: 100, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 			>

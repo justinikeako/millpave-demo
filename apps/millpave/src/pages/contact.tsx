@@ -3,7 +3,7 @@ import * as Select from '../components/select';
 import { Button } from '../components/button';
 import { useRouter } from 'next/router';
 
-type FormType = 'general' | 'quote';
+type FormType = 'general' | 'quote' | 'sample';
 
 function Page() {
 	const router = useRouter();
@@ -39,7 +39,10 @@ function Page() {
 									<Select.Viewport>
 										<Select.Item value="general">General Inquiry</Select.Item>
 										<Select.Item value="quote">
-											I want to get a quote
+											I would like to a quote
+										</Select.Item>
+										<Select.Item value="samples">
+											I would like to request samples
 										</Select.Item>
 									</Select.Viewport>
 									<Select.ScrollDownButton />

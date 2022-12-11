@@ -83,7 +83,11 @@ function Footer() {
 					during installation as colours may vary from pallet to pallet. Colours
 					shown on the website may vary from actual product colours. We
 					recommend colour selections be made from actual product samples.
-					Request a sample here.
+					Request a{' '}
+					<Link href="/contact?form=samples" className="underline">
+						sample here
+					</Link>
+					.
 				</i>
 			</p>
 

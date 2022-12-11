@@ -1,92 +1,149 @@
 import classNames from 'classnames';
 import { nanoid } from 'nanoid';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from './button';
 import { Icon } from './icon';
 import { AnimatePresence, motion } from 'framer-motion';
+
+type Message = {
+	id: string;
+	text: string;
+	sender: string;
+};
 
 function Chat() {
 	const [open, setOpen] = useState(false);
 	const closed = !open;
 
-	const [conversation, setConversation] = useState([
-		{
-			id: nanoid(),
-			from: 'them',
-			text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit enim error minima sit unde, temporibus delectus provident cum placeat eligendi?'
-		},
-		{
-			id: nanoid(),
-			from: 'me',
-			text: 'helo'
-		},
-		{
-			id: nanoid(),
-			from: 'me',
-			text: 'u r big nubz'
-		}
-	]);
+	const [conversation, setConversation] = useState<Message[]>([]);
+	const [unreadMessageCount, setUnreadMessageCount] = useState(
+		conversation.length
+	);
 
 	const [draftText, setDraftText] = useState('');
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	function handleSend(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-
+	function sendMessage(text: string, sender: string) {
 		setConversation([
 			...conversation,
 			{
 				id: nanoid(),
-				text: draftText,
-				from: 'me'
+				text,
+				sender
 			}
 		]);
 
-		if (inputRef.current) inputRef.current.focus();
-
-		setDraftText('');
+		if (closed && sender !== 'me')
+			setUnreadMessageCount(unreadMessageCount + 1);
 	}
+
+	function handleSend(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+
+		sendMessage(draftText, 'me');
+		setDraftText('');
+		inputRef.current?.focus();
+	}
+
+	function toggleOpen() {
+		setOpen(!open);
+
+		setUnreadMessageCount(0);
+	}
+
+	// Very crude auto messaging
+	const [messageQueue, setMessageQueue] = useState([
+		{
+			text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit enim error minima sit unde, temporibus delectus provident cum placeat eligendi?',
+			delay: 20000
+		},
+		{ text: 'helo', delay: 5000 },
+		{ text: 'u r big nubz', delay: 1000 }
+	]);
+
+	useEffect(() => {
+		const message = messageQueue[0];
+
+		if (message) {
+			const timerId = setTimeout(() => {
+				sendMessage(message.text, 'them');
+
+				setMessageQueue(messageQueue.slice(1));
+			}, message.delay);
+
+			return () => {
+				clearTimeout(timerId);
+			};
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [messageQueue.length]);
 
 	return (
 		<div className="fixed bottom-8 right-8 left-8 flex justify-end">
-			<motion.div
-				layout
-				className="flex items-end justify-end rounded-lg bg-gray-900"
-			>
-				<AnimatePresence mode="wait" initial={false}>
+			<div className="flex flex-col items-end justify-end space-y-2">
+				<AnimatePresence>
 					{open && (
 						<motion.div
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							className="w-full max-w-[24em] text-white opacity-0"
+							initial={{ opacity: 0, y: 50 }}
+							animate={{
+								opacity: 1,
+								y: 0,
+								transition: {
+									type: 'spring',
+									stiffness: 300,
+									damping: 30
+								}
+							}}
+							exit={{
+								opacity: 0,
+								y: 50,
+								transition: { type: 'spring', stiffness: 150, damping: 15 }
+							}}
+							className="w-full max-w-[24em] rounded-lg bg-gray-900 text-white opacity-0 shadow-button"
 						>
-							<div className="flex items-center justify-between p-4 pb-2">
-								<h2 className="text-lg">Totally not live chat™</h2>
+							<div className="flex items-center justify-between pr-4">
+								<h2 className="p-4 pb-2 font-semibold">
+									Not actually live chat™
+								</h2>
 								<Button
 									variant="tertiary"
-									className="hover:!bg-gray-800 active:!bg-gray-700"
+									className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
 									onClick={() => setOpen(false)}
 								>
 									<Icon name="expand_more" />
 								</Button>
 							</div>
 
-							<div className="flex h-96 flex-col-reverse overflow-y-auto">
-								<div className="flex flex-col space-y-2 py-2 px-4">
-									{conversation.map((message) => (
-										<div
-											key={message.id}
-											className={classNames(
-												'max-w-[75%] rounded-md p-4',
-												message.from === 'them'
-													? 'self-start rounded-bl-none bg-blue-500 text-white'
-													: 'self-end  rounded-br-none bg-gray-300 text-black'
-											)}
-										>
-											{message.text}
-										</div>
-									))}
+							<div className="flex h-96 flex-col-reverse overflow-y-scroll overscroll-y-contain">
+								<div className="flex h-fit min-h-full shrink-0 flex-col space-y-1 py-2 px-4">
+									<AnimatePresence initial={false}>
+										{conversation.map((message) => (
+											<motion.div
+												layout
+												layoutScroll
+												initial={{ y: 50, opacity: 0 }}
+												animate={{
+													y: 0,
+													opacity: 1,
+													transition: {
+														type: 'spring',
+														stiffness: 100,
+														damping: 15
+													}
+												}}
+												key={message.id}
+												className={classNames(
+													'max-w-[75%] rounded-lg px-3 py-2',
+													message.sender === 'them'
+														? 'self-start rounded-bl-none bg-gray-700 text-white'
+														: 'self-end  rounded-br-none bg-gray-300 text-black'
+												)}
+											>
+												{message.text}
+											</motion.div>
+										))}
+									</AnimatePresence>
 								</div>
 							</div>
 
@@ -114,28 +171,35 @@ function Chat() {
 							</form>
 						</motion.div>
 					)}
-					{closed && (
-						<motion.button
-							layout
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							onClick={() => setOpen(true)}
-							className="relative flex select-none rounded-lg p-4 text-white  hover:bg-gray-800 active:bg-gray-700"
-						>
-							{conversation.length && (
-								<span className="absolute -left-1 -top-1 block rounded-full bg-red-600 p-1 font-semibold text-white">
-									<span className="block h-4 w-4 leading-4">
-										{conversation.length}
-									</span>
-								</span>
-							)}
-
-							<Icon name="forum" className="!text-[2em]" />
-						</motion.button>
-					)}
 				</AnimatePresence>
-			</motion.div>
+
+				<motion.button
+					initial={{ y: 100, opacity: 0 }}
+					animate={{
+						y: 0,
+						opacity: 1,
+						transition: {
+							delay: 0.1,
+							type: 'spring',
+							stiffness: 100,
+							damping: 20
+						}
+					}}
+					exit={{ opacity: 0 }}
+					onClick={toggleOpen}
+					className="relative flex select-none rounded-lg bg-gray-900 p-4 text-white shadow-button  hover:bg-gray-800 active:bg-gray-700"
+				>
+					{unreadMessageCount > 0 && (
+						<span className="absolute -left-1 -top-1 block rounded-full bg-red-600 p-1 font-semibold text-white">
+							<span className="block h-4 w-4 leading-4">
+								{unreadMessageCount}
+							</span>
+						</span>
+					)}
+
+					<Icon name="forum" className="!text-[2em]" />
+				</motion.button>
+			</div>
 		</div>
 	);
 }

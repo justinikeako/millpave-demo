@@ -1,9 +1,4 @@
-import {
-	AnimatePresence,
-	AnimateSharedLayout,
-	motion,
-	Transition
-} from 'framer-motion';
+import { AnimatePresence, motion, Transition } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -24,26 +19,24 @@ function cycle<T>(arr: T[]) {
 }
 
 function Hero() {
-	const [strings, setStrings] = useState([
+	const [images, setImages] = useState([
 		'Driveway',
 		'Patio',
 		'Plaza',
 		'Garden',
 		'Pool Deck'
 	]);
-	const currentIndex = getMiddleIndex(strings);
+	const currentIndex = getMiddleIndex(images);
+	const currentImage = images[currentIndex];
 
-	const currentString = strings[currentIndex];
-
-	// This effect will run every time the "strings" state variable changes
 	useEffect(() => {
-		// Set an interavl to cycle through "strings" state variable after 5 seconds
+		// Set an interavl to cycle through "images" state variable after 5 seconds
 		const intervalId = setInterval(() => {
-			setStrings(cycle(strings));
+			setImages(cycle(images));
 		}, 5000);
 
 		return () => clearInterval(intervalId);
-	}, [strings]);
+	}, [images]);
 
 	const fastTransition: Transition = {
 		duration: 0.3
@@ -67,12 +60,12 @@ function Hero() {
 					<span className="block">Transform Your</span>
 					<AnimatePresence initial={false} mode="wait">
 						<motion.span
-							key={currentString}
+							key={currentImage}
 							transition={fastTransition}
 							exit={{ y: -10, opacity: 0 }}
 							className="block"
 						>
-							{(currentString + '.').split('').map((char, index) => {
+							{(currentImage + '.').split('').map((char, index) => {
 								if (char === ' ') return <span key={char + index}>&nbsp;</span>;
 
 								return (
@@ -119,22 +112,20 @@ function Hero() {
 				initial={{ y: 100, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 			>
-				<AnimateSharedLayout>
-					{strings.map((string, index) => (
-						<motion.div
-							key={'picture' + string}
-							className="grid aspect-square place-items-center bg-gray-200 text-2xl text-gray-300"
-							layout
-							transition={slowTransition}
-							animate={{ opacity: 1 - Math.abs(index - currentIndex) * 0.5 }}
-							style={{
-								height: 100 - Math.abs(index - currentIndex) * 12.5 + '%'
-							}}
-						>
-							{string}
-						</motion.div>
-					))}
-				</AnimateSharedLayout>
+				{images.map((image, index) => (
+					<motion.div
+						key={'picture' + image}
+						className="grid aspect-square place-items-center bg-gray-200 text-2xl text-gray-300"
+						layout
+						transition={slowTransition}
+						animate={{ opacity: 1 - Math.abs(index - currentIndex) * 0.5 }}
+						style={{
+							height: 100 - Math.abs(index - currentIndex) * 12.5 + '%'
+						}}
+					>
+						{image}
+					</motion.div>
+				))}
 			</motion.div>
 		</section>
 	);

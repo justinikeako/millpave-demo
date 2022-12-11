@@ -31,7 +31,11 @@ function Header() {
 					<NavLink href="/#where-to-buy">Where to Buy</NavLink>
 					<NavLink href="/contact">Contact Us</NavLink>
 					<li>
-						<Button variant="primary" asChild className="max-lg:!p-0">
+						<Button
+							variant="primary"
+							asChild
+							className="max-lg:!p-0 max-lg:shadow-none"
+						>
 							<Link href="/contact?form=quote">Get A Quote</Link>
 						</Button>
 					</li>

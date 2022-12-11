@@ -59,6 +59,10 @@ module.exports = {
 			colors: {
 				bubblegum: colors.pink,
 				gray: colors.zinc
+			},
+
+			boxShadow: {
+				button: '0 0 4px 1px rgb(0 0 0 / 0.2), 0 4px 4px 1px rgb(0 0 0 / .1)'
 			}
 		}
 	},

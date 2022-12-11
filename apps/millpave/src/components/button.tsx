@@ -12,11 +12,11 @@ type ButtonProps = {
 
 const classes = {
 	primary:
-		'flex justify-center space-x-1.5 rounded-sm bg-gray-900 px-4 py-2 font-semibold text-white disabled:opacity-50',
+		'select-none flex justify-center space-x-1.5 rounded-sm bg-gray-900 px-4 py-2 font-semibold text-white hover:bg-gray-800 active:bg-gray-700',
 	secondary:
-		'flex justify-center space-x-1.5 rounded-sm border border-gray-900 px-4 py-2 font-semibold',
+		'select-none flex justify-center space-x-1.5 rounded-sm border border-gray-900 px-4 py-2 font-semibold hover:bg-black/10 active:bg-black/20',
 	tertiary:
-		'-m-4 flex justify-center space-x-2 rounded-md p-4 active:bg-gray-100'
+		'select-none -m-3 flex justify-center space-x-2 rounded-full p-3 hover:bg-black/10 active:bg-black/20'
 };
 
 const Button = forwardRef<

@@ -253,7 +253,7 @@ function Page() {
 									key={similarProduct.id}
 									name={similarProduct.displayName}
 									startingPrice={similarProduct.startingSku.price}
-									link={`product/${similarProduct.id}`}
+									link={`/product/${similarProduct.id}`}
 									className="md:col-span-3 lg:col-span-2"
 									variant="display"
 								/>

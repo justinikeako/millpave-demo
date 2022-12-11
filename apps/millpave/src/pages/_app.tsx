@@ -6,6 +6,7 @@ import '../styles/globals.css';
 import { Header } from '../components/header';
 import { Footer } from '../components/footer';
 import Head from 'next/head';
+import { Chat } from '../components/chat';
 
 const MyApp: AppType = ({ Component, pageProps }) => {
 	return (
@@ -20,6 +21,8 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 			<Header />
 			<Component {...pageProps} />
 			<Footer />
+
+			<Chat />
 		</>
 	);
 };

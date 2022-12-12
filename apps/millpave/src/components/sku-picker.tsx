@@ -38,27 +38,29 @@ function SkuPicker({
 					index
 				]?.fragments?.find(({ id }) => id === currentValue)?.displayName;
 
-				return (
-					<Section
-						key={index}
-						heading={`${displayName} — ${currentValueDisplayName}`}
-					>
-						{type === 'variant' && (
-							<VariantPicker
-								variants={fragments}
-								currentVariant={currentValue}
-								onChange={(newVariant) => handleChange(newVariant, index)}
-							/>
-						)}
-						{type === 'color' && (
-							<ColorPicker
-								colors={fragments}
-								currentColor={currentValue}
-								onChange={(newColor) => handleChange(newColor, index)}
-							/>
-						)}
-					</Section>
-				);
+				if (fragments.length > 1)
+					return (
+						<Section
+							key={index}
+							heading={`${displayName} — ${currentValueDisplayName}`}
+						>
+							{type === 'variant' && (
+								<VariantPicker
+									variants={fragments}
+									currentVariant={currentValue}
+									onChange={(newVariant) => handleChange(newVariant, index)}
+								/>
+							)}
+							{type === 'color' && (
+								<ColorPicker
+									colors={fragments}
+									currentColor={currentValue}
+									onChange={(newColor) => handleChange(newColor, index)}
+								/>
+							)}
+						</Section>
+					);
+				else return null;
 			})}
 		</>
 	);
@@ -136,7 +138,7 @@ function VariantPicker({
 						<input
 							className="peer hidden"
 							type="radio"
-							name={props.name || 'variant'}
+							name={props.name || `variant-${displayName}`}
 							value={id}
 							id={id}
 							checked={currentVariant === id}

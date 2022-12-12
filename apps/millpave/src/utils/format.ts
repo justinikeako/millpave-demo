@@ -27,7 +27,7 @@ export function formatRelativeUpdate(date: Date) {
 }
 
 export function formatRestockDate(date?: Date) {
-	if (!date) return 'Done to order';
+	if (!date) return null;
 
 	const difference = differenceInCalendarDays(date, new Date());
 

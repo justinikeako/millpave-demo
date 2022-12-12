@@ -8,10 +8,10 @@ import {
 	Stock
 } from '@prisma/client';
 
-type ExtendedProductDetails<TDetails extends Prisma.JsonObject> =
+type ExtendedProductDetails<TDetails extends Prisma.JsonArray> =
 	ProductDetails & { data: TDetails };
 
-type SkuWithDetails<TDetails extends Prisma.JsonObject> = Sku & {
+type SkuWithDetails<TDetails extends Prisma.JsonArray> = Sku & {
 	details: ExtendedProductDetails<TDetails>;
 };
 
@@ -26,7 +26,7 @@ type Similar = Pick<
 };
 
 type FullProduct<
-	TDetails extends Prisma.JsonObject,
+	TDetails extends Prisma.JsonArray,
 	TSkuIdFragments extends Prisma.JsonArray
 > = Product & {
 	details: ExtendedProductDetails<TDetails>[];
@@ -38,13 +38,13 @@ type FullProduct<
 	skuIdFragments: TSkuIdFragments;
 };
 
-export type PaverDetails = {
-	dimensions: [number, number, number];
-	lbs_per_unit: number;
-	sqft_per_pallet: number;
-	units_per_pallet: number;
-	pcs_per_sqft: number;
-};
+export type PaverDetails = [
+	{ id: 'dimensions'; displayName: string; value: [number, number, number] },
+	{ id: 'lbs_per_unit'; displayName: string; value: number },
+	{ id: 'sqft_per_pallet'; displayName: string; value: number },
+	{ id: 'units_per_pallet'; displayName: string; value: number },
+	{ id: 'pcs_per_sqft'; displayName: string; value: number }
+];
 
 type PaverSkuIdFragments =
 	| {

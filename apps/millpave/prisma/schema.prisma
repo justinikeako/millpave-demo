@@ -27,6 +27,8 @@ model Product {
   skus            Sku[]
   details         ProductDetails[]
   skuIdFragments  Json
+  hasModels       Boolean                   @default(false)
+  estimator       String?
   stock           Stock[]
   restock         Restock[]
   pickupLocations PickupLocationOnProduct[]

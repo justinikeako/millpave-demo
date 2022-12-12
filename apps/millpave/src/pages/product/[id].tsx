@@ -23,26 +23,26 @@ import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { appRouter } from '../../server/trpc/router/_app';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
+import { extractDetail } from '../../utils/product';
 
 const ProductViewer3D = dynamic(
 	() => import('../../components/product-viewer-3d'),
-	{
-		suspense: true
-	}
+	{ suspense: true }
 );
 
 type GalleryProps = {
 	sku: Sku;
+	showModelViewer: boolean;
 };
 
-function Gallery({ sku }: GalleryProps) {
+function Gallery({ sku, showModelViewer }: GalleryProps) {
 	const images = [0, 0, 0, 0];
 
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	return (
 		<main className="flex flex-col items-center gap-2 md:sticky md:top-8 md:flex-[2] lg:flex-[3]">
 			<div className="relative aspect-square w-full bg-gray-200">
-				{selectedIndex === 3 && (
+				{showModelViewer && selectedIndex === 3 && (
 					<Suspense
 						fallback={
 							<div className="grid h-full w-full place-items-center">
@@ -73,7 +73,7 @@ function Gallery({ sku }: GalleryProps) {
 								htmlFor={id}
 								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center border border-gray-200 bg-gray-200 text-lg text-gray-400 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-black"
 							>
-								{index === 3 && '3D'}
+								{showModelViewer && index === 3 && '3D'}
 							</label>
 						</div>
 					);
@@ -86,9 +86,14 @@ function Gallery({ sku }: GalleryProps) {
 type ProductStockProps = {
 	productId: string;
 	skuId: string;
+	outOfStockMessage?: string;
 };
 
-function ProductStock({ productId, skuId }: ProductStockProps) {
+function ProductStock({
+	productId,
+	skuId,
+	outOfStockMessage
+}: ProductStockProps) {
 	const fulfillmentQuery = trpc.product.getFulfillmentData.useQuery(
 		{ productId },
 		{ refetchOnWindowFocus: false }
@@ -118,11 +123,20 @@ function ProductStock({ productId, skuId }: ProductStockProps) {
 			return closestDate;
 		}, undefined);
 
-	return currentStock > 0 ? (
-		<p>{formatNumber(currentStock)} units available</p>
-	) : (
-		<p>{formatRestockDate(closestRestock)}</p>
-	);
+	const formatedStock = formatNumber(currentStock);
+	const formattedRestockDate = formatRestockDate(closestRestock);
+
+	if (currentStock > 0) {
+		return <p>{formatedStock} units available</p>;
+	} else {
+		return (
+			<p>
+				{formattedRestockDate
+					? formattedRestockDate
+					: outOfStockMessage || 'Out of stock'}
+			</p>
+		);
+	}
 }
 
 type SectionProps = {
@@ -142,9 +156,9 @@ function Section({
 	);
 }
 
-const findDetails = (skuId?: string, details?: ExtendedPaverDetails[]) => {
-	return details?.find((details) => skuId?.includes(details.matcher));
-};
+function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
+	return details?.find((details) => skuId?.includes(details.matcher))?.data;
+}
 
 function findSKU(searchId?: string, skus?: Sku[]) {
 	return skus?.find((currentSku) => currentSku.id === searchId);
@@ -166,10 +180,12 @@ function Page() {
 
 	if (!product || !currentSku || !productDetails || !skuId) {
 		const productNotFound = productQuery.error?.data?.code === 'NOT_FOUND';
+		const skuNotFound = currentSku === undefined;
 
-		if (productNotFound) return <NextError statusCode={404} />;
+		if (!product || productNotFound) return <NextError statusCode={404} />;
+		if (skuNotFound && product.defaultSkuId) setSkuId(product.defaultSkuId);
 
-		return null;
+		return <NextError statusCode={500} />;
 	}
 
 	return (
@@ -182,7 +198,7 @@ function Page() {
 				{/* Main Content */}
 				<div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
 					{/* Gallery */}
-					<Gallery sku={currentSku} />
+					<Gallery sku={currentSku} showModelViewer={product.hasModels} />
 
 					{/* Supporting Details */}
 					<aside className="space-y-8 md:flex-[3] lg:flex-[4] lg:space-y-12">
@@ -194,16 +210,31 @@ function Page() {
 									<p>
 										{formatPrice(currentSku.price)} per {currentSku.unit}
 									</p>
-									<div className="h-8 w-[2px] bg-current" />
-									<p>
-										{formatPrice(
-											currentSku.price / productDetails.data.pcs_per_sqft
-										)}
-										&nbsp;per unit
-									</p>
+									{currentSku.unit === 'sqft' && (
+										<>
+											<div className="h-8 w-[2px] bg-current" />
+											<p>
+												{formatPrice(
+													currentSku.price /
+														extractDetail(productDetails, 'pcs_per_sqft')
+												)}
+												&nbsp;per unit
+											</p>
+										</>
+									)}
 								</div>
 
-								<ProductStock productId={productId} skuId={skuId} />
+								<ProductStock
+									productId={productId}
+									skuId={skuId}
+									outOfStockMessage={
+										['concrete_pavers', 'slabs_blocks'].includes(
+											product.category.id
+										)
+											? 'Done to order'
+											: undefined
+									}
+								/>
 							</div>
 						</section>
 
@@ -223,38 +254,22 @@ function Page() {
 						/>
 
 						{/* Paver Estimator */}
-						<PaverEstimator
-							paverDetails={productDetails.data}
-							sku={currentSku}
-						/>
+						{product.estimator === 'paver' && (
+							<PaverEstimator paverDetails={productDetails} sku={currentSku} />
+						)}
 
 						{/* Specifications */}
 						<Section heading="Specifications">
 							<ul>
-								<li className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100">
-									<p>Dimensions</p>
-									<p>
-										{productDetails.data.dimensions[0]} in x&nbsp;
-										{productDetails.data.dimensions[1]} in x&nbsp;
-										{productDetails.data.dimensions[2]} in
-									</p>
-								</li>
-								<li className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100">
-									<p>Weight per unit</p>
-									<p>{productDetails.data.lbs_per_unit} lbs</p>
-								</li>
-								<li className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100">
-									<p>Area per pallet</p>
-									<p>{productDetails.data.sqft_per_pallet} sqft</p>
-								</li>
-								<li className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100">
-									<p>Units per pallet</p>
-									<p>{productDetails.data.units_per_pallet}</p>
-								</li>
-								<li className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100">
-									<p>Pieces per sqft</p>
-									<p>{productDetails.data.pcs_per_sqft}</p>
-								</li>
+								{productDetails.map((detail) => (
+									<li
+										key={detail.id}
+										className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100"
+									>
+										<p>{detail.displayName}</p>
+										<p>{detail.value}</p>
+									</li>
+								))}
 							</ul>
 						</Section>
 					</aside>

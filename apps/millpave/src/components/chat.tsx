@@ -80,8 +80,8 @@ function Chat() {
 	}, [messageQueue.length]);
 
 	return (
-		<div className="fixed bottom-8 right-8 left-8 flex justify-end">
-			<div className="flex flex-col items-end justify-end space-y-2">
+		<div className="pointer-events-none fixed inset-x-8 bottom-8 flex justify-end">
+			<div className="pointer-events-auto flex flex-col items-end justify-end space-y-2">
 				<AnimatePresence>
 					{open && (
 						<motion.div

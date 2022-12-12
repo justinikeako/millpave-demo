@@ -53,6 +53,7 @@ importers:
       react-dom: 18.2.0
       react-error-boundary: ^3.1.4
       react-hook-form: ^7.34.2
+      react-qr-code: ^2.0.9
       superjson: ^1.9.1
       tailwindcss: ^3.2.4
       tailwindcss-inner-border: ^0.2.0
@@ -89,6 +90,7 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       react-error-boundary: 3.1.4_react@18.2.0
       react-hook-form: 7.34.2_react@18.2.0
+      react-qr-code: 2.0.9_react@18.2.0
       superjson: 1.9.1
       tailwindcss-radix: 2.6.0
       three: 0.144.0
@@ -3818,6 +3820,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /qr.js/0.0.0:
+    resolution: {integrity: sha512-c4iYnWb+k2E+vYpRimHqSu575b1/wKl4XFeJGpFmrJQz5I88v9aY2czh7s0w36srfCM1sXgC/xpoJz5dJfq+OQ==}
+    dev: false
+
   /queue-microtask/1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
@@ -3870,6 +3876,20 @@ packages:
 
   /react-merge-refs/1.1.0:
     resolution: {integrity: sha512-alTKsjEL0dKH/ru1Iyn7vliS2QRcBp9zZPGoWxUOvRGWPUYgjo+V01is7p04It6KhgrzhJGnIj9GgX8W4bZoCQ==}
+    dev: false
+
+  /react-qr-code/2.0.9_react@18.2.0:
+    resolution: {integrity: sha512-q6CUAzKZXxJyWOe9SFvw2G1hQ80k/1hnIE7eRTMMcNcnQGjm4Ohd+w4tBz7ASz+a76AMs9wPUNOZmES8sfhmuA==}
+    peerDependencies:
+      react: ^16.x || ^17.x || ^18.x
+      react-native-svg: '*'
+    peerDependenciesMeta:
+      react-native-svg:
+        optional: true
+    dependencies:
+      prop-types: 15.8.1
+      qr.js: 0.0.0
+      react: 18.2.0
     dev: false
 
   /react-reconciler/0.27.0_react@18.2.0:

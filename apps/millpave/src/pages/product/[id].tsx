@@ -9,7 +9,7 @@ import { ExtendedPaverDetails } from '../../types/product';
 import { trpc } from '../../utils/trpc';
 import classNames from 'classnames';
 import { PaverEstimator } from '../../components/estimator';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Icon } from '../../components/icon';
 import { InspirationSection } from '../../sections/inspiration';
 import { createProxySSGHelpers } from '@trpc/react-query/ssg';
@@ -23,19 +23,50 @@ import { createContextInner } from '../../server/trpc/context';
 import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { appRouter } from '../../server/trpc/router/_app';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 
-function Gallery() {
+const ProductViewer3D = dynamic(
+	() => import('../../components/product-viewer-3d'),
+	{
+		suspense: true
+	}
+);
+
+type GalleryProps = {
+	sku: Sku;
+};
+
+function Gallery({ sku }: GalleryProps) {
 	const images = [0, 0, 0, 0];
 
 	const [selectedIndex, setSelectedIndex] = useState(0);
-
 	return (
 		<main className="flex flex-col items-center gap-2 md:sticky md:top-8 md:flex-[2] lg:flex-[3]">
-			<div className="flex aspect-square w-full items-end justify-end gap-2 bg-gray-200 p-4">
-				<Button variant="secondary">View in 3D</Button>
-				<Button variant="secondary" className="px-2">
-					<Icon name="fullscreen" />
-				</Button>
+			<div className="relative aspect-square w-full bg-gray-200">
+				{selectedIndex === 3 && (
+					<Suspense
+						fallback={
+							<div className="grid h-full w-full place-items-center">
+								<p>Loading 3D Model</p>
+							</div>
+						}
+					>
+						<ProductViewer3D
+							skuId={sku.id}
+							displayName={sku.displayName}
+							// description={'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas error optio, molestias assumenda recusandae dolorem corporis animi eius incidunt quibusdam.'}
+						/>
+					</Suspense>
+				)}
+
+				{selectedIndex !== 3 && (
+					<Button
+						variant="secondary"
+						className="absolute bottom-4 right-4 px-2"
+					>
+						<Icon name="fullscreen" />
+					</Button>
+				)}
 			</div>
 			<div className="flex w-full justify-center gap-2">
 				{images.map((_, index) => {
@@ -54,8 +85,10 @@ function Gallery() {
 
 							<label
 								htmlFor={id}
-								className="aspect-square max-w-[80px] flex-1 shrink-0 border border-gray-200 bg-gray-200 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-black"
-							/>
+								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center border border-gray-200 bg-gray-200 text-lg text-gray-400 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-black"
+							>
+								{index === 3 && '3D'}
+							</label>
 						</div>
 					);
 				})}
@@ -70,9 +103,10 @@ type ProductStockProps = {
 };
 
 function ProductStock({ productId, skuId }: ProductStockProps) {
-	const fulfillmentQuery = trpc.product.getFulfillmentData.useQuery({
-		productId
-	});
+	const fulfillmentQuery = trpc.product.getFulfillmentData.useQuery(
+		{ productId },
+		{ refetchOnWindowFocus: false }
+	);
 
 	const fulfillment = fulfillmentQuery.data;
 
@@ -162,7 +196,7 @@ function Page() {
 				{/* Main Content */}
 				<div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
 					{/* Gallery */}
-					<Gallery />
+					<Gallery sku={currentSku} />
 
 					{/* Supporting Details */}
 					<aside className="space-y-8 md:flex-[3] lg:flex-[4] lg:space-y-12">

@@ -10,7 +10,6 @@ import { trpc } from '../../utils/trpc';
 import classNames from 'classnames';
 import { PaverEstimator } from '../../components/estimator';
 import { Suspense, useState } from 'react';
-import { Icon } from '../../components/icon';
 import { InspirationSection } from '../../sections/inspiration';
 import { createProxySSGHelpers } from '@trpc/react-query/ssg';
 import superjson from 'superjson';
@@ -51,21 +50,8 @@ function Gallery({ sku }: GalleryProps) {
 							</div>
 						}
 					>
-						<ProductViewer3D
-							skuId={sku.id}
-							displayName={sku.displayName}
-							// description={'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas error optio, molestias assumenda recusandae dolorem corporis animi eius incidunt quibusdam.'}
-						/>
+						<ProductViewer3D skuId={sku.id} displayName={sku.displayName} />
 					</Suspense>
-				)}
-
-				{selectedIndex !== 3 && (
-					<Button
-						variant="secondary"
-						className="absolute bottom-4 right-4 px-2"
-					>
-						<Icon name="fullscreen" />
-					</Button>
 				)}
 			</div>
 			<div className="flex w-full justify-center gap-2">

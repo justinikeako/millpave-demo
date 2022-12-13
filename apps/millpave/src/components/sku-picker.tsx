@@ -131,7 +131,7 @@ function VariantPicker({
 	...props
 }: VariantPickerProps) {
 	return (
-		<ul className="flex space-x-2">
+		<ul className="flex flex-wrap gap-2">
 			{variants.map(({ id, displayName }) => (
 				<li key={id} className="flex-1">
 					<label htmlFor={id}>
@@ -145,7 +145,7 @@ function VariantPicker({
 							onChange={(e) => onChange(e.target.value)}
 						/>
 
-						<div className="flex items-center justify-center rounded-md px-4 py-4 text-center inner-border inner-border-gray-200 peer-checked:bg-gray-100 peer-checked:font-semibold  peer-checked:text-gray-700 peer-checked:inner-border-2 peer-checked:inner-border-gray-700">
+						<div className="flex items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center inner-border inner-border-gray-200 peer-checked:bg-gray-100  peer-checked:font-semibold peer-checked:text-gray-700 peer-checked:inner-border-2 peer-checked:inner-border-gray-700">
 							{displayName}
 						</div>
 					</label>

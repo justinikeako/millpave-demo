@@ -343,17 +343,17 @@ async function addSlabsAndBlocks() {
 		[
 			{
 				id: 'slabs_blocks',
-				displayName: 'Slabs and BLocks'
+				displayName: 'Slabs and Blocks'
 			}
 		],
 		SLABS_AND_BLOCKS
 	);
 }
 
-async function addCleaningAndInstallationProducts() {
+async function addMaintenanceProducts() {
 	const CLEANING_INSTALLATION_PRODUCTS: Product[] = [
 		{
-			category: { connect: { id: 'installation' } },
+			category: { connect: { id: 'maintenance' } },
 			id: 'oil_sealant',
 			defaultSkuId: 'oil_sealant:one_gallon',
 			displayName: 'DYNA Oil-Based Sealant',
@@ -370,7 +370,7 @@ async function addCleaningAndInstallationProducts() {
 			]
 		},
 		{
-			category: { connect: { id: 'installation' } },
+			category: { connect: { id: 'maintenance' } },
 			id: 'water_sealant',
 			defaultSkuId: 'water_sealant:one_gallon',
 			displayName: 'DYNA Water-Based Sealant',
@@ -387,7 +387,7 @@ async function addCleaningAndInstallationProducts() {
 			]
 		},
 		{
-			category: { connect: { id: 'installation' } },
+			category: { connect: { id: 'maintenance' } },
 			id: 'polymeric_sand',
 			defaultSkuId: 'polymeric_sand:fifty_pound',
 			displayName: 'DYNA Polymeric Sand',
@@ -401,7 +401,7 @@ async function addCleaningAndInstallationProducts() {
 			]
 		},
 		{
-			category: { connect: { id: 'cleaning' } },
+			category: { connect: { id: 'maintenance' } },
 			id: 'efflorescence_cleaner',
 			defaultSkuId: 'efflorescence_cleaner:one_gallon',
 			displayName: 'DYNA Efflorescence Cleaner',
@@ -415,7 +415,7 @@ async function addCleaningAndInstallationProducts() {
 			]
 		},
 		{
-			category: { connect: { id: 'cleaning' } },
+			category: { connect: { id: 'maintenance' } },
 			id: 'stone_soap',
 			defaultSkuId: 'stone_soap:one_quart',
 			displayName: 'DYNA Stone Soap',
@@ -429,7 +429,7 @@ async function addCleaningAndInstallationProducts() {
 			]
 		},
 		{
-			category: { connect: { id: 'cleaning' } },
+			category: { connect: { id: 'maintenance' } },
 			id: 'gum_paint_tar',
 			defaultSkuId: 'gum_paint_tar:one_quart',
 			displayName: 'DYNA Gum Paint & Tar Stripper',
@@ -464,8 +464,7 @@ async function addCleaningAndInstallationProducts() {
 	);
 
 	const CATEGORIES: Category[] = [
-		{ id: 'installation', displayName: 'Paver Installation' },
-		{ id: 'cleaning', displayName: 'Concrete Cleaning' }
+		{ id: 'maintenance', displayName: 'Maintenance' }
 	];
 
 	addCategories(CATEGORIES, CLEANING_INSTALLATION_PRODUCTS);
@@ -976,7 +975,7 @@ async function addConcreteProductSkus() {
 	});
 }
 
-async function addCleaningAndInstallationSkus() {
+async function addMaintenanceSkus() {
 	const CLEANING_INSALLATION_SKUS: Sku[] = [
 		{
 			id: 'oil_sealant:one_gallon',
@@ -1141,9 +1140,9 @@ async function main() {
 	await addPickupLocations();
 	await addPavers();
 	await addSlabsAndBlocks();
-	await addCleaningAndInstallationProducts();
+	await addMaintenanceProducts();
 	await addProductDetails();
-	await addCleaningAndInstallationSkus();
+	await addMaintenanceSkus();
 	await addConcreteProductSkus();
 	await addPaverStock();
 	await addPaverRestockQueue();

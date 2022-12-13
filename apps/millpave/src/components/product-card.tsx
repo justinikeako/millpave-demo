@@ -20,7 +20,7 @@ function ProductCard({
 	return (
 		<li
 			className={classNames(
-				'col-span-1 flex h-[40vmax] flex-col items-start justify-end bg-gray-200 p-8 md:h-[50vmin]',
+				'flex h-[40vmax] flex-col items-start justify-end bg-gray-200 p-8 md:h-[50vmin] xl:h-[25vmax]',
 				props.className
 			)}
 		>

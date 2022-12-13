@@ -189,7 +189,7 @@ function Page() {
 							/>
 						</ul>
 						<Button variant="secondary" className="self-center" asChild>
-							<Link href="/products">View Product Catalogue</Link>
+							<Link href="/products/all">View Product Catalogue</Link>
 						</Button>
 					</div>
 				</section>
@@ -267,7 +267,7 @@ function Page() {
 						</div>
 						<div className="flex gap-4">
 							<Button variant="primary">
-								<Link href="/products">Explore Products</Link>
+								<Link href="/products/all">Explore Products</Link>
 							</Button>
 							<Button variant="secondary">
 								<Link href="/contact?form=quote">Get a Quote</Link>

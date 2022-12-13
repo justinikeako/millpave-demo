@@ -295,7 +295,7 @@ function Page() {
 							))}
 						</ul>
 						<Button variant="secondary" className="self-center" asChild>
-							<Link href="/products">View Product Catalogue</Link>
+							<Link href="/products/all">View Product Catalogue</Link>
 						</Button>
 					</div>
 				</section>
@@ -312,22 +312,24 @@ export const getStaticProps = async (
 ) => {
 	const { prisma } = await createContextInner({});
 
-	const ssr = await createProxySSGHelpers({
+	const ssg = await createProxySSGHelpers({
 		router: appRouter,
 		ctx: { prisma },
-		transformer: superjson // optional - adds superjson serialization
+		transformer: superjson
 	});
 
 	const productId = context.params?.id as string;
 
 	// prefetch `product.getById`
-	await ssr.product.getById.prefetch({ productId });
+	await ssg.product.getById.prefetch({ productId });
+
+	const ONE_MONTH_IN_SECONDS = 60 * 60 * 24 * 31;
 
 	return {
 		props: {
-			trpcState: ssr.dehydrate()
+			trpcState: ssg.dehydrate()
 		},
-		revalidate: 10
+		revalidate: ONE_MONTH_IN_SECONDS
 	};
 };
 

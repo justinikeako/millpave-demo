@@ -27,7 +27,7 @@ function Page() {
 			<main className="space-y-4 px-8 pb-8">
 				<nav className="flex justify-end pt-12 pb-8">
 					<Button variant="tertiary" asChild>
-						<Link href="/products">
+						<Link href="/products/all">
 							<Icon name="category" />
 						</Link>
 					</Button>

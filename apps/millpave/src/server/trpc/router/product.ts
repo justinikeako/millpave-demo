@@ -69,7 +69,12 @@ export const productRouter = router({
 	getByCategory: publicProcedure
 		.input(
 			z.object({
-				categoryId: z.string().nullish(),
+				categoryId: z
+					.string()
+					.nullish()
+					.transform((categoryId) =>
+						categoryId === 'all' ? undefined : categoryId
+					),
 				limit: z.number().min(1).max(100).nullish(),
 				cursor: z.string().nullish() // <-- "cursor" needs to exist, but can be any type
 			})

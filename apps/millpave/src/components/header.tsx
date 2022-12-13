@@ -31,8 +31,8 @@ function Header() {
 					Logo
 				</Link>
 
-				<ul className="inset-0 z-10 hidden flex-col items-start justify-center gap-8 bg-gray-900 px-16 text-3xl  text-white peer-checked:fixed peer-checked:flex md:px-24 lg:static lg:flex lg:flex-row lg:items-center lg:bg-transparent lg:px-0 lg:font-body lg:text-base lg:font-normal lg:text-gray-900">
-					<NavLink href="/products">Products</NavLink>
+				<ul className="inset-0 hidden flex-col items-start justify-center gap-8 bg-gray-900 px-16 text-3xl text-white  peer-checked:fixed peer-checked:flex max-lg:z-10 md:px-24 lg:static lg:flex lg:flex-row lg:items-center lg:bg-transparent lg:px-0 lg:font-body lg:text-base lg:font-normal lg:text-gray-900">
+					<NavLink href="/products/all">Products</NavLink>
 					<NavLink href="/gallery">Get Inspired</NavLink>
 					<NavLink href="/#where-to-buy">Where to Buy</NavLink>
 					<NavLink href="/contact">Contact Us</NavLink>

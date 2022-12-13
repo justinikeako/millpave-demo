@@ -52,15 +52,11 @@ export const productRouter = router({
 			} as FullPaver;
 		}),
 	getFulfillmentData: publicProcedure
-		.input(
-			z.object({
-				productId: z.string()
-			})
-		)
+		.input(z.object({ productId: z.string() }))
 		.query(async ({ ctx, input }) => {
 			const fulfillment = await ctx.prisma.product.findUnique({
 				where: { id: input.productId },
-				include: {
+				select: {
 					stock: true,
 					restock: true
 				}
@@ -69,5 +65,50 @@ export const productRouter = router({
 			if (!fulfillment) throw new TRPCError({ code: 'NOT_FOUND' });
 
 			return fulfillment;
+		}),
+	getByCategory: publicProcedure
+		.input(
+			z.object({
+				categoryId: z.string().nullish(),
+				limit: z.number().min(1).max(100).nullish(),
+				cursor: z.string().nullish() // <-- "cursor" needs to exist, but can be any type
+			})
+		)
+		.query(async ({ ctx, input }) => {
+			const limit = input.limit ?? 9;
+
+			const products = await ctx.prisma.product.findMany({
+				where: { categoryId: input.categoryId ? input.categoryId : undefined },
+				take: limit + 1, // get an extra item at the end which we'll use as next cursor,
+				cursor: input.cursor ? { id: input.cursor } : undefined,
+				include: {
+					skus: {
+						orderBy: { price: 'asc' },
+						take: 1,
+						select: { price: true, unit: true }
+					}
+				}
+			});
+
+			const productsWithStarterSku = products.map(({ skus, ...product }) => ({
+				...product,
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				startingSku: skus[0]!
+			}));
+
+			if (!products) throw new TRPCError({ code: 'NOT_FOUND' });
+
+			let nextCursor: typeof input.cursor | undefined = undefined;
+			if (products.length > limit) {
+				const nextItem = productsWithStarterSku.pop();
+
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				nextCursor = nextItem!.id;
+			}
+
+			return {
+				products: productsWithStarterSku,
+				nextCursor
+			};
 		})
 });

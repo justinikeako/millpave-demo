@@ -5,14 +5,14 @@ import Link from 'next/link';
 
 type ProductCardProps = {
 	name: string;
-	startingPrice: number;
+	startingSku: { price: number; unit: string };
 	link?: string;
 	variant?: 'display' | 'normal';
 } & React.LiHTMLAttributes<HTMLLIElement>;
 
 function ProductCard({
 	name,
-	startingPrice,
+	startingSku,
 	link = '/product/colonial_classic',
 	variant = 'normal',
 	...props
@@ -32,7 +32,7 @@ function ProductCard({
 					<h3 className="text-lg">{name}</h3>
 				)}
 				<p>
-					Starting at {formatPrice(startingPrice)} per ft<sup>2</sup>
+					Starting at {formatPrice(startingSku.price)} per {startingSku.unit}
 				</p>
 				<Button variant="secondary" className="w-fit" asChild>
 					<Link href={link}>Learn More</Link>

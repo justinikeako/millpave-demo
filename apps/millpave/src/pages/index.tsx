@@ -155,35 +155,35 @@ function Page() {
 							<ProductCard
 								variant="display"
 								name="Colonial Classic"
-								startingPrice={203}
+								startingSku={{ price: 203, unit: 'sqft' }}
 								link="/product/colonial_classic"
 								className="md:col-span-3"
 							/>
 							<ProductCard
 								variant="display"
 								name="Banjo"
-								startingPrice={219}
+								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/banjo"
 								className="md:col-span-3"
 							/>
 							<ProductCard
 								variant="display"
 								name="Heritage Series"
-								startingPrice={219}
+								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/heritage"
 								className="md:col-span-6 lg:col-span-2"
 							/>
 							<ProductCard
 								variant="display"
 								name="Cobble Mix"
-								startingPrice={219}
+								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/cobble_mix"
 								className="md:col-span-3 lg:col-span-2"
 							/>
 							<ProductCard
 								variant="display"
 								name="Old World Cobble"
-								startingPrice={203}
+								startingSku={{ price: 203, unit: 'sqft' }}
 								link="/product/owc"
 								className="md:col-span-3 lg:col-span-2"
 							/>

@@ -287,7 +287,7 @@ function Page() {
 								<ProductCard
 									key={similarProduct.id}
 									name={similarProduct.displayName}
-									startingPrice={similarProduct.startingSku.price}
+									startingSku={similarProduct.startingSku}
 									link={`/product/${similarProduct.id}`}
 									className="md:col-span-3 lg:col-span-2"
 									variant="display"

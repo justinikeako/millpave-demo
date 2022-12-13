@@ -6,12 +6,12 @@ import { Icon } from '../../components/icon';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { trpc } from '../../utils/trpc';
 import { useRouter } from 'next/router';
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTrigger
-} from '../../components/dialog';
+// import {
+// 	Dialog,
+// 	DialogContent,
+// 	DialogHeader,
+// 	DialogTrigger
+// } from '../../components/dialog';
 import Link from 'next/link';
 import cx from 'classnames';
 
@@ -108,46 +108,44 @@ function EditableHeader({
 	);
 }
 
-type ItemEditorProps = {
-	onSave: () => Promise<void>;
-	onDelete: () => Promise<void>;
-};
+// type ItemEditorProps = {
+// 	onSave: () => Promise<void>;
+// 	onDelete: () => Promise<void>;
+// };
 
-function ItemEditor({ onSave, onDelete }: ItemEditorProps) {
-	return (
-		<>
-			<DialogHeader title="Edit Item" />
+// function ItemEditor({ onSave, onDelete }: ItemEditorProps) {
+// 	return (
+// 		<>
+// 			{/* <DialogHeader title="Edit Item" /> */}
 
-			<div className="max-h-[50vh] space-y-8 overflow-y-auto px-8 pt-4 pb-8">
-				<div className="space-y-2">
-					<Button
-						variant="primary"
-						type="submit"
-						onClick={onSave}
-						className="w-full"
-					>
-						<Icon name="save" />
-						Save Changes
-					</Button>
-					<Button
-						variant="secondary"
-						type="button"
-						className="w-full text-red-600"
-						onClick={onDelete}
-					>
-						<Icon name="delete" />
-						Remove from Quote
-					</Button>
-				</div>
-			</div>
-		</>
-	);
-}
+// 			<div className="max-h-[50vh] space-y-8 overflow-y-auto px-8 pt-4 pb-8">
+// 				<div className="space-y-2">
+// 					<Button
+// 						variant="primary"
+// 						type="submit"
+// 						onClick={onSave}
+// 						className="w-full"
+// 					>
+// 						<Icon name="save" />
+// 						Save Changes
+// 					</Button>
+// 					<Button
+// 						variant="secondary"
+// 						type="button"
+// 						className="w-full text-red-600"
+// 						onClick={onDelete}
+// 					>
+// 						<Icon name="delete" />
+// 						Remove from Quote
+// 					</Button>
+// 				</div>
+// 			</div>
+// 		</>
+// 	);
+// }
 
 const deriveRouteFromSkuId = (skuId: string) => {
-	const [productId, ...skuIdFragments] = skuId.split(':');
-
-	const skuQuery = skuIdFragments.join().replace(/,/g, '+');
+	const [productId] = skuId.split(':');
 
 	return `/product/${productId}`;
 };
@@ -157,18 +155,18 @@ function Page() {
 
 	const quoteId = router.query.qid as string;
 
-	const [editDialogState, setEditDialogState] = useState({
-		open: false,
-		skuId: '',
-		pickupLocationId: 'STT_FACTORY'
-	});
+	// const [editDialogState, setEditDialogState] = useState({
+	// 	open: false,
+	// 	skuId: '',
+	// 	pickupLocationId: 'STT_FACTORY'
+	// });
 
-	const [sendDialogOpen, setSendDialogOpen] = useState(false);
+	// const [sendDialogOpen, setSendDialogOpen] = useState(false);
 	// const [showOverageWarning, setShowOverageWarning] = useState(false);
 
 	const quote = trpc.quote.getById.useQuery({ quoteId });
 	const renameQuote = trpc.quote.rename.useMutation();
-	const removeItem = trpc.quote.removeItem.useMutation();
+	// const removeItem = trpc.quote.removeItem.useMutation();
 
 	if (!quote.data) {
 		if (quote.error?.data?.code === 'NOT_FOUND')
@@ -186,7 +184,7 @@ function Page() {
 			<main className="space-y-16 px-8 pb-16">
 				<nav className="flex justify-between pt-12 pb-8">
 					<Button variant="tertiary" asChild>
-						<Link href="/products">
+						<Link href="/products/all">
 							<Icon name="category" />
 						</Link>
 					</Button>
@@ -209,7 +207,7 @@ function Page() {
 					<SectionHeader title={`Items (${quote.data.items.length})`} />
 
 					{/* Item List */}
-					<Dialog
+					{/* <Dialog
 						open={editDialogState.open}
 						onOpenChange={(newOpen) =>
 							setEditDialogState((oldState) => ({ ...oldState, open: newOpen }))
@@ -238,67 +236,65 @@ function Page() {
 									}));
 								}}
 							/>
-						</DialogContent>
+						</DialogContent> */}
 
-						<ul className="!mt-8 space-y-12">
-							{quote.data.items.map((item) => (
-								<li
-									key={`${item.skuId}_${item.pickupLocationId}`}
-									className="flex flex-col items-center space-y-4"
+					<ul className="!mt-8 space-y-12">
+						{quote.data.items.map((item) => (
+							<li
+								key={`${item.skuId}_${item.pickupLocationId}`}
+								className="flex flex-col items-center space-y-4"
+							>
+								<Link
+									href={deriveRouteFromSkuId(item.skuId)}
+									className="contents"
 								>
-									<Link
-										href={deriveRouteFromSkuId(item.skuId)}
-										className="contents"
-									>
-										<div className="mb-4 h-32 w-32 bg-gray-100" />
-										<div className="space-y-2 self-stretch">
-											<h3 className="font-display text-lg font-semibold">
-												{item.sku.displayName}
-											</h3>
-											<div className="flex justify-between">
-												<p className="font-semibold">
-													{formatNumber(item.quantity)} pieces
-												</p>
-												<p className="font-semibold">
-													{formatPrice(item.price)}
-												</p>
-											</div>
-										</div>
-									</Link>
+									<div className="mb-4 h-32 w-32 bg-gray-100" />
 									<div className="space-y-2 self-stretch">
-										<div className="flex items-center justify-between">
-											<p className="text-gray-500">
-												Order Today. Pick up on-site:
-												<br />
-												{getDistanceFromToday(item.closest_restock_date) > 1 &&
-													'Available '}
-												<b>{formatRestockDate(item.closest_restock_date)}</b>
-												&nbsp;at&nbsp;
-												<span className="inline-block text-bubblegum-600">
-													Our {item.pickupLocation.displayName}
-												</span>
+										<h3 className="font-display text-lg font-semibold">
+											{item.sku.displayName}
+										</h3>
+										<div className="flex justify-between">
+											<p className="font-semibold">
+												{formatNumber(item.quantity)} pieces
 											</p>
-
-											<DialogTrigger asChild>
-												<Button
-													variant="tertiary"
-													onClick={() => {
-														setEditDialogState((oldState) => ({
-															...oldState,
-															pickupLocationId: item.pickupLocationId,
-															skuId: item.skuId
-														}));
-													}}
-												>
-													<Icon name="edit" />
-												</Button>
-											</DialogTrigger>
+											<p className="font-semibold">{formatPrice(item.price)}</p>
 										</div>
 									</div>
-								</li>
-							))}
-						</ul>
-					</Dialog>
+								</Link>
+								<div className="space-y-2 self-stretch">
+									<div className="flex items-center justify-between">
+										<p className="text-gray-500">
+											Order Today. Pick up on-site:
+											<br />
+											{getDistanceFromToday(item.closest_restock_date) > 1 &&
+												'Available '}
+											<b>{formatRestockDate(item.closest_restock_date)}</b>
+											&nbsp;at&nbsp;
+											<span className="inline-block text-bubblegum-600">
+												Our {item.pickupLocation.displayName}
+											</span>
+										</p>
+
+										{/* <DialogTrigger asChild> */}
+										<Button
+											variant="tertiary"
+											onClick={() => {
+												// setEditDialogState((oldState) => ({
+												// 	...oldState,
+												// 	pickupLocationId: item.pickupLocationId,
+												// 	skuId: item.skuId
+												// }));
+											}}
+										>
+											<Icon name="edit" />
+										</Button>
+										{/* </DialogTrigger> */}
+									</div>
+								</div>
+							</li>
+						))}
+					</ul>
+					{/* </Dialog> */}
 				</section>
 
 				{/* Order Details */}
@@ -337,20 +333,17 @@ function Page() {
 							<Icon name="point_of_sale" />
 							<span className="font-semibold">Check Out</span>
 						</Button>
-						<Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
+						{/* <Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
 							<DialogContent open={sendDialogOpen}>
 								<DialogHeader title="Send to Customer" />
 							</DialogContent>
 
-							<DialogTrigger asChild>
-								<Button
-									variant="secondary"
-									className="w-full text-bubblegum-700"
-								>
-									<span className="font-semibold">Send as Quote</span>
-								</Button>
-							</DialogTrigger>
-						</Dialog>
+							<DialogTrigger asChild> */}
+						<Button variant="secondary" className="w-full text-bubblegum-700">
+							<span className="font-semibold">Send as Quote</span>
+						</Button>
+						{/* </DialogTrigger>
+						</Dialog> */}
 					</div>
 				</section>
 

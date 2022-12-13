@@ -1,14 +1,27 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from './button';
 import { Icon } from './icon';
 
 type ContentProps = React.PropsWithChildren<{
 	open: boolean;
+	className?: string;
 }>;
 
-const Content = ({ children, open }: ContentProps) => {
-	const transition = { type: 'spring', mass: 1, damping: 20, stiffness: 120 };
+function Content({ open, children, ...props }: ContentProps) {
+	const slowTransition = {
+		type: 'spring',
+		mass: 1,
+		damping: 20,
+		stiffness: 150
+	};
+	const fastTransition = {
+		type: 'spring',
+		mass: 1,
+		damping: 30,
+		stiffness: 300
+	};
 
 	return (
 		<AnimatePresence>
@@ -17,35 +30,35 @@ const Content = ({ children, open }: ContentProps) => {
 					<DialogPrimitive.Overlay asChild forceMount>
 						<motion.div
 							initial={{ opacity: 0 }}
-							animate={{ opacity: 0.2 }}
-							exit={{ opacity: 0 }}
-							transition={transition}
-							className="fixed inset-0 z-auto bg-black"
+							animate={{ opacity: 0.2, transition: slowTransition }}
+							exit={{ opacity: 0, transition: fastTransition }}
+							className="fixed inset-0 bg-black"
 						/>
 					</DialogPrimitive.Overlay>
 
-					<DialogPrimitive.Content asChild forceMount>
-						<motion.div
-							className="fixed inset-x-0 bottom-0 z-auto rounded-t-2xl bg-white"
-							initial={{ y: '100%' }}
-							animate={{ y: 0 }}
-							exit={{ y: '100%' }}
-							transition={transition}
-						>
-							{children}
-						</motion.div>
-					</DialogPrimitive.Content>
+					<div className="fixed inset-0 flex items-center justify-center">
+						<DialogPrimitive.Content asChild forceMount>
+							<motion.div
+								className={classNames('rounded-lg bg-white', props.className)}
+								initial={{ y: 100, opacity: 0 }}
+								animate={{ y: 0, opacity: 1, transition: slowTransition }}
+								exit={{ y: 100, opacity: 0, transition: fastTransition }}
+							>
+								{children}
+							</motion.div>
+						</DialogPrimitive.Content>
+					</div>
 				</DialogPrimitive.Portal>
 			)}
 		</AnimatePresence>
 	);
-};
+}
 
-type DialogHeader = {
+type HeaderProps = {
 	title: string;
 };
 
-const DialogHeader = ({ title }: DialogHeader) => {
+function Header({ title }: HeaderProps) {
 	return (
 		<div className="flex items-center justify-between px-8 pt-8 pb-4">
 			<DialogPrimitive.Title className="font-display text-lg">
@@ -59,11 +72,10 @@ const DialogHeader = ({ title }: DialogHeader) => {
 			</DialogPrimitive.Close>
 		</div>
 	);
-};
+}
 
-const Dialog = DialogPrimitive.Root;
-const DialogTrigger = DialogPrimitive.Trigger;
-const DialogContent = Content;
-const DialogClose = DialogPrimitive.Close;
+const Root = DialogPrimitive.Root;
+const Trigger = DialogPrimitive.Trigger;
+const Close = DialogPrimitive.Close;
 
-export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogClose };
+export { Root, Trigger, Content, Header, Close };

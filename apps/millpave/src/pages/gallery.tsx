@@ -1,29 +1,52 @@
 import Head from 'next/head';
-import classNames from 'classnames';
 import { Button } from '../components/button';
+import React, { useState } from 'react';
 
-type GalleryFilterProps = React.PropsWithChildren<{
-	selected?: boolean;
-}>;
+type GalleryFilterProps = React.PropsWithChildren<
+	{
+		value: string;
+	} & React.HTMLProps<HTMLInputElement>
+>;
 
-function GalleryFilter({ children, selected }: GalleryFilterProps) {
+function GalleryFilter({ children, value, ...props }: GalleryFilterProps) {
 	return (
-		<li
-			className={classNames(
-				'aspect-[4/3] w-full shrink-0 snap-center p-2 sm:h-[40vh] sm:w-auto',
-				selected
-					? 'inner-border-2 inner-border-black'
-					: 'inner-border inner-border-gray-200'
-			)}
-		>
-			<div className="flex h-full w-full items-end bg-gray-200 p-8">
-				<p className="font-display text-lg">{children}</p>
-			</div>
+		<li className="relative flex aspect-square w-[60vw] shrink-0 snap-center items-end p-4 md:w-[25vmax] md:p-8 lg:w-[30vmin]">
+			<input
+				{...props}
+				type="radio"
+				name="category"
+				className="peer hidden"
+				id={value}
+			/>
+			<label
+				htmlFor={value}
+				className="absolute inset-0 border border-gray-200 bg-gray-200 inner-border-4 inner-border-white peer-checked:border-2 peer-checked:border-black"
+			/>
+			<p className="pointer-events-none z-[1] font-display text-lg">
+				{children}
+			</p>
 		</li>
 	);
 }
 
+const categories = [
+	{ id: 'walkway', displayName: { singular: 'Walkway', plural: 'Walkways' } },
+	{ id: 'patio', displayName: { singular: 'Patio', plural: 'Patios' } },
+	{ id: 'garden', displayName: { singular: 'Garden', plural: 'Gardens' } },
+	{ id: 'plaza', displayName: { singular: 'Plaza', plural: 'Plazas' } },
+	{
+		id: 'driveway',
+		displayName: { singular: 'Driveway', plural: 'Driveways' }
+	},
+	{
+		id: 'pool_deck',
+		displayName: { singular: 'Pool Deck', plural: 'Pool Decks' }
+	}
+];
+
 function Page() {
+	const [categoryId, setCategoryId] = useState('walkway');
+
 	return (
 		<>
 			<Head>
@@ -32,42 +55,41 @@ function Page() {
 
 			<main className="space-y-32 px-8 md:px-24 lg:space-y-48 lg:px-32">
 				<section className="space-y-24">
-					<h1 className="text-center font-display text-4xl">
-						Inspiration Gallery
+					<h1 className="mx-auto max-w-[20ch] text-center font-display text-3xl">
+						Which types of projects would you like to see?
 					</h1>
 
-					<div className="space-y-16">
-						<p className="mx-auto max-w-[25ch] text-center font-display text-lg">
-							Which types of projects would you like to see?
-						</p>
-
-						<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory gap-4 overflow-scroll px-8 lg:-mx-32 lg:px-32">
-							<GalleryFilter>Walkways</GalleryFilter>
-							<GalleryFilter>Pool Decks</GalleryFilter>
-							<GalleryFilter selected>Driveways</GalleryFilter>
-							<GalleryFilter>Plazas</GalleryFilter>
-							<GalleryFilter>Gardens</GalleryFilter>
-							<GalleryFilter>Patios</GalleryFilter>
-						</ul>
-					</div>
+					<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory gap-4 overflow-scroll px-8 md:-mx-32 md:px-32 lg:-mx-32 lg:px-32">
+						{categories.map(({ id, displayName }) => (
+							<GalleryFilter
+								key={id}
+								value={id}
+								checked={id === categoryId}
+								onChange={() => setCategoryId(id)}
+							>
+								{displayName.plural}
+							</GalleryFilter>
+						))}
+					</ul>
 				</section>
 
 				<section className="space-y-4 md:space-y-8">
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
-						<div className="mb-8 flex items-center md:col-span-3 md:mb-0 lg:col-span-2">
-							<p className="font-display text-2xl">
+						<div className="mb-8 flex items-center md:col-span-3 md:mb-0 lg:col-span-3 xl:col-span-2">
+							<p className="text-center font-display text-2xl md:text-left">
 								Get inspiration for your new driveway.
 							</p>
 						</div>
 
 						<ul className="contents">
-							<div className="h-[40vh] bg-gray-200 md:col-span-3 lg:col-span-2" />
-							<div className="h-[40vh] bg-gray-200 md:col-span-3 lg:col-span-2" />
-							<div className="h-[40vh] bg-gray-200 md:col-span-3" />
-							<div className="h-[40vh] bg-gray-200 md:col-span-3" />
-							<div className="h-[40vh] bg-gray-200 md:col-span-3 lg:col-span-2" />
-							<div className="h-[40vh] bg-gray-200 md:col-span-3 lg:col-span-2" />
-							<div className="h-[40vh] bg-gray-200 md:col-span-3 lg:col-span-2" />
+							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
+							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
+							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
+							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
+							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
+							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
+							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
+							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
 						</ul>
 					</div>
 

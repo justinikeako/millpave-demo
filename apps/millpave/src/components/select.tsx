@@ -1,6 +1,11 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
 import cx from 'classnames';
-import { Icon } from './icon';
+import {
+	MdArrowDropDown,
+	MdCheck,
+	MdKeyboardArrowDown,
+	MdKeyboardArrowUp
+} from 'react-icons/md';
 
 type TriggerProps = {
 	basic?: boolean;
@@ -19,7 +24,10 @@ function Trigger({ basic, ...props }: TriggerProps) {
 		>
 			<SelectPrimitive.Value />
 			<SelectPrimitive.Icon asChild>
-				<Icon name="arrow_drop_down" className="text-gray-500" />
+				<MdArrowDropDown
+					name="arrow_drop_down"
+					className="text-[1.5em] text-gray-500"
+				/>
 			</SelectPrimitive.Icon>
 		</SelectPrimitive.Trigger>
 	);
@@ -51,7 +59,7 @@ function Item({ value, children }: SelectPrimitive.SelectItemProps) {
 		>
 			<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
 			<SelectPrimitive.ItemIndicator>
-				<Icon name="check" />
+				<MdCheck className="text-[1.5em]" />
 			</SelectPrimitive.ItemIndicator>
 		</SelectPrimitive.Item>
 	);
@@ -60,7 +68,7 @@ function Item({ value, children }: SelectPrimitive.SelectItemProps) {
 function ScrollUpButton() {
 	return (
 		<SelectPrimitive.ScrollUpButton className="flex cursor-default items-center justify-center bg-gray-100 py-4">
-			<Icon name="keyboard_arrow_up" />
+			<MdKeyboardArrowUp className="text-[1.5em]" />
 		</SelectPrimitive.ScrollUpButton>
 	);
 }
@@ -68,7 +76,7 @@ function ScrollUpButton() {
 function ScrollDownButton() {
 	return (
 		<SelectPrimitive.ScrollDownButton className="flex cursor-default items-center justify-center bg-gray-100 py-4">
-			<Icon name="keyboard_arrow_down" />
+			<MdKeyboardArrowDown />
 		</SelectPrimitive.ScrollDownButton>
 	);
 }

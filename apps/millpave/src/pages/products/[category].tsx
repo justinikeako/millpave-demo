@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { ProductCard } from '../../components/product-card';
 import { w } from 'windstitch';
-import { Icon } from '../../components/icon';
+import { MdCheck } from 'react-icons/md';
 import { appRouter } from '../../server/trpc/router/_app';
 import { createContextInner } from '../../server/trpc/context';
 import superjson from 'superjson';
@@ -42,10 +42,7 @@ function Chip({ value, children, ...props }: ChipProps) {
 			<span className="pointer-events-none z-[1] peer-checked:text-white">
 				{children}
 			</span>
-			<Icon
-				name="check"
-				className="pointer-events-none z-[1] hidden text-white peer-checked:inline"
-			/>
+			<MdCheck className="pointer-events-none z-[1] hidden text-[1.5rem] text-white peer-checked:inline" />
 		</li>
 	);
 }

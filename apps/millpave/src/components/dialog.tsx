@@ -2,7 +2,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from './button';
-import { Icon } from './icon';
+import { MdClose } from 'react-icons/md';
 
 type ContentProps = React.PropsWithChildren<{
 	open: boolean;
@@ -67,7 +67,7 @@ function Header({ title }: HeaderProps) {
 
 			<DialogPrimitive.Close asChild>
 				<Button variant="tertiary" className="text-gray-500">
-					<Icon name="close" />
+					<MdClose className="text-[1.5em]" />
 				</Button>
 			</DialogPrimitive.Close>
 		</div>

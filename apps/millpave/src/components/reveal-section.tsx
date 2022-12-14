@@ -13,7 +13,7 @@ function RevealSection(props: RevealSectionProps) {
 	const sectionRef = useRef<HTMLElement>(null);
 	const sectionIsInView = useInView(sectionRef, {
 		once: true,
-		margin: '0px 200px -200px 0px'
+		margin: '0px 150px -150px 0px'
 	});
 
 	return (

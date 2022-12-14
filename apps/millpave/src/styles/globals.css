@@ -44,15 +44,4 @@ b {
 		display: none;
 		-webkit-appearance: none;
 	}
-
-	.material-symbols-outlined {
-		--fill: 0;
-		--weight: 400;
-		--grade: 0;
-		--optical-size: 20;
-
-		font-size: 1.5rem;
-		font-variation-settings: 'FILL' var(--fill), 'wght' var(--weight),
-			'GRAD' var(--grade), 'opsz' var(--optical-size);
-	}
 }

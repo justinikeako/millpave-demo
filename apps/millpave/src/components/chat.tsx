@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { nanoid } from 'nanoid';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from './button';
-import { Icon } from './icon';
+import { MdExpandMore, MdForum, MdSend } from 'react-icons/md';
 import { AnimatePresence, motion } from 'framer-motion';
 
 type Message = {
@@ -111,7 +111,7 @@ function Chat() {
 									className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
 									onClick={() => setOpen(false)}
 								>
-									<Icon name="expand_more" />
+									<MdExpandMore />
 								</Button>
 							</div>
 
@@ -165,7 +165,7 @@ function Chat() {
 										type="submit"
 										className="flex select-none p-3 hover:bg-gray-100 active:bg-gray-200 disabled:text-gray-500"
 									>
-										<Icon name="send" />
+										<MdSend />
 									</button>
 								</div>
 							</form>
@@ -197,7 +197,7 @@ function Chat() {
 						</span>
 					)}
 
-					<Icon name="forum" className="!text-[2em]" />
+					<MdForum name="forum" className="text-[2em]" />
 				</motion.button>
 			</div>
 		</div>

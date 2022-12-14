@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from './button';
-import { Icon } from './icon';
+import { MdMenu } from 'react-icons/md';
 import { motion } from 'framer-motion';
 
 type NavLinkProps = React.PropsWithChildren<{ href: string }>;
@@ -53,7 +53,7 @@ function Header() {
 					asChild
 				>
 					<label htmlFor="menu-toggle">
-						<Icon name="menu" />
+						<MdMenu />
 					</label>
 				</Button>
 			</nav>

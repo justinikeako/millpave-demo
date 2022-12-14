@@ -29,7 +29,11 @@ const Button = forwardRef<
 		<Comp
 			{...props}
 			ref={ref}
-			className={cx('[&>*]:select-none', classes[variant], className)}
+			className={cx(
+				'[&>*]:select-none [&>svg]:text-[1.5rem]',
+				classes[variant],
+				className
+			)}
 		>
 			{children}
 		</Comp>

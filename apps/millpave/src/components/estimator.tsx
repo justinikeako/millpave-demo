@@ -78,7 +78,7 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 
 				<p>
 					{pallet.count} pallets ({pallet.area}ft²) & {piece.count} pieces (
-					{piece.area}ft²) ≈{' '}
+					{piece.area}ft²) ≈&nbsp;
 					<b>
 						{totalArea}ft<sup>2</sup>
 					</b>

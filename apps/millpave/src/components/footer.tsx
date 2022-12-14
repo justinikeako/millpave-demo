@@ -77,13 +77,13 @@ function Footer() {
 
 			<p className="text-center">
 				<i>
-					Colours on the website are subject to availability and minimum order
+					Products on the website are subject to availability and minimum order
 					quantities. Please contact a Millennium professional for additional
 					information. Product colours should be pulled from multiple pallets
 					during installation as colours may vary from pallet to pallet. Colours
 					shown on the website may vary from actual product colours. We
 					recommend colour selections be made from actual product samples.
-					Request a{' '}
+					Request a&nbsp;
 					<Link href="/contact?form=samples" className="underline">
 						sample here
 					</Link>

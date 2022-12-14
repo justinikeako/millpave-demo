@@ -4,6 +4,7 @@ import { MdClose, MdMenu } from 'react-icons/md';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { forwardRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
+import { Logo } from './logo';
 
 type NavLinkProps = {
 	href: string;
@@ -42,14 +43,11 @@ const content: Variants = {
 };
 
 const list: Variants = {
-	hide: {
-		transition: {
-			staggerChildren: 0.05
-		}
-	},
+	hide: {},
 	show: {
 		transition: {
-			staggerChildren: 0.05
+			delayChildren: 0.1,
+			staggerChildren: 0.075
 		}
 	}
 };
@@ -97,8 +95,13 @@ function Header() {
 				className="mb-12 select-none px-8 py-8 md:px-24 lg:px-32"
 			>
 				<nav className="flex items-center justify-between">
-					<Link href="/" className="text-lg font-bold">
-						Logo
+					<Link href="/">
+						<div className="max-sm:hidden">
+							<Logo withText />
+						</div>
+						<div className="sm:hidden">
+							<Logo />
+						</div>
 					</Link>
 
 					{/* Desktop Links */}
@@ -128,12 +131,13 @@ function Header() {
 										className="fixed inset-0 flex flex-col bg-gray-900 text-white"
 									>
 										<div className="flex items-center justify-between px-8 py-8 md:px-24">
-											<Link
-												href="/"
-												className="text-lg font-bold"
-												onClick={() => setOpen(false)}
-											>
-												Logo
+											<Link href="/" onClick={() => setOpen(false)}>
+												<div className="max-sm:hidden">
+													<Logo withText />
+												</div>
+												<div className="sm:hidden">
+													<Logo />
+												</div>
 											</Link>
 
 											<Dialog.Close asChild>

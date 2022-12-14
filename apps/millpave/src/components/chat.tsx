@@ -54,11 +54,21 @@ function Chat() {
 	// Very crude auto messaging
 	const [messageQueue, setMessageQueue] = useState([
 		{
-			text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit enim error minima sit unde, temporibus delectus provident cum placeat eligendi?',
-			delay: 20000
+			text: "This chat isn't actually live, just a demo.",
+			delay: 10000
 		},
-		{ text: 'helo', delay: 5000 },
-		{ text: 'u r big nubz', delay: 1000 }
+		{
+			text: 'It would serve as a semi-automated way for customers to interact with the company.',
+			delay: 8000
+		},
+		{
+			text: 'Using a service like x or y, customers could traverse the site, get answers to their questions, and even generate quotes using the chat bot that would live here 24/7.',
+			delay: 15000
+		},
+		{
+			text: 'And if their needs solicit human attention, they can also chat with sales rep live right from the site.',
+			delay: 12000
+		}
 	]);
 
 	useEffect(() => {
@@ -148,7 +158,7 @@ function Chat() {
 							</div>
 
 							<form className="p-4 pt-2" onSubmit={handleSend}>
-								<div className="flex overflow-hidden rounded-md bg-white text-black">
+								<div className="flex overflow-hidden rounded-md bg-white text-gray-900">
 									<label htmlFor="chat-input" className="flex-1 p-3">
 										<input
 											ref={inputRef}
@@ -163,7 +173,7 @@ function Chat() {
 									<button
 										disabled={!draftText}
 										type="submit"
-										className="flex select-none p-3 hover:bg-gray-100 active:bg-gray-200 disabled:text-gray-500"
+										className="flex select-none p-3 text-[1.5rem] text-gray-700 hover:bg-gray-100 active:bg-gray-200 disabled:text-gray-300 disabled:hover:bg-transparent disabled:active:bg-transparent"
 									>
 										<MdSend />
 									</button>

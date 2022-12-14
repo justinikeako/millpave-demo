@@ -120,7 +120,7 @@ function IOSARLink({ scene, ...props }: IOSARLinkProps) {
 	const encoded = {
 		title: encodeURIComponent(props.title),
 		subtitle: encodeURIComponent(
-			'Note: This model is an approximation based on the brochures.'
+			'Note: All colors are based on the brochures.'
 		),
 		callToAction: encodeURIComponent(props.callToAction)
 	};
@@ -152,7 +152,7 @@ function IOSARLink({ scene, ...props }: IOSARLinkProps) {
 			const eventWithData = event as unknown as { data: string };
 
 			if (eventWithData.data === '_apple_ar_quicklook_button_tapped') {
-				router.push('/create');
+				router.push('/contact?form=quote');
 			}
 		}
 

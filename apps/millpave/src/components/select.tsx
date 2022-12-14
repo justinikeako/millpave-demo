@@ -23,7 +23,7 @@ function Trigger({ basic, ...props }: TriggerProps) {
 			)}
 		>
 			<SelectPrimitive.Value />
-			<SelectPrimitive.Icon asChild>
+			<SelectPrimitive.Icon>
 				<MdArrowDropDown
 					name="arrow_drop_down"
 					className="text-[1.5em] text-gray-500"

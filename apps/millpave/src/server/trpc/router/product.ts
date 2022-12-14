@@ -58,7 +58,11 @@ export const productRouter = router({
 				where: { id: input.productId },
 				select: {
 					stock: true,
-					restock: true
+					restock: {
+						where: {
+							date: { gte: new Date() }
+						}
+					}
 				}
 			});
 

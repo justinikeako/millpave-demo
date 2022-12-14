@@ -179,7 +179,7 @@ function Chat() {
 						y: 0,
 						opacity: 1,
 						transition: {
-							delay: 0.1,
+							delay: 0.4,
 							type: 'spring',
 							stiffness: 100,
 							damping: 20

@@ -2,8 +2,15 @@ import Head from 'next/head';
 import * as Select from '../components/select';
 import { Button } from '../components/button';
 import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
 
 type FormType = 'general' | 'quote' | 'sample';
+
+const slowTransition = {
+	type: 'spring',
+	stiffness: 100,
+	damping: 20
+};
 
 function Page() {
 	const router = useRouter();
@@ -20,11 +27,23 @@ function Page() {
 			</Head>
 
 			<main className="space-y-16 px-8 md:px-24 lg:space-y-32 lg:px-32">
-				<h1 className="text-center font-display text-4xl">Get in touch.</h1>
+				<motion.h1
+					initial={{ y: 100, opacity: 0 }}
+					animate={{ y: 0, opacity: 1 }}
+					transition={{ delay: 0.1, ...slowTransition }}
+					className="text-center font-display text-4xl"
+				>
+					Get in touch.
+				</motion.h1>
 
 				<div className="flex flex-col gap-16 lg:flex-row lg:gap-16">
 					{/* Form */}
-					<div className="top-8 flex-1 space-y-8">
+					<motion.div
+						initial={{ y: 100, opacity: 0 }}
+						animate={{ y: 0, opacity: 1 }}
+						transition={{ delay: 0.2, ...slowTransition }}
+						className="top-8 flex-1 space-y-8"
+					>
 						<h2 className="font-display text-xl">Contact Form</h2>
 
 						<form className="space-y-8">
@@ -53,10 +72,15 @@ function Page() {
 								Submit
 							</Button>
 						</form>
-					</div>
+					</motion.div>
 
 					{/* Locations */}
-					<div className="top-8 flex-1 space-y-8 self-start lg:sticky lg:block">
+					<motion.div
+						initial={{ y: 100, opacity: 0 }}
+						animate={{ y: 0, opacity: 1 }}
+						transition={{ delay: 0.3, ...slowTransition }}
+						className="top-8 flex-1 space-y-8 self-start lg:sticky lg:block"
+					>
 						<h2 className="font-display text-xl">Millennium Locations</h2>
 						<ul className="flex gap-4">
 							<li>
@@ -139,7 +163,7 @@ function Page() {
 								</ul>
 							</li>
 						</ul>
-					</div>
+					</motion.div>
 				</div>
 			</main>
 		</>

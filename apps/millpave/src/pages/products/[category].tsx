@@ -12,6 +12,7 @@ import { Button } from '../../components/button';
 import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { useRouter } from 'next/router';
 import { Category } from '@prisma/client';
+import { motion } from 'framer-motion';
 
 const StyledProductCard = w(ProductCard, {
 	className: 'md:col-span-6 lg:col-span-4 xl:col-span-3'
@@ -48,6 +49,12 @@ function Chip({ value, children, ...props }: ChipProps) {
 		</li>
 	);
 }
+
+const slowTransition = {
+	type: 'spring',
+	stiffness: 100,
+	damping: 20
+};
 
 function Page() {
 	const router = useRouter();
@@ -86,10 +93,22 @@ function Page() {
 			</Head>
 
 			<main className="space-y-8 px-8 md:px-24 lg:space-y-16 lg:px-32">
-				<h1 className="text-center font-display text-4xl">Product Catalogue</h1>
+				<motion.h1
+					initial={{ y: 100, opacity: 0 }}
+					animate={{ y: 0, opacity: 1 }}
+					transition={{ delay: 0.1, ...slowTransition }}
+					className="text-center font-display text-4xl"
+				>
+					Product Catalogue
+				</motion.h1>
 
 				<div className="flex flex-col items-center gap-8 lg:gap-12">
-					<div className="no-scrollbar -mx-8 self-stretch overflow-x-scroll">
+					<motion.div
+						initial={{ y: 100, opacity: 0 }}
+						animate={{ y: 0, opacity: 1 }}
+						transition={{ delay: 0.2, ...slowTransition }}
+						className="no-scrollbar -mx-8 self-stretch overflow-x-scroll"
+					>
 						<ul className="mx-auto flex w-fit space-x-2  px-8">
 							{categories?.map((category) => (
 								<Chip
@@ -104,10 +123,15 @@ function Page() {
 								</Chip>
 							))}
 						</ul>
-					</div>
+					</motion.div>
 
 					{/* Products */}
-					<section className="space-y-16 self-stretch">
+					<motion.section
+						initial={{ y: 100, opacity: 0 }}
+						animate={{ y: 0, opacity: 1 }}
+						transition={{ delay: 0.3, ...slowTransition }}
+						className="space-y-16 self-stretch"
+					>
 						<div className="space-y-8">
 							<ul className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-8">
 								{products.pages.map((page) =>
@@ -133,7 +157,7 @@ function Page() {
 								</Button>
 							)}
 						</div>
-					</section>
+					</motion.section>
 				</div>
 			</main>
 		</>

@@ -2,19 +2,20 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { Button } from '../components/button';
+import { RevealSection } from '../components/reveal-section';
 
 function InspirationSection() {
-	const ref = useRef<HTMLDivElement>(null);
+	const carouselRef = useRef<HTMLDivElement>(null);
 
 	const { scrollYProgress } = useScroll({
-		target: ref,
+		target: carouselRef,
 		offset: ['start end', 'end start']
 	});
 	const x1 = useTransform(scrollYProgress, [0, 1], [150, -150]);
 	const x2 = useTransform(scrollYProgress, [0, 1], [-150, 150]);
 
 	return (
-		<section className="space-y-16">
+		<RevealSection className="space-y-16">
 			<div>
 				<p className="m-auto text-center font-display text-lg">Inspiration</p>
 
@@ -31,7 +32,7 @@ function InspirationSection() {
 
 			<div
 				className="-mx-8 space-y-4 overflow-hidden md:-mx-24 md:space-y-6 lg:-mx-32 lg:space-y-8"
-				ref={ref}
+				ref={carouselRef}
 			>
 				<motion.div
 					className="flex h-[40vmin] justify-start gap-4 md:gap-6 lg:gap-8"
@@ -59,7 +60,7 @@ function InspirationSection() {
 					<div className="flex aspect-square shrink-0 bg-gray-200" />
 				</motion.div>
 			</div>
-		</section>
+		</RevealSection>
 	);
 }
 

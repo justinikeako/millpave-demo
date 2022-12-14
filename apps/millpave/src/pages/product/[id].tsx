@@ -24,11 +24,19 @@ import { appRouter } from '../../server/trpc/router/_app';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { extractDetail } from '../../utils/product';
+import { RevealSection } from '../../components/reveal-section';
+import { motion } from 'framer-motion';
 
 const ProductViewer3D = dynamic(
 	() => import('../../components/product-viewer-3d'),
 	{ suspense: true }
 );
+
+const slowTransition = {
+	type: 'spring',
+	stiffness: 100,
+	damping: 20
+};
 
 type GalleryProps = {
 	sku: Sku;
@@ -40,7 +48,12 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	return (
-		<main className="flex flex-col items-center gap-2 md:sticky md:top-8 md:flex-[2] lg:flex-[3]">
+		<motion.div
+			initial={{ y: 100, opacity: 0 }}
+			animate={{ y: 0, opacity: 1 }}
+			transition={{ delay: 0.1, ...slowTransition }}
+			className="flex flex-col items-center gap-2 md:sticky md:top-8 md:flex-[2] lg:flex-[3]"
+		>
 			<div className="relative aspect-square w-full bg-gray-200">
 				{showModelViewer && selectedIndex === 3 && (
 					<Suspense
@@ -79,7 +92,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 					);
 				})}
 			</div>
-		</main>
+		</motion.div>
 	);
 }
 
@@ -196,12 +209,17 @@ function Page() {
 
 			<div className="space-y-32 px-8 md:px-24 lg:px-32">
 				{/* Main Content */}
-				<div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
+				<main className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
 					{/* Gallery */}
 					<Gallery sku={currentSku} showModelViewer={product.hasModels} />
 
 					{/* Supporting Details */}
-					<aside className="space-y-8 md:flex-[3] lg:flex-[4] lg:space-y-12">
+					<motion.div
+						initial={{ y: 100, opacity: 0 }}
+						animate={{ y: 0, opacity: 1 }}
+						transition={{ delay: 0.2, ...slowTransition }}
+						className="space-y-8 md:flex-[3] lg:flex-[4] lg:space-y-12"
+					>
 						{/* Basic Info */}
 						<section className="space-y-2">
 							<h1 className="font-display text-4xl">{product.displayName}</h1>
@@ -272,11 +290,11 @@ function Page() {
 								))}
 							</ul>
 						</Section>
-					</aside>
-				</div>
+					</motion.div>
+				</main>
 
 				{/* Similar Products */}
-				<section className="flex flex-col space-y-8">
+				<RevealSection className="flex flex-col space-y-8">
 					<h2 className="max-w-[28ch] self-center text-center font-display text-2xl">
 						Similar to {product.displayName}
 					</h2>
@@ -298,7 +316,7 @@ function Page() {
 							<Link href="/products/all">View Product Catalogue</Link>
 						</Button>
 					</div>
-				</section>
+				</RevealSection>
 
 				{/* Inspiration */}
 				<InspirationSection />

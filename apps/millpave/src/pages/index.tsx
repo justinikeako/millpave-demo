@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Button } from '../components/button';
 import { ProductCard } from '../components/product-card';
+import { RevealSection } from '../components/reveal-section';
 import { InspirationSection } from '../sections/inspiration';
 
 function getMiddleIndex(arr: unknown[]) {
@@ -143,7 +144,7 @@ function Page() {
 				<Hero />
 
 				{/* Products */}
-				<section className="flex flex-col space-y-32">
+				<RevealSection className="flex flex-col space-y-32">
 					<p className="max-w-[28ch] self-center text-center font-display text-lg text-gray-500 md:text-xl">
 						<span className="text-gray-900">Our concrete pavers</span> can turn
 						your outdoor walkway, deck, patio, or plaza into a functional work
@@ -192,13 +193,13 @@ function Page() {
 							<Link href="/products/all">View Product Catalogue</Link>
 						</Button>
 					</div>
-				</section>
+				</RevealSection>
 
 				{/* Inspiration */}
 				<InspirationSection />
 
 				{/* Locations */}
-				<section
+				<RevealSection
 					id="where-to-buy"
 					className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
 				>
@@ -220,10 +221,10 @@ function Page() {
 					</div>
 
 					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
-				</section>
+				</RevealSection>
 
 				{/* Process */}
-				<section className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
+				<RevealSection className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
 					<div className="flex-1 md:order-2">
 						<p className="font-display text-lg">Our Process</p>
 						<h2 className="max-w-[20ch] font-display text-3xl">
@@ -246,10 +247,10 @@ function Page() {
 					</div>
 
 					<div className="aspect-video w-full bg-gray-200 md:w-[30vw]"></div>
-				</section>
+				</RevealSection>
 
 				{/* About */}
-				<section className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
+				<RevealSection className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
 					<div className="flex-1 space-y-8">
 						<div>
 							<p className="font-display text-lg">About Us</p>
@@ -276,7 +277,7 @@ function Page() {
 					</div>
 
 					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
-				</section>
+				</RevealSection>
 			</main>
 		</>
 	);

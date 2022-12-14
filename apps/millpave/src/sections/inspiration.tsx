@@ -14,16 +14,17 @@ function InspirationSection() {
 	const x2 = useTransform(scrollYProgress, [0, 1], [-150, 150]);
 
 	return (
-		<section className="flex flex-col space-y-16">
-			<div className="flex flex-col items-center">
-				<p className="font-display text-lg">Inspiration</p>
-				<h2 className="max-w-[20ch] text-center font-display text-3xl">
+		<section className="space-y-16">
+			<div>
+				<p className="m-auto text-center font-display text-lg">Inspiration</p>
+
+				<h2 className="mx-auto max-w-[20ch] text-center font-display text-3xl">
 					Don&apos;t know where to start? Look at our best projects.
 				</h2>
 
 				<br />
 
-				<Button variant="primary" asChild>
+				<Button asChild variant="primary" className="mx-auto w-fit">
 					<Link href="/gallery">Get Inspired</Link>
 				</Button>
 			</div>

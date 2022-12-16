@@ -6,7 +6,7 @@ import { RevealSection } from '../components/reveal-section';
 import * as Dialog from '@radix-ui/react-dialog';
 import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdOpenInFull } from 'react-icons/md';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{
@@ -58,9 +58,13 @@ const slowTransition = {
 
 function GalleryImage() {
 	return (
-		<Dialog.Trigger asChild>
-			<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-		</Dialog.Trigger>
+		<li className="flex h-[30vmax] items-end justify-end bg-gray-200 p-2 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]">
+			<Dialog.Trigger asChild>
+				<Button variant="secondary" className="px-2">
+					<MdOpenInFull />
+				</Button>
+			</Dialog.Trigger>
+		</li>
 	);
 }
 

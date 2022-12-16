@@ -3,6 +3,10 @@ import Head from 'next/head';
 import { Button } from '../components/button';
 import { motion } from 'framer-motion';
 import { RevealSection } from '../components/reveal-section';
+import * as Dialog from '@radix-ui/react-dialog';
+import Link from 'next/link';
+import { ProductCard } from '../components/product-card';
+import { MdClose } from 'react-icons/md';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{
@@ -12,7 +16,7 @@ type GalleryFilterProps = React.PropsWithChildren<
 
 function GalleryFilter({ children, value, ...props }: GalleryFilterProps) {
 	return (
-		<li className="relative flex aspect-square w-[60vw] shrink-0 snap-center items-end p-4 md:w-[25vmax] md:p-8 lg:w-[30vmin]">
+		<li className="relative flex aspect-square w-[60vw] shrink-0 snap-center items-end p-6 md:w-[25vmax] md:p-8 lg:w-[30vmin]">
 			<input
 				{...props}
 				type="radio"
@@ -44,7 +48,7 @@ const categories = [
 		id: 'pool_deck',
 		displayName: { singular: 'Pool Deck', plural: 'Pool Decks' }
 	}
-];
+] as const;
 
 const slowTransition = {
 	type: 'spring',
@@ -52,8 +56,19 @@ const slowTransition = {
 	damping: 20
 };
 
+function GalleryImage() {
+	return (
+		<Dialog.Trigger asChild>
+			<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
+		</Dialog.Trigger>
+	);
+}
+
 function Page() {
-	const [categoryId, setCategoryId] = useState('walkway');
+	const [categoryId, setCategoryId] =
+		useState<typeof categories[number]['id']>('walkway');
+
+	const currentCategory = categories.find(({ id }) => id === categoryId);
 
 	return (
 		<>
@@ -95,20 +110,92 @@ function Page() {
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
 						<div className="mb-8 flex items-center md:col-span-3 md:mb-0 lg:col-span-3 xl:col-span-2">
 							<p className="text-center font-display text-2xl md:text-left">
-								Get inspiration for your new driveway.
+								Get inspiration for your new&nbsp;
+								{currentCategory?.displayName.singular.toLowerCase()}.
 							</p>
 						</div>
 
-						<ul className="contents">
-							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-							<li className="h-[30vmax] bg-gray-200 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]" />
-						</ul>
+						<Dialog.Root>
+							<Dialog.Portal>
+								<Dialog.Overlay>
+									<div className="fixed inset-0 bg-gray-900/50" />
+								</Dialog.Overlay>
+
+								<Dialog.Content>
+									<div className="pointer-events-none fixed inset-0 flex items-end justify-center md:items-center [&>*]:pointer-events-auto">
+										<div className="relative flex aspect-[2/1] h-[90vh] w-full flex-col overflow-y-auto rounded-t-lg bg-white md:h-auto md:w-[90vw] md:flex-row md:rounded-none lg:w-[80vw]">
+											<Dialog.Close asChild>
+												<Button
+													variant="tertiary"
+													className="absolute right-8 top-8 text-white md:top-12 md:text-gray-900"
+												>
+													<MdClose />
+												</Button>
+											</Dialog.Close>
+
+											<div className="flex aspect-square shrink-0 items-center bg-gray-400 md:sticky md:top-0 md:flex-1">
+												<div className="aspect-video w-full bg-gray-200" />
+											</div>
+
+											<div className="h-fit space-y-16 py-16 px-8 md:flex-1 md:px-12 lg:px-16">
+												<section>
+													<p className="font-bold">
+														By&nbsp;
+														<Link
+															target="_blank"
+															href="https://www.instagram.com/najobriks"
+															className="underline"
+														>
+															Najo Briks Construction
+														</Link>
+													</p>
+													<h1 className="text-2xl">Residential Driveway</h1>
+													<br />
+													<p>
+														Lorem ipsum, dolor sit amet consectetur adipisicing
+														elit. Dolor, accusantium? Quasi assumenda voluptate
+														error nesciunt placeat! Consequuntur incidunt,
+														temporibus nesciunt pariatur harum quisquam
+														voluptatum dicta facilis ut similique minus, soluta
+														at consectetur ipsa corporis eos doloribus atque
+														tempora molestias voluptatibus. Magni esse nihil
+														debitis mollitia. Culpa nulla quisquam veritatis!
+														Velit?
+													</p>
+												</section>
+												<section>
+													<h2 className="text-lg">Products in this photo</h2>
+
+													<ul className="mt-8 space-y-4">
+														<ProductCard
+															name="Colonial Classic"
+															startingSku={{ price: 203, unit: 'sqft' }}
+															link="/product/colonial_classic"
+														/>
+														<ProductCard
+															name="Banjo"
+															startingSku={{ price: 219, unit: 'sqft' }}
+															link="/product/banjo"
+														/>
+													</ul>
+												</section>
+											</div>
+										</div>
+									</div>
+								</Dialog.Content>
+							</Dialog.Portal>
+
+							<ul className="contents">
+								<GalleryImage />
+								<GalleryImage />
+								<GalleryImage />
+								<GalleryImage />
+								<GalleryImage />
+								<GalleryImage />
+								<GalleryImage />
+								<GalleryImage />
+							</ul>
+						</Dialog.Root>
 					</div>
 
 					<Button variant="secondary" className="mx-auto">

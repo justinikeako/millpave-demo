@@ -246,7 +246,9 @@ function Page() {
 						<Button variant="primary">Find an Installer</Button>
 					</div>
 
-					<div className="aspect-video w-full bg-gray-200 md:w-[30vw]"></div>
+					<div className="grid aspect-video w-full place-items-center bg-gray-200 text-center text-2xl text-gray-300 md:w-[30vw]">
+						Installation Video
+					</div>
 				</RevealSection>
 
 				{/* About */}

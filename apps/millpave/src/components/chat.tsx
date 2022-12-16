@@ -54,11 +54,11 @@ function Chat() {
 	// Very crude auto messaging
 	const [messageQueue, setMessageQueue] = useState([
 		{
-			text: "This chat isn't actually live, just an interactive demo. It would serve as a semi-automated way for customers to interact with the company.",
+			text: "This chat isn't actually live, just an interactive demo. It could serve as a semi-automated way for customers to interact with the company.",
 			delay: 15000
 		},
 		{
-			text: 'Using a service like freshchat by freshworks or tawk.to, prospects could traverse the site, get answers to their questions, and even generate quotes using the chat bot that would live here 24/7.',
+			text: 'Using a service like freshchat or tawk.to, prospects could traverse the site, get answers to their questions, and even generate quotes using the chat bot that would live here 24/7.',
 			delay: 20000
 		},
 		{

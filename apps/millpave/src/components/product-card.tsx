@@ -32,7 +32,8 @@ function ProductCard({
 					<h3 className="text-lg">{name}</h3>
 				)}
 				<p>
-					Starting at {formatPrice(startingSku.price)} per {startingSku.unit}
+					Starting at <del>{formatPrice(startingSku.price)}</del>&nbsp;
+					{formatPrice(startingSku.price - 0.01)} per {startingSku.unit}
 				</p>
 				<Button variant="secondary" className="w-fit" asChild>
 					<Link href={link}>Learn More</Link>

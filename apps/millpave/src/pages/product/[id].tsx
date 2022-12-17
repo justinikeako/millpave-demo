@@ -226,7 +226,8 @@ function Page() {
 							<div className="flex flex-wrap justify-between text-lg">
 								<div className="flex items-center gap-4">
 									<p>
-										{formatPrice(currentSku.price)} per {currentSku.unit}
+										<del>{formatPrice(currentSku.price)}</del>&nbsp;
+										{formatPrice(currentSku.price - 0.01)} per {currentSku.unit}
 									</p>
 									{currentSku.unit === 'sqft' && (
 										<>

@@ -84,17 +84,46 @@ const variants = {
 const MotionNavLink = motion(NavLink);
 
 function Header() {
-	const [open, setOpen] = useState(false);
+	const [menuOpen, setMenuOpen] = useState(false);
+	const [promoOpen, setPromoOpen] = useState(true);
 
 	return (
-		<Dialog.Root open={open} modal onOpenChange={setOpen}>
+		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>
 			<motion.header
 				initial={{ y: 100, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 				transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-				className="mb-12 select-none px-8 py-8 md:px-24 lg:px-32"
 			>
-				<nav className="flex items-center justify-between">
+				{promoOpen && (
+					<div className="relative flex flex-col items-center justify-center gap-4 bg-gray-900 p-4 text-white md:flex-row">
+						<p>Prices from $202.99/ft² in our Holiday Sale!</p>{' '}
+						<div className="flex gap-2">
+							<Button
+								variant="primary"
+								className="bg-white text-gray-900 hover:bg-gray-100 active:bg-gray-200"
+								asChild
+							>
+								<Link href="/products/all">See all Deals</Link>
+							</Button>
+							<Button
+								variant="secondary"
+								className="border-gray-500 text-white hover:bg-gray-800 active:bg-gray-700 md:hidden"
+								onClick={() => setPromoOpen(false)}
+							>
+								Dismiss
+							</Button>
+						</div>
+						<Button
+							variant="tertiary"
+							className="absolute right-8 max-md:hidden"
+							onClick={() => setPromoOpen(false)}
+						>
+							<MdClose />
+						</Button>
+					</div>
+				)}
+
+				<nav className="mb-12 flex select-none items-center justify-between px-8 py-8 md:px-24 lg:px-32">
 					<Link href="/">
 						<div className="max-sm:hidden">
 							<Logo withText />
@@ -119,7 +148,7 @@ function Header() {
 
 					{/* Mobile Menu */}
 					<AnimatePresence>
-						{open && (
+						{menuOpen && (
 							<Dialog.DialogPortal forceMount>
 								<Dialog.Overlay />
 								<Dialog.DialogContent forceMount asChild>
@@ -131,7 +160,7 @@ function Header() {
 										className="fixed inset-0 flex flex-col bg-gray-900 text-white"
 									>
 										<div className="flex items-center justify-between px-8 py-8 md:px-24">
-											<Link href="/" onClick={() => setOpen(false)}>
+											<Link href="/" onClick={() => setMenuOpen(false)}>
 												<div className="max-sm:hidden">
 													<Logo withText />
 												</div>
@@ -159,35 +188,35 @@ function Header() {
 											<MotionNavLink
 												variants={variants.item}
 												href="/products/all"
-												onClick={() => setOpen(false)}
+												onClick={() => setMenuOpen(false)}
 											>
 												Products
 											</MotionNavLink>
 											<MotionNavLink
 												variants={variants.item}
 												href="/gallery"
-												onClick={() => setOpen(false)}
+												onClick={() => setMenuOpen(false)}
 											>
 												Get Inspired
 											</MotionNavLink>
 											<MotionNavLink
 												variants={variants.item}
 												href="/#where-to-buy"
-												onClick={() => setOpen(false)}
+												onClick={() => setMenuOpen(false)}
 											>
 												Where to Buy
 											</MotionNavLink>
 											<MotionNavLink
 												variants={variants.item}
 												href="/contact"
-												onClick={() => setOpen(false)}
+												onClick={() => setMenuOpen(false)}
 											>
 												Contact Us
 											</MotionNavLink>
 											<MotionNavLink
 												variants={variants.item}
 												href="/contact?form=quote"
-												onClick={() => setOpen(false)}
+												onClick={() => setMenuOpen(false)}
 											>
 												Get A Quote
 											</MotionNavLink>

@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import { PaverEstimator } from '../../components/estimator';
 import { Suspense, useState } from 'react';
 import { InspirationSection } from '../../sections/inspiration';
-import { createProxySSGHelpers } from '@trpc/react-query/ssg';
+import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
 import {
 	formatPrice,
@@ -331,7 +331,7 @@ export const getStaticProps = async (
 ) => {
 	const { prisma } = await createContextInner({});
 
-	const ssg = await createProxySSGHelpers({
+	const ssg = await createServerSideHelpers({
 		router: appRouter,
 		ctx: { prisma },
 		transformer: superjson

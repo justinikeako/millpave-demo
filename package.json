@@ -17,12 +17,12 @@
 		"format": "prettier --write \"**/*.{ts,tsx,md}\""
 	},
 	"devDependencies": {
-		"eslint": "8.18.0",
-		"prettier": "^2.7.1",
-		"turbo": "latest"
+		"eslint": "8.38.0",
+		"prettier": "^2.8.7",
+		"turbo": "^1.9.1"
 	},
 	"engines": {
 		"node": ">=14.0.0"
 	},
-	"packageManager": "pnpm@7.9.5"
+	"packageManager": "pnpm@8.2.0"
 }

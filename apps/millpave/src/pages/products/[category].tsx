@@ -5,7 +5,7 @@ import { MdCheck } from 'react-icons/md';
 import { appRouter } from '../../server/trpc/router/_app';
 import { createContextInner } from '../../server/trpc/context';
 import superjson from 'superjson';
-import { createProxySSGHelpers } from '@trpc/react-query/ssg';
+import { createServerSideHelpers } from '@trpc/react-query/server';
 import { trpc } from '../../utils/trpc';
 import NextError from 'next/error';
 import { Button } from '../../components/button';
@@ -166,7 +166,7 @@ export const getStaticProps = async (
 ) => {
 	const { prisma } = await createContextInner({});
 
-	const ssg = await createProxySSGHelpers({
+	const ssg = await createServerSideHelpers({
 		router: appRouter,
 		ctx: { prisma },
 		transformer: superjson // optional - adds superjson serialization

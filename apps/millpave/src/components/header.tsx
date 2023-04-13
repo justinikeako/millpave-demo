@@ -100,7 +100,7 @@ function Header() {
 						<div className="flex gap-2">
 							<Button
 								variant="primary"
-								className="bg-white text-gray-900 hover:bg-gray-100 active:bg-gray-200"
+								className="!bg-white !text-gray-900 hover:!bg-gray-100 active:!bg-gray-200"
 								asChild
 							>
 								<Link href="/products/all">See all Deals</Link>

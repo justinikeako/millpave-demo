@@ -222,7 +222,14 @@ function Page() {
 					>
 						{/* Basic Info */}
 						<section className="space-y-2">
-							<h1 className="font-display text-4xl">{product.displayName}</h1>
+							<div>
+								<p className="font-display text-lg">
+									<Link href={`/products/${product.category.id}`}>
+										{product.category.displayName}
+									</Link>
+								</p>
+								<h1 className="font-display text-4xl">{product.displayName}</h1>
+							</div>
 							<div className="flex flex-wrap justify-between text-lg">
 								<div className="flex items-center gap-4">
 									<p>

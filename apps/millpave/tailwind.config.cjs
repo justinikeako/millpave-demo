@@ -35,7 +35,7 @@ module.exports = {
 			],
 			'4xl': [
 				'clamp(3.052rem, calc(3.052rem + ((1vw - 0.4rem) * 5.202)), 5.653rem);',
-				{ lineHeight: '1.15', fontWeight: '600' }
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.02em' }
 			]
 		},
 

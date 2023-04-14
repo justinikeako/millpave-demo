@@ -1,4 +1,4 @@
-import { pineconeIndex } from '../utils/pinecone-index';
+import { initPineconeIndex } from '../utils/pinecone-index';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { VectorDBQAChain } from 'langchain/chains';
@@ -10,6 +10,7 @@ const query =
 const model = openai;
 
 async function searchForDocs() {
+	const pineconeIndex = await initPineconeIndex();
 	const vectorStore = await PineconeStore.fromExistingIndex(
 		new OpenAIEmbeddings(),
 		{ pineconeIndex }

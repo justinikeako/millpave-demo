@@ -5,7 +5,7 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { VectorOperationsApi } from '@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch';
-import { pineconeIndex } from '../utils/pinecone-index';
+import { initPineconeIndex } from '../utils/pinecone-index';
 import { PrismaClient } from '@prisma/client';
 
 async function getUrls() {
@@ -78,6 +78,8 @@ async function splitDocsIntoChunks(docs: Document[]): Promise<Document[]> {
 		const docs = await splitDocsIntoChunks(rawDocs);
 
 		// Embed docs into pinecone
+
+		const pineconeIndex = await initPineconeIndex();
 		await embedDocuments(pineconeIndex, docs, new OpenAIEmbeddings());
 	} catch (error) {
 		console.log('error occured:', error);

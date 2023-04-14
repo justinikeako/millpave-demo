@@ -17,6 +17,7 @@
 		"dquery": "tsx -r dotenv/config scripts/demo-query.ts"
 	},
 	"dependencies": {
+		"@microsoft/fetch-event-source": "^2.0.1",
 		"@pinecone-database/pinecone": "^0.0.12",
 		"@prisma/client": "^4.12.0",
 		"@radix-ui/react-dialog": "^1.0.3",

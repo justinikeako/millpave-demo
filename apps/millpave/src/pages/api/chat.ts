@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
-// import { openai } from '../../../utils/openai-client';
-import { initPineconeIndex } from '../../../utils/pinecone-index';
-import { makeChain } from '../../../utils/makechain';
+import { pinecone } from '../../utils/pinecone-client';
+import { makeChain } from '../../utils/makechain';
+import { PINECONE_INDEX_NAME } from '../../config/pinecone';
 
 export default async function handler(
 	req: NextApiRequest,
@@ -19,7 +19,7 @@ export default async function handler(
 	const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
 
 	// Create vectorstore
-	const pineconeIndex = await initPineconeIndex();
+	const pineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
 	const vectorStore = await PineconeStore.fromExistingIndex(
 		new OpenAIEmbeddings(),
 		{ pineconeIndex }
@@ -37,7 +37,6 @@ export default async function handler(
 
 	sendData(JSON.stringify({ data: '' }));
 
-	// const model = openai;
 	// Create the chain
 	const chain = makeChain(vectorStore, async (token: string) => {
 		sendData(JSON.stringify({ data: token }));

@@ -3,7 +3,6 @@ import { useMemo, useRef, useState } from 'react';
 import { Button } from './button';
 import { MdExpandMore, MdForum, MdSend } from 'react-icons/md';
 import { AnimatePresence, motion } from 'framer-motion';
-import { fetchEventSource } from '@microsoft/fetch-event-source';
 import ReactMarkdown from 'react-markdown';
 
 type Message = {
@@ -59,10 +58,8 @@ function Chat() {
 		setDraftText('');
 		setChatState((state) => ({ ...state, pending: '' }));
 
-		const ctrl = new AbortController();
-
 		try {
-			fetchEventSource('/api/chat', {
+			const response = await fetch('/api/chat', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -70,34 +67,34 @@ function Chat() {
 				body: JSON.stringify({
 					question,
 					history
-				}),
-				signal: ctrl.signal,
-				onmessage: (event) => {
-					if (event.data === '[DONE]') {
-						setChatState((state) => ({
-							history: [...state.history, [question, state.pending ?? '']],
-							messages: [
-								...state.messages,
-								{
-									text: state.pending ?? '',
-									sender: 'gpt'
-								}
-							],
-							pending: undefined
-						}));
-						setLoading(false);
-						ctrl.abort();
-					} else {
-						const data = JSON.parse(event.data);
-						setChatState((state) => ({
-							...state,
-							pending: (state.pending ?? '') + data.data
-						}));
-					}
-				}
+				})
 			});
+			const data = await response.json();
+			console.log('data', data);
+
+			if (data.error) {
+				console.error(data.error);
+			} else {
+				setChatState((state) => ({
+					...state,
+					messages: [
+						...state.messages,
+						{
+							sender: 'gpt',
+							text: data.text
+						}
+					],
+					history: [...state.history, [question, data.text]]
+				}));
+			}
+			console.log('messageState', chatState);
+
+			setLoading(false);
 		} catch (error) {
 			setLoading(false);
+			console.error(
+				'An error occurred while fetching the data. Please try again.'
+			);
 			console.log('error', error);
 		}
 	}

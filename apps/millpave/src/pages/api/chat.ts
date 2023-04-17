@@ -11,6 +11,12 @@ export default async function handler(
 ) {
 	const { question, history } = req.body;
 
+	//only accept post requests
+	if (req.method !== 'POST') {
+		res.status(405).json({ error: 'Method not allowed' });
+		return;
+	}
+
 	if (!question) {
 		return res.status(400).json({ message: 'No question in the request' });
 	}
@@ -18,42 +24,32 @@ export default async function handler(
 	// OpenAI recommends replacing newlines with spaces for best results
 	const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
 
-	// Create vectorstore
-	const pineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
-	const vectorStore = await PineconeStore.fromExistingIndex(
-		new OpenAIEmbeddings(),
-		{ pineconeIndex }
-	);
-
-	res.writeHead(200, {
-		'Content-Type': '	text/event-stream',
-		'Cache-Control': 'no-cache, no-transform',
-		Connection: 'keep-alive'
-	});
-
-	const sendData = (data: string) => {
-		res.write(`data: ${data}\n\n`);
-	};
-
-	sendData(JSON.stringify({ data: '' }));
-
-	// Create the chain
-	const chain = makeChain(vectorStore, async (token: string) => {
-		sendData(JSON.stringify({ data: token }));
-	});
-
 	try {
-		// Ask a question
+		const index = pinecone.Index(PINECONE_INDEX_NAME);
+
+		// Create vector store
+		const vectorStore = await PineconeStore.fromExistingIndex(
+			new OpenAIEmbeddings({}),
+			{
+				pineconeIndex: index,
+				textKey: 'text'
+			}
+		);
+
+		// Create chain
+		const chain = makeChain(vectorStore);
+
+		// Ask a question using chat history
 		const response = await chain.call({
 			question: sanitizedQuestion,
 			chat_history: history || []
 		});
 
 		console.log('response', response);
-	} catch (error) {
+
+		res.status(200).json(response);
+	} catch (error: any) {
 		console.log('error', error);
-	} finally {
-		sendData('[DONE]');
-		res.end();
+		res.status(500).json({ error: error.message || 'Something went wrong' });
 	}
 }

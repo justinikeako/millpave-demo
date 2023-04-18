@@ -24,7 +24,7 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 	const total = calculateTotal(pallet.area, piece.area, sku);
 
 	return (
-		<section className="bg-gray-900 text-white">
+		<section data-ai-hidden className="bg-gray-900 text-white">
 			<div className="align-center flex justify-between p-8">
 				<h2 className="text-lg">Cost Estimator</h2>
 

@@ -26,6 +26,7 @@ import dynamic from 'next/dynamic';
 import { extractDetail } from '../../utils/product';
 import { RevealSection } from '../../components/reveal-section';
 import { motion } from 'framer-motion';
+import { Root as VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 const ProductViewer3D = dynamic(
 	() => import('../../components/product-viewer-3d'),
@@ -85,9 +86,13 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 							<label
 								htmlFor={id}
 								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center border border-gray-200 bg-gray-200 text-lg text-gray-400 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-black"
+								data-ai-hidden
 							>
 								{showModelViewer && index === 3 && '3D'}
 							</label>
+							<VisuallyHidden>
+								3D virtual samples are available for this product
+							</VisuallyHidden>
 						</div>
 					);
 				})}
@@ -162,7 +167,10 @@ function Section({
 	...props
 }: React.PropsWithChildren<SectionProps>) {
 	return (
-		<section className={classNames('space-y-2', props.className)}>
+		<section
+			data-ai-hidden={heading.includes('—')}
+			className={classNames('space-y-2', props.className)}
+		>
 			<h2 className="text-lg">{heading}</h2>
 			{children}
 		</section>
@@ -225,12 +233,19 @@ function Page() {
 							<div>
 								<p className="font-display text-lg">
 									<Link href={`/products/${product.category.id}`}>
+										<VisuallyHidden>Category:</VisuallyHidden>
 										{product.category.displayName}
 									</Link>
 								</p>
-								<h1 className="font-display text-4xl">{product.displayName}</h1>
+								<h1 className="font-display text-4xl">
+									<VisuallyHidden>Product Name:</VisuallyHidden>
+									{product.displayName}
+								</h1>
 							</div>
-							<div className="flex flex-wrap justify-between text-lg">
+							<div
+								className="flex flex-wrap justify-between text-lg"
+								data-ai-hidden
+							>
 								<div className="flex items-center gap-4">
 									<p>
 										<del>{formatPrice(currentSku.price)}</del>&nbsp;

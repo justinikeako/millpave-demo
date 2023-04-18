@@ -1,3 +1,4 @@
+import { Sku } from '@prisma/client';
 import type { CheerioAPI, load as LoadT } from 'cheerio';
 import { Document } from 'langchain/document';
 import { BaseDocumentLoader } from 'langchain/document_loaders';
@@ -41,7 +42,27 @@ export class CustomWebLoader
 			.end()
 			.text();
 
-		const cleanedContent = content.replace(/\s+/g, ' ').trim();
+		const data = JSON.parse($('#__NEXT_DATA__').text()) as {
+			props: {
+				pageProps: {
+					trpcState: {
+						json: { queries: { state: { data: { skus: Sku[] } } }[] };
+					};
+				};
+			};
+		};
+
+		let skuString = '';
+
+		const skus =
+			data.props.pageProps?.trpcState.json.queries[0]?.state.data.skus;
+		if (skus) {
+			for (const sku of skus) {
+				skuString += ` ${sku.displayName}: JMD $${sku.price} per ${sku.unit}.`;
+			}
+		}
+
+		const cleanedContent = (content + skuString).replace(/\s+/g, ' ').trim();
 
 		const contentLength = cleanedContent?.match(/\b\w+\b/g)?.length ?? 0;
 

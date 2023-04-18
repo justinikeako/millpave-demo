@@ -1,13 +1,12 @@
 import { Document } from 'langchain/document';
 import * as fs from 'fs/promises';
 import { CustomWebLoader } from '../utils/custom_web_loader';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { PineconeStore } from 'langchain/vectorstores/pinecone';
+import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { VectorOperationsApi } from '@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch';
-import { pinecone } from '../utils/pinecone-client';
+import { supabaseClient } from '../utils/supabase-client';
 import { PrismaClient } from '@prisma/client';
-import { PINECONE_INDEX_NAME } from '../config/pinecone';
 
 async function getUrls() {
 	const prisma = new PrismaClient();
@@ -28,6 +27,7 @@ async function extractDataFromUrl(url: string): Promise<Document[]> {
 	try {
 		const loader = new CustomWebLoader(url);
 		const docs = await loader.load();
+
 		return docs;
 	} catch (error) {
 		console.error(`Error while extracting data from ${url}: ${error}`);
@@ -50,20 +50,21 @@ async function extractDataFromUrls(urls: string[]): Promise<Document[]> {
 }
 
 async function embedDocuments(
-	pineconeIndex: VectorOperationsApi,
+	client: SupabaseClient,
 	docs: Document[],
 	embeddings: OpenAIEmbeddings
 ) {
 	console.log('Creating embeddings...');
-	await PineconeStore.fromDocuments(docs, embeddings, { pineconeIndex });
-	console.log('Embeddings successfully stored in pinecone');
+	await SupabaseVectorStore.fromDocuments(docs, embeddings, { client });
+	console.log('Embeddings successfully stored in supabase');
 }
 
 async function splitDocsIntoChunks(docs: Document[]): Promise<Document[]> {
 	const textSplitter = new RecursiveCharacterTextSplitter({
-		chunkSize: 2000,
-		chunkOverlap: 200
+		chunkSize: 200,
+		chunkOverlap: 20
 	});
+
 	return await textSplitter.splitDocuments(docs);
 }
 
@@ -78,10 +79,12 @@ async function splitDocsIntoChunks(docs: Document[]): Promise<Document[]> {
 		// Split docs into chunks for openai context window
 		const docs = await splitDocsIntoChunks(rawDocs);
 
-		// Embed docs into pinecone
-
-		const pineconeIndex = pinecone.Index(PINECONE_INDEX_NAME);
-		await embedDocuments(pineconeIndex, docs, new OpenAIEmbeddings());
+		// Embed docs into supabase
+		await embedDocuments(
+			supabaseClient,
+			docs,
+			new OpenAIEmbeddings({ modelName: 'text-embedding-ada-002' })
+		);
 	} catch (error) {
 		console.log('error occured:', error);
 	}

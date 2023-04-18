@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import { pinecone } from '../../utils/pinecone-client';
+import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
+import { supabaseClient } from '../../utils/supabase-client';
 import { makeChain } from '../../utils/makechain';
-import { PINECONE_INDEX_NAME } from '../../config/pinecone';
 
 export default async function handler(
 	req: NextApiRequest,
@@ -25,15 +24,10 @@ export default async function handler(
 	const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
 
 	try {
-		const index = pinecone.Index(PINECONE_INDEX_NAME);
-
 		// Create vector store
-		const vectorStore = await PineconeStore.fromExistingIndex(
-			new OpenAIEmbeddings({}),
-			{
-				pineconeIndex: index,
-				textKey: 'text'
-			}
+		const vectorStore = await SupabaseVectorStore.fromExistingIndex(
+			new OpenAIEmbeddings({ modelName: 'text-embedding-ada-002' }),
+			{ client: supabaseClient }
 		);
 
 		// Create chain

@@ -3,6 +3,9 @@ import type { CheerioAPI, load as LoadT } from 'cheerio';
 import { Document } from 'langchain/document';
 import { BaseDocumentLoader } from 'langchain/document_loaders';
 import type { DocumentLoader } from 'langchain/document_loaders';
+import { formatPrice } from './format';
+import { extractDetail } from './product';
+import { PaverDetails } from '../types/product';
 
 export class CustomWebLoader
 	extends BaseDocumentLoader
@@ -37,7 +40,7 @@ export class CustomWebLoader
 
 		const content = $('#__next')
 			.clone()
-			.find('header, footer, del')
+			.find('header, footer, del, [data-ai-hidden="true"]')
 			.remove()
 			.end()
 			.text();
@@ -46,7 +49,11 @@ export class CustomWebLoader
 			props: {
 				pageProps: {
 					trpcState: {
-						json: { queries: { state: { data: { skus: Sku[] } } }[] };
+						json: {
+							queries: {
+								state: { data: { skus: Sku[]; productDetails: PaverDetails } };
+							}[];
+						};
 					};
 				};
 			};
@@ -56,9 +63,17 @@ export class CustomWebLoader
 
 		const skus =
 			data.props.pageProps?.trpcState.json.queries[0]?.state.data.skus;
-		if (skus) {
+		const productDetails =
+			data.props.pageProps?.trpcState.json.queries[0]?.state.data
+				.productDetails;
+
+		if (skus && productDetails) {
 			for (const sku of skus) {
-				skuString += ` ${sku.displayName}: JMD $${sku.price} per ${sku.unit}.`;
+				skuString += ` ${sku.displayName}: JMD $${sku.price} per ${
+					sku.unit
+				} and ${formatPrice(
+					sku.price / extractDetail(productDetails, 'pcs_per_sqft')
+				)}. `;
 			}
 		}
 

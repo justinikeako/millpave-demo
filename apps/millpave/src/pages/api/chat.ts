@@ -10,10 +10,9 @@ export default async function handler(
 ) {
 	const { question, history } = req.body;
 
-	//only accept post requests
+	// Only accept post requests
 	if (req.method !== 'POST') {
-		res.status(405).json({ error: 'Method not allowed' });
-		return;
+		return res.status(405).json({ error: 'Method not allowed' });
 	}
 
 	if (!question) {

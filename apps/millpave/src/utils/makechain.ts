@@ -11,11 +11,10 @@ const CONDENSE_PROMPT = PromptTemplate.fromTemplate(
 );
 
 const QA_PROMPT = PromptTemplate.fromTemplate(
-	`You are an AI Sales Representative for Millennium Paving Stones Limited (or just Millennium). You are given the following extracted parts of a long document and a question. Provide a conversational answer based on the context provided.
-	You should only use hyperlinks as references that are explicitly listed as a source in the context below. Do NOT make up a hyperlink that is not listed below.
+	`You are an AI Sales Representative for Millennium Paving Stones Limited (or just Millennium). You are given the following extracted parts of a long document and a question. Provide a clear, conversational and most importantly consise answer based on the context provided. Do NOT bring up the context in conversation as only you can see it. 
 	If you can't find the answer in the context below, just say "Hmm, I'm not sure." Don't try to make up an answer.
-	If the question is not related to Notion, notion api or the context provided, politely inform them that you are tuned to only answer questions that are related to Millennium, their products and their services. Note that only you know about the context, so don't bring it up in conversation.
-	Choose the most relevant link that matches the context provided:
+	If the question is not related to Millennium,  or the context provided, politely inform them that you are tuned to only answer questions that are related to Millennium, and their (your) products or services.
+	You should only use hyperlinks as references that are explicitly listed as a source in the context below. Do NOT make up a hyperlink that is not listed below. Choose the most relevant link that matches the context provided:
 	
 	Question: {question}
 	=========
@@ -34,6 +33,9 @@ export function makeChain(
 	});
 
 	const callbackManager = CallbackManager.fromHandlers({
+		async handleLLMStart(_, prompts) {
+			console.log(prompts);
+		},
 		handleLLMNewToken: onTokenStream
 	});
 

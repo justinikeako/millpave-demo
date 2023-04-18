@@ -90,13 +90,15 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 							>
 								{showModelViewer && index === 3 && '3D'}
 							</label>
-							<VisuallyHidden>
-								3D virtual samples are available for this product
-							</VisuallyHidden>
 						</div>
 					);
 				})}
 			</div>
+			{showModelViewer && (
+				<VisuallyHidden>
+					3D virtual samples are available for this product.
+				</VisuallyHidden>
+			)}
 		</motion.div>
 	);
 }
@@ -171,7 +173,10 @@ function Section({
 			data-ai-hidden={heading.includes('—')}
 			className={classNames('space-y-2', props.className)}
 		>
-			<h2 className="text-lg">{heading}</h2>
+			<h2 className="text-lg">
+				{heading}
+				<VisuallyHidden>:</VisuallyHidden>
+			</h2>
 			{children}
 		</section>
 	);
@@ -236,10 +241,12 @@ function Page() {
 										<VisuallyHidden>Category:</VisuallyHidden>
 										{product.category.displayName}
 									</Link>
+									<VisuallyHidden>.</VisuallyHidden>
 								</p>
 								<h1 className="font-display text-4xl">
 									<VisuallyHidden>Product Name:</VisuallyHidden>
 									{product.displayName}
+									<VisuallyHidden>.</VisuallyHidden>
 								</h1>
 							</div>
 							<div

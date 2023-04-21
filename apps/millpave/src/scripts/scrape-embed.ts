@@ -6,20 +6,12 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { supabaseClient } from '../utils/supabase-client';
-import { PrismaClient } from '@prisma/client';
+import { getCatalogueDocument, getProductDocuments } from '../utils/db-loaders';
 
 async function getUrls() {
-	const prisma = new PrismaClient();
-
-	const ids = await prisma.product.findMany({ select: { id: true } });
-	const productUrls = ids.map(
-		({ id }) => `https://millpave.notprimitive.com/product/${id}`
-	);
-
 	return [
-		'https://millpave.notprimitive.com/',
-		'https://millpave.notprimitive.com/contact',
-		...productUrls
+		'https://beta.millpave.notprimitive.com/',
+		'https://beta.millpave.notprimitive.com/contact'
 	];
 }
 
@@ -40,8 +32,16 @@ async function extractDataFromUrls(urls: string[]): Promise<Document[]> {
 	const documents: Document[] = [];
 	for (const url of urls) {
 		const docs = await extractDataFromUrl(url);
+
 		documents.push(...docs);
 	}
+
+	const productDocs = await getProductDocuments();
+	documents.push(...productDocs);
+
+	const catalogueDoc = await getCatalogueDocument();
+	documents.push(...catalogueDoc);
+
 	console.log('Data successfully extracted from urls');
 	const json = JSON.stringify(documents);
 	await fs.writeFile('millpave.json', json);
@@ -61,8 +61,8 @@ async function embedDocuments(
 
 async function splitDocsIntoChunks(docs: Document[]): Promise<Document[]> {
 	const textSplitter = new RecursiveCharacterTextSplitter({
-		chunkSize: 200,
-		chunkOverlap: 20
+		chunkSize: 1000,
+		chunkOverlap: 200
 	});
 
 	return await textSplitter.splitDocuments(docs);
@@ -77,14 +77,14 @@ async function splitDocsIntoChunks(docs: Document[]): Promise<Document[]> {
 		const rawDocs = await extractDataFromUrls(urls);
 
 		// Split docs into chunks for openai context window
-		const docs = await splitDocsIntoChunks(rawDocs);
+		// const docs = await splitDocsIntoChunks(rawDocs);
 
-		// Embed docs into supabase
-		await embedDocuments(
-			supabaseClient,
-			docs,
-			new OpenAIEmbeddings({ modelName: 'text-embedding-ada-002' })
-		);
+		// // Embed docs into supabase
+		// await embedDocuments(
+		// 	supabaseClient,
+		// 	docs,
+		// 	new OpenAIEmbeddings({ modelName: 'text-embedding-ada-002' })
+		// );
 	} catch (error) {
 		console.log('error occured:', error);
 	}

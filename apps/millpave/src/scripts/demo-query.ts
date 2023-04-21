@@ -5,7 +5,7 @@ import { VectorDBQAChain } from 'langchain/chains';
 import { OpenAI } from 'langchain/llms/openai';
 import { CallbackManager } from 'langchain/callbacks';
 
-export const openai = new OpenAI(
+const openai = new OpenAI(
 	{
 		modelName: 'gpt-3.5-turbo',
 		openAIApiKey: process.env.OPENAI_API_KEY,
@@ -19,13 +19,13 @@ export const openai = new OpenAI(
 	{}
 );
 
-const query = "What's the price of banjo?";
+const query = 'Give me the price of colonial classic.';
 
 const model = openai;
 
 async function searchForDocs() {
 	const vectorStore = await SupabaseVectorStore.fromExistingIndex(
-		new OpenAIEmbeddings(),
+		new OpenAIEmbeddings({ modelName: 'text-embedding-ada-002' }),
 		{ client: supabaseClient }
 	);
 

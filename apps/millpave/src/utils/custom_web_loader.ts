@@ -1,11 +1,7 @@
-import { Sku } from '@prisma/client';
 import type { CheerioAPI, load as LoadT } from 'cheerio';
 import { Document } from 'langchain/document';
 import { BaseDocumentLoader } from 'langchain/document_loaders';
 import type { DocumentLoader } from 'langchain/document_loaders';
-import { formatPrice } from './format';
-import { extractDetail } from './product';
-import { PaverDetails } from '../types/product';
 
 export class CustomWebLoader
 	extends BaseDocumentLoader
@@ -36,7 +32,11 @@ export class CustomWebLoader
 			$(this).append(' ');
 		});
 
-		const title = $('h1').text().replace(/\s+/g, ' ').trim();
+		const title = $('title')
+			.text()
+			.replace('— Millennium Paving Stones', '')
+			.replace(/\s+/g, ' ')
+			.trim();
 
 		const content = $('#__next')
 			.clone()
@@ -45,39 +45,13 @@ export class CustomWebLoader
 			.end()
 			.text();
 
-		const data = JSON.parse($('#__NEXT_DATA__').text()) as {
-			props: {
-				pageProps: {
-					trpcState: {
-						json: {
-							queries: {
-								state: { data: { skus: Sku[]; productDetails: PaverDetails } };
-							}[];
-						};
-					};
-				};
-			};
-		};
-
-		let skuString = '';
-
-		const skus =
-			data.props.pageProps?.trpcState.json.queries[0]?.state.data.skus;
-		const productDetails =
-			data.props.pageProps?.trpcState.json.queries[0]?.state.data
-				.productDetails;
-
-		if (skus && productDetails) {
-			for (const sku of skus) {
-				skuString += ` ${sku.displayName}: JMD $${sku.price} per ${
-					sku.unit
-				} and ${formatPrice(
-					sku.price / extractDetail(productDetails, 'pcs_per_sqft')
-				)}. `;
-			}
-		}
-
-		const cleanedContent = (content + skuString).replace(/\s+/g, ' ').trim();
+		const cleanedContent = content
+			.replace(/\s+/g, ' ')
+			.trim()
+			.replace(
+				'Our Process Starting from zero. Integer a velit in sapien aliquam consectetur et vitae ligula. Integer ornare egestas enim a malesuada. Suspendisse arcu lectus, blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula neque at laoreet. Nullam efficitur mauris sit amet accumsan pulvinar.',
+				''
+			);
 
 		const contentLength = cleanedContent?.match(/\b\w+\b/g)?.length ?? 0;
 

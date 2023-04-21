@@ -96,7 +96,7 @@ function Header() {
 			>
 				{promoOpen && (
 					<div className="relative flex flex-col items-center justify-center gap-4 bg-gray-900 p-4 text-white md:flex-row">
-						<p>Prices from $202.99/ft² in our Holiday Sale!</p>{' '}
+						<p>Prices from $203/ft² in our Summer Sale!</p>{' '}
 						<div className="flex gap-2">
 							<Button
 								variant="primary"

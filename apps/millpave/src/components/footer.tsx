@@ -3,7 +3,7 @@ import { Logo } from './logo';
 
 function Footer() {
 	return (
-		<footer className="mt-24 space-y-16 bg-gray-900 px-8 pt-12 pb-16 text-white md:px-24 md:pt-16 lg:mt-32 lg:px-32 lg:pt-24">
+		<footer className="mt-24 space-y-16 bg-gray-900 px-8 pb-16 pt-12 text-white md:px-24 md:pt-16 lg:mt-32 lg:px-32 lg:pt-24">
 			<div className="flex flex-col justify-between gap-16 md:flex-row">
 				<Link href="/">
 					<Logo withText />
@@ -95,7 +95,7 @@ function Footer() {
 			</p>
 
 			<div className="flex flex-wrap justify-between">
-				<p>©2022 Millennium Paving Stones Ltd.</p>
+				<p>©2023 Millennium Paving Stones Ltd.</p>
 				<p>
 					Site by&nbsp;
 					<Link className="underline" href="https://notprimitive.com">

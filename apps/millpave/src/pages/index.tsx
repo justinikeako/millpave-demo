@@ -151,7 +151,7 @@ function Page() {
 						of art.
 					</p>
 
-					<div className="flex flex-col space-y-8">
+					<div className="flex flex-col space-y-8" data-ai-hidden>
 						<ul className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
 							<ProductCard
 								variant="display"
@@ -224,7 +224,10 @@ function Page() {
 				</RevealSection>
 
 				{/* Process */}
-				<RevealSection className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
+				<RevealSection
+					className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
+					data-ai-hidden
+				>
 					<div className="flex-1 md:order-2">
 						<p className="font-display text-lg">Our Process</p>
 						<h2 className="max-w-[20ch] font-display text-3xl">

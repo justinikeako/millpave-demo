@@ -150,7 +150,7 @@ export async function getCatalogueDocument() {
 		slabs_blocks: 'Slabs and Blocks'
 	};
 
-	let content = 'Millennium sells products in the folliwng categories: ';
+	let content = 'Millennium sells products in the following categories: ';
 
 	content +=
 		formatObjectList(categories, 'id', {

@@ -16,6 +16,12 @@ importers:
 
   apps/millpave:
     dependencies:
+      '@microsoft/fetch-event-source':
+        specifier: ^2.0.1
+        version: 2.0.1
+      '@pinecone-database/pinecone':
+        specifier: ^0.0.14
+        version: 0.0.14
       '@prisma/client':
         specifier: ^4.12.0
         version: 4.12.0(prisma@4.12.0)
@@ -77,8 +83,8 @@ importers:
         specifier: ^10.11.6
         version: 10.11.6(react-dom@18.2.0)(react@18.2.0)
       langchain:
-        specifier: ^0.0.54
-        version: 0.0.54(@supabase/supabase-js@2.20.0)(cheerio@1.0.0-rc.12)
+        specifier: ^0.0.62
+        version: 0.0.62(@pinecone-database/pinecone@0.0.14)(@supabase/supabase-js@2.20.0)(cheerio@1.0.0-rc.12)
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -667,6 +673,10 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
+  /@microsoft/fetch-event-source@2.0.1:
+    resolution: {integrity: sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==}
+    dev: false
+
   /@next/env@13.3.0:
     resolution: {integrity: sha512-AjppRV4uG3No7L1plinoTQETH+j2F10TEnrMfzbTUYwze5sBUPveeeBAPZPm8OkJZ1epq9OyYKhZrvbD6/9HCQ==}
     dev: false
@@ -778,6 +788,15 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
     dev: true
+
+  /@pinecone-database/pinecone@0.0.14:
+    resolution: {integrity: sha512-uQspP/fGB2xhS/PWVD9/XnNnzuTfjukuX9IKH0EYqJMXd0Yx+ewcRADVFrF5RBeBWXBWrpGhIhvWE0hTPy/BAg==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /@pkgr/utils@2.3.1:
     resolution: {integrity: sha512-wfzX8kc1PMyUILA+1Z/EqoE4UCXGy0iRGMhPwdfae1+f0OXlLqCk+By+aMzgJBzR9AzS4CDizioG6Ss1gvAFJw==}
@@ -2074,7 +2093,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.5
-      caniuse-lite: 1.0.30001478
+      caniuse-lite: 1.0.30001480
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -2220,10 +2239,6 @@ packages:
     dependencies:
       three: 0.151.3
     dev: false
-
-  /caniuse-lite@1.0.30001478:
-    resolution: {integrity: sha512-gMhDyXGItTHipJj2ApIvR+iVB5hd0KP3svMWWXDvZOmjzJJassGLMfxRkQCSYgGd2gtdL/ReeiyvMSFD1Ss6Mw==}
-    dev: true
 
   /caniuse-lite@1.0.30001480:
     resolution: {integrity: sha512-q7cpoPPvZYgtyC4VaBSN0Bt+PJ4c4EYRf0DrduInOz2SkFpHD5p3LnvEpqBp7UnJn+8x1Ogl1s38saUxe+ihQQ==}
@@ -3704,16 +3719,19 @@ packages:
     resolution: {integrity: sha512-MK3FOody4TXbFf8Yqv7EBbySw7aPvEcPX++Ipt6Sox+/YMFvR5xaTyhfNSk1AEmMy+RYIw81ctN4IMxCB8OAlg==}
     dev: false
 
-  /langchain@0.0.54(@supabase/supabase-js@2.20.0)(cheerio@1.0.0-rc.12):
-    resolution: {integrity: sha512-oweJt6Y9qDkGD/e3sBAu0FbWGv2Zv9s3fjlZaSHWRoPBlGmfjyRBHd64B26NwQgiLXqKOY1E2ClV7/G5AHnMew==}
+  /langchain@0.0.62(@pinecone-database/pinecone@0.0.14)(@supabase/supabase-js@2.20.0)(cheerio@1.0.0-rc.12):
+    resolution: {integrity: sha512-OgcMHb4qKkG2OnSGI4gpdEF7FFCG6XOx9DJWrbmadHkQWabqchFqB5ItfyqMumqv3yUjA1C3XxsU+DPuXzp89g==}
     engines: {node: '>=18'}
     peerDependencies:
+      '@aws-sdk/client-lambda': ^3.310.0
       '@aws-sdk/client-s3': ^3.310.0
       '@getmetal/metal-sdk': '*'
       '@huggingface/inference': ^1.5.1
+      '@opensearch-project/opensearch': '*'
       '@pinecone-database/pinecone': '*'
       '@supabase/supabase-js': ^2.10.0
       '@zilliz/milvus2-sdk-node': ^2.2.0
+      axios: ^0.26.0
       cheerio: ^1.0.0-rc.12
       chromadb: ^1.3.0
       cohere-ai: ^5.0.2
@@ -3722,25 +3740,33 @@ packages:
       hnswlib-node: ^1.4.2
       html-to-text: ^9.0.5
       mammoth: '*'
-      pdfjs-dist: ^3.4.120
+      mongodb: ^5.2.0
+      pdf-parse: 1.1.1
       playwright: ^1.32.1
       puppeteer: ^19.7.2
       redis: ^4.6.4
       replicate: ^0.9.0
       srt-parser-2: ^1.2.2
       typeorm: ^0.3.12
+      weaviate-ts-client: ^1.0.0
     peerDependenciesMeta:
+      '@aws-sdk/client-lambda':
+        optional: true
       '@aws-sdk/client-s3':
         optional: true
       '@getmetal/metal-sdk':
         optional: true
       '@huggingface/inference':
         optional: true
+      '@opensearch-project/opensearch':
+        optional: true
       '@pinecone-database/pinecone':
         optional: true
       '@supabase/supabase-js':
         optional: true
       '@zilliz/milvus2-sdk-node':
+        optional: true
+      axios:
         optional: true
       cheerio:
         optional: true
@@ -3758,7 +3784,9 @@ packages:
         optional: true
       mammoth:
         optional: true
-      pdfjs-dist:
+      mongodb:
+        optional: true
+      pdf-parse:
         optional: true
       playwright:
         optional: true
@@ -3772,9 +3800,12 @@ packages:
         optional: true
       typeorm:
         optional: true
+      weaviate-ts-client:
+        optional: true
     dependencies:
       '@anthropic-ai/sdk': 0.4.3
       '@dqbd/tiktoken': 1.0.6
+      '@pinecone-database/pinecone': 0.0.14
       '@supabase/supabase-js': 2.20.0
       binary-extensions: 2.2.0
       browser-or-node: 2.1.1
@@ -3790,6 +3821,7 @@ packages:
       uuid: 9.0.0
       yaml: 2.2.1
       zod: 3.21.4
+      zod-to-json-schema: 3.20.4(zod@3.21.4)
     transitivePeerDependencies:
       - debug
       - encoding
@@ -5914,6 +5946,14 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod-to-json-schema@3.20.4(zod@3.21.4):
+    resolution: {integrity: sha512-Un9+kInJ2Zt63n6Z7mLqBifzzPcOyX+b+Exuzf7L1+xqck9Q2EPByyTRduV3kmSPaXaRer1JCsucubpgL1fipg==}
+    peerDependencies:
+      zod: ^3.20.0
+    dependencies:
+      zod: 3.21.4
+    dev: false
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}

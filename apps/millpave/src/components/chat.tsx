@@ -1,15 +1,24 @@
 import classNames from 'classnames';
 import { useMemo, useRef, useState } from 'react';
 import { Button } from './button';
-import { MdExpandMore, MdForum, MdSend } from 'react-icons/md';
+import { MdExpandMore, MdForum, MdSend, MdRefresh } from 'react-icons/md';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
-
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 type Message = {
 	text: string;
 	sender: string;
 };
 
+const initialChatState = {
+	messages: [
+		{
+			text: 'Hi, how can I help?',
+			sender: 'gpt'
+		}
+	],
+	history: []
+};
 function Chat() {
 	const [open, setOpen] = useState(false);
 	const [draftText, setDraftText] = useState('');
@@ -18,19 +27,15 @@ function Chat() {
 		messages: Message[];
 		pending?: string;
 		history: [string, string][];
-	}>({
-		messages: [
-			{
-				text: 'Hi, how can I help?',
-				sender: 'gpt'
-			}
-		],
-		history: []
-	});
+	}>(initialChatState);
 
 	const { messages, pending, history } = chatState;
 
 	const inputRef = useRef<HTMLInputElement>(null);
+
+	function resetChatState() {
+		setChatState(initialChatState);
+	}
 
 	async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -58,36 +63,45 @@ function Chat() {
 		setDraftText('');
 		setChatState((state) => ({ ...state, pending: '' }));
 
+		const ctrl = new AbortController();
+
 		try {
-			const response = await fetch('/api/chat', {
+			await fetchEventSource('/api/chat', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({
-					question,
-					history
-				})
-			});
-			const data = await response.json();
-			console.log('data', data);
 
-			if (data.error) {
-				console.error(data.error);
-			} else {
-				setChatState((state) => ({
-					...state,
-					messages: [
-						...state.messages,
-						{
-							sender: 'gpt',
-							text: data.text
-						}
-					],
-					history: [...state.history, [question, data.text]]
-				}));
-			}
-			console.log('messageState', chatState);
+				body: JSON.stringify({
+					userPrompt: question,
+					conversationHistory: history
+				}),
+				signal: ctrl.signal,
+
+				onmessage: (event) => {
+					if (event.data === '[DONE]') {
+						setChatState((state) => ({
+							history: [...state.history, [question, state.pending ?? '']],
+							messages: [
+								...state.messages,
+								{
+									sender: 'gpt',
+									text: state.pending ?? ''
+								}
+							],
+							pending: undefined
+						}));
+						setLoading(false);
+						ctrl.abort();
+					} else {
+						const data = JSON.parse(event.data);
+						setChatState((state) => ({
+							...state,
+							pending: (state.pending ?? '') + data.data
+						}));
+					}
+				}
+			});
 
 			setLoading(false);
 		} catch (error) {
@@ -134,16 +148,23 @@ function Chat() {
 							className="w-full max-w-[24em] rounded-lg bg-gray-900 text-white opacity-0 shadow-button"
 						>
 							<div className="flex items-center justify-between pr-4">
-								<h2 className="p-4 pb-2 font-semibold">
-									Not actually live chat™
-								</h2>
-								<Button
-									variant="tertiary"
-									className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
-									onClick={() => setOpen(false)}
-								>
-									<MdExpandMore />
-								</Button>
+								<h2 className="p-4 pb-2 font-semibold">Customer Service AI</h2>
+								<div className="flex gap-6">
+									<Button
+										variant="tertiary"
+										className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
+										onClick={resetChatState}
+									>
+										<MdRefresh />
+									</Button>
+									<Button
+										variant="tertiary"
+										className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
+										onClick={() => setOpen(false)}
+									>
+										<MdExpandMore />
+									</Button>
+								</div>
 							</div>
 
 							<div className="flex h-96 flex-col-reverse overflow-y-scroll overscroll-y-contain">
@@ -169,7 +190,10 @@ function Chat() {
 														: 'self-end  rounded-br-none bg-gray-300 text-black'
 												)}
 											>
-												<ReactMarkdown linkTarget="_blank">
+												<ReactMarkdown
+													linkTarget="_blank"
+													className="markdownanswer"
+												>
 													{message.text}
 												</ReactMarkdown>
 											</motion.div>

@@ -77,14 +77,14 @@ async function splitDocsIntoChunks(docs: Document[]): Promise<Document[]> {
 		const rawDocs = await extractDataFromUrls(urls);
 
 		// Split docs into chunks for openai context window
-		// const docs = await splitDocsIntoChunks(rawDocs);
+		const docs = await splitDocsIntoChunks(rawDocs);
 
 		// // Embed docs into supabase
-		// await embedDocuments(
-		// 	supabaseClient,
-		// 	docs,
-		// 	new OpenAIEmbeddings({ modelName: 'text-embedding-ada-002' })
-		// );
+		await embedDocuments(
+			supabaseClient,
+			docs,
+			new OpenAIEmbeddings({ modelName: 'text-embedding-ada-002' })
+		);
 	} catch (error) {
 		console.log('error occured:', error);
 	}

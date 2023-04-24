@@ -7,6 +7,38 @@
 	min-height: 0vw;
 }
 
+.markdownanswer a:hover {
+	opacity: 0.8;
+}
+
+.markdownanswer a {
+	text-decoration: underline;
+}
+
+.markdownanswer code {
+	color: #15cb19;
+	font-weight: 500;
+	white-space: pre-wrap !important;
+}
+
+.markdownanswer ol,
+.markdownanswer ul {
+	margin: 1rem;
+}
+
+.boticon,
+.usericon {
+	margin-right: 1rem;
+	border-radius: 0.1rem;
+	height: 100%;
+}
+
+.markdownanswer h1,
+.markdownanswer h2,
+.markdownanswer h3 {
+	font-size: inherit;
+}
+
 :root,
 body,
 #__next {

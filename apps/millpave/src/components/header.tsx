@@ -141,7 +141,7 @@ function Header() {
 						<NavLink href="/contact">Contact Us</NavLink>
 						<li>
 							<Button variant="primary" asChild>
-								<Link href="/contact?form=quote">Get A Quote</Link>
+								<Link href="/quote-builder">Get A Quote</Link>
 							</Button>
 						</li>
 					</ul>
@@ -215,7 +215,7 @@ function Header() {
 											</MotionNavLink>
 											<MotionNavLink
 												variants={variants.item}
-												href="/contact?form=quote"
+												href="/quote-builder"
 												onClick={() => setMenuOpen(false)}
 											>
 												Get A Quote

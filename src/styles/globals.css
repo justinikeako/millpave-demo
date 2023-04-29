@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	min-height: 0vw;
+}
+
+body {
+	font-size: 14px;
+}
+/* Chrome, Safari, Edge, Opera */
+input.no-arrows::-webkit-outer-spin-button,
+input.no-arrows::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input.no-arrows[type='number'] {
+	-moz-appearance: textfield;
+}
+
+.markdownanswer a:hover {
+	opacity: 0.8;
+}
+
+.markdownanswer a {
+	text-decoration: underline;
+}
+
+.markdownanswer code {
+	color: #15cb19;
+	font-weight: 500;
+	white-space: pre-wrap !important;
+}
+
+.markdownanswer ol,
+.markdownanswer ul {
+	margin: 1rem;
+}
+
+.boticon,
+.usericon {
+	margin-right: 1rem;
+	border-radius: 0.1rem;
+	height: 100%;
+}
+
+.markdownanswer h1,
+.markdownanswer h2,
+.markdownanswer h3 {
+	font-size: inherit;
+}
+
+:root,
+body,
+#__next {
+	height: 100%;
+
+	-webkit-tap-highlight-color: transparent;
+}
+
+b {
+	@apply font-semibold;
+}
+
+@layer base {
+	html {
+		@apply text-gray-900;
+	}
+
+	@font-face {
+		font-family: 'InterVar';
+		font-weight: 100 900;
+		font-display: swap;
+		font-style: normal;
+		font-named-instance: 'Regular';
+		src: url('/fonts/Inter.var.woff2?v=3.19') format('woff2-variations'),
+			url('/fonts/Inter.var.woff2?v=3.19') format('woff2');
+	}
+}
+
+@layer utilities {
+	.font-display {
+		font-variation-settings: 'opsz' 48;
+	}
+
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+		-webkit-appearance: none;
+	}
+}

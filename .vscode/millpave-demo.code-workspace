@@ -1,0 +1,13 @@
+{
+  
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"tailwindCSS.experimental.classRegex": [
+			["w(?:\\.[a-zA-Z]+)?\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+	]
+}
+}

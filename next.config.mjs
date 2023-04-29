@@ -14,11 +14,16 @@ function defineNextConfig(config) {
 
 export default defineNextConfig({
 	reactStrictMode: true,
-	experimental:{
+	experimental: {
 		appDir: true
 	},
 	webpack: (config) => {
-		config.experiments = { ...config.experiments, topLevelAwait: true };
+		config.experiments = {
+			...config.experiments,
+			asyncWebAssembly: true,
+			topLevelAwait: true
+		};
+
 		return config;
 	},
 

@@ -1,23 +1,38 @@
+import { Button } from '@/components/button';
 import * as Select from '@/components/select';
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger
+} from '@/components/sheet';
+import { LayoutTemplate, RectangleHorizontal } from 'lucide-react';
+import { MoreVertical } from 'lucide-react';
 
 type OptionProps = React.PropsWithChildren<{
-	id: string;
-	fieldName: string;
 	title: string;
 	subtitle: string;
 }>;
 
-function Option({ id, fieldName, title, subtitle }: OptionProps) {
+function Option({ title, subtitle }: OptionProps) {
 	return (
-		<li>
-			<label htmlFor={id} className="relative flex h-full w-64 flex-col p-6">
-				<input name={fieldName} id={id} type="radio" className="peer hidden" />
-
-				<div className="flex-1" />
-				<div className="absolute inset-0 -z-10 rounded-lg border border-gray-400 peer-checked:border-2 peer-checked:border-black peer-checked:bg-gray-100" />
-				<p className="font-semibold">{title}</p>
-				<p>{subtitle}</p>
-			</label>
+		<li className="flex h-64 w-64 flex-col rounded-lg border border-gray-400 p-6">
+			<div className="flex-1" />
+			{/* <div className="absolute inset-0 -z-10 rounded-lg border border-gray-400 peer-checked:border-2 peer-checked:border-black peer-checked:bg-gray-100" /> */}
+			<div className="flex items-start">
+				<div className="flex-1">
+					<p className="font-semibold">{title}</p>
+					<p>{subtitle}</p>
+				</div>
+				<SheetTrigger asChild>
+					<Button variant="tertiary">
+						<MoreVertical className="h-5 w-5" />
+					</Button>
+				</SheetTrigger>
+			</div>
 		</li>
 	);
 }
@@ -70,28 +85,37 @@ export function InfillStage() {
 
 			<div className="flex flex-wrap justify-center gap-4">
 				<div className="flex h-64 w-64 flex-col gap-4">
-					<button className="w-full flex-1 rounded-lg border border-gray-400 p-6">
+					<button className="roun ded-lg flex w-full flex-1 items-center justify-center gap-2 border border-gray-400 p-6">
 						<span className="font-semibold">Add Stone</span>
+						<RectangleHorizontal className="h-5 w-5" />
 					</button>
-					<button className="w-full flex-1 rounded-lg border border-gray-400 p-6">
+					<button className="flex w-full flex-1 items-center justify-center gap-2  rounded-lg border border-gray-400 p-6">
 						<span className="font-semibold">Add Pattern</span>
+						<LayoutTemplate className="h-5 w-5" />
 					</button>
 					{/* <button className='w-full flex-1 p-6'>Add </button> */}
 				</div>
-				<ul className="contents">
-					<Option
-						title="Colonial Classic Gray"
-						subtitle="Covers 2 parts"
-						fieldName="nubi"
-						id="a"
-					/>
-					<Option
-						title="Colonial Classic Red"
-						subtitle="Covers 2 parts"
-						fieldName="nubi"
-						id="b"
-					/>
-				</ul>
+
+				<Sheet>
+					<SheetContent position="right" size="sm">
+						<SheetHeader>
+							<SheetTitle>Edit profile</SheetTitle>
+							<SheetDescription>
+								Make changes to your profile here. Click save when you're done.
+							</SheetDescription>
+						</SheetHeader>
+						<SheetFooter>
+							<Button variant="primary" type="submit">
+								Save changes
+							</Button>
+						</SheetFooter>
+					</SheetContent>
+
+					<ul className="contents">
+						<Option title="Colonial Classic Gray" subtitle="Covers 2 parts" />
+						<Option title="Colonial Classic Red" subtitle="Covers 2 parts" />
+					</ul>
+				</Sheet>
 			</div>
 		</section>
 	);

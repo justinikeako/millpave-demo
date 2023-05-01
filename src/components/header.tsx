@@ -134,7 +134,7 @@ function Header() {
 					</Link>
 
 					{/* Desktop Links */}
-					<ul className="flex flex-row items-center gap-8 bg-transparent px-0 font-body text-base font-normal text-gray-900 max-lg:hidden">
+					<ul className="flex flex-row items-center gap-8 bg-transparent px-0 font-normal text-gray-900 max-lg:hidden">
 						<NavLink href="/products/all">Products</NavLink>
 						<NavLink href="/gallery">Get Inspired</NavLink>
 						<NavLink href="/#where-to-buy">Where to Buy</NavLink>

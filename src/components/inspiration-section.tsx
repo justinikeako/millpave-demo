@@ -1,8 +1,10 @@
+'use client';
+
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRef } from 'react';
-import { Button } from '../components/button';
-import { RevealSection } from '../components/reveal-section';
+import { Button } from './button';
+import { RevealSection } from './reveal-section';
 
 function InspirationSection() {
 	const carouselRef = useRef<HTMLDivElement>(null);

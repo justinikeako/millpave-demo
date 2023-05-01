@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from './button';
 import { MdClose, MdMenu } from 'react-icons/md';

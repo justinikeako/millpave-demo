@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef } from 'react';
 import cx from 'classnames';
 import { Slot } from '@radix-ui/react-slot';

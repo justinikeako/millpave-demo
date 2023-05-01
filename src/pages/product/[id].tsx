@@ -10,7 +10,7 @@ import { trpc } from '../../utils/trpc';
 import classNames from 'classnames';
 import { PaverEstimator } from '../../components/estimator';
 import { Suspense, useState } from 'react';
-import { InspirationSection } from '../../sections/inspiration';
+import { InspirationSection } from '../../components/inspiration-section';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
 import {

@@ -1,6 +1,7 @@
 import { Header } from '@/components/header';
 import '../styles/globals.css';
 import { Footer } from '@/components/footer';
+import { Chat } from '@/components/chat';
 
 export const metadata = {
 	title: 'Millennium Paving Stones',
@@ -18,6 +19,8 @@ export default function RootLayout({
 				<Header />
 				{children}
 				<Footer />
+
+				<Chat />
 			</body>
 		</html>
 	);

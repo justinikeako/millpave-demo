@@ -1,3 +1,5 @@
+'use client';
+
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import { GLTF, USDZExporter } from 'three-stdlib';

@@ -1,27 +1,28 @@
-import { Sku } from '@prisma/client';
+'use client';
+
+import { useContext } from 'react';
+import { SkuContext } from './sku-context';
 import { round } from 'mathjs';
 import { useState } from 'react';
-import { PaverDetails } from '../types/product';
-import { formatPrice } from '../utils/format';
-import { roundTo } from '../utils/number';
-import { extractDetail } from '../utils/product';
-import * as Select from './select';
-
-type PaverEstimatorProps = {
-	paverDetails: PaverDetails;
-	sku: Sku;
-};
+import { PaverDetails } from '@/types/product';
+import { formatPrice } from '@/utils/format';
+import { roundTo } from '@/utils/number';
+import { extractDetail } from '@/utils/product';
+import * as Select from '@/components/select';
+import { Sku } from '@prisma/client';
 
 type EstimatorUnit = 'SQFT' | 'PCS' | 'PAL';
 
-function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
+function PaverEstimator() {
+	const { currentSku, productDetails } = useContext(SkuContext);
+
 	const [unit, setUnit] = useState<EstimatorUnit>('SQFT');
 	const [value, setValue] = useState('');
 	const [rawArea, setRawArea] = useState(0);
 
-	const { pallet, piece, totalArea } = splitArea(rawArea, paverDetails);
+	const { pallet, piece, totalArea } = splitArea(rawArea, productDetails);
 
-	const total = calculateTotal(pallet.area, piece.area, sku);
+	const total = calculateTotal(pallet.area, piece.area, currentSku);
 
 	return (
 		<section data-ai-hidden className="bg-gray-900 text-white">
@@ -33,7 +34,9 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 					onValueChange={(newUnit: EstimatorUnit) => {
 						setUnit(newUnit);
 
-						const newValue = convert(rawArea, paverDetails).fromSqftTo(newUnit);
+						const newValue = convert(rawArea, productDetails).fromSqftTo(
+							newUnit
+						);
 
 						setValue(String(newValue));
 					}}
@@ -67,9 +70,10 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 							setValue(e.target.value);
 
 							const parsedValue = parseFloat(e.target.value || '0');
-							const newRawArea = convert(parsedValue, paverDetails).toSqftFrom(
-								unit
-							);
+							const newRawArea = convert(
+								parsedValue,
+								productDetails
+							).toSqftFrom(unit);
 
 							setRawArea(newRawArea);
 						}}

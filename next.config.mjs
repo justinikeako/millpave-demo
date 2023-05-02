@@ -15,7 +15,8 @@ function defineNextConfig(config) {
 export default defineNextConfig({
 	reactStrictMode: true,
 	experimental: {
-		appDir: true
+		appDir: true,
+		experimentalReact: true
 	},
 	webpack: (config) => {
 		config.experiments = {

@@ -1,3 +1,5 @@
+'use client';
+
 import { FullPaver } from '../types/product';
 
 type SkuPickerProps = {
@@ -167,27 +169,31 @@ type ColorPickerProps = {
 function ColorPicker({ colors, currentColor, onChange }: ColorPickerProps) {
 	return (
 		<ul className="flex flex-wrap gap-2">
-			{colors.map(({ id, css }) => (
-				<li key={id} className="contents">
-					<label htmlFor={id} className="contents">
-						<input
-							className="peer hidden"
-							type="radio"
-							name="color"
-							value={id}
-							id={id}
-							checked={currentColor === id}
-							onChange={(e) => onChange(e.target.value)}
-						/>
-						<div
-							className="h-10 w-10 rounded-full border border-gray-300 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-gray-900  peer-checked:p-1"
-							style={{ background: css }}
-						/>
-					</label>
-				</li>
-			))}
+			{colors.map(({ id, css }) => {
+				console.log(id, currentColor, currentColor === 'id');
+
+				return (
+					<li key={id} className="contents">
+						<label htmlFor={id} className="contents">
+							<input
+								className="peer hidden"
+								type="radio"
+								name="color"
+								value={id}
+								id={id}
+								checked={currentColor === id}
+								onChange={(e) => onChange(e.target.value)}
+							/>
+							<div
+								className="h-10 w-10 rounded-full border border-gray-300 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-gray-900  peer-checked:p-1"
+								style={{ background: css }}
+							/>
+						</label>
+					</li>
+				);
+			})}
 		</ul>
 	);
 }
 
-export { SkuPicker as default, ProductPicker, VariantPicker, ColorPicker };
+export { SkuPicker, ProductPicker, VariantPicker, ColorPicker };

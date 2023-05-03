@@ -22,7 +22,7 @@ function Option({ id, fieldName, title, description }: OptionProps) {
 export function ShapeStage() {
 	return (
 		<section className="space-y-16 px-32">
-			<h2 className="text-center text-2xl">Pick a shape to get started</h2>
+			<h2 className="text-center text-2xl">Pick a shape to get started.</h2>
 			<div className="flex justify-center">
 				<ul className="grid grid-flow-col grid-cols-[repeat(3,224px)] gap-4">
 					<Option

@@ -1,16 +1,14 @@
 import { Button } from '@/components/button';
-import * as Select from '@/components/select';
+// import * as Select from '@/components/select';
 import {
 	Sheet,
 	SheetContent,
-	SheetDescription,
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger
 } from '@/components/sheet';
-import { LayoutTemplate, RectangleHorizontal } from 'lucide-react';
-import { MoreVertical } from 'lucide-react';
+import { Edit, LayoutTemplate, RectangleHorizontal } from 'lucide-react';
 
 type OptionProps = React.PropsWithChildren<{
 	title: string;
@@ -27,9 +25,10 @@ function Option({ title, subtitle }: OptionProps) {
 					<p className="font-semibold">{title}</p>
 					<p>{subtitle}</p>
 				</div>
+
 				<SheetTrigger asChild>
 					<Button variant="tertiary">
-						<MoreVertical className="h-5 w-5" />
+						<Edit className="h-5 w-5" />
 					</Button>
 				</SheetTrigger>
 			</div>
@@ -37,46 +36,46 @@ function Option({ title, subtitle }: OptionProps) {
 	);
 }
 
-type DimensionInputProps = React.PropsWithChildren<{
-	fieldName: string;
-	label: string;
-	placeholder?: string;
-}>;
+// type DimensionInputProps = React.PropsWithChildren<{
+// 	fieldName: string;
+// 	label: string;
+// 	placeholder?: string;
+// }>;
 
-function DimensionInput({
-	fieldName,
-	label,
-	placeholder
-}: DimensionInputProps) {
-	return (
-		<div className="max-w-xs flex-1 space-y-4">
-			<label htmlFor={fieldName}>{label}</label>
-			<div className="flex w-full rounded-md bg-gray-200 p-6 pr-4">
-				<input
-					id={fieldName}
-					name={fieldName}
-					type="number"
-					className="no-arrows w-full flex-1 bg-transparent outline-none"
-					placeholder={placeholder}
-				/>
-				<Select.Root defaultValue="ft">
-					<Select.Trigger basic />
+// function DimensionInput({
+// 	fieldName,
+// 	label,
+// 	placeholder
+// }: DimensionInputProps) {
+// 	return (
+// 		<div className="max-w-xs flex-1 space-y-4">
+// 			<label htmlFor={fieldName}>{label}</label>
+// 			<div className="flex w-full rounded-md bg-gray-200 p-6 pr-4">
+// 				<input
+// 					id={fieldName}
+// 					name={fieldName}
+// 					type="number"
+// 					className="no-arrows w-full flex-1 bg-transparent outline-none"
+// 					placeholder={placeholder}
+// 				/>
+// 				<Select.Root defaultValue="ft">
+// 					<Select.Trigger basic />
 
-					<Select.Content>
-						<Select.ScrollUpButton />
-						<Select.Viewport>
-							<Select.Item value="ft">parts</Select.Item>
-							<Select.Item value="in">in</Select.Item>
-							<Select.Item value="m">m</Select.Item>
-							<Select.Item value="cm">cm</Select.Item>
-						</Select.Viewport>
-						<Select.ScrollDownButton />
-					</Select.Content>
-				</Select.Root>
-			</div>
-		</div>
-	);
-}
+// 					<Select.Content>
+// 						<Select.ScrollUpButton />
+// 						<Select.Viewport>
+// 							<Select.Item value="ft">parts</Select.Item>
+// 							<Select.Item value="in">in</Select.Item>
+// 							<Select.Item value="m">m</Select.Item>
+// 							<Select.Item value="cm">cm</Select.Item>
+// 						</Select.Viewport>
+// 						<Select.ScrollDownButton />
+// 					</Select.Content>
+// 				</Select.Root>
+// 			</div>
+// 		</div>
+// 	);
+// }
 
 export function InfillStage() {
 	return (
@@ -85,11 +84,11 @@ export function InfillStage() {
 
 			<div className="flex flex-wrap justify-center gap-4">
 				<div className="flex h-64 w-64 flex-col gap-4">
-					<button className="roun ded-lg flex w-full flex-1 items-center justify-center gap-2 border border-gray-400 p-6">
+					<button className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-gray-400 p-6">
 						<span className="font-semibold">Add Stone</span>
 						<RectangleHorizontal className="h-5 w-5" />
 					</button>
-					<button className="flex w-full flex-1 items-center justify-center gap-2  rounded-lg border border-gray-400 p-6">
+					<button className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-gray-400 p-6">
 						<span className="font-semibold">Add Pattern</span>
 						<LayoutTemplate className="h-5 w-5" />
 					</button>
@@ -99,10 +98,7 @@ export function InfillStage() {
 				<Sheet>
 					<SheetContent position="right" size="sm">
 						<SheetHeader>
-							<SheetTitle>Edit profile</SheetTitle>
-							<SheetDescription>
-								Make changes to your profile here. Click save when you're done.
-							</SheetDescription>
+							<SheetTitle>Edit stone.</SheetTitle>
 						</SheetHeader>
 						<SheetFooter>
 							<Button variant="primary" type="submit">

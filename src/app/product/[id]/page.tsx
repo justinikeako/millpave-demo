@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { PaverEstimator } from './estimator';
 import { InspirationSection } from '@/components/inspiration-section';
 import { createContextInner } from '@/server/trpc/context';
-import { GetStaticPaths } from 'next';
 import { RevealSection } from '@/components/reveal-section';
 import { productRouter } from '@/server/trpc/router/product';
 import {
@@ -132,22 +131,5 @@ async function Page({ params }: PageProps) {
 		</SkuProvider>
 	);
 }
-
-export const getStaticPaths: GetStaticPaths = async () => {
-	const { prisma } = await createContextInner({});
-
-	const products = await prisma.product.findMany({
-		select: { id: true }
-	});
-
-	return {
-		paths: products.map((product) => ({
-			params: { id: product.id }
-		})),
-
-		// https://nextjs.org/docs/api-reference/data-fetching/get-static-paths#fallback-blocking
-		fallback: 'blocking'
-	};
-};
 
 export default Page;

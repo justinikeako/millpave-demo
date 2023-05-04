@@ -170,8 +170,6 @@ function ColorPicker({ colors, currentColor, onChange }: ColorPickerProps) {
 	return (
 		<ul className="flex flex-wrap gap-2">
 			{colors.map(({ id, css }) => {
-				console.log(id, currentColor, currentColor === 'id');
-
 				return (
 					<li key={id} className="contents">
 						<label htmlFor={id} className="contents">

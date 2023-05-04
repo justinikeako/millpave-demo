@@ -23,7 +23,8 @@ function GalleryFilter({ children, category, selected }: GalleryFilterProps) {
 		<li className="shrink-0">
 			<Link
 				href={`/gallery?category=${category}`}
-				replace={false}
+				replace={true}
+				scroll={false}
 				className={cn(
 					'flex aspect-square w-[60vw] snap-center items-end border border-gray-200 bg-gray-200 p-6 inner-border-4 inner-border-white md:w-[25vmax] md:p-8 lg:w-[30vmin]',
 					selected && 'border-2 border-black'

@@ -18,11 +18,22 @@ function findDetails(
 	skuId?: string | string[],
 	details?: ExtendedPaverDetails[]
 ) {
-	return details?.find((details) => skuId?.includes(details.matcher))!.data!;
+	const d = details?.find((details) => skuId?.includes(details.matcher))?.data;
+
+	if (!d) {
+		throw new Error('Details not found');
+	}
+	return d;
 }
 
 function findSku(searchId?: string | string[], skus?: Sku[]) {
-	return skus?.find((currentSku) => currentSku.id === searchId)!;
+	const sku = skus?.find((currentSku) => currentSku.id === searchId);
+
+	if (!sku) {
+		throw new Error('Sku not found');
+	}
+
+	return sku;
 }
 
 type SkuProviderProps = React.PropsWithChildren<{
@@ -36,7 +47,15 @@ function SkuProvider({ defaultSkuId, product, children }: SkuProviderProps) {
 	const productDetails = findDetails(skuId, product?.details);
 
 	return (
-		<SkuContext.Provider value={{ currentSku, productDetails, productId: product.id, skuId, setSkuId }}>
+		<SkuContext.Provider
+			value={{
+				currentSku,
+				productDetails,
+				productId: product.id,
+				skuId,
+				setSkuId
+			}}
+		>
 			{children}
 		</SkuContext.Provider>
 	);

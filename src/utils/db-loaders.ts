@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Document } from 'langchain/document';
 import { formatPrice } from './format';
 import { extractDetail } from './product';
 import { ExtendedPaverDetails, PaverDetails } from '../types/product';
 import { PrismaClient, Sku } from '@prisma/client';
-import { formatObjectList, formatStringList } from './format-list';
+import { formatObjectList } from './format-list';
 
 const prisma = new PrismaClient();
 

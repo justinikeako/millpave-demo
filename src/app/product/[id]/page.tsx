@@ -70,7 +70,7 @@ async function Page({ params }: PageProps) {
 								</p>
 								<h1 className="font-display text-4xl">{product.displayName}</h1>
 							</div>
-							<div className="flex flex-wrap justify-between text-lg">
+							<div className="flex flex-wrap justify-between gap-8 text-lg">
 								<ProductPricing />
 
 								<ProductStock

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { get } from 'lodash-es';
 
 type Path<T, K extends keyof T> = K extends string
@@ -12,7 +13,7 @@ interface FormatListConfig<T> {
 	toStringFunc?: (item: T) => string;
 }
 
-const defaultConfig = { separator: ', ', conjunction: 'and' };
+// const defaultConfig = { separator: ', ', conjunction: 'and' };
 
 export function formatObjectList<T extends object, K extends keyof T>(
 	list: T[],

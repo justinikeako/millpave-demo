@@ -1,9 +1,8 @@
-import { MdCheck, MdClose } from 'react-icons/md';
 import { Button } from '@/components/button';
 import React from 'react';
 import classNames from 'classnames';
 import { InfillStage } from './stages/infill';
-import { Check } from 'lucide-react';
+import { X, Check } from 'lucide-react';
 // import { ShapeStage } from './stages/shape';
 // import { DimensionsStage } from './stages/dimensions';
 
@@ -47,7 +46,7 @@ export default function Page() {
 		<div className="space-y-24">
 			<header>
 				<div className="flex items-center justify-between px-32 py-6">
-					<MdClose className="text-[1.5rem]" />
+					<X />
 					<h1 className="font-semibold">Get a quote</h1>
 					<Button variant="primary">Next</Button>
 				</div>

@@ -1,6 +1,6 @@
-import { supabaseClient } from '../utils/supabase-client';
-import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
+// import { supabaseClient } from '../utils/supabase-client';
+// import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
+// import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { LLMChain } from 'langchain/chains';
 import { OpenAIChat } from 'langchain/llms/openai';
 import { CallbackManager } from 'langchain/callbacks';

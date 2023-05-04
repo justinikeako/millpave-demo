@@ -5,13 +5,7 @@ import { Button } from './button';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import {
-	ChevronDown,
-	MessageCircle,
-	MessagesSquare,
-	RotateCcw,
-	Send
-} from 'lucide-react';
+import { ChevronDown, MessagesSquare, RotateCcw, Send } from 'lucide-react';
 type Message = {
 	text: string;
 	sender: string;

@@ -1,9 +1,7 @@
 import { Button } from '@/components/button';
-import * as Select from '@/components/select';
 import {
 	Sheet,
 	SheetContent,
-	SheetDescription,
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
@@ -37,47 +35,6 @@ function Option({ title, subtitle }: OptionProps) {
 	);
 }
 
-type DimensionInputProps = React.PropsWithChildren<{
-	fieldName: string;
-	label: string;
-	placeholder?: string;
-}>;
-
-function DimensionInput({
-	fieldName,
-	label,
-	placeholder
-}: DimensionInputProps) {
-	return (
-		<div className="max-w-xs flex-1 space-y-4">
-			<label htmlFor={fieldName}>{label}</label>
-			<div className="flex w-full rounded-md bg-gray-200 p-6 pr-4">
-				<input
-					id={fieldName}
-					name={fieldName}
-					type="number"
-					className="no-arrows w-full flex-1 bg-transparent outline-none"
-					placeholder={placeholder}
-				/>
-				<Select.Root defaultValue="ft">
-					<Select.Trigger basic />
-
-					<Select.Content>
-						<Select.ScrollUpButton />
-						<Select.Viewport>
-							<Select.Item value="ft">parts</Select.Item>
-							<Select.Item value="in">in</Select.Item>
-							<Select.Item value="m">m</Select.Item>
-							<Select.Item value="cm">cm</Select.Item>
-						</Select.Viewport>
-						<Select.ScrollDownButton />
-					</Select.Content>
-				</Select.Root>
-			</div>
-		</div>
-	);
-}
-
 export function InfillStage() {
 	return (
 		<section className="space-y-16 px-32">
@@ -99,10 +56,7 @@ export function InfillStage() {
 				<Sheet>
 					<SheetContent position="right" size="sm">
 						<SheetHeader>
-							<SheetTitle>Edit profile</SheetTitle>
-							<SheetDescription>
-								Make changes to your profile here. Click save when you're done.
-							</SheetDescription>
+							<SheetTitle>Edit Stone</SheetTitle>
 						</SheetHeader>
 						<SheetFooter>
 							<Button variant="primary" type="submit">

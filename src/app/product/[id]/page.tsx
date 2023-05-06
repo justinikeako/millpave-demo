@@ -17,10 +17,23 @@ import { OrchestratedReveal } from '@/components/orchestrated-reveal';
 import { notFound } from 'next/navigation';
 import { Section } from './section';
 import { SkuProvider } from './sku-context';
+import { PrismaClient } from '@prisma/client';
 
 type PageProps = {
 	params: { id: string };
 };
+
+export async function generateStaticParams() {
+	const prisma = new PrismaClient({});
+
+	const products = await prisma.product.findMany({
+		select: { id: true }
+	});
+
+	return products.map((product) => ({
+		id: product.id
+	}));
+}
 
 export async function generateMetadata({ params }: PageProps) {
 	const caller = productRouter.createCaller(await createContextInner({}));

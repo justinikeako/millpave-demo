@@ -6,9 +6,9 @@ module.exports = {
 	content: ['./src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		fontFamily: {
-			display: ['InterVar', 'sans-serif'],
-			body: ['InterVar', 'sans-serif'],
-			sans: ['InterVar', 'sans-serif']
+			display: ['Inter', 'sans-serif'],
+			body: ['Inter', 'sans-serif'],
+			sans: ['Inter', 'sans-serif']
 		},
 
 		fontSize: {

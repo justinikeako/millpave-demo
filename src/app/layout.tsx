@@ -2,6 +2,9 @@ import { Header } from '@/components/header';
 import '../styles/globals.css';
 import { Footer } from '@/components/footer';
 import { Chat } from '@/components/chat';
+import localFont from 'next/font/local';
+
+const inter = localFont({ src: '../fonts/Inter.var.woff2' });
 
 export const metadata = {
 	title: 'Millennium Paving Stones',
@@ -14,7 +17,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<html lang="en">
+		<html lang="en" className={`${inter.className} text-gray-900`}>
 			<body>
 				<Header />
 				{children}

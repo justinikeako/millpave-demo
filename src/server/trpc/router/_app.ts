@@ -1,9 +1,7 @@
 import { router } from '../trpc';
-import { categoryRouter } from './category';
 import { productRouter } from './product';
 
 export const appRouter = router({
-	category: categoryRouter,
 	product: productRouter
 });
 

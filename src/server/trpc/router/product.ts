@@ -78,18 +78,15 @@ export const productRouter = router({
 					.nullish()
 					.transform((categoryId) =>
 						categoryId === 'all' ? undefined : categoryId
-					),
-				limit: z.number().min(1).max(100).nullish(),
-				cursor: z.string().nullish() // <-- "cursor" needs to exist, but can be any type
+					)
 			})
 		)
 		.query(async ({ ctx, input }) => {
-			const limit = input.limit ?? 9;
+			const limit = 20;
 
 			const products = await ctx.prisma.product.findMany({
 				where: { categoryId: input.categoryId ? input.categoryId : undefined },
-				take: limit + 1, // get an extra item at the end which we'll use as next cursor,
-				cursor: input.cursor ? { id: input.cursor } : undefined,
+				take: limit,
 				include: {
 					skus: {
 						orderBy: { price: 'asc' },
@@ -107,17 +104,6 @@ export const productRouter = router({
 
 			if (!products) throw new TRPCError({ code: 'NOT_FOUND' });
 
-			let nextCursor: typeof input.cursor | undefined = undefined;
-			if (products.length > limit) {
-				const nextItem = productsWithStarterSku.pop();
-
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				nextCursor = nextItem!.id;
-			}
-
-			return {
-				products: productsWithStarterSku,
-				nextCursor
-			};
+			return productsWithStarterSku;
 		})
 });

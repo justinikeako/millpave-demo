@@ -28,9 +28,13 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 			>
 				<motion.div
 					key={router.asPath}
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					exit={{ opacity: 0 }}
+					initial={{ y: 5, opacity: 0 }}
+					animate={{ y: 0, opacity: 1 }}
+					exit={{ y: 5, opacity: 0 }}
+					transition={{
+						type: 'spring',
+						duration: 0.3
+					}}
 				>
 					<AnimatePresence initial>
 						<Header />

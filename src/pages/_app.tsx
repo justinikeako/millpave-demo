@@ -8,6 +8,10 @@ import { Footer } from '../components/footer';
 import Head from 'next/head';
 import { Chat } from '../components/chat';
 
+import localFont from 'next/font/local';
+
+const inter = localFont({ src: '../fonts/Inter.var.woff2' });
+
 const MyApp: AppType = ({ Component, pageProps }) => {
 	return (
 		<>
@@ -18,9 +22,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 				/>
 			</Head>
 
-			<Header />
-			<Component {...pageProps} />
-			<Footer />
+			<div className={inter.className}>
+				<Header />
+				<Component {...pageProps} />
+				<Footer />
+			</div>
 
 			<Chat />
 		</>

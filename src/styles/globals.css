@@ -55,7 +55,8 @@ input.no-arrows[type='number'] {
 
 :root,
 body,
-#__next {
+#__next,
+#__next > div {
 	height: 100%;
 
 	-webkit-tap-highlight-color: transparent;
@@ -63,22 +64,6 @@ body,
 
 b {
 	@apply font-semibold;
-}
-
-@layer base {
-	html {
-		@apply text-gray-900;
-	}
-
-	@font-face {
-		font-family: 'InterVar';
-		font-weight: 100 900;
-		font-display: swap;
-		font-style: normal;
-		font-named-instance: 'Regular';
-		src: url('/fonts/Inter.var.woff2?v=3.19') format('woff2-variations'),
-			url('/fonts/Inter.var.woff2?v=3.19') format('woff2');
-	}
 }
 
 @layer utilities {

@@ -92,20 +92,20 @@ export function BorderStage() {
 
 				<div className="max-w-xs flex-1 space-y-4">
 					<label className="font-semibold">Stone Orientation</label>
-					<div className="flex w-full rounded-md bg-gray-200 p-6 pr-4">
-						<Select.Root defaultValue="SOLDIER_ROW">
-							<Select.Trigger basic className="w-full" />
+					{/* <div className="flex w-full rounded-md bg-gray-200 p-6 pr-4"> */}
+					<Select.Root defaultValue="SOLDIER_ROW">
+						<Select.Trigger className="w-full !rounded-md p-6 pr-4" />
 
-							<Select.Content>
-								<Select.ScrollUpButton />
-								<Select.Viewport>
-									<Select.Item value="SOLDIER_ROW">Soldier Row</Select.Item>
-									<Select.Item value="TIP_TO_TIP">Tip to Tip</Select.Item>
-								</Select.Viewport>
-								<Select.ScrollDownButton />
-							</Select.Content>
-						</Select.Root>
-					</div>
+						<Select.Content>
+							<Select.ScrollUpButton />
+							<Select.Viewport>
+								<Select.Item value="SOLDIER_ROW">Soldier Row</Select.Item>
+								<Select.Item value="TIP_TO_TIP">Tip to Tip</Select.Item>
+							</Select.Viewport>
+							<Select.ScrollDownButton />
+						</Select.Content>
+					</Select.Root>
+					{/* </div> */}
 				</div>
 			</div>
 

@@ -1,19 +1,30 @@
+import { useFormContext } from 'react-hook-form';
+
 type OptionProps = React.PropsWithChildren<{
-	id: string;
-	fieldName: string;
+	value: string;
 	title: string;
-	description: string;
+	subtitle: string;
 }>;
 
-function Option({ id, fieldName, title, description }: OptionProps) {
+function Option({ value: id, title, subtitle: description }: OptionProps) {
+	const formContext = useFormContext();
+
+	const { register } = formContext;
+
 	return (
 		<li>
 			<label htmlFor={id} className="relative block h-full w-full p-6">
-				<input name={fieldName} id={id} type="radio" className="peer hidden" />
+				<input
+					{...register('shape')}
+					id={id}
+					value={id}
+					type="radio"
+					className="peer hidden"
+				/>
 
 				<div className="absolute inset-0 -z-10 rounded-lg border peer-checked:border-2 peer-checked:border-black peer-checked:bg-gray-100	" />
 				<p className="font-semibold">{title}</p>
-				<p>{description}</p>
+				<p className="text-sm">{description}</p>
 			</label>
 		</li>
 	);
@@ -26,22 +37,19 @@ export function ShapeStage() {
 			<div className="flex justify-center">
 				<ul className="grid grid-flow-col grid-cols-[repeat(3,224px)] gap-4">
 					<Option
-						fieldName="shape"
-						id="rectangle"
+						value="rectangle"
 						title="Rectangle"
-						description="Requires length and width."
+						subtitle="Requires length and width."
 					/>
 					<Option
-						fieldName="shape"
-						id="circle"
+						value="circle"
 						title="Circle"
-						description="Requires diameter or circumference"
+						subtitle="Requires diameter or circumference"
 					/>
 					<Option
-						fieldName="shape"
-						id="arbitrary"
+						value="arbitrary"
 						title="Arbitrary"
-						description="Requires area and/or running length"
+						subtitle="Requires area and/or running length"
 					/>
 				</ul>
 			</div>

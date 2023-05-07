@@ -12,10 +12,7 @@ module.exports = {
 		},
 
 		fontSize: {
-			sm: [
-				'clamp(0.707em, calc(0.8em + ((1vw - 0.4em) * -0.186)), 0.8em)',
-				{ lineHeight: '1.5' }
-			],
+			sm: ['0.8em', { lineHeight: '1.5' }],
 			base: ['1em', { lineHeight: '1.5' }],
 			lg: [
 				'clamp(1.25em, calc(1.25em + ((1vw - 0.4em) * 0.328)), 1.414em)',

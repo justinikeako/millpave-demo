@@ -88,7 +88,7 @@ const MotionNavLink = motion(NavLink);
 
 function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [promoOpen, setPromoOpen] = useState(true);
+	const [promoOpen, setPromoOpen]  = useState(false);
 
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>

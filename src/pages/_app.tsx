@@ -1,15 +1,18 @@
+import { createContext } from 'react';
 import { type AppType } from 'next/app';
 
 import { trpc } from '../utils/trpc';
 
-import '../styles/globals.css';
 import { Header } from '../components/header';
 import { Footer } from '../components/footer';
 import Head from 'next/head';
 import { Chat } from '../components/chat';
 import { AnimatePresence, motion } from 'framer-motion';
+import '../styles/globals.css';
 
 const MyApp: AppType = ({ Component, pageProps, router }) => {
+	const showLayout = router.route !== '/quote-builder';
+
 	return (
 		<>
 			<Head>
@@ -37,10 +40,12 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 					}}
 				>
 					<AnimatePresence initial>
-						<Header />
-						<Component {...pageProps} />
+						<>
+							{showLayout && <Header />}
+							<Component {...pageProps} />
+						</>
 					</AnimatePresence>
-					<Footer />
+					{showLayout && <Footer />}
 				</motion.div>
 			</AnimatePresence>
 

@@ -23,7 +23,7 @@ function RevealSection(props: RevealSectionProps) {
 			initial={{ y: 100, opacity: 0 }}
 			animate={sectionIsInView && { y: 0, opacity: 1 }}
 			transition={slowTransition}
-		></motion.section>
+		/>
 	);
 }
 

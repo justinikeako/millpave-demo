@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { ProductCard } from '../../components/product-card';
 import { w } from 'windstitch';
-import { MdCheck } from 'react-icons/md';
 import { appRouter } from '../../server/trpc/router/_app';
 import { createContextInner } from '../../server/trpc/context';
 import superjson from 'superjson';
@@ -13,6 +12,7 @@ import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { useRouter } from 'next/router';
 import { Category } from '@prisma/client';
 import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
 
 const StyledProductCard = w(ProductCard, {
 	className: 'md:col-span-6 lg:col-span-4 xl:col-span-3'
@@ -42,7 +42,7 @@ function Chip({ value, children, ...props }: ChipProps) {
 			<span className="pointer-events-none z-[1] peer-checked:text-white">
 				{children}
 			</span>
-			<MdCheck className="pointer-events-none z-[1] hidden text-[1.5rem] text-white peer-checked:inline" />
+			<Check className="pointer-events-none z-[1] hidden h-5 w-5 text-white peer-checked:inline" />
 		</li>
 	);
 }

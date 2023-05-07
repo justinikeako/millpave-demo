@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { Button } from './button';
-import { MdClose, MdMenu } from 'react-icons/md';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { forwardRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Logo } from './logo';
 import { OrchestratedReveal } from './orchestrated-reveal';
+import { Menu, X } from 'lucide-react';
 
 type NavLinkProps = {
 	href: string;
@@ -120,7 +120,7 @@ function Header() {
 								className="absolute right-8 max-md:hidden"
 								onClick={() => setPromoOpen(false)}
 							>
-								<MdClose />
+								<X />
 							</Button>
 						</div>
 					)}
@@ -182,7 +182,7 @@ function Header() {
 														variant="tertiary"
 														className="text-white active:bg-gray-800"
 													>
-														<MdClose />
+														<X />
 													</Button>
 												</Dialog.Close>
 											</div>
@@ -237,7 +237,7 @@ function Header() {
 
 						<Dialog.Trigger asChild>
 							<Button variant="tertiary" className=" lg:hidden">
-								<MdMenu />
+								<Menu />
 							</Button>
 						</Dialog.Trigger>
 					</nav>

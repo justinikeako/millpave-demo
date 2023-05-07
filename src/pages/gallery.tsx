@@ -6,7 +6,8 @@ import { RevealSection } from '../components/reveal-section';
 import * as Dialog from '@radix-ui/react-dialog';
 import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
-import { MdClose, MdOpenInFull } from 'react-icons/md';
+import { X } from 'lucide-react';
+import { Maximize2 } from 'lucide-react';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{
@@ -60,8 +61,8 @@ function GalleryImage() {
 	return (
 		<li className="flex h-[30vmax] items-end justify-end bg-gray-200 p-2 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]">
 			<Dialog.Trigger asChild>
-				<Button variant="secondary" className="px-2">
-					<MdOpenInFull />
+				<Button variant="secondary" className="!p-2">
+					<Maximize2 />
 				</Button>
 			</Dialog.Trigger>
 		</li>
@@ -133,7 +134,7 @@ function Page() {
 													variant="tertiary"
 													className="absolute right-8 top-8 text-white md:top-12 md:text-gray-900"
 												>
-													<MdClose />
+													<X />
 												</Button>
 											</Dialog.Close>
 

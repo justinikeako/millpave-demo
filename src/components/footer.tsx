@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from './logo';
+import { FacebookIcon, InstagramIcon, YoutubeIcon } from 'lucide-react';
 
 function Footer() {
 	return (
@@ -14,9 +15,22 @@ function Footer() {
 						<h3 className="font-semibold">Follow us on social media</h3>
 						<br />
 						<ul className="flex grid-rows-2 gap-2">
-							<li className="h-16 w-16 bg-white" />
-							<li className="h-16 w-16 bg-white" />
-							<li className="h-16 w-16 bg-white" />
+							<li>
+								<Link
+									className="hover:text-gray-300 active:text-gray-400"
+									href="https://www.facebook.com/millenniumpavingstones"
+								>
+									<FacebookIcon className="h-8 w-8" />
+								</Link>
+							</li>
+							<li>
+								<Link
+									className="hover:text-gray-300 active:text-gray-400"
+									href="http://www.instagram.com/millpave"
+								>
+									<InstagramIcon className="h-8 w-8" />
+								</Link>
+							</li>
 						</ul>
 					</div>
 

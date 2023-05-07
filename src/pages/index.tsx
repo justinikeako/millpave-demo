@@ -2,10 +2,11 @@ import { AnimatePresence, motion, Transition } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Button } from '../components/button';
-import { ProductCard } from '../components/product-card';
-import { RevealSection } from '../components/reveal-section';
-import { InspirationSection } from '../sections/inspiration';
+import { Button } from '@/components/button';
+import { ProductCard } from '@/components/product-card';
+import { RevealSection } from '@/components/reveal-section';
+import { InspirationSection } from '@/sections/inspiration';
+import { OrchestratedReveal } from '@/components/orchestrated-reveal';
 
 function getMiddleIndex(arr: unknown[]) {
 	const middleIndex = Math.floor(arr.length / 2);
@@ -52,82 +53,74 @@ function Hero() {
 	return (
 		<section className="space-y-20">
 			<div className="flex flex-col items-center space-y-12">
-				<motion.h1
-					className="text-center text-4xl font-bold"
-					initial={{ y: 100, opacity: 0 }}
-					animate={{ y: 0, opacity: 1 }}
-					transition={{ delay: 0.1, ...slowTransition }}
-				>
-					<span className="block">Transform Your</span>
-					<AnimatePresence initial={false} mode="wait">
-						<motion.span
-							key={currentImage}
-							transition={fastTransition}
-							exit={{ y: -10, opacity: 0 }}
-							className="block"
-						>
-							{(currentImage + '.').split('').map((char, index) => {
-								if (char === ' ') return <span key={char + index}>&nbsp;</span>;
+				<OrchestratedReveal delay={0.1} asChild>
+					<h1 className="text-center text-4xl font-bold">
+						<span className="block">Transform Your</span>
+						<AnimatePresence initial={false} mode="wait">
+							<motion.span
+								key={currentImage}
+								transition={fastTransition}
+								exit={{ y: -10, opacity: 0 }}
+								className="block"
+							>
+								{(currentImage + '.').split('').map((char, index) => {
+									if (char === ' ')
+										return <span key={char + index}>&nbsp;</span>;
 
-								return (
-									<motion.span
-										key={char + index}
-										initial={{ y: 10, opacity: 0 }}
-										transition={{
-											delay: index / 10,
-											...slowTransition
-										}}
-										animate={{ y: 0, opacity: 1 }}
-										className="inline-block"
-									>
-										{char}
-									</motion.span>
-								);
-							})}
-						</motion.span>
-					</AnimatePresence>
-				</motion.h1>
+									return (
+										<motion.span
+											key={char + index}
+											initial={{ y: 10, opacity: 0 }}
+											transition={{
+												delay: index / 10,
+												...slowTransition
+											}}
+											animate={{ y: 0, opacity: 1 }}
+											className="inline-block"
+										>
+											{char}
+										</motion.span>
+									);
+								})}
+							</motion.span>
+						</AnimatePresence>
+					</h1>
+				</OrchestratedReveal>
 
-				<motion.div
-					className="flex space-x-2"
-					transition={{ delay: 0.2, ...slowTransition }}
-					initial={{ y: 100, opacity: 0 }}
-					animate={{ y: 0, opacity: 1 }}
-				>
-					<Button variant="primary" asChild>
-						<Link href="/contact?form=quote">
-							<span>Get a Quote</span>
-						</Link>
-					</Button>
-					<Button variant="secondary" asChild>
-						<Link href="/gallery">
-							<span>Get Inspired</span>
-						</Link>
-					</Button>
-				</motion.div>
+				<OrchestratedReveal delay={0.2} asChild>
+					<div className="flex space-x-2">
+						<Button variant="primary" asChild>
+							<Link href="/contact?form=quote">
+								<span>Get a Quote</span>
+							</Link>
+						</Button>
+						<Button variant="secondary" asChild>
+							<Link href="/gallery">
+								<span>Get Inspired</span>
+							</Link>
+						</Button>
+					</div>
+				</OrchestratedReveal>
 			</div>
 
-			<motion.div
-				className="-mx-8 flex h-[55vmin] items-center justify-center space-x-4 overflow-hidden md:-mx-24 lg:-mx-32 lg:space-x-8"
-				transition={{ delay: 0.3, ...slowTransition }}
-				initial={{ y: 100, opacity: 0 }}
-				animate={{ y: 0, opacity: 1 }}
-			>
-				{images.map((image, index) => (
-					<motion.div
-						key={'picture' + image}
-						className="grid aspect-square place-items-center bg-gray-200 text-2xl text-gray-300"
-						layout
-						transition={slowTransition}
-						animate={{ opacity: 1 - Math.abs(index - currentIndex) * 0.5 }}
-						style={{
-							height: 100 - Math.abs(index - currentIndex) * 12.5 + '%'
-						}}
-					>
-						{image}
-					</motion.div>
-				))}
-			</motion.div>
+			<OrchestratedReveal delay={0.3} asChild>
+				<div className="-mx-8 flex h-[55vmin] items-center justify-center space-x-4 overflow-hidden md:-mx-24 lg:-mx-32 lg:space-x-8">
+					{images.map((image, index) => (
+						<motion.div
+							key={'picture' + image}
+							className="grid aspect-square place-items-center bg-gray-200 text-2xl text-gray-300"
+							layout
+							transition={slowTransition}
+							animate={{ opacity: 1 - Math.abs(index - currentIndex) * 0.5 }}
+							style={{
+								height: 100 - Math.abs(index - currentIndex) * 12.5 + '%'
+							}}
+						>
+							{image}
+						</motion.div>
+					))}
+				</div>
+			</OrchestratedReveal>
 		</section>
 	);
 }
@@ -139,7 +132,7 @@ function Page() {
 				<title>Millennium Paving Stones</title>
 			</Head>
 
-			<main className="space-y-48 px-8 pt-16 md:px-24 lg:px-32">
+			<main className="space-y-48 px-8 pt-8 md:px-24 lg:px-32">
 				{/* Hero */}
 				<Hero />
 

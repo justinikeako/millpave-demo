@@ -70,7 +70,7 @@ function GalleryImage() {
 
 function Page() {
 	const [categoryId, setCategoryId] =
-		useState<typeof categories[number]['id']>('walkway');
+		useState<(typeof categories)[number]['id']>('walkway');
 
 	const currentCategory = categories.find(({ id }) => id === categoryId);
 
@@ -141,11 +141,12 @@ function Page() {
 												<div className="aspect-video w-full bg-gray-200" />
 											</div>
 
-											<div className="h-fit space-y-16 py-16 px-8 md:flex-1 md:px-12 lg:px-16">
+											<div className="h-fit space-y-16 px-8 py-16 md:flex-1 md:px-12 lg:px-16">
 												<section>
 													<p className="font-bold">
 														By&nbsp;
 														<Link
+															scroll={false}
 															target="_blank"
 															href="https://www.instagram.com/najobriks"
 															className="underline"

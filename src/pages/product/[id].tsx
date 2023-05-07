@@ -224,7 +224,10 @@ function Page() {
 						<section className="space-y-2">
 							<div>
 								<p className="font-display text-lg">
-									<Link href={`/products/${product.category.id}`}>
+									<Link
+										scroll={false}
+										href={`/products/${product.category.id}`}
+									>
 										{product.category.displayName}
 									</Link>
 								</p>
@@ -321,7 +324,9 @@ function Page() {
 							))}
 						</ul>
 						<Button variant="secondary" className="self-center" asChild>
-							<Link href="/products/all">View Product Catalogue</Link>
+							<Link scroll={false} href="/products/all">
+								View Product Catalogue
+							</Link>
 						</Button>
 					</div>
 				</RevealSection>

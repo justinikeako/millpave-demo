@@ -7,8 +7,9 @@ import { Header } from '../components/header';
 import { Footer } from '../components/footer';
 import Head from 'next/head';
 import { Chat } from '../components/chat';
+import { AnimatePresence, motion } from 'framer-motion';
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp: AppType = ({ Component, pageProps, router }) => {
 	return (
 		<>
 			<Head>
@@ -18,9 +19,26 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 				/>
 			</Head>
 
-			<Header />
-			<Component {...pageProps} />
-			<Footer />
+			<AnimatePresence
+				mode="wait"
+				initial={false}
+				onExitComplete={() => {
+					window.scrollTo({ top: 0 });
+				}}
+			>
+				<motion.div
+					key={router.asPath}
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+				>
+					<AnimatePresence initial>
+						<Header />
+						<Component {...pageProps} />
+					</AnimatePresence>
+					<Footer />
+				</motion.div>
+			</AnimatePresence>
 
 			<Chat />
 		</>

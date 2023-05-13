@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import { Button } from '../components/button';
 import { motion } from 'framer-motion';
-import { RevealSection } from '../components/reveal-section';
+import { ViewportReveal } from '../components/reveal';
 import * as Dialog from '@radix-ui/react-dialog';
 import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
@@ -111,7 +111,7 @@ function Page() {
 					</motion.ul>
 				</section>
 
-				<RevealSection className="space-y-4 md:space-y-8">
+				<ViewportReveal className="space-y-4 md:space-y-8">
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
 						<div className="mb-8 flex items-center md:col-span-3 md:mb-0 lg:col-span-3 xl:col-span-2">
 							<p className="text-center font-display text-2xl md:text-left">
@@ -207,10 +207,10 @@ function Page() {
 					<Button variant="secondary" className="mx-auto">
 						See More
 					</Button>
-				</RevealSection>
+				</ViewportReveal>
 
 				{/* Process */}
-				<RevealSection className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-32">
+				<ViewportReveal className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-32">
 					<div className="flex-1 lg:order-2">
 						<p className="font-display text-lg">Our Process</p>
 						<h2 className="max-w-[20ch] font-display text-3xl">
@@ -233,7 +233,7 @@ function Page() {
 					</div>
 
 					<div className="aspect-video w-full bg-gray-200 lg:w-[70vmin]"></div>
-				</RevealSection>
+				</ViewportReveal>
 			</main>
 		</>
 	);

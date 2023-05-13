@@ -10,22 +10,19 @@ import { trpc } from '../../utils/trpc';
 import classNames from 'classnames';
 import { PaverEstimator } from '../../components/estimator';
 import { Suspense, useState } from 'react';
-import { InspirationSection } from '../../sections/inspiration';
+import { InspirationSection } from '../../components/inspiration-section';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
-import {
-	formatPrice,
-	formatNumber,
-	formatRestockDate
-} from '../../utils/format';
+import { formatPrice } from '../../utils/format';
 import { createContextInner } from '../../server/trpc/context';
 import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { appRouter } from '../../server/trpc/router/_app';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { extractDetail } from '../../utils/product';
-import { RevealSection } from '../../components/reveal-section';
+import { ViewportReveal } from '../../components/reveal';
 import { motion } from 'framer-motion';
+import { ProductStock } from '@/components/product-stock';
 
 const ProductViewer3D = dynamic(
 	() => import('../../components/product-viewer-3d'),
@@ -94,62 +91,6 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 			</div>
 		</motion.div>
 	);
-}
-
-type ProductStockProps = {
-	productId: string;
-	skuId: string;
-	outOfStockMessage?: string;
-};
-
-function ProductStock({
-	productId,
-	skuId,
-	outOfStockMessage
-}: ProductStockProps) {
-	const fulfillmentQuery = trpc.product.getFulfillmentData.useQuery(
-		{ productId },
-		{ refetchOnWindowFocus: false }
-	);
-
-	const fulfillment = fulfillmentQuery.data;
-
-	if (!fulfillment) {
-		return <p>Loading Stock Info...</p>;
-	}
-
-	const currentStock = fulfillment.stock.reduce((totalQuantity, item) => {
-		if (item.skuId !== skuId) return totalQuantity;
-
-		return totalQuantity + item.quantity;
-	}, 0);
-
-	const closestRestock = fulfillment.restock
-		.filter((restock) => restock.skuId === skuId)
-		.reduce<Date | undefined>((closestDate, curr) => {
-			// If closestDate isn't defined or the current item's date is closer, return the current date.
-			if (!closestDate || curr.date < closestDate) {
-				return curr.date;
-			}
-
-			// Otherwise the
-			return closestDate;
-		}, undefined);
-
-	const formatedStock = formatNumber(currentStock);
-	const formattedRestockDate = formatRestockDate(closestRestock);
-
-	if (currentStock > 0) {
-		return <p>{formatedStock} units available</p>;
-	} else {
-		return (
-			<p>
-				{formattedRestockDate
-					? formattedRestockDate
-					: outOfStockMessage || 'Out of stock'}
-			</p>
-		);
-	}
 }
 
 type SectionProps = {
@@ -233,7 +174,7 @@ function Page() {
 								</p>
 								<h1 className="font-display text-4xl">{product.displayName}</h1>
 							</div>
-							<div className="flex flex-wrap justify-between text-lg">
+							<div className="flex flex-wrap justify-between gap-x-4 text-lg">
 								<div className="flex items-center gap-4">
 									<p>
 										<del>{formatPrice(currentSku.price)}</del>&nbsp;
@@ -241,7 +182,7 @@ function Page() {
 									</p>
 									{currentSku.unit === 'sqft' && (
 										<>
-											<div className="h-8 w-[2px] bg-current" />
+											<div className="h-full w-[2px] bg-current" />
 											<p>
 												{formatPrice(
 													currentSku.price /
@@ -305,7 +246,7 @@ function Page() {
 				</main>
 
 				{/* Similar Products */}
-				<RevealSection className="flex flex-col space-y-8">
+				<ViewportReveal className="flex flex-col space-y-8">
 					<h2 className="max-w-[28ch] self-center text-center font-display text-2xl">
 						Similar to {product.displayName}
 					</h2>
@@ -329,7 +270,7 @@ function Page() {
 							</Link>
 						</Button>
 					</div>
-				</RevealSection>
+				</ViewportReveal>
 
 				{/* Inspiration */}
 				<InspirationSection />

@@ -1,8 +1,8 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRef } from 'react';
-import { Button } from '../components/button';
-import { RevealSection } from '../components/reveal-section';
+import { Button } from './button';
+import { ViewportReveal } from './reveal';
 
 function InspirationSection() {
 	const carouselRef = useRef<HTMLDivElement>(null);
@@ -15,7 +15,7 @@ function InspirationSection() {
 	const x2 = useTransform(scrollYProgress, [0, 1], [-150, 150]);
 
 	return (
-		<RevealSection className="space-y-16">
+		<ViewportReveal className="space-y-16">
 			<div>
 				<p className="m-auto text-center font-display text-lg">Inspiration</p>
 
@@ -62,7 +62,7 @@ function InspirationSection() {
 					<div className="flex aspect-square shrink-0 bg-gray-200" />
 				</motion.div>
 			</div>
-		</RevealSection>
+		</ViewportReveal>
 	);
 }
 

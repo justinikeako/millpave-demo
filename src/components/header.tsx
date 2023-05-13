@@ -4,7 +4,7 @@ import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { forwardRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Logo } from './logo';
-import { OrchestratedReveal } from './orchestrated-reveal';
+import { OrchestratedReveal } from './reveal';
 import { Menu, X } from 'lucide-react';
 
 type NavLinkProps = {
@@ -88,7 +88,7 @@ const MotionNavLink = motion(NavLink);
 
 function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [promoOpen, setPromoOpen]  = useState(false);
+	const [promoOpen, setPromoOpen] = useState(false);
 
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>

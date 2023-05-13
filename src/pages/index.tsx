@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/button';
 import { ProductCard } from '@/components/product-card';
-import { RevealSection } from '@/components/reveal-section';
-import { InspirationSection } from '@/sections/inspiration';
-import { OrchestratedReveal } from '@/components/orchestrated-reveal';
+import { ViewportReveal } from '@/components/reveal';
+import { InspirationSection } from '@/components/inspiration-section';
+import { OrchestratedReveal } from '@/components/reveal';
 
 function getMiddleIndex(arr: unknown[]) {
 	const middleIndex = Math.floor(arr.length / 2);
@@ -137,7 +137,7 @@ function Page() {
 				<Hero />
 
 				{/* Products */}
-				<RevealSection className="flex flex-col space-y-32">
+				<ViewportReveal className="flex flex-col space-y-32">
 					<p className="max-w-[28ch] self-center text-center font-display text-lg text-gray-500 md:text-xl">
 						<span className="text-gray-900">Our concrete pavers</span> can turn
 						your outdoor walkway, deck, patio, or plaza into a functional work
@@ -188,13 +188,13 @@ function Page() {
 							</Link>
 						</Button>
 					</div>
-				</RevealSection>
+				</ViewportReveal>
 
 				{/* Inspiration */}
 				<InspirationSection />
 
 				{/* Locations */}
-				<RevealSection
+				<ViewportReveal
 					id="where-to-buy"
 					className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
 				>
@@ -218,10 +218,10 @@ function Page() {
 					</div>
 
 					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
-				</RevealSection>
+				</ViewportReveal>
 
 				{/* Process */}
-				<RevealSection
+				<ViewportReveal
 					className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
 					data-ai-hidden
 				>
@@ -249,10 +249,10 @@ function Page() {
 					<div className="grid aspect-video w-full place-items-center bg-gray-200 text-center text-2xl text-gray-300 md:w-[30vw]">
 						Installation Video
 					</div>
-				</RevealSection>
+				</ViewportReveal>
 
 				{/* About */}
-				<RevealSection className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
+				<ViewportReveal className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
 					<div className="flex-1 space-y-8">
 						<div>
 							<p className="font-display text-lg">About Us</p>
@@ -283,7 +283,7 @@ function Page() {
 					</div>
 
 					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
-				</RevealSection>
+				</ViewportReveal>
 			</main>
 		</>
 	);

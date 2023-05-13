@@ -1,5 +1,8 @@
 import Head from 'next/head';
-import SkuPicker from '../../components/sku-picker';
+import {
+	SkuFragmentPicker,
+	SkuPickerProvider
+} from '../../components/sku-picker';
 import { ProductCard } from '../../components/product-card';
 import { Button } from '../../components/button';
 import Link from 'next/link';
@@ -81,7 +84,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 							<label
 								htmlFor={id}
-								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center border border-gray-200 bg-gray-200 text-lg text-gray-400 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-black"
+								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center border border-gray-200 bg-gray-200 text-lg text-gray-400 ring-2 ring-white peer-checked:border-2 peer-checked:border-black"
 							>
 								{showModelViewer && index === 3 && '3D'}
 							</label>
@@ -214,14 +217,17 @@ function Page() {
 						</Section>
 
 						{/* Sku Picker */}
-						<SkuPicker
-							value={skuId}
-							skuIdTemplateFragments={product.skuIdFragments}
-							section={Section}
+						<SkuPickerProvider
+							skuId={skuId}
 							onChange={(newSkuId) => {
 								setSkuId(newSkuId);
 							}}
-						/>
+						>
+							<SkuFragmentPicker
+								skuIdTemplateFragments={product.skuIdFragments}
+								section={Section}
+							/>
+						</SkuPickerProvider>
 
 						{/* Paver Estimator */}
 						{product.estimator === 'paver' && (
@@ -247,7 +253,7 @@ function Page() {
 
 				{/* Similar Products */}
 				<ViewportReveal className="flex flex-col space-y-8">
-					<h2 className="max-w-[28ch] self-center text-center font-display text-2xl">
+					<h2 className="font-display max-w-[28ch] self-center text-center text-2xl">
 						Similar to {product.displayName}
 					</h2>
 

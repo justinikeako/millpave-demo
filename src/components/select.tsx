@@ -16,7 +16,7 @@ function Trigger({ basic, ...props }: TriggerProps) {
 			className={cx(
 				basic
 					? 'flex items-center justify-between gap-1 outline-none'
-					: 'flex items-center justify-between rounded-sm bg-gray-200 p-4 outline-none focus:inner-border-2 focus:inner-border-gray-900',
+					: 'flex items-center justify-between rounded-sm bg-gray-200 p-4 outline-none focus:ring-2 focus:ring-gray-900',
 				props.className
 			)}
 		>
@@ -50,7 +50,7 @@ function Item({ value, children }: SelectPrimitive.SelectItemProps) {
 	return (
 		<SelectPrimitive.Item
 			value={value}
-			className="relative flex select-none items-center justify-between space-x-2 rounded-sm p-4 radix-highlighted:bg-gray-200"
+			className="relative flex select-none items-center justify-between space-x-2 rounded-sm p-4 data-[highlighted]:bg-gray-200"
 		>
 			<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
 			<SelectPrimitive.ItemIndicator>

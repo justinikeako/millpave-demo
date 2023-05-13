@@ -4,11 +4,13 @@
 
 :root {
 	min-height: 0vw;
+	font-family: var(--font-inter);
 }
 
 body {
 	font-size: 14px;
 }
+
 /* Chrome, Safari, Edge, Opera */
 input.no-arrows::-webkit-outer-spin-button,
 input.no-arrows::-webkit-inner-spin-button {
@@ -65,25 +67,19 @@ b {
 	@apply font-semibold;
 }
 
-@layer base {
-	html {
-		@apply text-gray-900;
-	}
-
-	@font-face {
-		font-family: 'InterVar';
-		font-weight: 100 900;
-		font-display: swap;
-		font-style: normal;
-		font-named-instance: 'Regular';
-		src: url('/fonts/Inter.var.woff2?v=3.19') format('woff2-variations'),
-			url('/fonts/Inter.var.woff2?v=3.19') format('woff2');
-	}
-}
-
 @layer utilities {
-	.font-display {
-		font-variation-settings: 'opsz' 48;
+	.text-4xl .text-3xl,
+	.text-2xl,
+	.text-xl {
+		font-variation-settings: 'opsz' 32;
+	}
+
+	.text-lg {
+		font-variation-settings: 'opsz' 24;
+	}
+
+	.text-sm {
+		font-variation-settings: 'opsz' 12;
 	}
 
 	.no-scrollbar::-webkit-scrollbar {

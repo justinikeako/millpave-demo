@@ -94,7 +94,7 @@ function Page() {
 					initial={{ y: 100, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					transition={{ delay: 0.1, ...slowTransition }}
-					className="text-center font-display text-4xl"
+					className="text-center text-4xl"
 				>
 					Product Catalogue
 				</motion.h1>

@@ -54,7 +54,6 @@
 		"react-markdown": "^8.0.7",
 		"react-qr-code": "^2.0.11",
 		"superjson": "^1.12.2",
-		"tailwindcss-radix": "^2.8.0",
 		"three": "^0.151.3",
 		"three-stdlib": "^2.21.8",
 		"windstitch": "^0.3.0",
@@ -77,7 +76,6 @@
 		"prettier-plugin-tailwindcss": "^0.2.7",
 		"prisma": "^4.13.0",
 		"tailwindcss": "^3.3.1",
-		"tailwindcss-inner-border": "^0.2.0",
 		"ts-node": "^10.9.1",
 		"tsx": "^3.12.6",
 		"typescript": "5.0.4"

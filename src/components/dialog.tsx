@@ -61,9 +61,7 @@ type HeaderProps = {
 function Header({ title }: HeaderProps) {
 	return (
 		<div className="flex items-center justify-between px-8 pb-4 pt-8">
-			<DialogPrimitive.Title className="font-display text-lg">
-				{title}
-			</DialogPrimitive.Title>
+			<DialogPrimitive.Title className="text-lg">{title}</DialogPrimitive.Title>
 
 			<DialogPrimitive.Close asChild>
 				<Button variant="tertiary" className="text-gray-500">

@@ -27,11 +27,9 @@ function GalleryFilter({ children, value, ...props }: GalleryFilterProps) {
 			/>
 			<label
 				htmlFor={value}
-				className="absolute inset-0 border border-gray-200 bg-gray-200 inner-border-4 inner-border-white peer-checked:border-2 peer-checked:border-black"
+				className="absolute inset-0 bg-gray-200 bg-clip-content p-1 text-lg ring-1 ring-inset ring-gray-200 peer-checked:ring-2 peer-checked:ring-black"
 			/>
-			<p className="pointer-events-none z-[1] font-display text-lg">
-				{children}
-			</p>
+			<p className="pointer-events-none z-[1] text-lg">{children}</p>
 		</li>
 	);
 }
@@ -87,7 +85,7 @@ function Page() {
 						initial={{ y: 100, opacity: 0 }}
 						animate={{ y: 0, opacity: 1 }}
 						transition={{ delay: 0.1, ...slowTransition }}
-						className="mx-auto max-w-[20ch] text-center font-display text-3xl"
+						className="mx-auto max-w-[20ch] text-center text-3xl"
 					>
 						Which types of projects would you like to see?
 					</motion.h1>
@@ -114,7 +112,7 @@ function Page() {
 				<ViewportReveal className="space-y-4 md:space-y-8">
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
 						<div className="mb-8 flex items-center md:col-span-3 md:mb-0 lg:col-span-3 xl:col-span-2">
-							<p className="text-center font-display text-2xl md:text-left">
+							<p className="text-center text-2xl md:text-left">
 								Get inspiration for your new&nbsp;
 								{currentCategory?.displayName.singular.toLowerCase()}.
 							</p>
@@ -212,14 +210,12 @@ function Page() {
 				{/* Process */}
 				<ViewportReveal className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-32">
 					<div className="flex-1 lg:order-2">
-						<p className="font-display text-lg">Our Process</p>
-						<h2 className="max-w-[20ch] font-display text-3xl">
-							Starting from zero.
-						</h2>
+						<p className="text-lg">Our Process</p>
+						<h2 className="max-w-[20ch] text-3xl">Starting from zero.</h2>
 
 						<br />
 
-						<p className="font-display text-lg">
+						<p className="text-lg">
 							Integer a velit in sapien aliquam consectetur et vitae ligula.
 							Integer ornare egestas enim a malesuada. Suspendisse arcu lectus,
 							blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula

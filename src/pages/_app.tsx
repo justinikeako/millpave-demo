@@ -10,11 +10,26 @@ import { Chat } from '../components/chat';
 import { AnimatePresence, motion } from 'framer-motion';
 import '../styles/globals.css';
 
+import localFont from 'next/font/local';
+import { cn } from '@/lib/utils';
+
+const Inter = localFont({
+	src: './fonts/inter.var.woff2',
+	display: 'swap',
+	variable: '--font-inter'
+});
+
 const MyApp: AppType = ({ Component, pageProps, router }) => {
 	const showLayout = router.route !== '/quote-builder';
 
 	return (
 		<>
+			{/* give access to the font */}
+			<style jsx global>{`
+				:root {
+					--font-inter: ${Inter.style.fontFamily};
+				}
+			`}</style>
 			<Head>
 				<meta
 					name="viewport"
@@ -34,6 +49,7 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 					initial={{ y: 5, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					exit={{ y: 5, opacity: 0 }}
+					className={cn(Inter.variable, 'font-sans text-gray-900')}
 					transition={{
 						type: 'spring',
 						duration: 0.3

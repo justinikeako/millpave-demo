@@ -17,9 +17,9 @@ function InspirationSection() {
 	return (
 		<ViewportReveal className="space-y-16">
 			<div>
-				<p className="m-auto text-center font-display text-lg">Inspiration</p>
+				<p className="m-auto text-center text-lg">Inspiration</p>
 
-				<h2 className="mx-auto max-w-[20ch] text-center font-display text-3xl">
+				<h2 className="mx-auto max-w-[20ch] text-center text-3xl">
 					Don&apos;t know where to start? Look at our best projects.
 				</h2>
 

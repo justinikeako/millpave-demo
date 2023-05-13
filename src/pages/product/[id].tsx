@@ -84,7 +84,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 							<label
 								htmlFor={id}
-								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center border border-gray-200 bg-gray-200 text-lg text-gray-400 ring-2 ring-white peer-checked:border-2 peer-checked:border-black"
+								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-200 peer-checked:ring-2 peer-checked:ring-black"
 							>
 								{showModelViewer && index === 3 && '3D'}
 							</label>
@@ -167,7 +167,7 @@ function Page() {
 						{/* Basic Info */}
 						<section className="space-y-2">
 							<div>
-								<p className="font-display text-lg">
+								<p className="text-lg">
 									<Link
 										scroll={false}
 										href={`/products/${product.category.id}`}
@@ -175,7 +175,7 @@ function Page() {
 										{product.category.displayName}
 									</Link>
 								</p>
-								<h1 className="font-display text-4xl">{product.displayName}</h1>
+								<h1 className="text-4xl">{product.displayName}</h1>
 							</div>
 							<div className="flex flex-wrap justify-between gap-x-4 text-lg">
 								<div className="flex items-center gap-4">
@@ -253,7 +253,7 @@ function Page() {
 
 				{/* Similar Products */}
 				<ViewportReveal className="flex flex-col space-y-8">
-					<h2 className="font-display max-w-[28ch] self-center text-center text-2xl">
+					<h2 className="max-w-[28ch] self-center text-center text-2xl">
 						Similar to {product.displayName}
 					</h2>
 

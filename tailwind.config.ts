@@ -1,14 +1,11 @@
-const colors = require('tailwindcss/colors');
-
-/** @type {import('tailwindcss').Config} */
+import { type Config } from 'tailwindcss';
+import colors from 'tailwindcss/colors';
 
 module.exports = {
 	content: ['./src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		fontFamily: {
-			display: ['InterVar', 'sans-serif'],
-			body: ['InterVar', 'sans-serif'],
-			sans: ['InterVar', 'sans-serif']
+			sans: ['var(--font-inter)', 'sans-serif']
 		},
 
 		fontSize: {
@@ -68,8 +65,5 @@ module.exports = {
 		hoverOnlyWhenSupported: true
 	},
 
-	plugins: [
-		require('tailwindcss-inner-border'),
-		require('tailwindcss-radix')('')
-	]
-};
+	plugins: []
+} satisfies Config;

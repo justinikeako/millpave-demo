@@ -138,7 +138,7 @@ function Page() {
 
 				{/* Products */}
 				<ViewportReveal className="flex flex-col space-y-32">
-					<p className="max-w-[28ch] self-center text-center font-display text-lg text-gray-500 md:text-xl">
+					<p className="max-w-[28ch] self-center text-center text-lg text-gray-500 md:text-xl">
 						<span className="text-gray-900">Our concrete pavers</span> can turn
 						your outdoor walkway, deck, patio, or plaza into a functional work
 						of art.
@@ -199,12 +199,10 @@ function Page() {
 					className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
 				>
 					<div className="flex-1">
-						<p className="font-display text-lg">Our Locations</p>
-						<h2 className="max-w-[20ch] font-display text-3xl">
-							Where to buy.
-						</h2>
+						<p className="text-lg">Our Locations</p>
+						<h2 className="max-w-[20ch] text-3xl">Where to buy.</h2>
 						<br />
-						<p className="font-display text-lg">
+						<p className="text-lg">
 							We operate from two locations, namely, our manufacturing plant in
 							Yallahs, St Thomas and our main office and showroom at 27 Mannings
 							Hill Road, Kingston.
@@ -226,14 +224,12 @@ function Page() {
 					data-ai-hidden
 				>
 					<div className="flex-1 md:order-2">
-						<p className="font-display text-lg">Our Process</p>
-						<h2 className="max-w-[20ch] font-display text-3xl">
-							Starting from zero.
-						</h2>
+						<p className="text-lg">Our Process</p>
+						<h2 className="max-w-[20ch] text-3xl">Starting from zero.</h2>
 
 						<br />
 
-						<p className="font-display text-lg">
+						<p className="text-lg">
 							Integer a velit in sapien aliquam consectetur et vitae ligula.
 							Integer ornare egestas enim a malesuada. Suspendisse arcu lectus,
 							blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula
@@ -255,12 +251,12 @@ function Page() {
 				<ViewportReveal className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
 					<div className="flex-1 space-y-8">
 						<div>
-							<p className="font-display text-lg">About Us</p>
-							<h2 className="max-w-[20ch] font-display text-3xl">
+							<p className="text-lg">About Us</p>
+							<h2 className="max-w-[20ch] text-3xl">
 								Millennium Paving Stones LTD.
 							</h2>
 							<br />
-							<p className="font-display text-lg">
+							<p className="text-lg">
 								Millennium Paving Stones Limited is the largest manufacturer of
 								paving stones in Jamaica, and has been in operation since 2000.
 								We also manufacture stepping stones, grasscrete, curb wall and

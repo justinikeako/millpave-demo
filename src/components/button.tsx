@@ -19,7 +19,7 @@ const buttonVariants = cva('[&>*]:select-none [&>svg]:text-[1.5rem]', {
 			secondary:
 				'flex justify-center space-x-1.5 rounded-sm border border-black/10 px-4 py-2 font-semibold hover:bg-black/10 active:bg-black/20',
 			tertiary:
-				'-m-3 flex justify-center space-x-2 rounded-full p-3 hover:bg-black/10 active:bg-black/20'
+				'-m-3 flex justify-center space-x-2 rounded-full p-3 disabled:text-gray-500 hover:bg-black/10 active:bg-black/20'
 		}
 	}
 });

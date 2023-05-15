@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import Head from 'next/head';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -8,34 +8,46 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { InfillStage } from '@/components/quote-stages/infill';
 import { BorderStage } from '@/components/quote-stages/border';
 import { ReviewStage } from '@/components/quote-stages/review';
+import { Button } from '@/components/button';
+import {
+	StageContext,
+	useStageContext,
+	StageProvider
+} from '../components/stage-context';
+
+const stages = [
+	ShapeStage,
+	DimensionsStage,
+	InfillStage,
+	BorderStage,
+	ReviewStage
+];
+
+const maximumStageIndex = stages.length - 1;
 
 type StageSelectorProps = React.PropsWithChildren<{
 	index: number;
-	currentStage: number;
-	onClick: (newStage: number) => void;
 }>;
 
-function StageSelector({
-	index,
-	currentStage,
-	onClick,
-	children
-}: StageSelectorProps) {
-	const selected = currentStage === index,
-		completed = currentStage > index;
+function StageSelector({ index, children }: StageSelectorProps) {
+	const { currentStageIndex, setCurrentStageIndex } = useContext(StageContext);
+
+	const selected = currentStageIndex === index,
+		completed = currentStageIndex > index;
 
 	return (
 		<li>
 			<button
 				className="flex items-center gap-2"
-				onClick={() => onClick(index)}
+				// disabled={completedStages[index - 1 < 0 ? 0 : index - 1] === false}
+				onClick={() => setCurrentStageIndex(index)}
 			>
 				<span
 					className={cn(
 						'rounded-md p-[3px] align-middle font-semibold',
 						selected || completed
 							? 'bg-gray-900 text-white'
-							: 'border border-gray-900'
+							: 'ring-1 ring-inset ring-gray-900'
 					)}
 				>
 					{completed ? (
@@ -49,6 +61,53 @@ function StageSelector({
 				<span>{children}</span>
 			</button>
 		</li>
+	);
+}
+
+function Header() {
+	const {
+		currentStageIndex,
+		incrementCurrentStageIndex,
+		decrementCurrentStageIndex
+	} = useContext(StageContext);
+
+	return (
+		<header>
+			<div className="flex justify-between p-4">
+				<Button
+					variant="secondary"
+					type="button"
+					disabled={currentStageIndex <= 0}
+					onClick={decrementCurrentStageIndex}
+				>
+					Prev Stage
+				</Button>
+				{/* <Button variant="primary" type="submit">
+					Submit
+				</Button> */}
+				<Button
+					variant="primary"
+					type="button"
+					disabled={currentStageIndex >= maximumStageIndex}
+					onClick={incrementCurrentStageIndex}
+				>
+					Next Stage
+				</Button>
+			</div>
+			<nav>
+				<ul className="flex items-center justify-center gap-2 bg-gray-100 px-32 py-6">
+					<StageSelector index={0}>Shape</StageSelector>
+					<li className="h-[1px] w-8 bg-current" />
+					<StageSelector index={1}>Dimensions</StageSelector>
+					<li className="h-[1px] w-8 bg-current" />
+					<StageSelector index={2}>Infill</StageSelector>
+					<li className="h-[1px] w-8 bg-current" />
+					<StageSelector index={3}>Border</StageSelector>
+					<li className="h-[1px] w-8 bg-current" />
+					<StageSelector index={4}>Review Items</StageSelector>
+				</ul>
+			</nav>
+		</header>
 	);
 }
 
@@ -76,8 +135,15 @@ const defaultValues = {
 	}
 };
 
+function CurrentStage() {
+	const { currentStageIndex } = useStageContext();
+
+	const CurrentStage = stages[currentStageIndex];
+
+	return CurrentStage ? <CurrentStage /> : null;
+}
+
 function Page() {
-	const [stage, setStage] = useState(0);
 	const methods = useForm({ defaultValues });
 
 	return (
@@ -86,66 +152,14 @@ function Page() {
 				<title>Get a Quote — Millennium Paving Stones</title>
 			</Head>
 
-			<main className="space-y-24">
-				<ul className="flex items-center justify-center gap-2 bg-gray-100 px-32 py-6">
-					<StageSelector
-						index={0}
-						currentStage={stage}
-						onClick={(newStage) => setStage(newStage)}
-					>
-						Shape
-					</StageSelector>
-					<li className="h-[1px] w-8 bg-current" />
-					<StageSelector
-						index={1}
-						currentStage={stage}
-						onClick={(newStage) => setStage(newStage)}
-					>
-						Dimensions
-					</StageSelector>
-					<li className="h-[1px] w-8 bg-current" />
-					<StageSelector
-						index={2}
-						currentStage={stage}
-						onClick={(newStage) => setStage(newStage)}
-					>
-						Infill
-					</StageSelector>
-					<li className="h-[1px] w-8 bg-current" />
-					<StageSelector
-						index={3}
-						currentStage={stage}
-						onClick={(newStage) => setStage(newStage)}
-					>
-						Border
-					</StageSelector>
-					<li className="h-[1px] w-8 bg-current" />
-					<StageSelector
-						index={4}
-						currentStage={stage}
-						onClick={(newStage) => setStage(newStage)}
-					>
-						Review Items
-					</StageSelector>
-				</ul>
-
+			<StageProvider maximumStageIndex={maximumStageIndex}>
 				<FormProvider {...methods}>
-					<form onSubmit={methods.handleSubmit(onSubmit)}>
-						{stage === 0 && <ShapeStage />}
-						{stage === 1 && <DimensionsStage />}
-						{stage === 2 && <InfillStage />}
-						{stage === 3 && <BorderStage />}
-						{stage === 4 && <ReviewStage />}
-						<button type="button" onClick={() => setStage(stage - 1)}>
-							Prev Stage
-						</button>
-						<button type="button" onClick={() => setStage(stage + 1)}>
-							Next Stage
-						</button>
-						<button type="submit">Submit</button>
-					</form>
+					<main className="flex flex-col gap-y-24 pb-32">
+						<Header />
+						<CurrentStage />
+					</main>
 				</FormProvider>
-			</main>
+			</StageProvider>
 		</>
 	);
 }

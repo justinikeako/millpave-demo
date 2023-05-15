@@ -119,5 +119,19 @@ export const productRouter = router({
 				products: productsWithStarterSku,
 				nextCursor
 			};
+		}),
+	getPavers: publicProcedure
+		.input(z.object({}))
+		.query(async ({ ctx, input }) => {
+			const pavers = ctx.prisma.product.findMany({
+				where: { categoryId: 'concrete_pavers' },
+				select: {
+					id: true,
+					displayName: true,
+					defaultSkuId: true
+				}
+			});
+
+			return pavers;
 		})
 });

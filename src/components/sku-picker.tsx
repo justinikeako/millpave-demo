@@ -3,6 +3,7 @@ import { FullPaver } from '../types/product';
 
 type SkuPickerContextValue = {
 	skuIdFragments: string[];
+	changeSkuId(newSkuId: string): void;
 	changeFragment(changeIndex: number, newFragment: string): void;
 };
 
@@ -31,7 +32,11 @@ function SkuPickerProvider(props: SkuPickerProviderProps) {
 
 	return (
 		<SkuPickerContext.Provider
-			value={{ skuIdFragments: props.skuId.split(':'), changeFragment }}
+			value={{
+				skuIdFragments: props.skuId.split(':'),
+				changeFragment,
+				changeSkuId: props.onChange
+			}}
 		>
 			{props.children}
 		</SkuPickerContext.Provider>
@@ -46,11 +51,12 @@ type ProductPickerProps = {
 	products: {
 		id: string;
 		displayName: string;
+		defaultSkuId: string;
 	}[];
 };
 
 function ProductPicker({ products }: ProductPickerProps) {
-	const { skuIdFragments, changeFragment } = useSkuPickerContext();
+	const { skuIdFragments, changeSkuId } = useSkuPickerContext();
 
 	const [productId] = skuIdFragments;
 
@@ -66,7 +72,25 @@ function ProductPicker({ products }: ProductPickerProps) {
 								value={id}
 								id={id}
 								checked={productId === id}
-								onChange={(e) => changeFragment(0, e.target.value)}
+								onChange={(e) => {
+									const newProductId = e.target.value;
+
+									const sustainedColorId = structuredClone(
+										skuIdFragments
+									).pop() as string;
+
+									const newDefaultSkuId = products.find(
+										({ id }) => id === newProductId
+									)?.defaultSkuId;
+
+									// We want to keep the color and discard everything else
+									const newSkuId = newDefaultSkuId?.replace(
+										'grey',
+										sustainedColorId
+									);
+
+									if (newSkuId) changeSkuId(newSkuId);
+								}}
 							/>
 
 							<div className="flex items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-200 peer-checked:bg-gray-100 peer-checked:text-gray-950 peer-checked:ring-2 peer-checked:ring-gray-950">

@@ -1,94 +1,152 @@
 import * as Select from '@/components/select';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
+import { Dimensions, Shape, useStageContext } from '../stage-context';
+import { Button } from '../button';
+import { StageForm } from './form';
+import { set } from 'lodash-es';
 
 type DimensionInputProps = React.PropsWithChildren<{
 	fieldName: string;
 	label: string;
 	placeholder?: string;
+	dimension?: '2D' | '3D';
 }>;
 
 function DimensionInput({
 	fieldName,
 	label,
-	placeholder
+	placeholder,
+	dimension = '2D'
 }: DimensionInputProps) {
-	const { register } = useFormContext();
+	const { register, control } = useFormContext();
 
 	return (
 		<div className="max-w-xs flex-1 space-y-4">
-			<label htmlFor={fieldName}>{label}</label>
-			<div className="flex w-full rounded-md bg-gray-200 p-6 pr-4">
+			<label htmlFor={`${fieldName}.value`}>{label}</label>
+			<div className="flex w-full rounded-md bg-gray-200 p-4 pr-2">
 				<input
-					{...register(fieldName)}
-					id={fieldName}
+					{...register(`${fieldName}.value`)}
+					id={`${fieldName}.value`}
 					type="number"
 					className="no-arrows w-full flex-1 bg-transparent outline-none"
 					placeholder={placeholder}
 				/>
-				<Select.Root defaultValue="ft">
-					<Select.Trigger basic />
+				<Controller
+					name={`${fieldName}.unit`}
+					control={control}
+					render={({ field }) => (
+						<Select.Root value={field.value} onValueChange={field.onChange}>
+							<Select.Trigger basic />
 
-					<Select.Content>
-						<Select.ScrollUpButton />
-						<Select.Viewport>
-							<Select.Item value="ft">ft</Select.Item>
-							<Select.Item value="in">in</Select.Item>
-							<Select.Item value="m">m</Select.Item>
-							<Select.Item value="cm">cm</Select.Item>
-						</Select.Viewport>
-						<Select.ScrollDownButton />
-					</Select.Content>
-				</Select.Root>
+							<Select.Content>
+								<Select.ScrollUpButton />
+								<Select.Viewport>
+									{dimension === '2D' && (
+										<>
+											<Select.Item value="ft">ft</Select.Item>
+											<Select.Item value="in">in</Select.Item>
+											<Select.Item value="m">m</Select.Item>
+											<Select.Item value="cm">cm</Select.Item>
+										</>
+									)}
+									{dimension === '3D' && (
+										<>
+											<Select.Item value="sqft">sqft</Select.Item>
+											<Select.Item value="sqin">sqin</Select.Item>
+											<Select.Item value="sqm">sqm</Select.Item>
+											<Select.Item value="sqcm">sqcm</Select.Item>
+										</>
+									)}
+								</Select.Viewport>
+								<Select.ScrollDownButton />
+							</Select.Content>
+						</Select.Root>
+					)}
+				/>
 			</div>
 		</div>
 	);
 }
 
-export function DimensionsStage() {
-	const { watch } = useFormContext();
+function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
+	switch (shape) {
+		case 'rect':
+			return dimensions.length.value * dimensions.width.value;
+		case 'circle':
+			return dimensions.circumference
+				? dimensions.circumference
+				: Math.PI * dimensions.diameter.value;
+		case 'arbitrary':
+			return dimensions.runningFoot;
+	}
+}
 
-	const shape = watch().shape;
+export function DimensionsStage() {
+	const { values, setValues } = useStageContext();
 
 	return (
-		<section className="space-y-16 px-32">
-			<h2 className="text-center text-2xl">Now enter your measurements.</h2>
-			<div className="flex justify-center gap-4">
-				{shape === 'rectangle' && (
-					<>
+		<StageForm
+			onSubmit={(values) => {
+				const newValues = set(
+					structuredClone(values),
+					'border.runningFoot.value',
+					calculateRunningFoot(values.shape, values.dimensions)
+				);
+
+				console.log(
+					values.shape,
+					values.dimensions,
+					newValues.border.runningFoot.value
+				);
+
+				setValues(newValues);
+			}}
+		>
+			<div className="space-y-16 px-32">
+				<h2 className="text-center text-2xl">Now enter your measurements.</h2>
+				<div className="flex justify-center gap-4">
+					{values.shape === 'rect' && (
+						<>
+							<DimensionInput
+								fieldName="dimensions.width"
+								label="Width"
+								placeholder="Amount"
+							/>
+							<DimensionInput
+								fieldName="dimensions.length"
+								label="Height"
+								placeholder="Amount"
+							/>
+						</>
+					)}
+					{values.shape === 'circle' && (
 						<DimensionInput
-							fieldName="dimensions.width"
-							label="Width"
+							fieldName="dimensions.circumference"
+							label="Circumference"
 							placeholder="Amount"
 						/>
-						<DimensionInput
-							fieldName="dimensions.height"
-							label="Height"
-							placeholder="Amount"
-						/>
-					</>
-				)}
-				{shape === 'circle' && (
-					<DimensionInput
-						fieldName="dimensions.circumference"
-						label="Circumference"
-						placeholder="Amount"
-					/>
-				)}
-				{shape === 'arbitrary' && (
-					<>
-						<DimensionInput
-							fieldName="dimensions.area"
-							label="Area"
-							placeholder="Amount"
-						/>
-						<DimensionInput
-							fieldName="dimensions.runningFoot"
-							label="Running Foot"
-							placeholder="Amount"
-						/>
-					</>
-				)}
+					)}
+					{values.shape === 'arbitrary' && (
+						<>
+							<DimensionInput
+								fieldName="dimensions.area"
+								label="Area"
+								placeholder="Amount"
+								dimension="3D"
+							/>
+							<DimensionInput
+								fieldName="dimensions.runningFoot"
+								label="Running Foot"
+								placeholder="Amount"
+							/>
+						</>
+					)}
+				</div>
 			</div>
-		</section>
+
+			<Button variant="primary" type="submit">
+				next
+			</Button>
+		</StageForm>
 	);
 }

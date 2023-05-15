@@ -5,7 +5,7 @@ import { Slot, SlotProps } from '@radix-ui/react-slot';
 import { RefAttributes } from 'react';
 import { useRef } from 'react';
 
-type MotionSlotProps<Props extends unknown> = Omit<
+type MotionSlotProps<Props> = Omit<
 	SlotProps & MotionProps & RefAttributes<HTMLElement>,
 	'ref'
 > &

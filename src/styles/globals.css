@@ -68,7 +68,8 @@ b {
 }
 
 @layer utilities {
-	.text-4xl .text-3xl,
+	.text-4xl,
+	.text-3xl,
 	.text-2xl,
 	.text-xl {
 		font-variation-settings: 'opsz' 32;

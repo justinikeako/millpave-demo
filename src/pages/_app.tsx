@@ -1,4 +1,3 @@
-import { createContext } from 'react';
 import { type AppType } from 'next/app';
 
 import { trpc } from '../utils/trpc';
@@ -10,12 +9,12 @@ import { Chat } from '../components/chat';
 import { AnimatePresence, motion } from 'framer-motion';
 import '../styles/globals.css';
 
-import localFont from 'next/font/local';
+import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 
-const Inter = localFont({
-	src: './fonts/inter.var.woff2',
+const inter = Inter({
 	display: 'swap',
+	subsets: ['latin'],
 	variable: '--font-inter'
 });
 
@@ -27,7 +26,7 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 			{/* give access to the font */}
 			<style jsx global>{`
 				:root {
-					--font-inter: ${Inter.style.fontFamily};
+					--font-inter: ${inter.style.fontFamily};
 				}
 			`}</style>
 			<Head>
@@ -49,7 +48,7 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 					initial={{ y: 5, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					exit={{ y: 5, opacity: 0 }}
-					className={cn(Inter.variable, 'font-sans text-gray-900')}
+					className={cn(inter.variable, 'font-sans text-gray-900')}
 					transition={{
 						type: 'spring',
 						duration: 0.3

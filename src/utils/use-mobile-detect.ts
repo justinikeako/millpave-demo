@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 const getMobileDetect = (userAgent: NavigatorID['userAgent']) => {
 	const isAndroid = () => Boolean(userAgent.match(/Android/i));
 	const isIos = () => Boolean(userAgent.match(/iPhone|iPad|iPod/i));
@@ -19,9 +17,6 @@ const getMobileDetect = (userAgent: NavigatorID['userAgent']) => {
 };
 
 export const useMobileDetect = () => {
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	useEffect(() => {});
-
 	const userAgent =
 		typeof navigator === 'undefined' ? 'SSR' : navigator.userAgent;
 

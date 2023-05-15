@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import cx from 'classnames';
 import { Check, ChevronUp, ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type TriggerProps = {
 	basic?: boolean;
@@ -13,7 +13,7 @@ function Trigger({ basic, ...props }: TriggerProps) {
 	return (
 		<SelectPrimitive.Trigger
 			{...props}
-			className={cx(
+			className={cn(
 				basic
 					? 'flex items-center justify-between gap-1 outline-none'
 					: 'flex items-center justify-between rounded-sm bg-gray-200 p-4 outline-none focus:ring-2 focus:ring-gray-900',

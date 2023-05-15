@@ -66,13 +66,21 @@ export function StoneEditor(props: StoneEditorProps) {
 	});
 
 	const [editIndex, setEditIndex] = useState(0);
+	const [sheetOpen, setSheetOpen] = useState(true);
 
 	const addStone = (stone: Stone) => append(stone);
 	const editStone = (index: number, stone: Stone) => update(index, stone);
 
+	function handleSubmit(stone: Stone) {
+		if (editIndex === -1) addStone(stone);
+		else editStone(editIndex, stone);
+
+		setSheetOpen(false);
+	}
+
 	return (
 		<div className="flex flex-wrap justify-center gap-4">
-			<Sheet>
+			<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
 				<div className="flex h-64 w-64 flex-col gap-4">
 					<SheetTrigger asChild>
 						<button
@@ -113,9 +121,7 @@ export function StoneEditor(props: StoneEditorProps) {
 				<SheetContent position="right" size="sm">
 					<StoneForm
 						initialValues={fields[editIndex] as Stone}
-						action={(stone) =>
-							editIndex === -1 ? addStone(stone) : editStone(editIndex, stone)
-						}
+						onSubmit={handleSubmit}
 						dimension={props.dimension}
 					/>
 				</SheetContent>
@@ -127,7 +133,7 @@ export function StoneEditor(props: StoneEditorProps) {
 type StoneFormProps = {
 	dimension: '2D' | '3D';
 	initialValues?: Stone;
-	action(stone: Stone): void;
+	onSubmit(stone: Stone): void;
 };
 
 const defaultStone: Stone = {
@@ -139,7 +145,7 @@ const defaultStone: Stone = {
 function StoneForm({
 	dimension,
 	initialValues = defaultStone,
-	action
+	onSubmit
 }: StoneFormProps) {
 	const formMethods = useForm<Stone>({ defaultValues: initialValues });
 	const { register, setValue, watch, handleSubmit } = formMethods;
@@ -173,7 +179,7 @@ function StoneForm({
 	}
 
 	return (
-		<form onSubmit={stopPropagate(handleSubmit(action))} className="contents">
+		<form onSubmit={stopPropagate(handleSubmit(onSubmit))} className="contents">
 			<SheetHeader>
 				<Button
 					variant="tertiary"

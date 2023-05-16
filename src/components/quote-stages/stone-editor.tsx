@@ -32,7 +32,7 @@ import { ExtendedPaverDetails } from '@/types/product';
 import { Check } from 'lucide-react';
 import { Stone, FormValues } from '../stage-context';
 import { StoneListItem } from './stone-list-item';
-import { stopPropagate } from '@/lib/utils';
+import { cn, stopPropagate } from '@/lib/utils';
 
 type SectionProps = React.PropsWithChildren<{
 	heading: string;
@@ -66,7 +66,7 @@ export function StoneEditor(props: StoneEditorProps) {
 	});
 
 	const [editIndex, setEditIndex] = useState(0);
-	const [sheetOpen, setSheetOpen] = useState(true);
+	const [sheetOpen, setSheetOpen] = useState(false);
 
 	const addStone = (stone: Stone) => append(stone);
 	const editStone = (index: number, stone: Stone) => update(index, stone);
@@ -85,7 +85,12 @@ export function StoneEditor(props: StoneEditorProps) {
 					<SheetTrigger asChild>
 						<button
 							type="button"
-							className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-gray-400 p-6"
+							className={cn(
+								'flex w-full flex-1 items-center justify-center gap-2 rounded-lg p-6 ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
+								sheetOpen &&
+									editIndex - 1 &&
+									'bg-gray-100 ring-2 ring-black ring-opacity-100'
+							)}
 							onClick={() => {
 								setEditIndex(-1);
 							}}
@@ -111,9 +116,10 @@ export function StoneEditor(props: StoneEditorProps) {
 					{fields.map((stone, index) => (
 						<StoneListItem
 							key={stone.id}
+							selected={sheetOpen && index === editIndex}
 							displayName={stone.displayName}
 							coverage={stone.coverage}
-							onClick={() => setEditIndex(index)}
+							onSelect={() => setEditIndex(index)}
 						/>
 					))}
 				</ul>

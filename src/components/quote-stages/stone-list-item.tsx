@@ -2,11 +2,13 @@ import { Button } from '@/components/button';
 import { SheetTrigger } from '@/components/sheet';
 import { Edit } from 'lucide-react';
 import { Coverage, CoverageUnit } from '../stage-context';
+import { cn } from '@/lib/utils';
 
 type StoneProps = React.PropsWithChildren<{
 	displayName: string;
 	coverage: Coverage;
-	onClick?(): void;
+	selected: boolean;
+	onSelect?(): void;
 }>;
 
 const coverageUnitDisplayNameDictionary: {
@@ -24,17 +26,31 @@ const coverageUnitDisplayNameDictionary: {
 	sqcm: ['sqcm', 'sqcm']
 };
 
-export function StoneListItem({ displayName, coverage, onClick }: StoneProps) {
+export function StoneListItem({
+	displayName,
+	coverage,
+	selected,
+	onSelect
+}: StoneProps) {
 	const coverageUnitDisplayName =
 		coverageUnitDisplayNameDictionary[coverage.unit][
 			coverage.value == 1 ? 0 : 1
 		];
 
 	return (
-		<li className="flex h-64 w-64 flex-col rounded-lg border border-gray-400 p-6">
+		<li className="relative flex h-64 w-64 flex-col p-6">
 			<div className="flex-1" />
-			{/* <div className="absolute inset-0 -z-10 rounded-lg border border-gray-400 peer-checked:border-2 peer-checked:border-black peer-checked:bg-gray-100" /> */}
-			<div className="flex items-start">
+			<SheetTrigger asChild>
+				<button
+					type="button"
+					className={cn(
+						'absolute inset-0 rounded-lg ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
+						selected && 'bg-gray-100 ring-2 ring-gray-950'
+					)}
+					onClick={onSelect}
+				/>
+			</SheetTrigger>
+			<div className="pointer-events-none z-10 flex items-start">
 				<div className="flex-1">
 					<p className="font-semibold">{displayName}</p>
 					<p className="text-sm">
@@ -42,11 +58,13 @@ export function StoneListItem({ displayName, coverage, onClick }: StoneProps) {
 					</p>
 				</div>
 
-				<SheetTrigger asChild>
-					<Button variant="tertiary" onClick={onClick}>
-						<Edit className="h-5 w-5" />
-					</Button>
-				</SheetTrigger>
+				<Button
+					variant="tertiary"
+					type="button"
+					className="pointer-events-auto z-10"
+				>
+					<Edit className="h-5 w-5" />
+				</Button>
 			</div>
 		</li>
 	);

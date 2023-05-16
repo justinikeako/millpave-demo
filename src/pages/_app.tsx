@@ -6,11 +6,9 @@ import { Header } from '../components/header';
 import { Footer } from '../components/footer';
 import Head from 'next/head';
 import { Chat } from '../components/chat';
-import { AnimatePresence, motion } from 'framer-motion';
 import '../styles/globals.css';
 
 import { Inter } from 'next/font/google';
-import { cn } from '@/lib/utils';
 
 const inter = Inter({
 	display: 'swap',
@@ -23,12 +21,13 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 
 	return (
 		<>
-			{/* give access to the font */}
+			{/* give root access to the font variable */}
 			<style jsx global>{`
 				:root {
 					--font-inter: ${inter.style.fontFamily};
 				}
 			`}</style>
+
 			<Head>
 				<meta
 					name="viewport"
@@ -36,35 +35,13 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 				/>
 			</Head>
 
-			<AnimatePresence
-				mode="wait"
-				initial={false}
-				onExitComplete={() => {
-					window.scrollTo({ top: 0 });
-				}}
-			>
-				<motion.div
-					key={router.asPath}
-					initial={{ y: 5, opacity: 0 }}
-					animate={{ y: 0, opacity: 1 }}
-					exit={{ y: 5, opacity: 0 }}
-					className={cn(inter.variable, 'font-sans text-gray-900')}
-					transition={{
-						type: 'spring',
-						duration: 0.3
-					}}
-				>
-					<AnimatePresence initial>
-						<>
-							{showLayout && <Header />}
-							<Component {...pageProps} />
-						</>
-					</AnimatePresence>
-					{showLayout && <Footer />}
-				</motion.div>
-			</AnimatePresence>
+			{showLayout && <Header />}
 
-			<Chat />
+			<Component {...pageProps} />
+
+			{showLayout && <Footer />}
+
+			{showLayout && <Chat />}
 		</>
 	);
 };

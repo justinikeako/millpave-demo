@@ -1,5 +1,4 @@
 import { useFormContext } from 'react-hook-form';
-import { Button } from '../button';
 import { StageForm } from './form';
 
 type OptionProps = React.PropsWithChildren<{
@@ -64,10 +63,6 @@ export function ShapeStage() {
 					</ul>
 				</div>
 			</section>
-
-			<Button variant="primary" type="submit">
-				Next
-			</Button>
 		</StageForm>
 	);
 }

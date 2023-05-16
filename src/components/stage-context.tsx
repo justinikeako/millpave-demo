@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 
 type Unit2D = 'ft' | 'in' | 'm' | 'cm';
 type Unit3D = 'sqft' | 'sqin' | 'sqm' | 'sqcm';
@@ -38,9 +38,9 @@ export type FormValues = {
 type StageContextValue = {
 	values: FormValues;
 	currentStageIndex: number;
-	setCurrentStageIndex(newStageIndex: number): void;
-	incrementCurrentStageIndex(): void;
-	decrementCurrentStageIndex(): void;
+	queuedStageIndex: number;
+	queueStageIndex(newStageIndex: number): void;
+	commitQueuedIndex(): void;
 	setValues: React.Dispatch<React.SetStateAction<FormValues>>;
 };
 
@@ -71,30 +71,23 @@ export function StageProvider(props: StageProviderProps) {
 			stones: []
 		}
 	});
-	const [currentStageIndex, _setCurrentStageIndex] = useState(0);
+	const [currentStageIndex, setCurrentStageIndex] = useState(0);
+	const [queueIndex, setQueueIndex] = useState<number>(0);
 
-	function incrementCurrentStageIndex() {
-		if (currentStageIndex < props.maximumStageIndex)
-			_setCurrentStageIndex((stage) => stage + 1);
-	}
-	function decrementCurrentStageIndex() {
-		if (currentStageIndex > 0) _setCurrentStageIndex((stage) => stage - 1);
-	}
-
-	function setCurrentStageIndex(newStageIndex: number) {
-		if (newStageIndex >= 0 && newStageIndex <= props.maximumStageIndex)
-			_setCurrentStageIndex(newStageIndex);
-	}
+	const commitQueuedIndex = useCallback(() => {
+		if (queueIndex >= 0 && queueIndex <= props.maximumStageIndex)
+			setCurrentStageIndex(queueIndex);
+	}, [queueIndex, props.maximumStageIndex]);
 
 	return (
 		<StageContext.Provider
 			value={{
 				values,
 				currentStageIndex,
+				queuedStageIndex: queueIndex,
 				setValues,
-				incrementCurrentStageIndex,
-				decrementCurrentStageIndex,
-				setCurrentStageIndex
+				commitQueuedIndex,
+				queueStageIndex: setQueueIndex
 			}}
 		>
 			{props.children}

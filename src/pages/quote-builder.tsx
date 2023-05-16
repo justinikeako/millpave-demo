@@ -1,19 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Head from 'next/head';
-import { Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { ShapeStage } from '@/components/quote-stages/shape';
 import { DimensionsStage } from '@/components/quote-stages/dimensions';
-import { FormProvider, useForm } from 'react-hook-form';
 import { InfillStage } from '@/components/quote-stages/infill';
 import { BorderStage } from '@/components/quote-stages/border';
 import { ReviewStage } from '@/components/quote-stages/review';
 import { Button } from '@/components/button';
-import {
-	StageContext,
-	useStageContext,
-	StageProvider
-} from '../components/stage-context';
+import { useStageContext, StageProvider } from '@/components/stage-context';
+import Link from 'next/link';
+import { Logo } from '@/components/logo';
 
 const stages = [
 	ShapeStage,
@@ -30,7 +25,7 @@ type StageSelectorProps = React.PropsWithChildren<{
 }>;
 
 function StageSelector({ index, children }: StageSelectorProps) {
-	const { currentStageIndex, setCurrentStageIndex } = useContext(StageContext);
+	const { currentStageIndex, queueStageIndex } = useStageContext();
 
 	const selected = currentStageIndex === index,
 		completed = currentStageIndex > index;
@@ -38,102 +33,61 @@ function StageSelector({ index, children }: StageSelectorProps) {
 	return (
 		<li>
 			<button
-				className="flex items-center gap-2"
-				// disabled={completedStages[index - 1 < 0 ? 0 : index - 1] === false}
-				onClick={() => setCurrentStageIndex(index)}
+				data-selected={selected || undefined}
+				data-completed={completed || undefined}
+				type="submit"
+				form="stage-form"
+				className="flex items-center gap-2 text-gray-500 data-[completed]:font-semibold data-[selected]:font-semibold data-[selected]:text-gray-900"
+				onClick={() => queueStageIndex(index)}
 			>
-				<span
-					className={cn(
-						'rounded-md p-[3px] align-middle font-semibold',
-						selected || completed
-							? 'bg-gray-900 text-white'
-							: 'ring-1 ring-inset ring-gray-900'
-					)}
-				>
-					{completed ? (
-						<Check className="h-4 w-4" strokeWidth={3} />
-					) : (
-						<span className="flex h-4 w-4 items-center justify-center">
-							<span className="block leading-none">{index + 1}</span>
-						</span>
-					)}
-				</span>
-				<span>{children}</span>
+				{children}
 			</button>
 		</li>
 	);
 }
 
-function Header() {
-	const {
-		currentStageIndex,
-		incrementCurrentStageIndex,
-		decrementCurrentStageIndex
-	} = useContext(StageContext);
+function StageFooter() {
+	const { currentStageIndex, queueStageIndex } = useStageContext();
 
 	return (
-		<header>
-			<div className="flex justify-between p-4">
-				<Button
-					variant="secondary"
-					type="button"
-					disabled={currentStageIndex <= 0}
-					onClick={decrementCurrentStageIndex}
-				>
-					Prev Stage
-				</Button>
-				{/* <Button variant="primary" type="submit">
-					Submit
-				</Button> */}
-				<Button
-					variant="primary"
-					type="button"
-					disabled={currentStageIndex >= maximumStageIndex}
-					onClick={incrementCurrentStageIndex}
-				>
-					Next Stage
-				</Button>
-			</div>
+		<footer className="sticky bottom-0 flex justify-between bg-white px-32 pb-8 pt-6">
 			<nav>
-				<ul className="flex items-center justify-center gap-2 bg-gray-100 px-32 py-6">
+				<ul className="flex items-center justify-center gap-3">
 					<StageSelector index={0}>Shape</StageSelector>
-					<li className="h-[1px] w-8 bg-current" />
+					<li>&middot;</li>
 					<StageSelector index={1}>Dimensions</StageSelector>
-					<li className="h-[1px] w-8 bg-current" />
+					<li>&middot;</li>
 					<StageSelector index={2}>Infill</StageSelector>
-					<li className="h-[1px] w-8 bg-current" />
+					<li>&middot;</li>
 					<StageSelector index={3}>Border</StageSelector>
-					<li className="h-[1px] w-8 bg-current" />
+					<li>&middot;</li>
 					<StageSelector index={4}>Review Items</StageSelector>
 				</ul>
 			</nav>
-		</header>
+
+			<div className="flex gap-2">
+				<Button
+					variant="secondary"
+					type="submit"
+					form="stage-form"
+					disabled={currentStageIndex <= 0}
+					onClick={() => queueStageIndex(currentStageIndex - 1)}
+				>
+					Back
+				</Button>
+				<Button
+					variant="primary"
+					type="submit"
+					form="stage-form"
+					disabled={currentStageIndex >= maximumStageIndex}
+					onClick={() => queueStageIndex(currentStageIndex + 1)}
+				>
+					Next
+				</Button>
+			</div>
+		</footer>
 	);
 }
-
-function onSubmit(values: unknown) {
-	console.log(values);
-}
-
-const defaultValues = {
-	shape: null,
-	dimensions: {
-		width: 0,
-		height: 0,
-		circumference: 0,
-		radius: 0,
-		diameter: 0,
-		area: 0,
-		runningFoot: 0
-	},
-	infill: {
-		stones: []
-	},
-	border: {
-		orientation: 'SOLDIER_ROW',
-		stones: []
-	}
-};
 
 function CurrentStage() {
 	const { currentStageIndex } = useStageContext();
@@ -144,23 +98,25 @@ function CurrentStage() {
 }
 
 function Page() {
-	const methods = useForm({ defaultValues });
-
 	return (
-		<>
+		<div className="flex min-h-full flex-col">
 			<Head>
 				<title>Get a Quote — Millennium Paving Stones</title>
 			</Head>
 
+			<header className="flex select-none items-center justify-center px-8 py-8 md:px-24 lg:px-32">
+				<Link scroll={false} href="/">
+					<Logo />
+				</Link>
+			</header>
+
 			<StageProvider maximumStageIndex={maximumStageIndex}>
-				<FormProvider {...methods}>
-					<main className="flex flex-col gap-y-24 pb-32">
-						<Header />
-						<CurrentStage />
-					</main>
-				</FormProvider>
+				<main className="flex flex-1 flex-col gap-y-24 py-24">
+					<CurrentStage />
+				</main>
+				<StageFooter />
 			</StageProvider>
-		</>
+		</div>
 	);
 }
 

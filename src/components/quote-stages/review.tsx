@@ -1,6 +1,7 @@
 import { formatPrice } from '@/utils/format';
 import { Plus, PlusSquare } from 'lucide-react';
 import { Button } from '../button';
+import { StageForm } from './form';
 
 type AddonsProps = React.PropsWithChildren<{
 	title: string;
@@ -70,7 +71,7 @@ function Item(props: ItemProps) {
 
 export function ReviewStage() {
 	return (
-		<section className="space-y-16 px-32">
+		<StageForm className="space-y-16 px-32">
 			<h2 className="text-center text-2xl">Review your items.</h2>
 
 			<div className="flex justify-center">
@@ -151,6 +152,6 @@ export function ReviewStage() {
 					</Button>
 				</div>
 			</div>
-		</section>
+		</StageForm>
 	);
 }

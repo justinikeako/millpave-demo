@@ -9,7 +9,7 @@ type StageFormProps = Omit<
 };
 
 export function StageForm({ onSubmit, ...props }: StageFormProps) {
-	const { values, setValues, incrementCurrentStageIndex } = useStageContext();
+	const { values, setValues, commitQueuedIndex } = useStageContext();
 	const formMethods = useForm<FormValues>({
 		defaultValues: values
 	});
@@ -21,12 +21,12 @@ export function StageForm({ onSubmit, ...props }: StageFormProps) {
 
 		if (onSubmit) onSubmit({ ...values, ...newValues });
 
-		incrementCurrentStageIndex();
+		commitQueuedIndex();
 	}
 
 	return (
 		<FormProvider {...formMethods}>
-			<form {...props} onSubmit={handleSubmit(saveData)} className="contents">
+			<form {...props} id="stage-form" onSubmit={handleSubmit(saveData)}>
 				{props.children}
 			</form>
 		</FormProvider>

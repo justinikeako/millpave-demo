@@ -1,7 +1,6 @@
 import * as Select from '@/components/select';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Dimensions, Shape, useStageContext } from '../stage-context';
-import { Button } from '../button';
 import { StageForm } from './form';
 import { set } from 'lodash-es';
 
@@ -73,11 +72,11 @@ function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
 		case 'rect':
 			return dimensions.length.value * dimensions.width.value;
 		case 'circle':
-			return dimensions.circumference
-				? dimensions.circumference
+			return dimensions.circumference.value
+				? dimensions.circumference.value
 				: Math.PI * dimensions.diameter.value;
 		case 'arbitrary':
-			return dimensions.runningFoot;
+			return dimensions.runningFoot.value;
 	}
 }
 
@@ -91,12 +90,6 @@ export function DimensionsStage() {
 					structuredClone(values),
 					'border.runningFoot.value',
 					calculateRunningFoot(values.shape, values.dimensions)
-				);
-
-				console.log(
-					values.shape,
-					values.dimensions,
-					newValues.border.runningFoot.value
 				);
 
 				setValues(newValues);
@@ -143,10 +136,6 @@ export function DimensionsStage() {
 					)}
 				</div>
 			</div>
-
-			<Button variant="primary" type="submit">
-				next
-			</Button>
 		</StageForm>
 	);
 }

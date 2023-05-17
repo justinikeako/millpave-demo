@@ -88,7 +88,7 @@ function DimensionInput({
 function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
 	switch (shape) {
 		case 'rect':
-			return dimensions.length.value * dimensions.width.value;
+			return dimensions.length.value * 2 + dimensions.width.value * 2;
 		case 'circle':
 			return dimensions.circumference.value
 				? dimensions.circumference.value

@@ -10,14 +10,14 @@ type DimensionInputProps = React.PropsWithChildren<{
 	fieldName: string;
 	label: string;
 	placeholder?: string;
-	dimension?: '2D' | '3D';
+	dimension?: '1D' | '2D';
 }>;
 
 function DimensionInput({
 	fieldName,
 	label,
 	placeholder,
-	dimension = '2D'
+	dimension = '1D'
 }: DimensionInputProps) {
 	const { register, control } = useFormContext();
 
@@ -42,7 +42,7 @@ function DimensionInput({
 							<Select.Content>
 								<Select.ScrollUpButton />
 								<Select.Viewport>
-									{dimension === '2D' && (
+									{dimension === '1D' && (
 										<>
 											<Select.Item value="ft">
 												{unitDisplayNameDictionary['ft'][0]}
@@ -58,7 +58,7 @@ function DimensionInput({
 											</Select.Item>
 										</>
 									)}
-									{dimension === '3D' && (
+									{dimension === '2D' && (
 										<>
 											<Select.Item value="sqft">
 												{unitDisplayNameDictionary['sqft'][0]}
@@ -143,7 +143,7 @@ export function DimensionsStage() {
 								fieldName="dimensions.area"
 								label="Area"
 								placeholder="Amount"
-								dimension="3D"
+								dimension="2D"
 							/>
 							<DimensionInput
 								fieldName="dimensions.runningFoot"

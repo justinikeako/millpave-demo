@@ -1,10 +1,11 @@
 import classNames from 'classnames';
-import { CoverageUnit } from '@/types/quote';
+import { Unit } from '@/types/quote';
 
 export const unitDisplayNameDictionary: {
-	[key in CoverageUnit]: [string, string];
+	[key in Unit]: [string, string];
 } = {
 	fr: ['part', 'parts'],
+	pal: ['pallet', 'pallets'],
 	unit: ['unit', 'units'],
 	ft: ['ft', 'ft'],
 	in: ['in', 'in'],

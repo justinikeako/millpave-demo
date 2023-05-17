@@ -88,7 +88,7 @@ export function BorderStage() {
 
 			<BorderOptions />
 
-			<StoneEditor name="border.stones" dimension="2D" />
+			<StoneEditor name="border.stones" dimension="1D" />
 		</StageForm>
 	);
 }

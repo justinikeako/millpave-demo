@@ -104,7 +104,7 @@ function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
 
 type StoneEditorProps = {
 	name: FieldArrayPath<StoneProject>;
-	dimension: '2D' | '3D';
+	dimension: '1D' | '2D';
 };
 export function StoneEditor(props: StoneEditorProps) {
 	const { control } = useFormContext<StoneProject>();
@@ -186,7 +186,7 @@ export function StoneEditor(props: StoneEditorProps) {
 }
 
 type StoneFormProps = {
-	dimension: '2D' | '3D';
+	dimension: '1D' | '2D';
 	initialValues?: Stone;
 	onSubmit(stone: Stone): void;
 };
@@ -269,11 +269,9 @@ function StoneForm({
 							<div className="flex items-center gap-2">
 								<p>
 									{formatPrice(currentSku.price)} per&nbsp;
-									
 									{currentSku.unit === 'sqft'
-											? unitDisplayNameDictionary['sqft'][0]
-											: currentSku.unit}
-											
+										? unitDisplayNameDictionary['sqft'][0]
+										: currentSku.unit}
 									{currentSkuDetails && currentSku.unit === 'sqft' && (
 										<>
 											<span>
@@ -323,7 +321,7 @@ function StoneForm({
 									<Select.Content>
 										<Select.ScrollUpButton />
 										<Select.Viewport>
-											{dimension === '3D' && (
+											{dimension === '2D' && (
 												<>
 													<Select.Item value="fr">
 														{unitDisplayNameDictionary['fr'][0]}
@@ -345,7 +343,7 @@ function StoneForm({
 													</Select.Item>
 												</>
 											)}
-											{dimension === '2D' && (
+											{dimension === '1D' && (
 												<>
 													<Select.Item value="fr">
 														{unitDisplayNameDictionary['fr'][0]}

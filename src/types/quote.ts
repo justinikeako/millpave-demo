@@ -1,8 +1,8 @@
-type Unit2D = 'ft' | 'in' | 'm' | 'cm';
-type Unit3D = 'sqft' | 'sqin' | 'sqm' | 'sqcm';
-export type CoverageUnit = Unit3D | Unit2D | 'fr' | 'unit';
+type Unit1D = 'ft' | 'in' | 'm' | 'cm';
+type Unit2D = 'sqft' | 'sqin' | 'sqm' | 'sqcm';
+export type Unit = Unit1D | Unit2D | 'fr' | 'pal' | 'unit';
 
-export type Coverage = { value: number; unit: CoverageUnit };
+export type Coverage = { value: number; unit: Unit };
 
 export type Stone = {
 	skuId: string;
@@ -14,12 +14,12 @@ export type Stone = {
 export type Shape = 'rect' | 'circle' | 'arbitrary';
 
 export type Dimensions = {
-	width: { value: number; unit: Unit2D };
-	length: { value: number; unit: Unit2D };
-	diameter: { value: number; unit: Unit2D };
-	circumference: { value: number; unit: Unit2D };
-	area: { value: number; unit: Unit3D };
-	runningFoot: { value: number; unit: Unit2D };
+	width: { value: number; unit: Unit1D };
+	length: { value: number; unit: Unit1D };
+	diameter: { value: number; unit: Unit1D };
+	circumference: { value: number; unit: Unit1D };
+	area: { value: number; unit: Unit2D };
+	runningFoot: { value: number; unit: Unit1D };
 };
 
 export type StoneProject = {
@@ -27,7 +27,7 @@ export type StoneProject = {
 	dimensions: Dimensions;
 	infill: Stone[];
 	border: {
-		runningFoot: { value: number; unit: Unit2D };
+		runningFoot: { value: number; unit: Unit1D };
 		orientation: 'SOLDIER_ROW' | 'TIP_TO_TIP';
 		stones: Stone[];
 	};

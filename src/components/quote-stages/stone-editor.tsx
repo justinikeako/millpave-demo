@@ -57,7 +57,7 @@ export function StoneListItem({
 					type="button"
 					className={cn(
 						'absolute inset-0 rounded-lg ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
-						selected && 'bg-gray-100 ring-2 ring-gray-950'
+						selected && 'bg-gray-100 ring-2 ring-black'
 					)}
 					onClick={onSelect}
 				/>
@@ -136,9 +136,7 @@ export function StoneEditor(props: StoneEditorProps) {
 							type="button"
 							className={cn(
 								'flex w-full flex-1 items-center justify-center gap-2 rounded-lg p-6 ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
-								sheetOpen &&
-									editIndex - 1 &&
-									'bg-gray-100 ring-2 ring-black ring-opacity-100'
+								sheetOpen && editIndex === -1 && 'bg-gray-100 ring-2 ring-black'
 							)}
 							onClick={() => {
 								setEditIndex(-1);

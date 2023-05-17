@@ -928,7 +928,7 @@ async function addConcreteProductSkus() {
 		),
 		...generatePaverSKUList(
 			{
-				id: 'savannah:16x24: regular',
+				id: 'savannah:16x24:regular',
 				displayName: 'Savannah 24 x 16 Regular'
 			},
 			[228.5, 305.5, 305.5, 305.5, 305.5]

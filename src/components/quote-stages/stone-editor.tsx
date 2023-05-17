@@ -30,9 +30,58 @@ import { ProductStock } from '../product-stock';
 import { extractDetail } from '@/utils/product';
 import { ExtendedPaverDetails } from '@/types/product';
 import { Check } from 'lucide-react';
-import { Stone, FormValues } from '../stage-context';
-import { StoneListItem } from './stone-list-item';
-import { cn, stopPropagate } from '@/lib/utils';
+import { StoneProject, Stone, Coverage } from '@/types/quote';
+import { Edit } from 'lucide-react';
+import { cn, stopPropagate, unitDisplayNameDictionary } from '@/lib/utils';
+
+type StoneProps = React.PropsWithChildren<{
+	displayName: string;
+	coverage: Coverage;
+	selected: boolean;
+	onSelect?(): void;
+}>;
+
+export function StoneListItem({
+	displayName,
+	coverage,
+	selected,
+	onSelect
+}: StoneProps) {
+	const coverageUnitDisplayName =
+		unitDisplayNameDictionary[coverage.unit][coverage.value == 1 ? 0 : 1];
+
+	return (
+		<li className="relative flex h-64 w-64 flex-col p-6">
+			<div className="flex-1" />
+			<SheetTrigger asChild>
+				<button
+					type="button"
+					className={cn(
+						'absolute inset-0 rounded-lg ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
+						selected && 'bg-gray-100 ring-2 ring-gray-950'
+					)}
+					onClick={onSelect}
+				/>
+			</SheetTrigger>
+			<div className="pointer-events-none z-10 flex items-start">
+				<div className="flex-1">
+					<p className="font-semibold">{displayName}</p>
+					<p className="text-sm">
+						{coverage.value} {coverageUnitDisplayName}
+					</p>
+				</div>
+
+				<Button
+					variant="tertiary"
+					type="button"
+					className="pointer-events-auto z-10"
+				>
+					<Edit className="h-5 w-5" />
+				</Button>
+			</div>
+		</li>
+	);
+}
 
 type SectionProps = React.PropsWithChildren<{
 	heading: string;
@@ -54,11 +103,11 @@ function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
 }
 
 type StoneEditorProps = {
-	name: FieldArrayPath<FormValues>;
+	name: FieldArrayPath<StoneProject>;
 	dimension: '2D' | '3D';
 };
 export function StoneEditor(props: StoneEditorProps) {
-	const { control } = useFormContext<FormValues>();
+	const { control } = useFormContext<StoneProject>();
 	const { fields, append, update } = useFieldArray({
 		control,
 		keyName: 'id',
@@ -272,22 +321,46 @@ function StoneForm({
 										<Select.Viewport>
 											{dimension === '3D' && (
 												<>
-													<Select.Item value="fr">parts</Select.Item>
-													<Select.Item value="sqft">sqft</Select.Item>
-													<Select.Item value="sqin">sqin</Select.Item>
-													<Select.Item value="sqm">sqm</Select.Item>
-													<Select.Item value="sqcm">sqcm</Select.Item>
-													<Select.Item value="unit">units</Select.Item>
+													<Select.Item value="fr">
+														{unitDisplayNameDictionary['fr'][0]}
+													</Select.Item>
+													<Select.Item value="sqft">
+														{unitDisplayNameDictionary['sqft'][0]}
+													</Select.Item>
+													<Select.Item value="sqin">
+														{unitDisplayNameDictionary['sqin'][0]}
+													</Select.Item>
+													<Select.Item value="sqm">
+														{unitDisplayNameDictionary['sqm'][0]}
+													</Select.Item>
+													<Select.Item value="sqcm">
+														{unitDisplayNameDictionary['sqcm'][0]}
+													</Select.Item>
+													<Select.Item value="unit">
+														{unitDisplayNameDictionary['unit'][0]}
+													</Select.Item>
 												</>
 											)}
 											{dimension === '2D' && (
 												<>
-													<Select.Item value="fr">parts</Select.Item>
-													<Select.Item value="ft">ft</Select.Item>
-													<Select.Item value="in">in</Select.Item>
-													<Select.Item value="m">m</Select.Item>
-													<Select.Item value="cm">cm</Select.Item>
-													<Select.Item value="unit">units</Select.Item>
+													<Select.Item value="fr">
+														{unitDisplayNameDictionary['fr'][0]}
+													</Select.Item>
+													<Select.Item value="ft">
+														{unitDisplayNameDictionary['ft'][0]}
+													</Select.Item>
+													<Select.Item value="in">
+														{unitDisplayNameDictionary['in'][0]}
+													</Select.Item>
+													<Select.Item value="m">
+														{unitDisplayNameDictionary['m'][0]}
+													</Select.Item>
+													<Select.Item value="cm">
+														{unitDisplayNameDictionary['cm'][0]}
+													</Select.Item>
+													<Select.Item value="unit">
+														{unitDisplayNameDictionary['unit'][0]}
+													</Select.Item>
 												</>
 											)}
 										</Select.Viewport>

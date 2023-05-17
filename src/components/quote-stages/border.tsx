@@ -2,10 +2,11 @@ import * as Select from '@/components/select';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
-import { FormValues } from '../stage-context';
+import { StoneProject } from '@/types/quote';
+import { unitDisplayNameDictionary } from '@/lib/utils';
 
 function BorderOptions() {
-	const { register, control } = useFormContext<FormValues>();
+	const { register, control } = useFormContext<StoneProject>();
 
 	return (
 		<div className="flex flex-wrap justify-center gap-4">
@@ -38,10 +39,18 @@ function BorderOptions() {
 								<Select.Content>
 									<Select.ScrollUpButton />
 									<Select.Viewport>
-										<Select.Item value="ft">ft</Select.Item>
-										<Select.Item value="in">in</Select.Item>
-										<Select.Item value="m">m</Select.Item>
-										<Select.Item value="cm">cm</Select.Item>
+										<Select.Item value="ft">
+											{unitDisplayNameDictionary['ft'][0]}
+										</Select.Item>
+										<Select.Item value="in">
+											{unitDisplayNameDictionary['in'][0]}
+										</Select.Item>
+										<Select.Item value="m">
+											{unitDisplayNameDictionary['m'][0]}
+										</Select.Item>
+										<Select.Item value="cm">
+											{unitDisplayNameDictionary['cm'][0]}
+										</Select.Item>
 									</Select.Viewport>
 									<Select.ScrollDownButton />
 								</Select.Content>

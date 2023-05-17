@@ -1,8 +1,10 @@
 import * as Select from '@/components/select';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Dimensions, Shape, useStageContext } from '../stage-context';
+import { useStageContext } from '../stage-context';
+import { Dimensions, Shape } from '@/types/quote';
 import { StageForm } from './form';
 import { set } from 'lodash-es';
+import { unitDisplayNameDictionary } from '@/lib/utils';
 
 type DimensionInputProps = React.PropsWithChildren<{
 	fieldName: string;
@@ -42,18 +44,34 @@ function DimensionInput({
 								<Select.Viewport>
 									{dimension === '2D' && (
 										<>
-											<Select.Item value="ft">ft</Select.Item>
-											<Select.Item value="in">in</Select.Item>
-											<Select.Item value="m">m</Select.Item>
-											<Select.Item value="cm">cm</Select.Item>
+											<Select.Item value="ft">
+												{unitDisplayNameDictionary['ft'][0]}
+											</Select.Item>
+											<Select.Item value="in">
+												{unitDisplayNameDictionary['in'][0]}
+											</Select.Item>
+											<Select.Item value="m">
+												{unitDisplayNameDictionary['m'][0]}
+											</Select.Item>
+											<Select.Item value="cm">
+												{unitDisplayNameDictionary['cm'][0]}
+											</Select.Item>
 										</>
 									)}
 									{dimension === '3D' && (
 										<>
-											<Select.Item value="sqft">sqft</Select.Item>
-											<Select.Item value="sqin">sqin</Select.Item>
-											<Select.Item value="sqm">sqm</Select.Item>
-											<Select.Item value="sqcm">sqcm</Select.Item>
+											<Select.Item value="sqft">
+												{unitDisplayNameDictionary['sqft'][0]}
+											</Select.Item>
+											<Select.Item value="sqin">
+												{unitDisplayNameDictionary['sqin'][0]}
+											</Select.Item>
+											<Select.Item value="sqm">
+												{unitDisplayNameDictionary['sqm'][0]}
+											</Select.Item>
+											<Select.Item value="sqcm">
+												{unitDisplayNameDictionary['sqcm'][0]}
+											</Select.Item>
 										</>
 									)}
 								</Select.Viewport>

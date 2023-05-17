@@ -24,7 +24,10 @@ function DimensionInput({
 	return (
 		<div className="max-w-xs flex-1 space-y-4">
 			<label htmlFor={`${fieldName}.value`}>{label}</label>
-			<div className="flex w-full rounded-md bg-gray-200 p-4 pr-2">
+			<label
+				htmlFor={`${fieldName}.value`}
+				className="flex w-full rounded-md bg-gray-200 p-4 pr-2"
+			>
 				<input
 					{...register(`${fieldName}.value`)}
 					id={`${fieldName}.value`}
@@ -80,7 +83,7 @@ function DimensionInput({
 						</Select.Root>
 					)}
 				/>
-			</div>
+			</label>
 		</div>
 	);
 }
@@ -114,7 +117,7 @@ export function DimensionsStage() {
 			}}
 		>
 			<div className="space-y-16 px-32">
-				<h2 className="text-center text-2xl">Now enter your measurements.</h2>
+				<h2 className="text-center text-2xl">Now, enter your measurements.</h2>
 				<div className="flex justify-center gap-4">
 					{values.shape === 'rect' && (
 						<>

@@ -1,7 +1,9 @@
-import { formatPrice } from '@/utils/format';
+import { formatNumber, formatPrice } from '@/utils/format';
 import { Plus, PlusSquare } from 'lucide-react';
 import { Button } from '../button';
 import { StageForm } from './form';
+import { Unit } from '@/types/quote';
+import { unitDisplayNameDictionary } from '@/lib/utils';
 
 type AddonsProps = React.PropsWithChildren<{
 	title: string;
@@ -23,16 +25,52 @@ function Addons({ title, description }: AddonsProps) {
 	);
 }
 
-type ItemProps = {
+type Item = {
 	displayName: string;
 	quantity: number;
-	unit: string;
+	unit: Unit;
 	price: number;
+	hasPlan: boolean;
 	priceWithPlan?: number;
-	hasPlan?: boolean;
 };
 
-function Item(props: ItemProps) {
+const items: Item[] = [
+	{
+		displayName: 'Colonial Classic Grey',
+		quantity: 6,
+		unit: 'pal',
+		price: 156817.5,
+		priceWithPlan: 78408.75,
+		hasPlan: true
+	},
+	{
+		displayName: 'Colonial Classic Red',
+		quantity: 3,
+		unit: 'pal',
+		price: 88065,
+		priceWithPlan: 44032.5,
+		hasPlan: true
+	},
+	{
+		displayName: 'CasaScapes Polymeric Sand',
+		quantity: 3,
+		unit: 'unit',
+		price: 88065,
+		hasPlan: false
+	},
+	{
+		displayName: 'DynaMatrix HB-1 Protective Sealant (1 gallon)',
+		quantity: 3,
+		unit: 'unit',
+		price: 70956.48,
+		hasPlan: false
+	}
+];
+
+function Item(props: Item) {
+	const unit =
+		unitDisplayNameDictionary[props.unit][props.quantity === 1 ? 0 : 1];
+
 	return (
 		<li className="-mx-8 flex gap-8 rounded-lg border border-transparent p-8 focus-within:bg-gray-100">
 			<div className="h-32 w-32 bg-gray-300" />
@@ -41,7 +79,7 @@ function Item(props: ItemProps) {
 				<div className="flex gap-16">
 					<h3 className="flex-1 text-lg">{props.displayName}</h3>
 					<p className="flex-1 text-lg">
-						{props.quantity} {props.unit}
+						{props.quantity} {unit}
 					</p>
 					<p className="text-lg">{formatPrice(props.price)}</p>
 				</div>
@@ -92,57 +130,32 @@ export function ReviewStage() {
 			</div>
 
 			<ul>
-				<Item
-					displayName="Colonial Classic Grey"
-					quantity={6}
-					unit="pallets"
-					price={156817.5}
-					priceWithPlan={78408.75}
-					hasPlan
-				/>
-				<Item
-					displayName="Colonial Classic Red"
-					quantity={3}
-					unit="pallets"
-					price={88065}
-					priceWithPlan={44032.5}
-					hasPlan
-				/>
-				<Item
-					displayName="CasaScapes Polymeric Sand"
-					quantity={3}
-					unit="bags"
-					price={88065}
-				/>
-				<Item
-					displayName="DynaMatrix HB-1 Protective Sealant (1 gallon)"
-					quantity={3}
-					unit="units"
-					price={70956.48}
-				/>
+				{items.map((item, index) => (
+					<Item key={index} {...item} />
+				))}
 			</ul>
 
 			<div className="space-y-4 pl-40">
 				<div className="flex justify-between">
 					<span>Area</span>
-					<span>1,158.75 sqft</span>
+					<span>{formatNumber(1158.75)} sqft</span>
 				</div>
 				<div className="flex justify-between">
 					<span>Approximate Weight</span>
-					<span>27,000 lbs</span>
+					<span>{formatNumber(27000)} lbs</span>
 				</div>
 				<div className="flex justify-between">
 					<span>Subtotal</span>
-					<span>$923,339.45</span>
+					<span>{formatPrice(923339.45)}</span>
 				</div>
 				<div className="flex justify-between">
 					<span>Tax</span>
-					<span>$138,500.90</span>
+					<span>{formatPrice(138500.9)}</span>
 				</div>
 				<hr />
 				<div className="flex justify-between text-lg">
 					<span>Total</span>
-					<span>$1,061,840.35</span>
+					<span>{formatPrice(1061840.35)}</span>
 				</div>
 
 				<div className="!mt-16 flex justify-end">

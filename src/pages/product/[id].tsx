@@ -26,6 +26,7 @@ import { extractDetail } from '../../utils/product';
 import { ViewportReveal } from '../../components/reveal';
 import { motion } from 'framer-motion';
 import { ProductStock } from '@/components/product-stock';
+import { unitDisplayNameDictionary } from '@/lib/utils';
 
 const ProductViewer3D = dynamic(
 	() => import('../../components/product-viewer-3d'),
@@ -47,6 +48,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 	const images = [0, 0, 0, 0];
 
 	const [selectedIndex, setSelectedIndex] = useState(0);
+
 	return (
 		<motion.div
 			initial={{ y: 100, opacity: 0 }}
@@ -180,8 +182,10 @@ function Page() {
 							<div className="flex flex-wrap justify-between gap-x-4 text-lg">
 								<div className="flex items-center gap-4">
 									<p>
-										<del>{formatPrice(currentSku.price)}</del>&nbsp;
-										{formatPrice(currentSku.price - 0.01)} per {currentSku.unit}
+										{formatPrice(currentSku.price)} per&nbsp;
+										{currentSku.unit === 'sqft'
+											? unitDisplayNameDictionary['sqft'][0]
+											: currentSku.unit}
 									</p>
 									{currentSku.unit === 'sqft' && (
 										<>

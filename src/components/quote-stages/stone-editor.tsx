@@ -269,7 +269,11 @@ function StoneForm({
 							<div className="flex items-center gap-2">
 								<p>
 									{formatPrice(currentSku.price)} per&nbsp;
-									{currentSku.unit}
+									
+									{currentSku.unit === 'sqft'
+											? unitDisplayNameDictionary['sqft'][0]
+											: currentSku.unit}
+											
 									{currentSkuDetails && currentSku.unit === 'sqft' && (
 										<>
 											<span>

@@ -16,20 +16,20 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 		<li>
 			<label
 				htmlFor={id}
-				className="relative flex aspect-square w-full flex-col p-6"
+				className="relative flex aspect-square w-full cursor-pointer flex-col rounded-md p-6 hover:bg-gray-100"
 			>
 				<input
 					{...register('shape')}
 					id={id}
 					value={id}
 					type="radio"
-					className="peer hidden"
+					className="peer sr-only"
 				/>
 
-				<div className="absolute inset-0 -z-10 rounded-lg border peer-checked:border-2 peer-checked:border-black peer-checked:bg-gray-100" />
+				<div className="pointer-events-none absolute inset-0 rounded-md ring-1 ring-inset ring-gray-200 peer-checked:bg-gray-100 peer-checked:ring-2 peer-checked:ring-black peer-focus:ring-black" />
 
 				<div className="flex-1" />
-				<div>
+				<div className="z-10">
 					<p className="font-semibold">{title}</p>
 					<p className="text-sm">{description}</p>
 				</div>

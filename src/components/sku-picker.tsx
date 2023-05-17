@@ -64,10 +64,10 @@ function ProductPicker({ products }: ProductPickerProps) {
 		<ul className="flex flex-wrap gap-2">
 			{products.map(({ id, displayName }) => {
 				return (
-					<li key={id} className="flex-1">
+					<li key={id} className="relative flex-1">
 						<label htmlFor={id}>
 							<input
-								className="peer hidden"
+								className="peer sr-only"
 								type="radio"
 								value={id}
 								id={id}
@@ -93,7 +93,7 @@ function ProductPicker({ products }: ProductPickerProps) {
 								}}
 							/>
 
-							<div className="flex items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-200 peer-checked:bg-gray-100 peer-checked:text-gray-950 peer-checked:ring-2 peer-checked:ring-gray-950">
+							<div className="flex items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-300 peer-checked:bg-gray-100 peer-checked:text-gray-950 peer-checked:ring-2 peer-checked:ring-gray-950 peer-focus:bg-blue-50 peer-focus:text-blue-500 peer-focus:ring-blue-500">
 								{displayName}
 							</div>
 						</label>
@@ -137,6 +137,7 @@ function SkuFragmentPicker({
 							{type === 'variant' && (
 								<VariantPicker
 									variants={fragments}
+									name={displayName.toLowerCase().replace(' ', '_')}
 									currentVariantId={selectedFragmentId}
 									onChange={(newVariant) =>
 										changeFragment(fragmentIndex, newVariant)
@@ -179,19 +180,19 @@ function VariantPicker({
 	return (
 		<ul className="flex flex-wrap gap-2">
 			{variants.map(({ id, displayName }) => (
-				<li key={id} className="flex-1">
+				<li key={id} className="relative flex-1">
 					<label htmlFor={id}>
 						<input
-							className="peer hidden"
+							className="peer sr-only"
 							type="radio"
-							name={props.name || `variant-${displayName}`}
+							name={props.name}
 							value={id}
 							id={id}
 							checked={currentVariantId === id}
 							onChange={(e) => onChange(e.target.value)}
 						/>
 
-						<div className="flex items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-200 peer-checked:bg-gray-100  peer-checked:font-semibold peer-checked:text-gray-700 peer-checked:ring-2 peer-checked:ring-gray-700">
+						<div className="flex items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-300 peer-checked:bg-gray-100 peer-checked:text-gray-700 peer-checked:ring-2 peer-checked:ring-gray-700 peer-focus:bg-blue-50 peer-focus:text-blue-500 peer-focus:ring-blue-500">
 							{displayName}
 						</div>
 					</label>
@@ -212,12 +213,12 @@ type ColorPickerProps = {
 
 function ColorPicker({ colors, currentColorId, onChange }: ColorPickerProps) {
 	return (
-		<ul className="flex flex-wrap gap-2">
+		<ul className="relative flex flex-wrap gap-2">
 			{colors.map(({ id, css }) => (
 				<li key={id} className="contents">
 					<label htmlFor={id} className="contents">
 						<input
-							className="peer hidden"
+							className="peer sr-only"
 							type="radio"
 							name="color"
 							value={id}
@@ -226,7 +227,7 @@ function ColorPicker({ colors, currentColorId, onChange }: ColorPickerProps) {
 							onChange={(e) => onChange(e.target.value)}
 						/>
 						<div
-							className="h-10 w-10 rounded-full bg-clip-content p-[3px] ring-1 ring-inset ring-gray-300 peer-checked:p-1 peer-checked:ring-2 peer-checked:ring-gray-950"
+							className="h-10 w-10 rounded-full bg-clip-content p-[3px] ring-1 ring-inset ring-gray-300 peer-checked:p-1 peer-checked:ring-2 peer-checked:ring-gray-950 peer-focus:bg-blue-50 peer-focus:text-blue-500 peer-focus:ring-blue-500"
 							style={{ backgroundColor: css, backgroundImage: css }}
 						/>
 					</label>

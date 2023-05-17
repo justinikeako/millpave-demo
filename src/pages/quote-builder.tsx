@@ -53,7 +53,7 @@ function StageFooter() {
 	const { currentStageIndex, queueStageIndex } = useStageContext();
 
 	return (
-		<footer className="sticky bottom-0 flex justify-between bg-white px-32 pb-8 pt-6">
+		<footer className="sticky bottom-0 z-40 flex justify-between bg-white px-32 pb-8 pt-6">
 			<nav>
 				<ul className="flex items-center justify-center gap-3">
 					<StageSelector index={0}>Shape</StageSelector>

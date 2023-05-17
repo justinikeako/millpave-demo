@@ -6,7 +6,10 @@ import { InfillStage } from '@/components/quote-stages/infill';
 import { BorderStage } from '@/components/quote-stages/border';
 import { ReviewStage } from '@/components/quote-stages/review';
 import { Button } from '@/components/button';
-import { useStageContext, StageProvider } from '@/components/stage-context';
+import {
+	useStageContext,
+	StageProvider
+} from '@/components/quote-stages/stage-context';
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
 

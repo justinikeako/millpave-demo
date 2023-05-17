@@ -17,9 +17,7 @@ const NavLink = forwardRef<HTMLLIElement, NavLinkProps>(function NavLink(
 ) {
 	return (
 		<li ref={ref} {...props}>
-			<Link scroll={false} href={href}>
-				{children}
-			</Link>
+			<Link href={href}>{children}</Link>
 		</li>
 	);
 });
@@ -103,9 +101,7 @@ function Header() {
 									className="!bg-white !text-gray-900 hover:!bg-gray-100 active:!bg-gray-200"
 									asChild
 								>
-									<Link scroll={false} href="/products/all">
-										See all Deals
-									</Link>
+									<Link href="/products/all">See all Deals</Link>
 								</Button>
 								<Button
 									variant="secondary"
@@ -126,7 +122,7 @@ function Header() {
 					)}
 
 					<nav className="mb-12 flex select-none items-center justify-between px-8 py-8 md:px-24 lg:px-32">
-						<Link scroll={false} href="/">
+						<Link href="/">
 							<div className="max-sm:hidden">
 								<Logo withText />
 							</div>
@@ -143,9 +139,7 @@ function Header() {
 							<NavLink href="/contact">Contact Us</NavLink>
 							<li>
 								<Button variant="primary" asChild>
-									<Link scroll={false} href="/quote-builder">
-										Get A Quote
-									</Link>
+									<Link href="/quote-builder">Get A Quote</Link>
 								</Button>
 							</li>
 						</ul>
@@ -164,11 +158,7 @@ function Header() {
 											className="fixed inset-0 flex flex-col bg-gray-900 text-white"
 										>
 											<div className="flex items-center justify-between px-8 py-8 md:px-24">
-												<Link
-													scroll={false}
-													href="/"
-													onClick={() => setMenuOpen(false)}
-												>
+												<Link href="/" onClick={() => setMenuOpen(false)}>
 													<div className="max-sm:hidden">
 														<Logo withText />
 													</div>

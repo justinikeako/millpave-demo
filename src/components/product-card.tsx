@@ -35,9 +35,7 @@ function ProductCard({
 					Starting at {formatPrice(startingSku.price)} per {startingSku.unit}
 				</p>
 				<Button variant="secondary" className="w-fit" asChild>
-					<Link scroll={false} href={link}>
-						Learn More
-					</Link>
+					<Link href={link}>Learn More</Link>
 				</Button>
 			</div>
 		</li>

@@ -90,12 +90,12 @@ function Hero() {
 				<OrchestratedReveal delay={0.2} asChild>
 					<div className="flex space-x-2">
 						<Button variant="primary" asChild>
-							<Link scroll={false} href="/contact?form=quote">
+							<Link href="/contact?form=quote">
 								<span>Get a Quote</span>
 							</Link>
 						</Button>
 						<Button variant="secondary" asChild>
-							<Link scroll={false} href="/gallery">
+							<Link href="/gallery">
 								<span>Get Inspired</span>
 							</Link>
 						</Button>
@@ -183,9 +183,7 @@ function Page() {
 							/>
 						</ul>
 						<Button variant="secondary" className="self-center" asChild>
-							<Link scroll={false} href="/products/all">
-								View Product Catalogue
-							</Link>
+							<Link href="/products/all">View Product Catalogue</Link>
 						</Button>
 					</div>
 				</ViewportReveal>
@@ -209,9 +207,7 @@ function Page() {
 						</p>
 						<br />
 						<Button variant="primary" asChild className="w-fit">
-							<Link scroll={false} href="/contact?form=quote">
-								Get a Quote
-							</Link>
+							<Link href="/contact?form=quote">Get a Quote</Link>
 						</Button>
 					</div>
 
@@ -266,14 +262,10 @@ function Page() {
 						</div>
 						<div className="flex gap-4">
 							<Button variant="primary">
-								<Link scroll={false} href="/products/all">
-									Explore Products
-								</Link>
+								<Link href="/products/all">Explore Products</Link>
 							</Button>
 							<Button variant="secondary">
-								<Link scroll={false} href="/contact?form=quote">
-									Get a Quote
-								</Link>
+								<Link href="/contact?form=quote">Get a Quote</Link>
 							</Button>
 						</div>
 					</div>

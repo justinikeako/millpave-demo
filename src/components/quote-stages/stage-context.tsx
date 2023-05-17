@@ -1,13 +1,24 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
-import { StoneProject } from '@/types/quote';
+import { StoneProject, Unit } from '@/types/quote';
+
+type Item = {
+	displayName: string;
+	quantity: number;
+	unit: Unit;
+	price: number;
+	hasPlan: boolean;
+	priceWithPlan?: number;
+};
 
 type StageContextValue = {
 	values: StoneProject;
+	items: Item[];
 	currentStageIndex: number;
 	queuedStageIndex: number;
 	queueStageIndex(newStageIndex: number): void;
 	commitQueuedIndex(): void;
-	setValues: React.Dispatch<React.SetStateAction<StoneProject>>;
+	setValues(newValues: StoneProject): void;
+	setItems(newValues: Item[]): void;
 };
 
 export const StageContext = createContext<StageContextValue>(
@@ -37,6 +48,7 @@ export function StageProvider(props: StageProviderProps) {
 			stones: []
 		}
 	});
+	const [items, setItems] = useState<Item[]>([]);
 	const [currentStageIndex, setCurrentStageIndex] = useState(0);
 	const [queueIndex, setQueueIndex] = useState<number>(0);
 
@@ -49,9 +61,11 @@ export function StageProvider(props: StageProviderProps) {
 		<StageContext.Provider
 			value={{
 				values,
+				items,
 				currentStageIndex,
 				queuedStageIndex: queueIndex,
 				setValues,
+				setItems,
 				commitQueuedIndex,
 				queueStageIndex: setQueueIndex
 			}}

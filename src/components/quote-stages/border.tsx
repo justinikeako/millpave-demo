@@ -4,6 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
 import { StoneProject } from '@/types/quote';
 import { unitDisplayNameDictionary } from '@/lib/utils';
+import { useStageContext } from './stage-context';
 
 function BorderOptions() {
 	const { register, control } = useFormContext<StoneProject>();
@@ -82,8 +83,45 @@ function BorderOptions() {
 }
 
 export function BorderStage() {
+	const { setItems } = useStageContext();
 	return (
-		<StageForm className="space-y-16 px-32">
+		<StageForm
+			className="space-y-16 px-32"
+			onSubmit={() => {
+				setItems([
+					{
+						displayName: 'Colonial Classic Grey',
+						quantity: 6,
+						unit: 'pal',
+						price: 156817.5,
+						priceWithPlan: 78408.75,
+						hasPlan: true
+					},
+					{
+						displayName: 'Colonial Classic Red',
+						quantity: 3,
+						unit: 'pal',
+						price: 88065,
+						priceWithPlan: 44032.5,
+						hasPlan: true
+					},
+					{
+						displayName: 'CasaScapes Polymeric Sand',
+						quantity: 3,
+						unit: 'unit',
+						price: 88065,
+						hasPlan: false
+					},
+					{
+						displayName: 'DynaMatrix HB-1 Protective Sealant (1 gallon)',
+						quantity: 3,
+						unit: 'unit',
+						price: 70956.48,
+						hasPlan: false
+					}
+				]);
+			}}
+		>
 			<h2 className="text-center text-2xl">Add a border.</h2>
 
 			<BorderOptions />

@@ -4,6 +4,7 @@ import { Button } from '../button';
 import { StageForm } from './form';
 import { Unit } from '@/types/quote';
 import { unitDisplayNameDictionary } from '@/lib/utils';
+import { useStageContext } from './stage-context';
 
 type AddonsProps = React.PropsWithChildren<{
 	title: string;
@@ -33,39 +34,6 @@ type Item = {
 	hasPlan: boolean;
 	priceWithPlan?: number;
 };
-
-const items: Item[] = [
-	{
-		displayName: 'Colonial Classic Grey',
-		quantity: 6,
-		unit: 'pal',
-		price: 156817.5,
-		priceWithPlan: 78408.75,
-		hasPlan: true
-	},
-	{
-		displayName: 'Colonial Classic Red',
-		quantity: 3,
-		unit: 'pal',
-		price: 88065,
-		priceWithPlan: 44032.5,
-		hasPlan: true
-	},
-	{
-		displayName: 'CasaScapes Polymeric Sand',
-		quantity: 3,
-		unit: 'unit',
-		price: 88065,
-		hasPlan: false
-	},
-	{
-		displayName: 'DynaMatrix HB-1 Protective Sealant (1 gallon)',
-		quantity: 3,
-		unit: 'unit',
-		price: 70956.48,
-		hasPlan: false
-	}
-];
 
 function Item(props: Item) {
 	const unit =
@@ -108,6 +76,8 @@ function Item(props: Item) {
 }
 
 export function ReviewStage() {
+	const { items } = useStageContext();
+
 	return (
 		<StageForm className="space-y-16 px-32">
 			<h2 className="text-center text-2xl">Review your items.</h2>

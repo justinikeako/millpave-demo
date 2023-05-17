@@ -8,10 +8,15 @@ import {
 	Stock
 } from '@prisma/client';
 
-type ExtendedProductDetails<TDetails extends Prisma.JsonArray> =
-	ProductDetails & { data: TDetails };
+type ExtendedProductDetails<TDetails extends Prisma.JsonObject> = Omit<
+	ProductDetails,
+	'rawData' | 'formattedData'
+> & {
+	rawData: TDetails;
+	formattedData: { displayName: string; value: string | number }[];
+};
 
-type SkuWithDetails<TDetails extends Prisma.JsonArray> = Sku & {
+type SkuWithDetails<TDetails extends Prisma.JsonObject> = Sku & {
 	details: ExtendedProductDetails<TDetails>;
 };
 
@@ -26,7 +31,7 @@ type Similar = Pick<
 };
 
 type FullProduct<
-	TDetails extends Prisma.JsonArray,
+	TDetails extends Prisma.JsonObject,
 	TSkuIdFragments extends Prisma.JsonArray
 > = Product & {
 	details: ExtendedProductDetails<TDetails>[];
@@ -38,13 +43,12 @@ type FullProduct<
 	skuIdFragments: TSkuIdFragments;
 };
 
-export type PaverDetails = [
-	{ id: 'dimensions'; displayName: string; value: [number, number, number] },
-	{ id: 'lbs_per_unit'; displayName: string; value: number },
-	{ id: 'sqft_per_pallet'; displayName: string; value: number },
-	{ id: 'units_per_pallet'; displayName: string; value: number },
-	{ id: 'pcs_per_sqft'; displayName: string; value: number }
-];
+export type PaverDetails = {
+	lbs_per_unit: number;
+	sqft_per_pallet: number;
+	units_per_pallet: number;
+	pcs_per_sqft: number;
+};
 
 type PaverSkuIdFragments =
 	| {

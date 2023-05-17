@@ -84,6 +84,7 @@ async function addPavers() {
 			defaultSkuId: 'colonial_classic:grey',
 			estimator: 'paver',
 			displayName: 'Colonial Classic',
+			borderable: true,
 			similar: ['banjo', 'thin_classic', 'heritage'],
 			skuIdFragments: [
 				{
@@ -98,6 +99,7 @@ async function addPavers() {
 			defaultSkuId: 'thin_classic:grey',
 			estimator: 'paver',
 			displayName: 'Thin Classic',
+			borderable: true,
 			similar: ['colonial_classic', 'banjo', 'circle_bundle'],
 			skuIdFragments: [
 				{
@@ -140,6 +142,7 @@ async function addPavers() {
 			defaultSkuId: 'cobble_mix:oblong:grey',
 			estimator: 'paver',
 			displayName: 'Cobble Mix',
+			borderable: true,
 			similar: ['owc', 'heritage', 'colonial_classic'],
 			skuIdFragments: [
 				{
@@ -163,6 +166,7 @@ async function addPavers() {
 			defaultSkuId: 'heritage:regular:grey',
 			estimator: 'paver',
 			displayName: 'Heritage Series',
+			borderable: true,
 			similar: ['colonial_classic', 'cobble_mix', 'owc'],
 			skuIdFragments: [
 				{
@@ -474,173 +478,204 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		matcher: 'colonial_classic',
 		productId: 'colonial_classic',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '4in x 8in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 5 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 128.75 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 600 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 4.66 }
+		rawData: {
+			lbs_per_unit: 5,
+			sqft_per_pallet: 128.75,
+			pcs_per_pallet: 600,
+			pcs_per_sqft: 4.66,
+			conversion_factors: { SOLDIER_ROW: 0.675, TIP_TO_TIP: 0.338 }
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '4in x 8in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '5 lbs' },
+			{ displayName: 'Area per Pallet', value: '128.75 sqft' },
+			{ displayName: 'Units per Pallet', value: 600 },
+			{ displayName: 'Pieces per sqft', value: 4.66 }
 		]
 	},
 	{
 		matcher: 'thin_classic',
 		productId: 'thin_classic',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '4in x 8in x 1.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 4.16 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 154.5 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 720 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 4.66 }
+		rawData: {
+			lbs_per_unit: 4.16,
+			sqft_per_pallet: 154.5,
+			pcs_per_pallet: 720,
+			pcs_per_sqft: 4.66,
+			conversion_factors: { SOLDIER_ROW: 0.675, TIP_TO_TIP: 0.338 }
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '4in x 8in x 1.375in' },
+			{ displayName: 'Weight per Unit', value: '4.16 lbs' },
+			{ displayName: 'Area per Pallet', value: '154.5 sqft' },
+			{ displayName: 'Units per Pallet', value: 720 },
+			{ displayName: 'Pieces per sqft', value: 4.66 }
 		]
 	},
 	{
 		matcher: 'banjo',
 		productId: 'banjo',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '5.5in x 9in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 6.67 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 128.57 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 450 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 3.5 }
+		rawData: {
+			lbs_per_unit: 6.67,
+			sqft_per_pallet: 128.57,
+			pcs_per_pallet: 450,
+			pcs_per_sqft: 3.5
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '5.5in x 9in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '6.67 lbs' },
+			{ displayName: 'Area per Pallet', value: '128.57 sqft' },
+			{ displayName: 'Units per Pallet', value: 450 },
+			{ displayName: 'Pieces per sqft', value: 3.5 }
 		]
 	},
 	{
 		matcher: 'owc',
 		productId: 'owc',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '5.5in x 9in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 3.75 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 125.39 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 800 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 6.38 }
+		rawData: {
+			lbs_per_unit: 3.75,
+			sqft_per_pallet: 125.39,
+			pcs_per_pallet: 800,
+			pcs_per_sqft: 6.38
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '5.5in x 9in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '3.75 lbs' },
+			{ displayName: 'Area per Pallet', value: '125.39 sqft' },
+			{ displayName: 'Units per Pallet', value: 800 },
+			{ displayName: 'Pieces per sqft', value: 6.38 }
 		]
 	},
 	{
 		matcher: 'cobble_mix:double',
 		productId: 'cobble_mix',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '7in x 9.5in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 11.28 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 119.28 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 266 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 2.23 }
+		rawData: {
+			lbs_per_unit: 11.28,
+			sqft_per_pallet: 119.28,
+			pcs_per_pallet: 266,
+			pcs_per_sqft: 2.23,
+			conversion_factors: { SOLDIER_ROW: 0.79, TIP_TO_TIP: 0.61 }
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '7in x 9.5in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '11.28 lbs' },
+			{ displayName: 'Area per Pallet', value: '119.28 sqft' },
+			{ displayName: 'Units per Pallet', value: 266 },
+			{ displayName: 'Pieces per sqft', value: 2.23 }
 		]
 	},
 	{
 		matcher: 'cobble_mix:oblong',
 		productId: 'cobble_mix',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '4.75in x 7in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 5.3 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 126.91 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 566 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 4.46 }
+		rawData: {
+			lbs_per_unit: 5.3,
+			sqft_per_pallet: 126.91,
+			pcs_per_pallet: 566,
+			pcs_per_sqft: 4.46,
+			conversion_factors: { SOLDIER_ROW: 0.59, TIP_TO_TIP: 0.43 }
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '4.75in x 7in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '5.3 lbs' },
+			{ displayName: 'Area per Pallet', value: '126.91 sqft' },
+			{ displayName: 'Units per Pallet', value: 566 },
+			{ displayName: 'Pieces per sqft', value: 4.46 }
 		]
 	},
 	{
 		matcher: 'cobble_mix:two_part',
 		productId: 'cobble_mix',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '4.75in x 7in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 3.53 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 130.97 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 850 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 6.49 }
+		rawData: {
+			lbs_per_unit: 3.53,
+			sqft_per_pallet: 130.97,
+			pcs_per_pallet: 850,
+			pcs_per_sqft: 6.49,
+			conversion_factors: { SOLDIER_ROW: 0.59, TIP_TO_TIP: 0.42 }
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '4.75in x 7in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '3.53 lbs' },
+			{ displayName: 'Area per Pallet', value: '130.97 sqft' },
+			{ displayName: 'Units per Pallet', value: 850 },
+			{ displayName: 'Pieces per sqft', value: 6.49 }
 		]
 	},
 	{
 		matcher: 'heritage:regular',
 		productId: 'heritage',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '6in x 9in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 9.15 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 120.59 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 328 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 2.72 }
+		rawData: {
+			lbs_per_unit: 9.15,
+			sqft_per_pallet: 120.59,
+			pcs_per_pallet: 328,
+			pcs_per_sqft: 2.72,
+			conversion_factors: { SOLDIER_ROW: 0.75, TIP_TO_TIP: 0.5 }
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '6in x 9in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '9.15 lbs' },
+			{ displayName: 'Area per Pallet', value: '120.59 sqft' },
+			{ displayName: 'Units per Pallet', value: 328 },
+			{ displayName: 'Pieces per sqft', value: 2.72 }
 		]
 	},
 	{
 		matcher: 'heritage:square',
 		productId: 'heritage',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '6in x 6in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 5.86 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 128 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 512 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 4 }
+		rawData: {
+			lbs_per_unit: 5.86,
+			sqft_per_pallet: 128,
+			pcs_per_pallet: 512,
+			pcs_per_sqft: 4,
+			conversion_factors: { SOLDIER_ROW: 0.5, TIP_TO_TIP: 0.5 }
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '6in x 6in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '5.86 lbs' },
+			{ displayName: 'Area per Pallet', value: '128 sqft' },
+			{ displayName: 'Units per Pallet', value: 512 },
+			{ displayName: 'Pieces per sqft', value: 4 }
 		]
 	},
 	{
 		matcher: 'heritage:two_part',
 		productId: 'heritage',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '6in x 9in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 5.77 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 130 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 520 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 4 }
+		rawData: {
+			lbs_per_unit: 5.77,
+			sqft_per_pallet: 130,
+			pcs_per_pallet: 520,
+			pcs_per_sqft: 4,
+			conversion_factors: { SOLDIER_ROW: 0.75, TIP_TO_TIP: 0.5 }
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '6in x 9in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '5.77 lbs' },
+			{ displayName: 'Area per Pallet', value: '130 sqft' },
+			{ displayName: 'Units per Pallet', value: 520 },
+			{ displayName: 'Pieces per sqft', value: 4 }
 		]
 	},
 	{
 		matcher: 'tropical_wave',
 		productId: 'tropical_wave',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '4.75in x 9.5in x 3in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 9.38 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 102.89 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 320 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 3.11 }
+		rawData: {
+			lbs_per_unit: 9.38,
+			sqft_per_pallet: 102.89,
+			pcs_per_pallet: 320,
+			pcs_per_sqft: 3.11
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '4.75in x 9.5in x 3in' },
+			{ displayName: 'Weight per Unit', value: '9.38 lbs' },
+			{ displayName: 'Area per Pallet', value: '102.89 sqft' },
+			{ displayName: 'Units per Pallet', value: 320 },
+			{ displayName: 'Pieces per sqft', value: 3.11 }
 		]
 	},
 	{
 		matcher: 'circle_bundle',
 		productId: 'circle_bundle',
-		data: [
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 2.75 },
+		rawData: {},
+		formattedData: [
+			{ displayName: 'Weight per Unit', value: '2.75 lbs' },
 			{
 				id: 'sqft_per_full_bundle',
 				displayName: 'Area per 8ft bundle',
@@ -666,164 +701,179 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		matcher: 'circle_stepping',
 		productId: 'circle_stepping',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '11in x 11in x 2.375in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 9.38 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 120 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 120 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 1 }
+		rawData: {
+			lbs_per_unit: 9.38,
+			sqft_per_pallet: 120,
+			pcs_per_pallet: 120,
+			pcs_per_sqft: 1
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '11in x 11in x 2.375in' },
+			{ displayName: 'Weight per Unit', value: '9.38 lbs' },
+			{ displayName: 'Area per Pallet', value: '120 sqft' },
+			{ displayName: 'Units per Pallet', value: 120 },
+			{ displayName: 'Pieces per sqft', value: 1 }
 		]
 	},
 	{
 		matcher: 'savannah:16x8',
 		productId: 'savannah',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '8in x 16in x 3in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 20 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 104.4 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 116 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 0.9 }
+		rawData: {
+			lbs_per_unit: 20,
+			sqft_per_pallet: 104.4,
+			pcs_per_pallet: 116,
+			pcs_per_sqft: 0.9
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '8in x 16in x 3in' },
+			{ displayName: 'Weight per Unit', value: '20 lbs' },
+			{ displayName: 'Area per Pallet', value: '104.4 sqft' },
+			{ displayName: 'Units per Pallet', value: 116 },
+			{ displayName: 'Pieces per sqft', value: 0.9 }
 		]
 	},
 	{
 		matcher: 'savannah:16x16',
 		productId: 'savannah',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '16in x 16in x 3in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 28 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 104.88 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 59 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 0.5625 }
+		rawData: {
+			lbs_per_unit: 28,
+			sqft_per_pallet: 104.88,
+			pcs_per_pallet: 59,
+			pcs_per_sqft: 0.5625
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '16in x 16in x 3in' },
+			{ displayName: 'Weight per Unit', value: '28 lbs' },
+			{ displayName: 'Area per Pallet', value: '104.88 sqft' },
+			{ displayName: 'Units per Pallet', value: 59 },
+			{ displayName: 'Pieces per sqft', value: 0.5625 }
 		]
 	},
 	{
 		matcher: 'savannah:16x24',
 		productId: 'savannah',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '16in x 24in x 3in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 36 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 104 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 39 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 0.375 }
+		rawData: {
+			lbs_per_unit: 36,
+			sqft_per_pallet: 104,
+			pcs_per_pallet: 39,
+			pcs_per_sqft: 0.375
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '16in x 24in x 3in' },
+			{ displayName: 'Weight per Unit', value: '36 lbs' },
+			{ displayName: 'Area per Pallet', value: '104 sqft' },
+			{ displayName: 'Units per Pallet', value: 39 },
+			{ displayName: 'Pieces per sqft', value: 0.375 }
 		]
 	},
 	{
 		matcher: 'savannah:24x24',
 		productId: 'savannah',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '24in x 24in x 3in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 42 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 104 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 26 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 0.25 }
+		rawData: {
+			lbs_per_unit: 42,
+			sqft_per_pallet: 104,
+			pcs_per_pallet: 26,
+			pcs_per_sqft: 0.25
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '24in x 24in x 3in' },
+			{ displayName: 'Weight per Unit', value: '42 lbs' },
+			{ displayName: 'Area per Pallet', value: '104 sqft' },
+			{ displayName: 'Units per Pallet', value: 26 },
+			{ displayName: 'Pieces per sqft', value: 0.25 }
 		]
 	},
 	{
 		matcher: 'grasscrete:circle',
 		productId: 'grasscrete',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '23.5in x 15.5in x 3.5in'
-			},
-			{ id: 'lbs_per_unit', displayName: 'Weight per Unit', value: 19 },
-			{ id: 'sqft_per_pallet', displayName: 'Area per Pallet', value: 106 },
-			{ id: 'units_per_pallet', displayName: 'Units per Pallet', value: 40 },
-			{ id: 'pcs_per_sqft', displayName: 'Pieces per sqft', value: 0.373 }
+		rawData: {
+			lbs_per_unit: 19,
+			sqft_per_pallet: 106,
+			pcs_per_pallet: 40,
+			pcs_per_sqft: 0.373
+		},
+		formattedData: [
+			{ displayName: 'Dimensions', value: '23.5in x 15.5in x 3.5in' },
+			{ displayName: 'Weight per Unit', value: '19 lbs' },
+			{ displayName: 'Area per Pallet', value: '106 sqft' },
+			{ displayName: 'Units per Pallet', value: 40 },
+			{ displayName: 'Pieces per sqft', value: 0.373 }
 		]
 	},
 	{
 		matcher: 'curbwall',
 		productId: 'curbwall',
-		data: [
-			{
-				id: 'dimensions',
-				displayName: 'Dimensions',
-				value: '29.5in x 4in x 7in'
-			}
-		]
+		rawData: {},
+		formattedData: [{ displayName: 'Dimensions', value: '29.5in x 4in x 7in' }]
 	},
 	{
 		matcher: 'oil_sealant:one_gallon',
 		productId: 'oil_sealant',
-		data: [
-			{ id: 'coverage', displayName: 'Coverage', value: '100sqft' },
-			{ id: 'lbs_per_unit', displayName: 'Weight per unit', value: 4 }
+		rawData: {},
+		formattedData: [
+			{ displayName: 'Coverage', value: '100 sqft' },
+			{ displayName: 'Weight per unit', value: '4 lbs' }
 		]
 	},
 	{
 		matcher: 'oil_sealant:five_gallon',
 		productId: 'oil_sealant',
-		data: [
-			{ id: 'coverage', displayName: 'Coverage', value: '500sqft' },
-			{ id: 'lbs_per_unit', displayName: 'Weight per unit', value: 25 }
+		rawData: {},
+		formattedData: [
+			{ displayName: 'Coverage', value: '500 sqft' },
+			{ displayName: 'Weight per unit', value: '25 lbs' }
 		]
 	},
 	{
 		matcher: 'water_sealant:one_gallon',
 		productId: 'water_sealant',
-		data: [
-			{ id: 'coverage', displayName: 'Coverage', value: '100sqft' },
-			{ id: 'lbs_per_unit', displayName: 'Weight per unit', value: 4 }
+		rawData: {},
+		formattedData: [
+			{ displayName: 'Coverage', value: '100 sqft' },
+			{ displayName: 'Weight per unit', value: '4 lbs' }
 		]
 	},
 	{
 		matcher: 'water_sealant:five_gallon',
 		productId: 'water_sealant',
-		data: [
-			{ id: 'coverage', displayName: 'Coverage', value: '500sqft' },
-			{ id: 'lbs_per_unit', displayName: 'Weight per unit', value: 25 }
+		rawData: {},
+		formattedData: [
+			{ displayName: 'Coverage', value: '500 sqft' },
+			{ displayName: 'Weight per unit', value: '25 lbs' }
 		]
 	},
 	{
 		productId: 'polymeric_sand',
 		matcher: 'polymeric_sand:fifty_pound',
-		data: [
-			{ id: 'coverage', displayName: 'Coverage', value: '100sqft' },
-			{ id: 'lbs_per_unit', displayName: 'Weight per unit', value: 50 }
+		rawData: {},
+		formattedData: [
+			{ displayName: 'Coverage', value: '100 sqft' },
+			{ displayName: 'Weight per unit', value: '50 lbs' }
 		]
 	},
 	{
 		productId: 'efflorescence_cleaner',
 		matcher: 'efflorescence_cleaner:one_gallon',
-		data: [
-			{ id: 'coverage', displayName: 'Coverage', value: '100sqft' },
-			{ id: 'lbs_per_unit', displayName: 'Weight per unit', value: 20 }
+		rawData: {},
+		formattedData: [
+			{ displayName: 'Coverage', value: '100 sqft' },
+			{ displayName: 'Weight per unit', value: '20 lbs' }
 		]
 	},
 	{
 		productId: 'stone_soap',
 		matcher: 'stone_soap:one_quart',
-		data: [
-			{ id: 'coverage', displayName: 'Coverage', value: '25sqft' },
-			{ id: 'lbs_per_unit', displayName: 'Weight per unit', value: 6 }
+		rawData: {},
+		formattedData: [
+			{ displayName: 'Coverage', value: '25 sqft' },
+			{ displayName: 'Weight per unit', value: '2 lbs' }
 		]
 	},
 	{
 		productId: 'gum_paint_tar',
 		matcher: 'gum_paint_tar:one_quart',
-		data: [{ id: 'lbs_per_unit', displayName: 'Weight per unit', value: 3 }]
+		rawData: {},
+		formattedData: [{ displayName: 'Weight per unit', value: '2 lbs' }]
 	}
 ];
 

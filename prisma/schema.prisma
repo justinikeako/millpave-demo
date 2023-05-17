@@ -29,6 +29,7 @@ model Product {
   details         ProductDetails[]
   skuIdFragments  Json
   hasModels       Boolean                   @default(false)
+  borderable      Boolean                   @default(false)
   estimator       String?
   stock           Stock[]
   restock         Restock[]
@@ -63,11 +64,12 @@ model PickupLocationOnProduct {
 }
 
 model ProductDetails {
-  matcher   String  @id
-  product   Product @relation(fields: [productId], references: [id])
-  productId String
-  data      Json
-  sku       Sku[]
+  matcher       String  @id
+  product       Product @relation(fields: [productId], references: [id])
+  productId     String
+  rawData       Json
+  formattedData Json
+  sku           Sku[]
 
   @@index([productId])
 }

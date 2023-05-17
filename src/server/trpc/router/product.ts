@@ -121,10 +121,17 @@ export const productRouter = router({
 			};
 		}),
 	getPavers: publicProcedure
-		.input(z.object({}))
+		.input(
+			z.object({
+				dimension: z.enum(['1D', '2D'])
+			})
+		)
 		.query(async ({ ctx, input }) => {
 			const pavers = ctx.prisma.product.findMany({
-				where: { categoryId: 'concrete_pavers' },
+				where: {
+					categoryId: 'concrete_pavers',
+					borderable: input.dimension === '1D' || undefined
+				},
 				select: {
 					id: true,
 					displayName: true,

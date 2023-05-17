@@ -27,7 +27,6 @@ import { useState } from 'react';
 import { Sku } from '@prisma/client';
 import { formatPrice } from '@/utils/format';
 import { ProductStock } from '../product-stock';
-import { extractDetail } from '@/utils/product';
 import { ExtendedPaverDetails } from '@/types/product';
 import { Check } from 'lucide-react';
 import { StoneProject, Stone, Coverage } from '@/types/quote';
@@ -99,13 +98,14 @@ function findSku(searchId?: string, skus?: Sku[]) {
 	return skus?.find((currentSku) => currentSku.id === searchId);
 }
 function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
-	return details?.find((details) => skuId?.includes(details.matcher))?.data;
+	return details?.find((details) => skuId?.includes(details.matcher));
 }
 
 type StoneEditorProps = {
 	name: FieldArrayPath<StoneProject>;
 	dimension: '1D' | '2D';
 };
+
 export function StoneEditor(props: StoneEditorProps) {
 	const { control } = useFormContext<StoneProject>();
 	const { fields, append, update } = useFieldArray({
@@ -192,8 +192,8 @@ type StoneFormProps = {
 };
 
 const defaultStone: Stone = {
-	skuId: 'banjo:grey',
-	displayName: 'Banjo Grey',
+	skuId: 'colonial_classic:grey',
+	displayName: 'Colonial Classic Grey',
 	coverage: { value: 1, unit: 'fr' }
 };
 
@@ -209,7 +209,7 @@ function StoneForm({
 	const currentPaverId = currentSkuId.split(':')[0] as string;
 
 	const paversQuery = trpc.product.getPavers.useQuery(
-		{},
+		{ dimension },
 		{ refetchOnWindowFocus: false }
 	);
 
@@ -232,6 +232,13 @@ function StoneForm({
 
 		setPreviousDisplayName(currentDisplayName);
 	}
+
+	if (!pavers)
+		return (
+			<div className="flex flex-1 items-center justify-center">
+				<p>Loading...</p>
+			</div>
+		);
 
 	return (
 		<form onSubmit={stopPropagate(handleSubmit(onSubmit))} className="contents">
@@ -272,13 +279,13 @@ function StoneForm({
 									{currentSku.unit === 'sqft'
 										? unitDisplayNameDictionary['sqft'][0]
 										: currentSku.unit}
-									{currentSkuDetails && currentSku.unit === 'sqft' && (
+									{currentSkuDetails?.rawData.pcs_per_sqft && (
 										<>
 											<span>
 												<span>&nbsp;|&nbsp;</span>
 												{formatPrice(
 													currentSku.price /
-														extractDetail(currentSkuDetails, 'pcs_per_sqft')
+														currentSkuDetails.rawData.pcs_per_sqft
 												)}
 												&nbsp;per unit
 											</span>
@@ -383,15 +390,13 @@ function StoneForm({
 								skuId.field.onChange(newSkuId);
 							}}
 						>
-							{pavers && (
-								<Section
-									heading={`Product — ${
-										currentPaver?.displayName || 'Loading...'
-									}`}
-								>
-									<ProductPicker products={pavers} />
-								</Section>
-							)}
+							<Section
+								heading={`Product — ${
+									currentPaver?.displayName || 'Loading...'
+								}`}
+							>
+								<ProductPicker products={pavers} />
+							</Section>
 
 							{currentPaver && (
 								<SkuFragmentPicker

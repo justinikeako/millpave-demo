@@ -22,7 +22,6 @@ import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { appRouter } from '../../server/trpc/router/_app';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { extractDetail } from '../../utils/product';
 import { ViewportReveal } from '../../components/reveal';
 import { motion } from 'framer-motion';
 import { ProductStock } from '@/components/product-stock';
@@ -116,7 +115,7 @@ function Section({
 }
 
 function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
-	return details?.find((details) => skuId?.includes(details.matcher))?.data;
+	return details?.find((details) => skuId?.includes(details.matcher));
 }
 
 function findSKU(searchId?: string, skus?: Sku[]) {
@@ -184,13 +183,12 @@ function Page() {
 											? unitDisplayNameDictionary['sqft'][0]
 											: currentSku.unit}
 									</p>
-									{currentSku.unit === 'sqft' && (
+									{productDetails.rawData.pcs_per_sqft && (
 										<>
 											<div className="h-full w-[2px] bg-current" />
 											<p>
 												{formatPrice(
-													currentSku.price /
-														extractDetail(productDetails, 'pcs_per_sqft')
+													currentSku.price / productDetails.rawData.pcs_per_sqft
 												)}
 												&nbsp;per unit
 											</p>
@@ -232,15 +230,18 @@ function Page() {
 
 						{/* Paver Estimator */}
 						{product.estimator === 'paver' && (
-							<PaverEstimator paverDetails={productDetails} sku={currentSku} />
+							<PaverEstimator
+								paverDetails={productDetails.rawData}
+								sku={currentSku}
+							/>
 						)}
 
 						{/* Specifications */}
 						<Section heading="Specifications">
 							<ul>
-								{productDetails.map((detail) => (
+								{productDetails.formattedData.map((detail, index) => (
 									<li
-										key={detail.id}
+										key={index}
 										className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100"
 									>
 										<p>{detail.displayName}</p>

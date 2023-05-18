@@ -8,7 +8,6 @@ import { Button } from '../../components/button';
 import Link from 'next/link';
 import NextError from 'next/error';
 import { Sku } from '@prisma/client';
-import { ExtendedPaverDetails } from '../../types/product';
 import { trpc } from '../../utils/trpc';
 import classNames from 'classnames';
 import { PaverEstimator } from '../../components/estimator';
@@ -25,7 +24,7 @@ import dynamic from 'next/dynamic';
 import { ViewportReveal } from '../../components/reveal';
 import { motion } from 'framer-motion';
 import { ProductStock } from '@/components/product-stock';
-import { unitDisplayNameDictionary } from '@/lib/utils';
+import { findSku, unitDisplayNameDictionary } from '@/lib/utils';
 
 const ProductViewer3D = dynamic(
 	() => import('../../components/product-viewer-3d'),
@@ -114,14 +113,6 @@ function Section({
 	);
 }
 
-function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
-	return details?.find((details) => skuId?.includes(details.matcher));
-}
-
-function findSKU(searchId?: string, skus?: Sku[]) {
-	return skus?.find((currentSku) => currentSku.id === searchId);
-}
-
 function Page() {
 	const productId = useRouter().query.id as string;
 
@@ -133,14 +124,14 @@ function Page() {
 	const product = productQuery.data;
 
 	const [skuId, setSkuId] = useState(product?.defaultSkuId);
-	const currentSku = findSKU(skuId, product?.skus);
-	const productDetails = findDetails(skuId, product?.details);
+	const currentSku = findSku(skuId, product?.skus, product?.details);
 
-	if (!product || !currentSku || !productDetails || !skuId) {
+	if (!product || !currentSku || !skuId) {
 		const productNotFound = productQuery.error?.data?.code === 'NOT_FOUND';
 		const skuNotFound = currentSku === undefined;
 
-		if (!product || productNotFound) return <NextError statusCode={404} />;
+		if (!product) return null;
+		if (productNotFound) return <NextError statusCode={404} />;
 		if (skuNotFound && product.defaultSkuId) setSkuId(product.defaultSkuId);
 
 		return <NextError statusCode={500} />;
@@ -183,12 +174,13 @@ function Page() {
 											? unitDisplayNameDictionary['sqft'][0]
 											: currentSku.unit}
 									</p>
-									{productDetails.rawData.pcs_per_sqft && (
+									{currentSku.details.rawData.pcs_per_sqft && (
 										<>
 											<div className="h-full w-[2px] bg-current" />
 											<p>
 												{formatPrice(
-													currentSku.price / productDetails.rawData.pcs_per_sqft
+													currentSku.price /
+														currentSku.details.rawData.pcs_per_sqft
 												)}
 												&nbsp;per unit
 											</p>
@@ -231,7 +223,7 @@ function Page() {
 						{/* Paver Estimator */}
 						{product.estimator === 'paver' && (
 							<PaverEstimator
-								paverDetails={productDetails.rawData}
+								paverDetails={currentSku.details.rawData}
 								sku={currentSku}
 							/>
 						)}
@@ -239,7 +231,7 @@ function Page() {
 						{/* Specifications */}
 						<Section heading="Specifications">
 							<ul>
-								{productDetails.formattedData.map((detail, index) => (
+								{currentSku.details.formattedData.map((detail, index) => (
 									<li
 										key={index}
 										className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100"

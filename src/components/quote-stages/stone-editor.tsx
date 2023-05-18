@@ -24,14 +24,17 @@ import {
 } from '../sku-picker';
 import { trpc } from '@/utils/trpc';
 import { useState } from 'react';
-import { Sku } from '@prisma/client';
 import { formatPrice } from '@/utils/format';
 import { ProductStock } from '../product-stock';
-import { ExtendedPaverDetails } from '@/types/product';
 import { Check } from 'lucide-react';
 import { StoneProject, Stone, Coverage } from '@/types/quote';
 import { Edit } from 'lucide-react';
-import { cn, stopPropagate, unitDisplayNameDictionary } from '@/lib/utils';
+import {
+	cn,
+	findSku,
+	stopPropagate,
+	unitDisplayNameDictionary
+} from '@/lib/utils';
 
 type StoneProps = React.PropsWithChildren<{
 	displayName: string;
@@ -93,12 +96,6 @@ function Section({ heading, children }: SectionProps) {
 			{children}
 		</section>
 	);
-}
-function findSku(searchId?: string, skus?: Sku[]) {
-	return skus?.find((currentSku) => currentSku.id === searchId);
-}
-function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
-	return details?.find((details) => skuId?.includes(details.matcher));
 }
 
 type StoneEditorProps = {
@@ -217,8 +214,11 @@ function StoneForm({
 	);
 	const pavers = paversQuery.data;
 	const currentPaver = currentPaverQuery.data;
-	const currentSku = findSku(currentSkuId, currentPaver?.skus);
-	const currentSkuDetails = findDetails(currentSkuId, currentPaver?.details);
+	const currentSku = findSku(
+		currentSkuId,
+		currentPaver?.skus,
+		currentPaver?.details
+	);
 	const currentDisplayName = currentSku?.displayName;
 
 	// Update displayname once it changes
@@ -277,13 +277,13 @@ function StoneForm({
 									{currentSku.unit === 'sqft'
 										? unitDisplayNameDictionary['sqft'][0]
 										: currentSku.unit}
-									{currentSkuDetails?.rawData.pcs_per_sqft && (
+									{currentSku.details?.rawData.pcs_per_sqft && (
 										<>
 											<span>
 												<span>&nbsp;|&nbsp;</span>
 												{formatPrice(
 													currentSku.price /
-														currentSkuDetails.rawData.pcs_per_sqft
+														currentSku.details.rawData.pcs_per_sqft
 												)}
 												&nbsp;per unit
 											</span>

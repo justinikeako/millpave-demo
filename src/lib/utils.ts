@@ -1,5 +1,25 @@
 import classNames from 'classnames';
 import { Unit } from '@/types/quote';
+import { Sku } from '@prisma/client';
+import { ExtendedPaverDetails } from '@/types/product';
+
+export function findSku(
+	skuId: string | undefined,
+	skus: Sku[] | undefined,
+	details: ExtendedPaverDetails[] | undefined
+) {
+	const foundSku = skus?.find((currentSku) => currentSku.id === skuId);
+	const foundDetails = details?.find((details) =>
+		skuId?.includes(details.matcher)
+	);
+
+	if (!foundSku || !foundDetails) return undefined;
+
+	return {
+		...foundSku,
+		details: foundDetails
+	};
+}
 
 export const unitDisplayNameDictionary: {
 	[key in Unit]: [string, string];

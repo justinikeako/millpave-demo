@@ -4,14 +4,9 @@
 	"private": true,
 	"license": "UNLICENSED",
 	"type": "module",
-	"prisma": {
-		"seed": "node --loader ts-node/esm prisma/seed.ts",
-		"schema": "prisma/schema.prisma"
-	},
 	"scripts": {
 		"build": "next build",
 		"dev": "next dev",
-		"postinstall": "prisma generate",
 		"lint": "next lint",
 		"start": "next start",
 		"db-introspect": "drizzle-kit introspect:mysql",

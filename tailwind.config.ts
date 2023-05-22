@@ -17,19 +17,19 @@ module.exports = {
 			],
 			xl: [
 				'clamp(1.563em, calc(1.563em + ((1vw - 0.4em) * 0.872)), 1.999em)',
-				{ lineHeight: '1.15', fontWeight: '600' }
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.03em' }
 			],
 			'2xl': [
 				'clamp(1.953em, calc(1.953em + ((1vw - 0.4em) * 1.748)), 2.827em)',
-				{ lineHeight: '1.15', fontWeight: '600' }
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.03em' }
 			],
 			'3xl': [
 				' clamp(2.441em, calc(2.441em + ((1vw - 0.4em) * 3.114)), 3.998em)',
-				{ lineHeight: '1.15', fontWeight: '600' }
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.035em' }
 			],
 			'4xl': [
 				'clamp(3.052em, calc(3.052em + ((1vw - 0.4em) * 5.202)), 5.653em);',
-				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.02em' }
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.04em' }
 			]
 		},
 

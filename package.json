@@ -17,8 +17,7 @@
 		"db-introspect": "drizzle-kit introspect:mysql",
 		"db-push": "drizzle-kit push:mysql",
 		"db-seed": "tsx -r dotenv/config drizzle/seed.ts",
-		"sembed": "tsx -r dotenv/config src/scripts/scrape-embed.ts",
-		"dquery": "tsx -r dotenv/config src/scripts/demo-query.ts"
+		"sembed": "tsx -r dotenv/config src/scripts/scrape-embed.ts"
 	},
 	"dependencies": {
 		"@microsoft/fetch-event-source": "^2.0.1",

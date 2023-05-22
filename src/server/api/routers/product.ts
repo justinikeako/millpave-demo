@@ -53,8 +53,6 @@ export const productRouter = createTRPCRouter({
 				}
 			);
 
-			console.log(product.recommendations);
-
 			return {
 				...product,
 				similar: similarProducts

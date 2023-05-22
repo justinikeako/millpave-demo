@@ -15,47 +15,45 @@ export const productRouter = createTRPCRouter({
 			})
 		)
 		.query(async ({ ctx, input }) => {
-			const [product, similar] = await Promise.all([
-				ctx.db.query.products.findFirst({
-					where: (products, { eq }) => eq(products.id, input.productId),
-					with: {
-						category: true,
-						details: true,
-						skus: true
-					}
-				}),
-
-				// Temporary second query due to bug in the relational query builder.
-				ctx.db.query.productToProduct.findMany({
-					where: (productToProduct, { eq }) =>
-						eq(productToProduct.productId, input.productId),
-					orderBy: (similarProducts, { desc }) =>
-						desc(similarProducts.relevance),
-					with: {
-						similarProduct: {
-							columns: {
-								id: true,
-								displayName: true,
-								defaultSkuId: true
-							},
-							with: {
-								skus: {
-									orderBy: (skus, { asc }) => asc(skus.price),
-									limit: 1,
-									columns: { price: true, unit: true }
+			const product = await ctx.db.query.products.findFirst({
+				where: (products, { eq }) => eq(products.id, input.productId),
+				with: {
+					category: true,
+					details: true,
+					skus: true,
+					recommendations: {
+						orderBy: (productRecommendations, { desc }) =>
+							desc(productRecommendations.relevance),
+						with: {
+							recommending: {
+								columns: {
+									id: true,
+									displayName: true,
+									defaultSkuId: true
+								},
+								with: {
+									skus: {
+										orderBy: (skus, { asc }) => asc(skus.price),
+										limit: 1,
+										columns: { price: true, unit: true }
+									}
 								}
 							}
 						}
 					}
-				})
-			]);
+				}
+			});
 
 			if (!product) throw new TRPCError({ code: 'NOT_FOUND' });
 
-			const similarProducts = similar.map(({ similarProduct }) => {
-				const { skus, ...product } = similarProduct;
-				return { ...product, startingSku: skus[0] as StartingSku };
-			});
+			const similarProducts = product.recommendations.map(
+				({ recommending: similarProduct }) => {
+					const { skus, ...product } = similarProduct;
+					return { ...product, startingSku: skus[0] as StartingSku };
+				}
+			);
+
+			console.log(product.recommendations);
 
 			return {
 				...product,
@@ -68,8 +66,8 @@ export const productRouter = createTRPCRouter({
 			const fulfillment = await ctx.db.query.products.findFirst({
 				where: eq(products.id, input.productId),
 				with: {
-					stockList: true,
-					restockList: {
+					skuStock: true,
+					skuRestocks: {
 						where: gte(skuRestocks.date, new Date())
 					}
 				}

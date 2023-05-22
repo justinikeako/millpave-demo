@@ -163,23 +163,23 @@ export const skuRestocks = mysqlTable(
 	})
 );
 
-export const productToProduct = mysqlTable(
-	'product_to_product',
+export const productRecommendations = mysqlTable(
+	'product_recommendations',
 	{
 		relevance: int('relevance').notNull(),
-		productId: varchar('product_id', { length: 32 }).notNull(),
-		similarId: varchar('similar_id', { length: 32 }).notNull()
+		recommenderId: varchar('recommender_id', { length: 32 }).notNull(),
+		recommendingId: varchar('recommending_id', { length: 32 }).notNull()
 	},
 	(table) => ({
-		productToProductProductIdIdx: index('product_to_product_product_id_idx').on(
-			table.productId
-		),
-		productToProductSimilarIdIdx: index('product_to_product_similar_id_idx').on(
-			table.similarId
-		),
-		productToProductProductIdSimilarId: primaryKey(
-			table.productId,
-			table.similarId
+		productRecommendationsRecommenderIdIdx: index(
+			'product_recommendations_recommender_id_idx'
+		).on(table.recommenderId),
+		productRecommendationsRecommendingIdIdx: index(
+			'product_recommendations_recommending_id_idx'
+		).on(table.recommendingId),
+		productRecommendationsRecommenderIdRecommendingId: primaryKey(
+			table.recommenderId,
+			table.recommendingId
 		)
 	})
 );
@@ -213,24 +213,26 @@ export const productsRelations = relations(products, ({ one, many }) => ({
 	}),
 	details: many(skuDetails),
 	skus: many(skus),
-	stockList: many(skuStock),
-	restockList: many(skuRestocks),
-	similar: many(productToProduct, { relationName: 'similar' }),
-	similarTo: many(productToProduct, { relationName: 'similarTo' })
+	skuStock: many(skuStock),
+	skuRestocks: many(skuRestocks),
+	recommendations: many(productRecommendations, {
+		relationName: 'recommenders'
+	}),
+	recommenders: many(productRecommendations, { relationName: 'recommending' })
 }));
 
-export const productToProductRelations = relations(
-	productToProduct,
+export const productRecommendationsRelations = relations(
+	productRecommendations,
 	({ one }) => ({
-		product: one(products, {
-			fields: [productToProduct.productId],
+		recommender: one(products, {
+			fields: [productRecommendations.recommenderId],
 			references: [products.id],
-			relationName: 'similarTo'
+			relationName: 'recommenders'
 		}),
-		similarProduct: one(products, {
-			fields: [productToProduct.similarId],
+		recommending: one(products, {
+			fields: [productRecommendations.recommendingId],
 			references: [products.id],
-			relationName: 'similar'
+			relationName: 'recommending'
 		})
 	})
 );
@@ -288,8 +290,8 @@ export const skuRestocksRelations = relations(skuRestocks, ({ one }) => ({
 export const pickupLocationsRelations = relations(
 	pickupLocations,
 	({ many }) => ({
-		stockList: many(skuStock),
-		restockList: many(skuRestocks),
+		skuStock: many(skuStock),
+		skuRestocks: many(skuRestocks),
 		quoteItems: many(quoteItems)
 	})
 );

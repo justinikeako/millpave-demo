@@ -1,7 +1,7 @@
 import { InferModel } from 'drizzle-orm';
 import {
 	categories,
-	productToProduct,
+	productRecommendations,
 	products,
 	skuDetails,
 	skuRestocks,
@@ -24,7 +24,10 @@ export const db = drizzle(connection);
 
 type NewCategory = InferModel<typeof categories, 'insert'>;
 type NewProduct = InferModel<typeof products, 'insert'>;
-type NewProductToProduct = InferModel<typeof productToProduct, 'insert'>;
+type NewProductRecommendations = InferModel<
+	typeof productRecommendations,
+	'insert'
+>;
 type ProductDetails = InferModel<typeof skuDetails>;
 type Sku = InferModel<typeof skus, 'insert'>;
 type Stock = InferModel<typeof skuStock, 'insert'>;
@@ -51,21 +54,21 @@ async function addCategoryWithProducts(
 	await db.insert(categories).values(newCategory);
 	await db.insert(products).values(newProducts);
 
-	const newProductToProduct: NewProductToProduct[] = [];
+	const newProductRecommendations: NewProductRecommendations[] = [];
 
-	for (const [productId, similarIds] of similar) {
-		newProductToProduct.push(
-			...similarIds.map(
-				(similarId, index): NewProductToProduct => ({
-					relevance: similarIds.length - index,
-					productId,
-					similarId
+	for (const [recommenderId, recommendingIds] of similar) {
+		newProductRecommendations.push(
+			...recommendingIds.map(
+				(recommendingId, index): NewProductRecommendations => ({
+					relevance: recommendingIds.length - index,
+					recommenderId,
+					recommendingId
 				})
 			)
 		);
 	}
 
-	await db.insert(productToProduct).values(newProductToProduct);
+	await db.insert(productRecommendations).values(newProductRecommendations);
 
 	console.log(
 		`Successfully added category "${newCategory.displayName}" and all related products`

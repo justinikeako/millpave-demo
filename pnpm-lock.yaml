@@ -65,8 +65,8 @@ dependencies:
     specifier: ^16.0.3
     version: 16.0.3
   drizzle-orm:
-    specifier: ^0.26.0
-    version: 0.26.0(mysql2@3.3.1)
+    specifier: 0.26.0-5f2b067
+    version: 0.26.0-5f2b067(mysql2@3.3.1)
   framer-motion:
     specifier: ^10.11.6
     version: 10.11.6(react-dom@18.2.0)(react@18.2.0)
@@ -2492,8 +2492,8 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.26.0(mysql2@3.3.1):
-    resolution: {integrity: sha512-ztjhHehcuG5+lpGYxfT/L5I+yd/Z0dOf0fV3cS2ywBU01wkpxjwl4EJZVT7kVzjYfM8kwMGDghAPRPBCK0vULA==}
+  /drizzle-orm@0.26.0-5f2b067(mysql2@3.3.1):
+    resolution: {integrity: sha512-8DHjqBSrDjVS+msFijhgZQPHj/RoBVYELNAwLAqCJPUD4DCkcD1kIf7aLXzFX6UGd24nnbFBFsVJ8ZIjrhkkYw==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'

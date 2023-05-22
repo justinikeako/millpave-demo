@@ -22,13 +22,13 @@ export function ProductStock({
 		return <p>Loading Stock Info...</p>;
 	}
 
-	const currentStock = fulfillment.stockList.reduce((totalQuantity, item) => {
+	const currentStock = fulfillment.skuStock.reduce((totalQuantity, item) => {
 		if (item.skuId !== skuId) return totalQuantity;
 
 		return totalQuantity + item.quantity;
 	}, 0);
 
-	const closestRestock = fulfillment.restockList
+	const closestRestock = fulfillment.skuRestocks
 		.filter((restock) => restock.skuId === skuId)
 		.reduce<Date | undefined>((closestDate, curr) => {
 			// If closestDate isn't defined or the current item's date is closer, return the current date.

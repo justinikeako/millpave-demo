@@ -26,7 +26,7 @@ please refer to the respective docs. If you still are in the wind, please join
 our [Discord](https://t3.gg/discord) and ask for help.
 
 - [Next-Auth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
+- [Drizzle ORM](https://orm.drizzle.team/)
 - [TailwindCSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io) (using @next version?
   [see v10 docs here](https://alpha.trpc.io))

@@ -1,33 +1,30 @@
 import Head from 'next/head';
-import {
-	SkuFragmentPicker,
-	SkuPickerProvider
-} from '../../components/sku-picker';
-import { ProductCard } from '../../components/product-card';
-import { Button } from '../../components/button';
+import { VariantPicker, SkuPickerProvider } from '@/components/sku-picker';
+import { ProductCard } from '@/components/product-card';
+import { Button } from '@/components/button';
 import Link from 'next/link';
 import NextError from 'next/error';
-import { Sku } from '@prisma/client';
-import { trpc } from '../../utils/trpc';
+import { Sku } from '@/types/product';
+import { api } from '@/utils/api';
 import classNames from 'classnames';
-import { PaverEstimator } from '../../components/estimator';
+import { PaverEstimator } from '@/components/estimator';
 import { Suspense, useState } from 'react';
-import { InspirationSection } from '../../components/inspiration-section';
+import { InspirationSection } from '@/components/inspiration-section';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
-import { formatPrice } from '../../utils/format';
-import { createContextInner } from '../../server/trpc/context';
+import { formatPrice } from '@/utils/format';
+import { createContextInner } from '@/server/api/context';
 import { GetStaticPaths, GetStaticPropsContext } from 'next';
-import { appRouter } from '../../server/trpc/router/_app';
+import { appRouter } from '@/server/api/routers/root';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { ViewportReveal } from '../../components/reveal';
+import { ViewportReveal } from '@/components/reveal';
 import { motion } from 'framer-motion';
 import { ProductStock } from '@/components/product-stock';
 import { findSku, unitDisplayNameDictionary } from '@/lib/utils';
 
 const ProductViewer3D = dynamic(
-	() => import('../../components/product-viewer-3d'),
+	() => import('@/components/product-viewer-3d'),
 	{ suspense: true }
 );
 
@@ -116,7 +113,7 @@ function Section({
 function Page() {
 	const productId = useRouter().query.id as string;
 
-	const productQuery = trpc.product.getById.useQuery(
+	const productQuery = api.product.getById.useQuery(
 		{ productId },
 		{ refetchOnWindowFocus: false }
 	);
@@ -174,7 +171,7 @@ function Page() {
 											? unitDisplayNameDictionary['sqft'][0]
 											: currentSku.unit}
 									</p>
-									{currentSku.details.rawData.pcs_per_sqft && (
+									{currentSku.details.rawData?.pcs_per_sqft && (
 										<>
 											<div className="h-full w-[2px] bg-current" />
 											<p>
@@ -214,14 +211,14 @@ function Page() {
 								setSkuId(newSkuId);
 							}}
 						>
-							<SkuFragmentPicker
-								skuIdTemplateFragments={product.skuIdFragments}
+							<VariantPicker
+								variantIdTemplate={product.variantIdTemplate}
 								section={Section}
 							/>
 						</SkuPickerProvider>
 
 						{/* Paver Estimator */}
-						{product.estimator === 'paver' && (
+						{product.estimator === 'paver' && currentSku.details?.rawData && (
 							<PaverEstimator
 								paverDetails={currentSku.details.rawData}
 								sku={currentSku}
@@ -280,11 +277,11 @@ function Page() {
 export const getStaticProps = async (
 	context: GetStaticPropsContext<{ id: string }>
 ) => {
-	const { prisma } = await createContextInner({});
+	const ssgContext = await createContextInner({});
 
 	const ssg = await createServerSideHelpers({
 		router: appRouter,
-		ctx: { prisma },
+		ctx: ssgContext,
 		transformer: superjson
 	});
 
@@ -304,10 +301,10 @@ export const getStaticProps = async (
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const { prisma } = await createContextInner({});
+	const { db } = await createContextInner({});
 
-	const products = await prisma.product.findMany({
-		select: { id: true }
+	const products = await db.query.products.findMany({
+		columns: { id: true }
 	});
 
 	return {

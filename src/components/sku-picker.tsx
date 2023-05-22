@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { FullPaver } from '../types/product';
+import { VariantIdTemplate } from '../types/product';
 
 type SkuPickerContextValue = {
 	skuIdFragments: string[];
@@ -104,50 +104,47 @@ function ProductPicker({ products }: ProductPickerProps) {
 	);
 }
 
-type SkuFragmentPickerProps = {
-	skuIdTemplateFragments: FullPaver['skuIdFragments'];
+type VariantPickerProps = {
+	variantIdTemplate: VariantIdTemplate;
 	section: React.FC<React.PropsWithChildren<{ heading: string }>>;
 };
 
-function SkuFragmentPicker({
-	skuIdTemplateFragments,
-	section
-}: SkuFragmentPickerProps) {
+function VariantPicker({ variantIdTemplate, section }: VariantPickerProps) {
 	const Section = section;
 
 	const { skuIdFragments, changeFragment } = useSkuPickerContext();
 
 	return (
 		<>
-			{skuIdTemplateFragments.map(({ type, fragments, displayName }, index) => {
+			{variantIdTemplate.map(({ type, fragments, displayName }, index) => {
 				// Index 0 is reserved for the product id
 				const fragmentIndex = index + 1;
 
-				const selectedFragmentId = skuIdFragments[fragmentIndex] as string;
-				const selectedFragmentDisplayName = skuIdTemplateFragments[
+				const variantFragmentId = skuIdFragments[fragmentIndex] as string;
+				const variantFragmentDisplayName = variantIdTemplate[
 					index
-				]?.fragments?.find(({ id }) => id === selectedFragmentId)?.displayName;
+				]?.fragments?.find(({ id }) => id === variantFragmentId)?.displayName;
 
 				if (fragments.length > 1)
 					return (
 						<Section
 							key={fragmentIndex}
-							heading={`${displayName} — ${selectedFragmentDisplayName}`}
+							heading={`${displayName} — ${variantFragmentDisplayName}`}
 						>
 							{type === 'variant' && (
-								<VariantPicker
+								<VariantFragmentPicker
 									variants={fragments}
 									name={displayName.toLowerCase().replace(' ', '_')}
-									currentVariantId={selectedFragmentId}
+									currentVariantId={variantFragmentId}
 									onChange={(newVariant) =>
 										changeFragment(fragmentIndex, newVariant)
 									}
 								/>
 							)}
 							{type === 'color' && (
-								<ColorPicker
+								<ColorFragmentPicker
 									colors={fragments}
-									currentColorId={selectedFragmentId}
+									currentColorId={variantFragmentId}
 									onChange={(newColor) =>
 										changeFragment(fragmentIndex, newColor)
 									}
@@ -161,7 +158,7 @@ function SkuFragmentPicker({
 	);
 }
 
-type VariantPickerProps = {
+type VariantFragmentPickerProps = {
 	variants: {
 		id: string;
 		displayName: string;
@@ -171,12 +168,12 @@ type VariantPickerProps = {
 	onChange: (newVariant: string) => void;
 };
 
-function VariantPicker({
+function VariantFragmentPicker({
 	variants,
 	currentVariantId,
 	onChange,
 	...props
-}: VariantPickerProps) {
+}: VariantFragmentPickerProps) {
 	return (
 		<ul className="flex flex-wrap gap-2">
 			{variants.map(({ id, displayName }) => (
@@ -202,7 +199,7 @@ function VariantPicker({
 	);
 }
 
-type ColorPickerProps = {
+type ColorFragmentPickerProps = {
 	colors: {
 		id: string;
 		css: string;
@@ -211,7 +208,11 @@ type ColorPickerProps = {
 	onChange: (newColor: string) => void;
 };
 
-function ColorPicker({ colors, currentColorId, onChange }: ColorPickerProps) {
+function ColorFragmentPicker({
+	colors,
+	currentColorId,
+	onChange
+}: ColorFragmentPickerProps) {
 	return (
 		<ul className="relative flex flex-wrap gap-2">
 			{colors.map(({ id, css }) => (
@@ -237,4 +238,4 @@ function ColorPicker({ colors, currentColorId, onChange }: ColorPickerProps) {
 	);
 }
 
-export { SkuPickerProvider, ProductPicker, SkuFragmentPicker };
+export { SkuPickerProvider, ProductPicker, VariantPicker };

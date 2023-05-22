@@ -1,16 +1,16 @@
 import Head from 'next/head';
-import { ProductCard } from '../../components/product-card';
+import { ProductCard } from '@/components/product-card';
 import { w } from 'windstitch';
-import { appRouter } from '../../server/trpc/router/_app';
-import { createContextInner } from '../../server/trpc/context';
+import { appRouter } from '@/server/api/routers/root';
+import { createContextInner } from '@/server/api/context';
 import superjson from 'superjson';
 import { createServerSideHelpers } from '@trpc/react-query/server';
-import { trpc } from '../../utils/trpc';
+import { api } from '@/utils/api';
 import NextError from 'next/error';
-import { Button } from '../../components/button';
+import { Button } from '@/components/button';
 import { GetStaticPaths, GetStaticPropsContext } from 'next';
 import { useRouter } from 'next/router';
-import { Category } from '@prisma/client';
+import { Category } from '@/types/product';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 
@@ -57,11 +57,11 @@ function Page() {
 	const router = useRouter();
 	const categoryId = router.query.category as string | undefined;
 
-	const categoriesQuery = trpc.category.getAll.useQuery(undefined, {
+	const categoriesQuery = api.category.getAll.useQuery(undefined, {
 		refetchOnWindowFocus: false
 	});
 
-	const productsQuery = trpc.product.getByCategory.useInfiniteQuery(
+	const productsQuery = api.product.getByCategory.useInfiniteQuery(
 		{ categoryId },
 		{
 			refetchOnWindowFocus: false,
@@ -164,11 +164,11 @@ function Page() {
 export const getStaticProps = async (
 	context: GetStaticPropsContext<{ category: string }>
 ) => {
-	const { prisma } = await createContextInner({});
+	const ssgContext = await createContextInner({});
 
 	const ssg = await createServerSideHelpers({
 		router: appRouter,
-		ctx: { prisma },
+		ctx: ssgContext,
 		transformer: superjson // optional - adds superjson serialization
 	});
 
@@ -189,10 +189,10 @@ export const getStaticProps = async (
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const { prisma } = await createContextInner({});
+	const { db } = await createContextInner({});
 
-	const categories = await prisma.category.findMany({
-		select: { id: true }
+	const categories = await db.query.categories.findMany({
+		columns: { id: true }
 	});
 
 	return {

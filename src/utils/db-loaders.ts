@@ -1,33 +1,32 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Document } from 'langchain/document';
 import { formatPrice } from './format';
-import { extractDetail } from './product';
-import { ExtendedPaverDetails, PaverDetails } from '../types/product';
-import { PrismaClient, Sku } from '@prisma/client';
-import { formatObjectList, formatStringList } from './format-list';
-
-const prisma = new PrismaClient();
+import { Sku } from '@/types/product';
+import { db } from '@/server/db';
+import { productToProduct } from '@/db/schema';
+import { desc } from 'drizzle-orm';
+import { ExtendedPaverDetails } from '@/types/product';
 
 export async function getProductDocuments() {
-	const products = await prisma.product.findMany({
-		select: {
+	const products = await db.query.products.findMany({
+		columns: {
 			id: true,
 			displayName: true,
 			description: true,
-			hasModels: true,
-			pickupLocations: true,
-			category: true,
-			details: true,
+			hasModels: true
+		},
+		with: {
 			skus: true,
 			similar: {
-				orderBy: { relevance: 'desc' },
-				include: {
-					similar: {
-						select: {
-							displayName: true
-						}
+				orderBy: desc(productToProduct.relevance),
+				with: {
+					similarProduct: {
+						columns: { displayName: true }
 					}
 				}
-			}
+			},
+			details: true,
+			category: true
 		}
 	});
 
@@ -37,7 +36,7 @@ export async function getProductDocuments() {
 		let content = '';
 
 		function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
-			return details?.find((details) => skuId?.includes(details.matcher))?.data;
+			return details?.find((details) => skuId?.includes(details.matcher));
 		}
 
 		if (product) {
@@ -46,12 +45,15 @@ export async function getProductDocuments() {
 				return (
 					product.details
 						.map((details) => {
-							const data = details.data as PaverDetails;
-
-							const detailList = formatObjectList(data, 'displayName', {
-								toStringFunc: (item) => `${item.displayName} -- ${item.value}`,
-								conjunction: ' '
-							});
+							const detailList = formatObjectList(
+								details.formattedData,
+								'displayName',
+								{
+									toStringFunc: (item) =>
+										`${item.displayName} -- ${item.value}`,
+									conjunction: ' '
+								}
+							);
 
 							const variantName = details.matcher
 								.replace(product.id, product.displayName)
@@ -67,7 +69,7 @@ export async function getProductDocuments() {
 			};
 
 			const getSimilar = () =>
-				formatObjectList(product.similar, 'similar.displayName');
+				formatObjectList(product.similar, 'similarProduct.displayName');
 
 			function getLowestAndHighestPrice(skus: Sku[]) {
 				if (skus.length === 0) {
@@ -101,16 +103,13 @@ export async function getProductDocuments() {
 
 			content += ` The following are the prices for all variants of ${product.displayName}:`;
 			for (const sku of product.skus) {
-				const skuDetails = findDetails(
-					sku.id,
-					product.details as ExtendedPaverDetails[]
-				);
+				const skuDetails = findDetails(sku.id, product.details);
 
 				if (skuDetails) {
-					const pcs_per_sqft = extractDetail(skuDetails, 'pcs_per_sqft');
-
-					const unitPrice = pcs_per_sqft
-						? ' and ' + formatPrice(sku.price / pcs_per_sqft) + ' per unit'
+					const unitPrice = skuDetails.rawData?.pcs_per_sqft
+						? ' and ' +
+						  formatPrice(sku.price / skuDetails.rawData.pcs_per_sqft) +
+						  ' per unit'
 						: '';
 
 					content += ` ${sku.displayName} costs $${sku.price} per ${sku.unit}${unitPrice}.`;
@@ -133,13 +132,13 @@ export async function getProductDocuments() {
 }
 
 export async function getCatalogueDocument() {
-	const categories = await prisma.category.findMany({
-		select: {
-			id: true,
+	const categories = await db.query.categories.findMany({
+		columns: {
+			id: true
+		},
+		with: {
 			products: {
-				select: {
-					displayName: true
-				}
+				columns: { displayName: true }
 			}
 		}
 	});
@@ -171,4 +170,59 @@ export async function getCatalogueDocument() {
 	};
 
 	return [new Document({ pageContent: cleanedContent, metadata })];
+}
+
+import { get } from 'lodash-es';
+
+type Path<T, K extends keyof T> = K extends string
+	? T[K] extends object
+		? `${K}.${Path<T[K], keyof T[K]>}`
+		: K
+	: never;
+
+interface FormatListConfig<T> {
+	separator?: string;
+	conjunction?: string;
+	toStringFunc?: (item: T) => string;
+}
+
+function formatObjectList<T extends object, K extends keyof T>(
+	list: T[],
+	path: Path<T, K>,
+	config?: FormatListConfig<T>
+): string {
+	const separator = config?.separator || ', ',
+		conjunction = config?.conjunction || 'and',
+		toStringFunc = config?.toStringFunc;
+
+	const values = list.map((item) => get(item, path)) as T[K][];
+
+	if (values.length === 0) {
+		return '';
+	} else if (values.length === 1) {
+		return toStringFunc ? toStringFunc(list[0]!) : list[0]!.toString();
+	} else if (values.length === 2) {
+		const firstValue = toStringFunc
+			? toStringFunc(list[0]!)
+			: values[0]!.toString();
+
+		const secondValue = toStringFunc
+			? toStringFunc(list[1]!)
+			: values[1]!.toString();
+
+		return `${firstValue} ${conjunction} ${secondValue}`;
+	} else {
+		const lastValue = toStringFunc
+			? toStringFunc(list[values.length - 1]!)
+			: values[values.length - 1]!.toString();
+
+		const restValues = values.slice(0, values.length - 1);
+		const restString = restValues
+			.map((value, index) =>
+				toStringFunc ? toStringFunc(list[index]!) : value!.toString()
+			)
+			.join(separator);
+
+		return `${restString}${separator}${conjunction} ${lastValue}`;
+	}
 }

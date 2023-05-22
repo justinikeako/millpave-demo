@@ -1,4 +1,4 @@
-import { trpc } from '@/utils/trpc';
+import { api } from '@/utils/api';
 import { formatNumber, formatRestockDate } from '@/utils/format';
 
 type ProductStockProps = {
@@ -11,7 +11,7 @@ export function ProductStock({
 	skuId,
 	outOfStockMessage
 }: ProductStockProps) {
-	const fulfillmentQuery = trpc.product.getFulfillmentData.useQuery(
+	const fulfillmentQuery = api.product.getFulfillmentData.useQuery(
 		{ productId },
 		{ refetchOnWindowFocus: false }
 	);
@@ -22,13 +22,13 @@ export function ProductStock({
 		return <p>Loading Stock Info...</p>;
 	}
 
-	const currentStock = fulfillment.stock.reduce((totalQuantity, item) => {
+	const currentStock = fulfillment.stockList.reduce((totalQuantity, item) => {
 		if (item.skuId !== skuId) return totalQuantity;
 
 		return totalQuantity + item.quantity;
 	}, 0);
 
-	const closestRestock = fulfillment.restock
+	const closestRestock = fulfillment.restockList
 		.filter((restock) => restock.skuId === skuId)
 		.reduce<Date | undefined>((closestDate, curr) => {
 			// If closestDate isn't defined or the current item's date is closer, return the current date.

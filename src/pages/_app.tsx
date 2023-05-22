@@ -1,6 +1,6 @@
 import { type AppType } from 'next/app';
 
-import { trpc } from '../utils/trpc';
+import { api } from '../utils/api';
 
 import { Header } from '../components/header';
 import { Footer } from '../components/footer';
@@ -51,4 +51,4 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 	);
 };
 
-export default trpc.withTRPC(MyApp);
+export default api.withTRPC(MyApp);

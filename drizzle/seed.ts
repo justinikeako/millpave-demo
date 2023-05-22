@@ -1,26 +1,75 @@
-import { Prisma, PrismaClient, PrismaPromise } from '@prisma/client';
+import { InferModel } from 'drizzle-orm';
+import {
+	categories,
+	productToProduct,
+	products,
+	skuDetails,
+	skuRestocks,
+	pickupLocations,
+	skuStock,
+	skus
+} from './schema';
+import mysql from 'mysql2/promise';
+import { drizzle } from 'drizzle-orm/mysql2';
 import { addBusinessDays, addHours } from 'date-fns';
 
-const prisma = new PrismaClient();
+const connection = await mysql.createConnection({
+	database: process.env.DB_NAME,
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASS
+});
 
-type Product = Prisma.ProductCreateInput;
-type Category = Prisma.CategoryCreateInput;
-type ProductDetails = Prisma.ProductDetailsCreateManyInput;
-type Sku = Prisma.SkuCreateManyInput;
-type Stock = Prisma.StockCreateManyInput;
-type Restock = Prisma.RestockCreateManyInput;
-type PickupLocation = Prisma.PickupLocationCreateManyInput;
+export const db = drizzle(connection);
 
-const PICKUP_LOCATIONS: Prisma.Enumerable<PickupLocation> = [
+type NewCategory = InferModel<typeof categories, 'insert'>;
+type NewProduct = InferModel<typeof products, 'insert'>;
+type NewProductToProduct = InferModel<typeof productToProduct, 'insert'>;
+type ProductDetails = InferModel<typeof skuDetails>;
+type Sku = InferModel<typeof skus, 'insert'>;
+type Stock = InferModel<typeof skuStock, 'insert'>;
+type Restock = InferModel<typeof skuRestocks, 'insert'>;
+type NewPickupLocation = InferModel<typeof pickupLocations, 'insert'>;
+
+const PICKUP_LOCATIONS: NewPickupLocation[] = [
 	{ id: 'KNG_SHOWROOM', displayName: 'Kingston Showroom' },
 	{ id: 'STT_FACTORY', displayName: 'St. Thomas Factory' }
 ];
 
 // Create pickup locations (shoroom and factory)
 async function addPickupLocations() {
-	await prisma.pickupLocation.createMany({
-		data: PICKUP_LOCATIONS
-	});
+	await db.insert(pickupLocations).values(PICKUP_LOCATIONS);
+
+	console.log('Successfully added pickup locations');
+}
+
+async function addCategoryWithProducts(
+	newCategory: NewCategory,
+	newProducts: NewProduct[],
+	similar: Map<string, string[]>
+) {
+	await db.insert(categories).values(newCategory);
+	await db.insert(products).values(newProducts);
+
+	const newProductToProduct: NewProductToProduct[] = [];
+
+	for (const [productId, similarIds] of similar) {
+		newProductToProduct.push(
+			...similarIds.map(
+				(similarId, index): NewProductToProduct => ({
+					relevance: similarIds.length - index,
+					productId,
+					similarId
+				})
+			)
+		);
+	}
+
+	await db.insert(productToProduct).values(newProductToProduct);
+
+	console.log(
+		`Successfully added category "${newCategory.displayName}" and all related products`
+	);
 }
 
 const PAVER_COLOR_FRAGMENTS = [
@@ -55,40 +104,17 @@ const PAVER_COLOR_FRAGMENTS = [
 	{ id: 'green', displayName: 'Green', css: '#A9D786' }
 ];
 
-async function addCategories(categories: Category[], products: Product[]) {
-	const categoryQueries: PrismaPromise<unknown>[] = [];
-
-	for (const category of categories) {
-		categoryQueries.push(
-			prisma.category.create({
-				data: category
-			})
-		);
-	}
-
-	await prisma.$transaction(categoryQueries);
-
-	const productQueries: PrismaPromise<unknown>[] = [];
-
-	for (const product of products) {
-		productQueries.push(prisma.product.create({ data: product }));
-	}
-
-	await prisma.$transaction(productQueries);
-}
-
 async function addPavers() {
-	const PAVERS: Product[] = [
+	const PAVERS: Omit<NewProduct, 'description' | 'categoryId'>[] = [
 		{
 			id: 'colonial_classic',
 			defaultSkuId: 'colonial_classic:grey',
 			estimator: 'paver',
 			displayName: 'Colonial Classic',
-			borderable: true,
-			similar: ['banjo', 'thin_classic', 'heritage'],
-			skuIdFragments: [
+			canBorder: true,
+			variantIdTemplate: [
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
@@ -99,11 +125,10 @@ async function addPavers() {
 			defaultSkuId: 'thin_classic:grey',
 			estimator: 'paver',
 			displayName: 'Thin Classic',
-			borderable: true,
-			similar: ['colonial_classic', 'banjo', 'circle_bundle'],
-			skuIdFragments: [
+			canBorder: true,
+			variantIdTemplate: [
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
@@ -114,10 +139,9 @@ async function addPavers() {
 			defaultSkuId: 'banjo:grey',
 			estimator: 'paver',
 			displayName: 'Banjo',
-			similar: ['colonial_classic', 'heritage', 'cobble_mix'],
-			skuIdFragments: [
+			variantIdTemplate: [
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
@@ -128,10 +152,9 @@ async function addPavers() {
 			defaultSkuId: 'owc:grey',
 			estimator: 'paver',
 			displayName: 'Old World Cobble',
-			similar: ['cobble_mix', 'tropical_wave', 'colonial_classic'],
-			skuIdFragments: [
+			variantIdTemplate: [
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
@@ -142,11 +165,10 @@ async function addPavers() {
 			defaultSkuId: 'cobble_mix:oblong:grey',
 			estimator: 'paver',
 			displayName: 'Cobble Mix',
-			borderable: true,
-			similar: ['owc', 'heritage', 'colonial_classic'],
-			skuIdFragments: [
+			canBorder: true,
+			variantIdTemplate: [
 				{
-					type: 'variant',
+					type: 'variant' as const,
 					displayName: 'Variant',
 					fragments: [
 						{ id: 'double', displayName: 'Double' },
@@ -155,7 +177,7 @@ async function addPavers() {
 					]
 				},
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
@@ -166,11 +188,10 @@ async function addPavers() {
 			defaultSkuId: 'heritage:regular:grey',
 			estimator: 'paver',
 			displayName: 'Heritage Series',
-			borderable: true,
-			similar: ['colonial_classic', 'cobble_mix', 'owc'],
-			skuIdFragments: [
+			canBorder: true,
+			variantIdTemplate: [
 				{
-					type: 'variant',
+					type: 'variant' as const,
 					displayName: 'Variant',
 					fragments: [
 						{ id: 'regular', displayName: 'Regular' },
@@ -179,7 +200,7 @@ async function addPavers() {
 					]
 				},
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
@@ -190,10 +211,9 @@ async function addPavers() {
 			defaultSkuId: 'tropical_wave:grey',
 			estimator: 'paver',
 			displayName: 'Tropical Wave',
-			similar: ['owc', 'cobble_mix', 'colonial_classic'],
-			skuIdFragments: [
+			variantIdTemplate: [
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
@@ -203,11 +223,10 @@ async function addPavers() {
 			id: 'circle_bundle',
 			defaultSkuId: 'circle_bundle:grey',
 			displayName: 'Circle Bundle',
-			similar: ['owc', 'cobble_mix', 'colonial_classic'],
 			hasModels: false,
-			skuIdFragments: [
+			variantIdTemplate: [
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
@@ -217,55 +236,52 @@ async function addPavers() {
 			id: 'circle_stepping',
 			defaultSkuId: 'circle_stepping:grey',
 			displayName: 'Circle Stepping Stone',
-			similar: ['owc', 'cobble_mix', 'colonial_classic'],
 			hasModels: false,
-			skuIdFragments: [
+			variantIdTemplate: [
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		}
-	].map(
-		({ similar, ...product }): Product => ({
-			...product,
-			category: { connect: { id: 'concrete_pavers' } },
-			pickupLocations: {
-				create: [
-					{ pickupLocation: { connect: { id: 'KNG_SHOWROOM' } } },
-					{ pickupLocation: { connect: { id: 'STT_FACTORY' } } }
-				]
-			},
-			hasModels: product.hasModels === undefined,
-			similar: {
-				create: similar.map((id, index) => ({
-					similarId: id,
-					relevance: similar.length - index
-				}))
-			},
+	];
 
-			description: `Create a traditional feel to your garden with our ${product.displayName} Paver. As one of the most sought after styles of stone paving, it displays a beautiful range of colors which will brighten up any exterior to create an added sense of space! Using aggregates sourced from the St. Thomas River, ${product.displayName} promises an outdoor area filled with character and is a household favourite providing a wealth of design opportunities.`
-		})
-	);
+	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+		['colonial_classic', ['banjo', 'thin_classic', 'heritage']],
+		['thin_classic', ['colonial_classic', 'banjo', 'circle_bundle']],
+		['banjo', ['colonial_classic', 'heritage', 'cobble_mix']],
+		['owc', ['cobble_mix', 'tropical_wave', 'colonial_classic']],
+		['cobble_mix', ['owc', 'heritage', 'colonial_classic']],
+		['heritage', ['colonial_classic', 'cobble_mix', 'owc']],
+		['tropical_wave', ['owc', 'cobble_mix', 'colonial_classic']],
+		['circle_bundle', ['owc', 'cobble_mix', 'colonial_classic']],
+		['circle_stepping', ['owc', 'cobble_mix', 'colonial_classic']]
+	]);
 
-	await addCategories(
-		[{ id: 'concrete_pavers', displayName: 'Concrete Pavers' }],
-		PAVERS
+	await addCategoryWithProducts(
+		{ id: 'concrete_pavers', displayName: 'Concrete Pavers' },
+		PAVERS.map(
+			(product): NewProduct => ({
+				...product,
+				categoryId: 'concrete_pavers',
+				hasModels: product.hasModels === undefined,
+				description: `Create a traditional feel to your garden with our ${product.displayName} Paver. As one of the most sought after styles of stone paving, it displays a beautiful range of colors which will brighten up any exterior to create an added sense of space! Using aggregates sourced from the St. Thomas River, ${product.displayName} promises an outdoor area filled with character and is a household favourite providing a wealth of design opportunities.`
+			})
+		),
+		SIMILAR_PRODUCTS
 	);
 }
 
 async function addSlabsAndBlocks() {
-	const SLABS_AND_BLOCKS: Product[] = [
+	const SLABS_AND_BLOCKS: Omit<NewProduct, 'description' | 'categoryId'>[] = [
 		{
-			category: { connect: { id: 'slabs_blocks' } },
 			id: 'savannah',
 			defaultSkuId: 'savannah:16x8:regular:grey',
 			displayName: 'Savannah',
-			similar: ['heritage', 'circle_stepping', 'grasscrete'],
-			skuIdFragments: [
+			variantIdTemplate: [
 				{
-					type: 'variant',
+					type: 'variant' as const,
 					displayName: 'Dimensions',
 					fragments: [
 						{ id: '16x8', displayName: '16 x 8' },
@@ -275,7 +291,7 @@ async function addSlabsAndBlocks() {
 					]
 				},
 				{
-					type: 'variant',
+					type: 'variant' as const,
 					displayName: 'Variant',
 					fragments: [
 						{ id: 'regular', displayName: 'Regular' },
@@ -283,195 +299,168 @@ async function addSlabsAndBlocks() {
 					]
 				},
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		},
 		{
-			category: { connect: { id: 'slabs_blocks' } },
 			id: 'grasscrete',
 			defaultSkuId: 'grasscrete:circle:grey',
 			displayName: 'Grasscrete',
-			similar: ['tropical_wave', 'circle_stepping', 'savannah'],
-			skuIdFragments: [
+			variantIdTemplate: [
 				{
-					type: 'variant',
+					type: 'variant' as const,
 					displayName: 'Shape',
 					fragments: [{ id: 'circle', displayName: 'Circle' }]
 				},
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: PAVER_COLOR_FRAGMENTS
 				}
 			]
 		},
 		{
-			category: { connect: { id: 'slabs_blocks' } },
-			id: 'curbwall',
-			defaultSkuId: 'curbwall:grey',
+			id: 'curb_wall',
+			defaultSkuId: 'curb_wall:grey',
 			displayName: 'Curb Wall',
-			similar: ['tropical_wave', 'circle_stepping', 'savannah'],
-			skuIdFragments: [
+			variantIdTemplate: [
 				{
-					type: 'color',
+					type: 'color' as const,
 					displayName: 'Colour',
 					fragments: [{ id: 'grey', displayName: 'Grey', css: '#D9D9D9' }]
 				}
 			]
 		}
-	].map(
-		({ similar, ...product }): Product => ({
-			...product,
-			pickupLocations: {
-				create: [
-					{ pickupLocation: { connect: { id: 'KNG_SHOWROOM' } } },
-					{ pickupLocation: { connect: { id: 'STT_FACTORY' } } }
-				]
-			},
-			similar: {
-				create: similar.map((id, index) => ({
-					similarId: id,
-					relevance: similar.length - index
-				}))
-			},
+	];
 
-			description:
-				'Integer a velit in sapien aliquam consectetur et vitae ligula. Integer ornare egestas enim a malesuada. Suspendisse arcu lectus, blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula neque at laoreet. Nullam efficitur mauris sit amet accumsan pulvinar.'
-		})
-	);
+	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+		['savannah', ['heritage', 'circle_stepping', 'grasscrete']],
+		['grasscrete', ['tropical_wave', 'circle_stepping', 'savannah']],
+		['curb_wall', ['tropical_wave', 'circle_stepping', 'savannah']]
+	]);
 
-	addCategories(
-		[
-			{
-				id: 'slabs_blocks',
-				displayName: 'Slabs and Blocks'
-			}
-		],
-		SLABS_AND_BLOCKS
+	await addCategoryWithProducts(
+		{ id: 'slabs_blocks', displayName: 'Slabs and Blocks' },
+		SLABS_AND_BLOCKS.map(
+			(product): NewProduct => ({
+				...product,
+				categoryId: 'slabs_blocks',
+				description:
+					'Integer a velit in sapien aliquam consectetur et vitae ligula. Integer ornare egestas enim a malesuada. Suspendisse arcu lectus, blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula neque at laoreet. Nullam efficitur mauris sit amet accumsan pulvinar.'
+			})
+		),
+		SIMILAR_PRODUCTS
 	);
 }
 
 async function addMaintenanceProducts() {
-	const CLEANING_INSTALLATION_PRODUCTS: Product[] = [
-		{
-			category: { connect: { id: 'maintenance' } },
-			id: 'oil_sealant',
-			defaultSkuId: 'oil_sealant:one_gallon',
-			displayName: 'DYNA Oil-Based Sealant',
-			similar: ['water_sealant', 'efflorescence_cleaner', 'polymeric_sand'],
-			skuIdFragments: [
-				{
-					type: 'variant',
-					displayName: 'Size',
-					fragments: [
-						{ id: 'one_gallon', displayName: 'One Gallon' },
-						{ id: 'five_gallon', displayName: 'Five Gallon' }
-					]
-				}
-			]
-		},
-		{
-			category: { connect: { id: 'maintenance' } },
-			id: 'water_sealant',
-			defaultSkuId: 'water_sealant:one_gallon',
-			displayName: 'DYNA Water-Based Sealant',
-			similar: ['oil_sealant', 'efflorescence_cleaner', 'polymeric_sand'],
-			skuIdFragments: [
-				{
-					type: 'variant',
-					displayName: 'Size',
-					fragments: [
-						{ id: 'one_gallon', displayName: 'One Gallon' },
-						{ id: 'five_gallon', displayName: 'Five Gallon' }
-					]
-				}
-			]
-		},
-		{
-			category: { connect: { id: 'maintenance' } },
-			id: 'polymeric_sand',
-			defaultSkuId: 'polymeric_sand:fifty_pound',
-			displayName: 'DYNA Polymeric Sand',
-			similar: ['oil_sealant', 'water_sealant', 'efflorescence_cleaner'],
-			skuIdFragments: [
-				{
-					type: 'variant',
-					displayName: 'Size',
-					fragments: [{ id: 'fifty_pound', displayName: '50 pound bag' }]
-				}
-			]
-		},
-		{
-			category: { connect: { id: 'maintenance' } },
-			id: 'efflorescence_cleaner',
-			defaultSkuId: 'efflorescence_cleaner:one_gallon',
-			displayName: 'DYNA Efflorescence Cleaner',
-			similar: ['stone_soap', 'gum_paint_tar', 'oil_sealant'],
-			skuIdFragments: [
-				{
-					type: 'variant',
-					displayName: 'Size',
-					fragments: [{ id: 'one_gallon', displayName: 'One Gallon' }]
-				}
-			]
-		},
-		{
-			category: { connect: { id: 'maintenance' } },
-			id: 'stone_soap',
-			defaultSkuId: 'stone_soap:one_quart',
-			displayName: 'DYNA Stone Soap',
-			similar: ['efflorescence_cleaner', 'gum_paint_tar', 'oil_sealant'],
-			skuIdFragments: [
-				{
-					type: 'variant',
-					displayName: 'Variant',
-					fragments: [{ id: 'one_quart', displayName: 'One Quart' }]
-				}
-			]
-		},
-		{
-			category: { connect: { id: 'maintenance' } },
-			id: 'gum_paint_tar',
-			defaultSkuId: 'gum_paint_tar:one_quart',
-			displayName: 'DYNA Gum Paint & Tar Stripper',
-			similar: ['efflorescence_cleaner', 'stone_soap', 'oil_sealant'],
-			skuIdFragments: [
-				{
-					type: 'variant',
-					displayName: 'Variant',
-					fragments: [{ id: 'one_quart', displayName: 'One Quart' }]
-				}
-			]
-		}
-	].map(
-		({ similar, ...product }): Product => ({
-			...product,
-			pickupLocations: {
-				create: [
-					{ pickupLocation: { connect: { id: 'KNG_SHOWROOM' } } },
-					{ pickupLocation: { connect: { id: 'STT_FACTORY' } } }
+	const MAINTENANCE_PRODUCTS: Omit<NewProduct, 'description' | 'categoryId'>[] =
+		[
+			{
+				id: 'oil_sealant',
+				defaultSkuId: 'oil_sealant:one_gallon',
+				displayName: 'DYNA Oil-Based Sealant',
+				variantIdTemplate: [
+					{
+						type: 'variant' as const,
+						displayName: 'Size',
+						fragments: [
+							{ id: 'one_gallon', displayName: 'One Gallon' },
+							{ id: 'five_gallon', displayName: 'Five Gallon' }
+						]
+					}
 				]
 			},
-			similar: {
-				create: similar.map((id, index) => ({
-					similarId: id,
-					relevance: similar.length - index
-				}))
+			{
+				id: 'water_sealant',
+				defaultSkuId: 'water_sealant:one_gallon',
+				displayName: 'DYNA Water-Based Sealant',
+				variantIdTemplate: [
+					{
+						type: 'variant' as const,
+						displayName: 'Size',
+						fragments: [
+							{ id: 'one_gallon', displayName: 'One Gallon' },
+							{ id: 'five_gallon', displayName: 'Five Gallon' }
+						]
+					}
+				]
 			},
+			{
+				id: 'polymeric_sand',
+				defaultSkuId: 'polymeric_sand:fifty_pound',
+				displayName: 'DYNA Polymeric Sand',
+				variantIdTemplate: [
+					{
+						type: 'variant' as const,
+						displayName: 'Size',
+						fragments: [{ id: 'fifty_pound', displayName: '50 pound bag' }]
+					}
+				]
+			},
+			{
+				id: 'efflorescence_cleaner',
+				defaultSkuId: 'efflorescence_cleaner:one_gallon',
+				displayName: 'DYNA Efflorescence Cleaner',
+				variantIdTemplate: [
+					{
+						type: 'variant' as const,
+						displayName: 'Size',
+						fragments: [{ id: 'one_gallon', displayName: 'One Gallon' }]
+					}
+				]
+			},
+			{
+				id: 'stone_soap',
+				defaultSkuId: 'stone_soap:one_quart',
+				displayName: 'DYNA Stone Soap',
+				variantIdTemplate: [
+					{
+						type: 'variant' as const,
+						displayName: 'Variant',
+						fragments: [{ id: 'one_quart', displayName: 'One Quart' }]
+					}
+				]
+			},
+			{
+				id: 'gum_paint_tar',
+				defaultSkuId: 'gum_paint_tar:one_quart',
+				displayName: 'DYNA Gum Paint & Tar Stripper',
+				variantIdTemplate: [
+					{
+						type: 'variant' as const,
+						displayName: 'Variant',
+						fragments: [{ id: 'one_quart', displayName: 'One Quart' }]
+					}
+				]
+			}
+		];
 
-			description:
-				'Integer a velit in sapien aliquam consectetur et vitae ligula. Integer ornare egestas enim a malesuada. Suspendisse arcu lectus, blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula neque at laoreet. Nullam efficitur mauris sit amet accumsan pulvinar.'
-		})
+	// prettier-ignore
+	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+		['oil_sealant', ['water_sealant', 'efflorescence_cleaner', 'polymeric_sand']],
+		['water_sealant', ['oil_sealant', 'efflorescence_cleaner', 'polymeric_sand']],
+		['polymeric_sand', ['oil_sealant', 'water_sealant', 'efflorescence_cleaner']],
+		['efflorescence_cleaner', ['stone_soap', 'gum_paint_tar', 'oil_sealant']],
+		['stone_soap', ['efflorescence_cleaner', 'gum_paint_tar', 'oil_sealant']],
+		['gum_paint_tar', ['efflorescence_cleaner', 'stone_soap', 'oil_sealant']]
+	]);
+
+	await addCategoryWithProducts(
+		{ id: 'maintenance', displayName: 'Maintenance' },
+		MAINTENANCE_PRODUCTS.map(
+			(product): NewProduct => ({
+				...product,
+				categoryId: 'maintenance',
+				description:
+					'Integer a velit in sapien aliquam consectetur et vitae ligula. Integer ornare egestas enim a malesuada. Suspendisse arcu lectus, blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula neque at laoreet. Nullam efficitur mauris sit amet accumsan pulvinar.'
+			})
+		),
+		SIMILAR_PRODUCTS
 	);
-
-	const CATEGORIES: Category[] = [
-		{ id: 'maintenance', displayName: 'Maintenance' }
-	];
-
-	addCategories(CATEGORIES, CLEANING_INSTALLATION_PRODUCTS);
 }
 
 const PRODUCT_DETAILS: ProductDetails[] = [
@@ -479,6 +468,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'colonial_classic',
 		productId: 'colonial_classic',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 5,
 			sqft_per_pallet: 128.75,
 			pcs_per_pallet: 600,
@@ -497,6 +487,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'thin_classic',
 		productId: 'thin_classic',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 4.16,
 			sqft_per_pallet: 154.5,
 			pcs_per_pallet: 720,
@@ -515,6 +506,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'banjo',
 		productId: 'banjo',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 6.67,
 			sqft_per_pallet: 128.57,
 			pcs_per_pallet: 450,
@@ -532,6 +524,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'owc',
 		productId: 'owc',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 3.75,
 			sqft_per_pallet: 125.39,
 			pcs_per_pallet: 800,
@@ -549,6 +542,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'cobble_mix:double',
 		productId: 'cobble_mix',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 11.28,
 			sqft_per_pallet: 119.28,
 			pcs_per_pallet: 266,
@@ -567,6 +561,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'cobble_mix:oblong',
 		productId: 'cobble_mix',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 5.3,
 			sqft_per_pallet: 126.91,
 			pcs_per_pallet: 566,
@@ -585,6 +580,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'cobble_mix:two_part',
 		productId: 'cobble_mix',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 3.53,
 			sqft_per_pallet: 130.97,
 			pcs_per_pallet: 850,
@@ -603,6 +599,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'heritage:regular',
 		productId: 'heritage',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 9.15,
 			sqft_per_pallet: 120.59,
 			pcs_per_pallet: 328,
@@ -621,6 +618,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'heritage:square',
 		productId: 'heritage',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 5.86,
 			sqft_per_pallet: 128,
 			pcs_per_pallet: 512,
@@ -639,6 +637,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'heritage:two_part',
 		productId: 'heritage',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 5.77,
 			sqft_per_pallet: 130,
 			pcs_per_pallet: 520,
@@ -657,6 +656,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'tropical_wave',
 		productId: 'tropical_wave',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 9.38,
 			sqft_per_pallet: 102.89,
 			pcs_per_pallet: 320,
@@ -673,35 +673,20 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		matcher: 'circle_bundle',
 		productId: 'circle_bundle',
-		rawData: {},
+		rawData: null,
 		formattedData: [
 			{ displayName: 'Weight per Unit', value: '2.75 lbs' },
-			{
-				id: 'sqft_per_full_bundle',
-				displayName: 'Area per 8ft bundle',
-				value: 63
-			},
-			{
-				id: 'sqft_per_half_bundle',
-				displayName: 'Area per 5ft bundle',
-				value: 31.5
-			},
-			{
-				id: 'units_per_full_bundle',
-				displayName: 'Units per 8ft bundle',
-				value: 419
-			},
-			{
-				id: 'units_per_half_bundle',
-				displayName: 'Units per 5ft bundle',
-				value: 169
-			}
+			{ displayName: 'Area per 8ft bundle', value: 63 },
+			{ displayName: 'Area per 5ft bundle', value: 31.5 },
+			{ displayName: 'Units per 8ft bundle', value: 419 },
+			{ displayName: 'Units per 5ft bundle', value: 169 }
 		]
 	},
 	{
 		matcher: 'circle_stepping',
 		productId: 'circle_stepping',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 9.38,
 			sqft_per_pallet: 120,
 			pcs_per_pallet: 120,
@@ -719,6 +704,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'savannah:16x8',
 		productId: 'savannah',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 20,
 			sqft_per_pallet: 104.4,
 			pcs_per_pallet: 116,
@@ -736,6 +722,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'savannah:16x16',
 		productId: 'savannah',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 28,
 			sqft_per_pallet: 104.88,
 			pcs_per_pallet: 59,
@@ -753,6 +740,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'savannah:16x24',
 		productId: 'savannah',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 36,
 			sqft_per_pallet: 104,
 			pcs_per_pallet: 39,
@@ -770,6 +758,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'savannah:24x24',
 		productId: 'savannah',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 42,
 			sqft_per_pallet: 104,
 			pcs_per_pallet: 26,
@@ -787,6 +776,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		matcher: 'grasscrete:circle',
 		productId: 'grasscrete',
 		rawData: {
+			type: 'paver',
 			lbs_per_unit: 19,
 			sqft_per_pallet: 106,
 			pcs_per_pallet: 40,
@@ -801,15 +791,15 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 		]
 	},
 	{
-		matcher: 'curbwall',
-		productId: 'curbwall',
-		rawData: {},
+		matcher: 'curb_wall',
+		productId: 'curb_wall',
+		rawData: null,
 		formattedData: [{ displayName: 'Dimensions', value: '29.5in x 4in x 7in' }]
 	},
 	{
 		matcher: 'oil_sealant:one_gallon',
 		productId: 'oil_sealant',
-		rawData: {},
+		rawData: null,
 		formattedData: [
 			{ displayName: 'Coverage', value: '100 sqft' },
 			{ displayName: 'Weight per unit', value: '4 lbs' }
@@ -818,7 +808,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		matcher: 'oil_sealant:five_gallon',
 		productId: 'oil_sealant',
-		rawData: {},
+		rawData: null,
 		formattedData: [
 			{ displayName: 'Coverage', value: '500 sqft' },
 			{ displayName: 'Weight per unit', value: '25 lbs' }
@@ -827,7 +817,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		matcher: 'water_sealant:one_gallon',
 		productId: 'water_sealant',
-		rawData: {},
+		rawData: null,
 		formattedData: [
 			{ displayName: 'Coverage', value: '100 sqft' },
 			{ displayName: 'Weight per unit', value: '4 lbs' }
@@ -836,7 +826,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		matcher: 'water_sealant:five_gallon',
 		productId: 'water_sealant',
-		rawData: {},
+		rawData: null,
 		formattedData: [
 			{ displayName: 'Coverage', value: '500 sqft' },
 			{ displayName: 'Weight per unit', value: '25 lbs' }
@@ -845,7 +835,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		productId: 'polymeric_sand',
 		matcher: 'polymeric_sand:fifty_pound',
-		rawData: {},
+		rawData: null,
 		formattedData: [
 			{ displayName: 'Coverage', value: '100 sqft' },
 			{ displayName: 'Weight per unit', value: '50 lbs' }
@@ -854,7 +844,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		productId: 'efflorescence_cleaner',
 		matcher: 'efflorescence_cleaner:one_gallon',
-		rawData: {},
+		rawData: null,
 		formattedData: [
 			{ displayName: 'Coverage', value: '100 sqft' },
 			{ displayName: 'Weight per unit', value: '20 lbs' }
@@ -863,7 +853,7 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		productId: 'stone_soap',
 		matcher: 'stone_soap:one_quart',
-		rawData: {},
+		rawData: null,
 		formattedData: [
 			{ displayName: 'Coverage', value: '25 sqft' },
 			{ displayName: 'Weight per unit', value: '2 lbs' }
@@ -872,16 +862,16 @@ const PRODUCT_DETAILS: ProductDetails[] = [
 	{
 		productId: 'gum_paint_tar',
 		matcher: 'gum_paint_tar:one_quart',
-		rawData: {},
+		rawData: null,
 		formattedData: [{ displayName: 'Weight per unit', value: '2 lbs' }]
 	}
 ];
 
 async function addProductDetails() {
 	// Create details for every product
-	await prisma.productDetails.createMany({
-		data: PRODUCT_DETAILS
-	});
+	await db.insert(skuDetails).values(PRODUCT_DETAILS);
+
+	console.log('Successfully added product details');
 }
 
 async function addConcreteProductSkus() {
@@ -1000,10 +990,10 @@ async function addConcreteProductSkus() {
 			[228.5, 305.5, 305.5, 305.5, 305.5]
 		),
 		{
-			id: 'curbwall:grey',
-			productId: 'curbwall',
-			detailsMatcher: 'curbwall',
-			displayName: 'Curbwall Grey',
+			id: 'curb_wall:grey',
+			productId: 'curb_wall',
+			detailsMatcher: 'curb_wall',
+			displayName: 'Curb Wall Grey',
 			price: 445.5,
 			unit: 'unit'
 		} as Sku
@@ -1020,9 +1010,7 @@ async function addConcreteProductSkus() {
 		};
 	});
 
-	await prisma.sku.createMany({
-		data: PAVER_SKUS
-	});
+	await db.insert(skus).values(PAVER_SKUS);
 }
 
 async function addMaintenanceSkus() {
@@ -1096,9 +1084,7 @@ async function addMaintenanceSkus() {
 		};
 	});
 
-	await prisma.sku.createMany({
-		data: CLEANING_INSALLATION_SKUS
-	});
+	await db.insert(skus).values(CLEANING_INSALLATION_SKUS);
 }
 
 function coinFlip(chance = 0.5) {
@@ -1139,9 +1125,9 @@ async function addPaverStock() {
 		...generatePaverStock('thin_classic', 0.1)
 	];
 
-	await prisma.stock.createMany({
-		data: STOCK
-	});
+	await db.insert(skuStock).values(STOCK);
+
+	console.log('Successfully added paver sku stocks');
 }
 
 async function addPaverRestockQueue() {
@@ -1181,9 +1167,9 @@ async function addPaverRestockQueue() {
 		...generatePaverRestockElements('thin_classic', 0.25)
 	];
 
-	await prisma.restock.createMany({
-		data: RESTOCK_QUEUE
-	});
+	await db.insert(skuRestocks).values(RESTOCK_QUEUE);
+
+	console.log('Successfully added paver sku restocks');
 }
 
 async function main() {
@@ -1198,12 +1184,16 @@ async function main() {
 	await addPaverRestockQueue();
 }
 
-main()
-	.then(async () => {
-		await prisma.$disconnect();
-	})
-	.catch(async (e) => {
-		console.error(e);
-		await prisma.$disconnect();
-		process.exit(1);
-	});
+try {
+	await main();
+
+	console.log('Successfully executed seed script.');
+
+	await connection.end();
+} catch (e) {
+	console.error(e);
+
+	await connection.end();
+
+	process.exit(1);
+}

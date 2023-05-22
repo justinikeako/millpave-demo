@@ -38,23 +38,39 @@ const CoverageInput2D = z.object({
 });
 type CoverageInput2D = z.infer<typeof CoverageInput1D>;
 
-const Stone1D = z.object({
-	skuId: z.string(),
+const StoneMetadata = z.object({
 	displayName: z.string(),
-
-	coverage: CoverageInput1D
+	price: z.number(),
+	details: z.object({
+		pcs_per_sqft: z.number(),
+		pcs_per_pallet: z.number(),
+		lbs_per_unit: z.number(),
+		conversion_factors: z
+			.object({
+				TIP_TO_TIP: z.number(),
+				SOLDIER_ROW: z.number()
+			})
+			.optional()
+	})
 });
+export type StoneMetadata = z.infer<typeof StoneMetadata>;
+
+function createStoneSchema<Coverage extends z.ZodTypeAny>(coverage: Coverage) {
+	return z.object({
+		skuId: z.string(),
+		metadata: StoneMetadata,
+
+		coverage
+	});
+}
+
+const Stone1D = createStoneSchema(CoverageInput1D);
+const Stone2D = createStoneSchema(CoverageInput2D);
 export type Stone1D = z.infer<typeof Stone1D>;
-
-const Stone2D = z.object({
-	skuId: z.string(),
-	displayName: z.string(),
-
-	coverage: CoverageInput2D
-});
 export type Stone2D = z.infer<typeof Stone2D>;
 
 const Stone = z.union([Stone1D, Stone2D]);
+
 export type Stone = z.infer<typeof Stone>;
 
 export type Coverage = { value: number; unit: Unit };

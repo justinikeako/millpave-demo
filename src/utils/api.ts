@@ -1,10 +1,10 @@
 import { createTRPCNext } from '@trpc/next';
-import { type AppRouter } from '../server/trpc/router/_app';
+import { type AppRouter } from '@/server/api/routers/root';
 import superjson from 'superjson';
 import { loggerLink, httpBatchLink } from '@trpc/client';
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
 
-export const trpc = createTRPCNext<AppRouter>({
+export const api = createTRPCNext<AppRouter>({
 	config({ ctx }) {
 		if (typeof window !== 'undefined') {
 			// during client requests

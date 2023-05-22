@@ -17,37 +17,39 @@ import {
 	useForm,
 	useFormContext
 } from 'react-hook-form';
-import {
-	SkuPickerProvider,
-	ProductPicker,
-	SkuFragmentPicker
-} from '../sku-picker';
-import { trpc } from '@/utils/trpc';
+import { SkuPickerProvider, ProductPicker, VariantPicker } from '../sku-picker';
+import { api } from '@/utils/api';
 import { useState } from 'react';
 import { formatPrice } from '@/utils/format';
 import { ProductStock } from '../product-stock';
 import { Check } from 'lucide-react';
-import { StoneProject, Stone, Coverage } from '@/types/quote';
-import { Edit } from 'lucide-react';
+import { StoneProject, Stone, Coverage, StoneMetadata } from '@/types/quote';
 import {
 	cn,
 	findSku,
 	stopPropagate,
 	unitDisplayNameDictionary
 } from '@/lib/utils';
+import { PaverDetails } from '@/types/product';
+import { isEqual } from 'lodash-es';
+import { Trash } from 'lucide-react';
 
 type StoneProps = React.PropsWithChildren<{
+	index: number;
 	displayName: string;
 	coverage: Coverage;
 	selected: boolean;
-	onSelect?(): void;
+	onSelect(): void;
+	onDelete(index: number): void;
 }>;
 
 export function StoneListItem({
+	index,
 	displayName,
 	coverage,
 	selected,
-	onSelect
+	onSelect,
+	onDelete
 }: StoneProps) {
 	const coverageUnitDisplayName =
 		unitDisplayNameDictionary[coverage.unit][coverage.value == 1 ? 0 : 1];
@@ -65,7 +67,7 @@ export function StoneListItem({
 					onClick={onSelect}
 				/>
 			</SheetTrigger>
-			<div className="pointer-events-none z-10 flex items-start">
+			<div className="pointer-events-none z-10 flex items-start gap-4">
 				<div className="flex-1">
 					<p className="font-semibold">{displayName}</p>
 					<p className="text-sm">
@@ -77,8 +79,9 @@ export function StoneListItem({
 					variant="tertiary"
 					type="button"
 					className="pointer-events-auto z-10"
+					onClick={() => onDelete(index)}
 				>
-					<Edit className="h-5 w-5" />
+					<Trash className="h-5 w-5" />
 				</Button>
 			</div>
 		</li>
@@ -105,7 +108,7 @@ type StoneEditorProps = {
 
 export function StoneEditor(props: StoneEditorProps) {
 	const { control } = useFormContext<StoneProject>();
-	const { fields, append, update } = useFieldArray({
+	const { fields, append, update, remove } = useFieldArray({
 		control,
 		keyName: 'id',
 		name: props.name
@@ -160,10 +163,12 @@ export function StoneEditor(props: StoneEditorProps) {
 					{fields.map((stone, index) => (
 						<StoneListItem
 							key={stone.id}
+							index={index}
 							selected={sheetOpen && index === editIndex}
-							displayName={stone.displayName}
+							displayName={stone.metadata.displayName}
 							coverage={stone.coverage}
 							onSelect={() => setEditIndex(index)}
+							onDelete={() => remove(index)}
 						/>
 					))}
 				</ul>
@@ -188,9 +193,8 @@ type StoneFormProps = {
 
 const defaultStone: Stone = {
 	skuId: 'colonial_classic:grey',
-	displayName: 'Colonial Classic Grey',
 	coverage: { value: 1, unit: 'fr' }
-};
+} as Stone;
 
 function StoneForm({
 	dimension,
@@ -203,12 +207,12 @@ function StoneForm({
 	const currentSkuId = watch('skuId');
 	const currentPaverId = currentSkuId.split(':')[0] as string;
 
-	const paversQuery = trpc.product.getPavers.useQuery(
+	const paversQuery = api.product.getPavers.useQuery(
 		{ dimension },
 		{ refetchOnWindowFocus: false }
 	);
 
-	const currentPaverQuery = trpc.product.getById.useQuery(
+	const currentPaverQuery = api.product.getById.useQuery(
 		{ productId: currentPaverId },
 		{ refetchOnWindowFocus: false, keepPreviousData: true }
 	);
@@ -219,16 +223,20 @@ function StoneForm({
 		currentPaver?.skus,
 		currentPaver?.details
 	);
-	const currentDisplayName = currentSku?.displayName;
 
-	// Update displayname once it changes
-	const [previousDisplayName, setPreviousDisplayName] =
-		useState(currentDisplayName);
+	const currentMetadata: StoneMetadata = {
+		displayName: currentSku?.displayName || '',
+		price: currentSku?.price || 0,
+		details: currentSku?.details.rawData || ({} as PaverDetails)
+	};
 
-	if (previousDisplayName !== currentDisplayName) {
-		if (currentDisplayName) setValue('displayName', currentDisplayName);
+	// Update metadata once it changes
+	const [previousMetadata, setPreviousMetadata] = useState(currentMetadata);
 
-		setPreviousDisplayName(currentDisplayName);
+	if (!isEqual(previousMetadata, currentMetadata)) {
+		if (currentMetadata) setValue('metadata', currentMetadata);
+
+		setPreviousMetadata(currentMetadata);
 	}
 
 	if (!pavers)
@@ -239,7 +247,12 @@ function StoneForm({
 		);
 
 	return (
-		<form onSubmit={stopPropagate(handleSubmit(onSubmit))} className="contents">
+		<form
+			onSubmit={stopPropagate(
+				handleSubmit(currentSku === undefined ? () => null : onSubmit)
+			)}
+			className="contents"
+		>
 			<SheetHeader>
 				<Button
 					variant="tertiary"
@@ -277,7 +290,7 @@ function StoneForm({
 									{currentSku.unit === 'sqft'
 										? unitDisplayNameDictionary['sqft'][0]
 										: currentSku.unit}
-									{currentSku.details?.rawData.pcs_per_sqft && (
+									{currentSku.details.rawData?.pcs_per_sqft && (
 										<>
 											<span>
 												<span>&nbsp;|&nbsp;</span>
@@ -397,9 +410,9 @@ function StoneForm({
 							</Section>
 
 							{currentPaver && (
-								<SkuFragmentPicker
+								<VariantPicker
 									section={Section}
-									skuIdTemplateFragments={currentPaver.skuIdFragments}
+									variantIdTemplate={currentPaver.variantIdTemplate}
 								/>
 							)}
 						</SkuPickerProvider>

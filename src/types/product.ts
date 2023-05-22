@@ -1,23 +1,35 @@
+import { InferModel } from 'drizzle-orm';
 import {
-	Category,
-	Prisma,
-	Product,
-	ProductDetails,
-	Restock,
-	Sku,
-	Stock
-} from '@prisma/client';
+	categories,
+	products,
+	skuDetails,
+	skuRestocks,
+	skuStock,
+	skus
+} from '@/db/schema';
 
-type ExtendedProductDetails<TDetails extends Prisma.JsonObject> = Omit<
-	ProductDetails,
+export type Category = InferModel<typeof categories, 'select'>;
+type Product = InferModel<typeof products, 'select'>;
+type SkuDetails = InferModel<typeof skuDetails, 'select'>;
+type Restock = InferModel<typeof skuRestocks, 'select'>;
+type Stock = InferModel<typeof skuStock, 'select'>;
+export type Sku = InferModel<typeof skus, 'select'>;
+
+export type FormattedProductDetails = {
+	displayName: string;
+	value: string | number;
+}[];
+
+type ExtendedProductDetails<TRawDetails> = Omit<
+	SkuDetails,
 	'rawData' | 'formattedData'
 > & {
-	rawData: TDetails;
-	formattedData: { displayName: string; value: string | number }[];
+	rawData: TRawDetails | null;
+	formattedData: FormattedProductDetails;
 };
 
-type SkuWithDetails<TDetails extends Prisma.JsonObject> = Sku & {
-	details: ExtendedProductDetails<TDetails>;
+type SkuWithDetails<TRawDetails> = Sku & {
+	details: ExtendedProductDetails<TRawDetails>;
 };
 
 type Similar = Pick<
@@ -30,11 +42,8 @@ type Similar = Pick<
 	};
 };
 
-type FullProduct<
-	TDetails extends Prisma.JsonObject,
-	TSkuIdFragments extends Prisma.JsonArray
-> = Product & {
-	details: ExtendedProductDetails<TDetails>[];
+type FullProduct<TRawDetails, TSkuIdFragments> = Product & {
+	details: ExtendedProductDetails<TRawDetails>[];
 	skus: Sku[];
 	category: Category;
 	stock: Stock[];
@@ -44,13 +53,15 @@ type FullProduct<
 };
 
 export type PaverDetails = {
+	type: 'paver';
 	lbs_per_unit: number;
 	sqft_per_pallet: number;
-	units_per_pallet: number;
+	pcs_per_pallet: number;
 	pcs_per_sqft: number;
+	conversion_factors?: { TIP_TO_TIP: number; SOLDIER_ROW: number };
 };
 
-type PaverSkuIdFragments =
+export type VariantIdTemplate = (
 	| {
 			type: 'color';
 			displayName: string;
@@ -60,9 +71,10 @@ type PaverSkuIdFragments =
 			type: 'variant';
 			displayName: string;
 			fragments: { id: string; displayName: string }[];
-	  };
+	  }
+)[];
 
-export type FullPaver = FullProduct<PaverDetails, PaverSkuIdFragments[]>;
+export type FullPaver = FullProduct<PaverDetails, VariantIdTemplate>;
 
 export type ExtendedPaverDetails = ExtendedProductDetails<PaverDetails>;
 export type PaverSkuWithDetails = SkuWithDetails<PaverDetails>;

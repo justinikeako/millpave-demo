@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { Unit } from '@/types/quote';
-import { Sku } from '@prisma/client';
+import { Sku } from '@/types/product';
 import { ExtendedPaverDetails } from '@/types/product';
 
 export function findSku(

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Logo } from './logo';
-import { FacebookIcon, InstagramIcon, YoutubeIcon } from 'lucide-react';
+import { FacebookIcon, InstagramIcon } from 'lucide-react';
 
 function Footer() {
 	return (

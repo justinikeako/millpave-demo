@@ -1,5 +1,5 @@
 import { type inferAsyncReturnType } from '@trpc/server';
-import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
+import { type FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 
 import { db } from '../db';
 
@@ -25,7 +25,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
  * @link https://trpc.io/docs/context
  **/
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const createContext = async (opts: CreateNextContextOptions) => {
+export const createContext = async (opts: FetchCreateContextFnOptions) => {
 	return await createContextInner({});
 };
 

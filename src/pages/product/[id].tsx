@@ -14,14 +14,19 @@ import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
 import { formatPrice } from '@/utils/format';
 import { createContextInner } from '@/server/api/context';
-import { GetStaticPaths, GetStaticPropsContext } from 'next';
+import {
+	GetStaticPaths,
+	GetStaticPropsContext,
+	InferGetStaticPropsType
+} from 'next';
 import { appRouter } from '@/server/api/routers/root';
-import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { ViewportReveal } from '@/components/reveal';
 import { motion } from 'framer-motion';
 import { ProductStock } from '@/components/product-stock';
 import { findSku, unitDisplayNameDictionary } from '@/lib/utils';
+import { Main } from '@/components/main';
+import { db } from '@/server/db';
 
 const ProductViewer3D = dynamic(
 	() => import('@/components/product-viewer-3d'),
@@ -49,7 +54,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 			initial={{ y: 100, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
 			transition={{ delay: 0.1, ...slowTransition }}
-			className="flex flex-col items-center gap-2 md:sticky md:top-8 md:flex-[2] lg:flex-[3]"
+			className="flex flex-col items-center gap-2 md:sticky md:top-16 md:flex-[2] lg:flex-[3]"
 		>
 			<div className="relative aspect-square w-full bg-gray-200">
 				{showModelViewer && selectedIndex === 3 && (
@@ -110,8 +115,8 @@ function Section({
 	);
 }
 
-function Page() {
-	const productId = useRouter().query.id as string;
+function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
+	const productId = props.id;
 
 	const productQuery = api.product.getById.useQuery(
 		{ productId },
@@ -140,9 +145,9 @@ function Page() {
 				<title>{`${product.displayName} — Millennium Paving Stones`}</title>
 			</Head>
 
-			<div className="space-y-32 px-8 md:px-24 lg:px-32">
+			<Main className="space-y-32">
 				{/* Main Content */}
-				<main className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
+				<section className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
 					{/* Gallery */}
 					<Gallery sku={currentSku} showModelViewer={product.hasModels} />
 
@@ -157,7 +162,10 @@ function Page() {
 						<section className="space-y-2">
 							<div>
 								<p className="text-lg">
-									<Link href={`/products/${product.category.id}`}>
+									<Link
+										scroll={false}
+										href={`/products/${product.category.id}`}
+									>
 										{product.category.displayName}
 									</Link>
 								</p>
@@ -240,7 +248,7 @@ function Page() {
 							</ul>
 						</Section>
 					</motion.div>
-				</main>
+				</section>
 
 				{/* Similar Products */}
 				<ViewportReveal className="flex flex-col space-y-8">
@@ -262,14 +270,16 @@ function Page() {
 							))}
 						</ul>
 						<Button variant="secondary" className="self-center" asChild>
-							<Link href="/products/all">View Product Catalogue</Link>
+							<Link scroll={false} href="/products/all">
+								View Product Catalogue
+							</Link>
 						</Button>
 					</div>
 				</ViewportReveal>
 
 				{/* Inspiration */}
 				<InspirationSection />
-			</div>
+			</Main>
 		</>
 	);
 }
@@ -294,15 +304,14 @@ export const getStaticProps = async (
 
 	return {
 		props: {
-			trpcState: ssg.dehydrate()
+			trpcState: ssg.dehydrate(),
+			id: productId
 		},
 		revalidate: ONE_MONTH_IN_SECONDS
 	};
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const { db } = await createContextInner({});
-
 	const products = await db.query.products.findMany({
 		columns: { id: true }
 	});

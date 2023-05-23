@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
 import { X } from 'lucide-react';
 import { Maximize2 } from 'lucide-react';
+import { Main } from '@/components/main';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{
@@ -79,7 +80,7 @@ function Page() {
 				<title>Inspiration Gallery — Millennium Paving Stones</title>
 			</Head>
 
-			<main className="space-y-32 px-8 md:px-24 lg:space-y-48 lg:px-32">
+			<Main className="space-y-32 pt-16 md:pt-24">
 				<section className="space-y-24">
 					<motion.h1
 						initial={{ y: 100, opacity: 0 }}
@@ -145,6 +146,7 @@ function Page() {
 													<p className="font-bold">
 														By&nbsp;
 														<Link
+															scroll={false}
 															target="_blank"
 															href="https://www.instagram.com/najobriks"
 															className="underline"
@@ -229,7 +231,7 @@ function Page() {
 
 					<div className="aspect-video w-full bg-gray-200 lg:w-[70vmin]"></div>
 				</ViewportReveal>
-			</main>
+			</Main>
 		</>
 	);
 }

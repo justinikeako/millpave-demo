@@ -63,9 +63,12 @@ input.no-arrows[type='number'] {
 }
 
 :root,
-body,
-#__next {
+body {
 	height: 100%;
+}
+
+#__next {
+	min-height: 100%;
 
 	-webkit-tap-highlight-color: transparent;
 }

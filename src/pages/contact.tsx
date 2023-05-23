@@ -3,6 +3,7 @@ import * as Select from '../components/select';
 import { Button } from '../components/button';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
+import { Main } from '@/components/main';
 
 type FormType = 'general' | 'quote' | 'sample';
 
@@ -26,7 +27,7 @@ function Page() {
 				<title>Contact — Millennium Paving Stones</title>
 			</Head>
 
-			<main className="space-y-16 px-8 md:px-24 lg:space-y-32 lg:px-32">
+			<Main className="space-y-16 pt-16 md:pt-24">
 				<motion.h1
 					initial={{ y: 100, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
@@ -165,7 +166,7 @@ function Page() {
 						</ul>
 					</motion.div>
 				</div>
-			</main>
+			</Main>
 		</>
 	);
 }

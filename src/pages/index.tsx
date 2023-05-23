@@ -7,6 +7,7 @@ import { ProductCard } from '@/components/product-card';
 import { ViewportReveal } from '@/components/reveal';
 import { InspirationSection } from '@/components/inspiration-section';
 import { OrchestratedReveal } from '@/components/reveal';
+import { Main } from '@/components/main';
 
 function getMiddleIndex(arr: unknown[]) {
 	const middleIndex = Math.floor(arr.length / 2);
@@ -54,7 +55,7 @@ function Hero() {
 		<section className="space-y-20">
 			<div className="flex flex-col items-center space-y-12">
 				<OrchestratedReveal delay={0.1} asChild>
-					<h1 className="text-center text-4xl font-bold">
+					<h1 className="text-center text-4xl">
 						<span className="block">Transform Your</span>
 						<AnimatePresence initial={false} mode="wait">
 							<motion.span
@@ -90,12 +91,12 @@ function Hero() {
 				<OrchestratedReveal delay={0.2} asChild>
 					<div className="flex space-x-2">
 						<Button variant="primary" asChild>
-							<Link href="/contact?form=quote">
+							<Link scroll={false} href="/contact?form=quote">
 								<span>Get a Quote</span>
 							</Link>
 						</Button>
 						<Button variant="secondary" asChild>
-							<Link href="/gallery">
+							<Link scroll={false} href="/gallery">
 								<span>Get Inspired</span>
 							</Link>
 						</Button>
@@ -132,7 +133,7 @@ function Page() {
 				<title>Millennium Paving Stones</title>
 			</Head>
 
-			<main className="space-y-48 px-8 pt-8 md:px-24 lg:px-32">
+			<Main className="space-y-48 pt-24 md:pt-24">
 				{/* Hero */}
 				<Hero />
 
@@ -183,7 +184,9 @@ function Page() {
 							/>
 						</ul>
 						<Button variant="secondary" className="self-center" asChild>
-							<Link href="/products/all">View Product Catalogue</Link>
+							<Link scroll={false} href="/products/all">
+								View Product Catalogue
+							</Link>
 						</Button>
 					</div>
 				</ViewportReveal>
@@ -194,7 +197,7 @@ function Page() {
 				{/* Locations */}
 				<ViewportReveal
 					id="where-to-buy"
-					className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
+					className="flex scroll-m-48 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
 				>
 					<div className="flex-1">
 						<p className="text-lg">Our Locations</p>
@@ -207,7 +210,9 @@ function Page() {
 						</p>
 						<br />
 						<Button variant="primary" asChild className="w-fit">
-							<Link href="/contact?form=quote">Get a Quote</Link>
+							<Link scroll={false} href="/contact?form=quote">
+								Get a Quote
+							</Link>
 						</Button>
 					</div>
 
@@ -262,17 +267,21 @@ function Page() {
 						</div>
 						<div className="flex gap-4">
 							<Button variant="primary">
-								<Link href="/products/all">Explore Products</Link>
+								<Link scroll={false} href="/products/all">
+									Explore Products
+								</Link>
 							</Button>
 							<Button variant="secondary">
-								<Link href="/contact?form=quote">Get a Quote</Link>
+								<Link scroll={false} href="/contact?form=quote">
+									Get a Quote
+								</Link>
 							</Button>
 						</div>
 					</div>
 
 					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
 				</ViewportReveal>
-			</main>
+			</Main>
 		</>
 	);
 }

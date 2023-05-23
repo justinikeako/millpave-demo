@@ -6,7 +6,7 @@ function Footer() {
 	return (
 		<footer className="mt-24 space-y-16 bg-gray-900 px-8 pb-16 pt-12 text-white md:px-24 md:pt-16 lg:mt-32 lg:px-32 lg:pt-24">
 			<div className="flex flex-col justify-between gap-16 md:flex-row">
-				<Link href="/">
+				<Link scroll={false} href="/">
 					<Logo withText />
 				</Link>
 
@@ -17,6 +17,7 @@ function Footer() {
 						<ul className="flex grid-rows-2 gap-2">
 							<li>
 								<Link
+									scroll={false}
 									className="hover:text-gray-300 active:text-gray-400"
 									href="https://www.facebook.com/millenniumpavingstones"
 								>
@@ -25,6 +26,7 @@ function Footer() {
 							</li>
 							<li>
 								<Link
+									scroll={false}
 									className="hover:text-gray-300 active:text-gray-400"
 									href="http://www.instagram.com/millpave"
 								>
@@ -101,7 +103,11 @@ function Footer() {
 					shown on the website may vary from actual product colours. We
 					recommend colour selections be made from actual product samples.
 					Request a&nbsp;
-					<Link href="/contact?form=samples" className="underline">
+					<Link
+						scroll={false}
+						href="/contact?form=samples"
+						className="underline"
+					>
 						sample here
 					</Link>
 					.
@@ -112,7 +118,11 @@ function Footer() {
 				<p>©2023 Millennium Paving Stones Ltd.</p>
 				<p>
 					Site by&nbsp;
-					<Link className="underline" href="https://notprimitive.com">
+					<Link
+						scroll={false}
+						className="underline"
+						href="https://notprimitive.com"
+					>
 						Not Primitive
 					</Link>
 				</p>

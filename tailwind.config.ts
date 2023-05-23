@@ -12,24 +12,24 @@ module.exports = {
 			sm: ['0.8em', { lineHeight: '1.5' }],
 			base: ['1em', { lineHeight: '1.5' }],
 			lg: [
-				'clamp(1.25em, calc(1.25em + ((1vw - 0.4em) * 0.328)), 1.414em)',
-				{ lineHeight: '1.5', fontWeight: '600' }
+				'clamp(1.2em, calc(1.2em + ((1vw - 0.4em) * 0.4)), 1.4em)',
+				{ lineHeight: '1.5', fontWeight: '500' }
 			],
 			xl: [
-				'clamp(1.563em, calc(1.563em + ((1vw - 0.4em) * 0.872)), 1.999em)',
-				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.03em' }
+				'clamp(1.6em, calc(1.6em + ((1vw - 0.4em) * 0.8)), 2em)',
+				{ lineHeight: '1.15', fontWeight: '500', letterSpacing: '-0.02em' }
 			],
 			'2xl': [
-				'clamp(1.953em, calc(1.953em + ((1vw - 0.4em) * 1.748)), 2.827em)',
-				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.03em' }
+				'clamp(1.8em, calc(1.8em + ((1vw - 0.4em) * 1.8)), 2.8em)',
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.025em' }
 			],
 			'3xl': [
-				' clamp(2.441em, calc(2.441em + ((1vw - 0.4em) * 3.114)), 3.998em)',
-				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.035em' }
+				' clamp(2.4em, calc(2.4em + ((1vw - 0.4em) * 3.2)), 4em)',
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.03em' }
 			],
 			'4xl': [
-				'clamp(3.052em, calc(3.052em + ((1vw - 0.4em) * 5.202)), 5.653em);',
-				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.04em' }
+				'clamp(3.2em, calc(3.2em + ((1vw - 0.4em) * 4.8)), 5.4em)',
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.035em' }
 			]
 		},
 

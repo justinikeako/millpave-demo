@@ -74,10 +74,10 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 					<AnimatePresence initial>
 						<Component {...pageProps} />
 					</AnimatePresence>
+
+					{showLayout && <Footer />}
 				</motion.div>
 			</AnimatePresence>
-
-			{showLayout && <Footer />}
 
 			{showLayout && <Chat />}
 		</>

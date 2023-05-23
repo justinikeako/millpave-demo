@@ -18,6 +18,7 @@ function Footer() {
 							<li>
 								<Link
 									scroll={false}
+									target="_blank"
 									className="hover:text-gray-300 active:text-gray-400"
 									href="https://www.facebook.com/millenniumpavingstones"
 								>
@@ -27,6 +28,7 @@ function Footer() {
 							<li>
 								<Link
 									scroll={false}
+									target="_blank"
 									className="hover:text-gray-300 active:text-gray-400"
 									href="http://www.instagram.com/millpave"
 								>
@@ -120,6 +122,7 @@ function Footer() {
 					Site by&nbsp;
 					<Link
 						scroll={false}
+						target="_blank"
 						className="underline"
 						href="https://notprimitive.com"
 					>

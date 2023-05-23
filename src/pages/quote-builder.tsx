@@ -108,11 +108,13 @@ function Page() {
 			</Head>
 
 			<header className="flex select-none items-center justify-between px-8 py-8 md:px-24 lg:px-32">
-				<Link href="/">
+				<Link scroll={false} href="/">
 					<Logo />
 				</Link>
 
-				<Link href="/">Close Editor</Link>
+				<Link scroll={false} href="/">
+					Close Editor
+				</Link>
 			</header>
 
 			<StageProvider maximumStageIndex={maximumStageIndex}>

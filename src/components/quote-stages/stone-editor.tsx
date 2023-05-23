@@ -185,23 +185,28 @@ export function StoneEditor(props: StoneEditorProps) {
 	);
 }
 
+type StoneWithOptionalMetadata = Omit<Stone, 'metadata'> &
+	Partial<Pick<Stone, 'metadata'>>;
+
 type StoneFormProps = {
 	dimension: '1D' | '2D';
-	initialValues?: Stone;
-	onSubmit(stone: Stone): void;
+	initialValues?: StoneWithOptionalMetadata;
+	onSubmit(stone: StoneWithOptionalMetadata): void;
 };
 
-const defaultStone: Stone = {
+const defaultStone: StoneWithOptionalMetadata = {
 	skuId: 'colonial_classic:grey',
 	coverage: { value: 1, unit: 'fr' }
-} as Stone;
+};
 
 function StoneForm({
 	dimension,
 	initialValues = defaultStone,
 	onSubmit
 }: StoneFormProps) {
-	const formMethods = useForm<Stone>({ defaultValues: initialValues });
+	const formMethods = useForm<StoneWithOptionalMetadata>({
+		defaultValues: initialValues
+	});
 	const { register, setValue, watch, handleSubmit } = formMethods;
 
 	const currentSkuId = watch('skuId');
@@ -224,18 +229,19 @@ function StoneForm({
 		currentPaver?.details
 	);
 
-	const currentMetadata: StoneMetadata = {
-		displayName: currentSku?.displayName || '',
-		price: currentSku?.price || 0,
-		details: currentSku?.details.rawData || ({} as PaverDetails)
-	};
+	const currentMetadata: StoneMetadata | undefined = currentSku
+		? {
+				displayName: currentSku.displayName,
+				price: currentSku.price,
+				details: currentSku.details.rawData as PaverDetails
+		  }
+		: undefined;
 
 	// Update metadata once it changes
-	const [previousMetadata, setPreviousMetadata] = useState(currentMetadata);
+	const [previousMetadata, setPreviousMetadata] = useState(watch('metadata'));
 
 	if (!isEqual(previousMetadata, currentMetadata)) {
-		if (currentMetadata) setValue('metadata', currentMetadata);
-
+		setValue('metadata', currentMetadata);
 		setPreviousMetadata(currentMetadata);
 	}
 
@@ -247,17 +253,12 @@ function StoneForm({
 		);
 
 	return (
-		<form
-			onSubmit={stopPropagate(
-				handleSubmit(currentSku === undefined ? () => null : onSubmit)
-			)}
-			className="contents"
-		>
+		<form onSubmit={stopPropagate(handleSubmit(onSubmit))} className="contents">
 			<SheetHeader>
 				<Button
 					variant="tertiary"
 					type="submit"
-					disabled={currentSku === undefined}
+					disabled={watch('metadata') === undefined}
 				>
 					<Check />
 				</Button>

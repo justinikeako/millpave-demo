@@ -97,7 +97,7 @@ function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
 				? dimensions.circumference.value
 				: Math.PI * dimensions.diameter.value;
 		case 'arbitrary':
-			return dimensions.runningFoot.value;
+			return dimensions.runningLength.value;
 	}
 }
 

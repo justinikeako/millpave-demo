@@ -2,16 +2,128 @@ import * as Select from '@/components/select';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
-import { Border, Stone1D, StoneProject } from '@/types/quote';
+import {
+	Border,
+	Dimensions,
+	Infill,
+	Shape,
+	Stone1D,
+	Stone2D,
+	StoneProject,
+	Unit
+} from '@/types/quote';
 import { unitDisplayNameDictionary } from '@/lib/utils';
 import { useStageContext } from './stage-context';
 
+function toFt(value: number, unit: Exclude<Unit, 'fr' | 'pal' | 'unit'>) {
+	switch (unit) {
+		case 'ft':
+			return value;
+		case 'in':
+			return value / 12;
+		case 'm':
+			return value * 3.281;
+		case 'cm':
+			return value * 30.48;
+		case 'sqft':
+			return value;
+		case 'sqin':
+			return value / 12;
+		case 'sqm':
+			return value * 3.281;
+		case 'sqcm':
+			return value * 30.48;
+	}
+}
+
+const toSqft = toFt;
+
+function calculateProjectArea(shape: Shape, dimensions: Dimensions) {
+	const length = toFt(dimensions.length.value, dimensions.length.unit);
+	const width = toFt(dimensions.width.value, dimensions.width.unit);
+	const circumference = toFt(
+		dimensions.circumference.value,
+		dimensions.circumference.unit
+	);
+	const diameter = toFt(dimensions.diameter.value, dimensions.diameter.unit);
+	const area = toFt(dimensions.area.value, dimensions.area.unit);
+
+	switch (shape) {
+		case 'rect':
+			return length * width;
+		case 'circle':
+			return circumference
+				? Math.PI * Math.pow(Math.sqrt(circumference / 2), 2)
+				: Math.PI * Math.pow(diameter / 2, 2);
+		case 'arbitrary':
+			return area;
+	}
+}
+
+function getInfillItems(area: number, infill: Infill) {
+	let infillArea = area;
+
+	const stones: {
+		skuId: string;
+		displayName: string;
+		sqftCoverage: number;
+		sqftPrice: number;
+		signatures: string[];
+	}[] = [];
+
+	// Cut out fixed values first; divy up ratio values afterwards
+	const fractionalStones: Stone2D[] = [];
+	let fractionalTotal = 0;
+	const fixedStones: Stone2D[] = [];
+
+	for (const stone of infill) {
+		if (stone.coverage.unit === 'fr') {
+			fractionalTotal += stone.coverage.value;
+			fractionalStones.push(stone);
+		} else fixedStones.push(stone);
+	}
+
+	for (const stone of fixedStones) {
+		const unit = stone.coverage.unit as Exclude<Unit, 'fr' | 'pal'>;
+
+		const fixedSegmentArea =
+			unit === 'unit'
+				? stone.coverage.value / stone.metadata.details.pcs_per_sqft
+				: toSqft(stone.coverage.value, unit);
+		infillArea -= fixedSegmentArea;
+
+		console.log('Fixed infill segment area:', fixedSegmentArea);
+
+		stones.push({
+			skuId: stone.skuId,
+			displayName: stone.metadata.displayName,
+			sqftCoverage: fixedSegmentArea,
+			sqftPrice: stone.metadata.price,
+			signatures: ['infill']
+		});
+	}
+
+	for (const stone of fractionalStones) {
+		const fractionalSegmentArea =
+			infillArea * (stone.coverage.value / fractionalTotal);
+
+		stones.push({
+			skuId: stone.skuId,
+			displayName: stone.metadata.displayName,
+			sqftCoverage: fractionalSegmentArea,
+			sqftPrice: stone.metadata.price,
+			signatures: ['infill']
+		});
+	}
+
+	return { items: stones };
+}
+
 function getBorderItems(border: Border) {
+	let borderArea = 0;
 	let runningFoot = border.runningFoot.value;
 	const orientation = border.orientation;
 
-	console.log('Running Foot:', runningFoot);
-	console.log('Orientation:', orientation);
 	const stones: {
 		skuId: string;
 		displayName: string;
@@ -37,28 +149,32 @@ function getBorderItems(border: Border) {
 		if (!conversionFactorDictionary)
 			throw new Error(`Stone ${stone.skuId} can not be used as a border`);
 
-		runningFoot -= stone.coverage.value;
-		const borderSegmentArea =
-			stone.coverage.value * conversionFactorDictionary[orientation];
+		const inverseConversionFactor =
+			conversionFactorDictionary[
+				orientation === 'SOLDIER_ROW' ? 'TIP_TO_TIP' : 'SOLDIER_ROW'
+			];
+
+		const unit = stone.coverage.unit as Exclude<Unit, 'fr' | 'pal'>;
+
+		const fixedSegmentLength =
+			unit === 'unit'
+				? stone.coverage.value * inverseConversionFactor
+				: toFt(stone.coverage.value, unit);
+
+		runningFoot -= fixedSegmentLength;
+
+		const fixedSegmentArea =
+			fixedSegmentLength * conversionFactorDictionary[orientation];
+
+		borderArea += fixedSegmentArea;
 
 		stones.push({
 			skuId: stone.skuId,
 			displayName: stone.metadata.displayName,
-			sqftCoverage: borderSegmentArea,
+			sqftCoverage: fixedSegmentArea,
 			sqftPrice: stone.metadata.price,
 			signatures: ['border']
 		});
-
-		return [
-			{
-				displayName: 'Colonial Classic Grey',
-				quantity: 6,
-				unit: 'pal',
-				price: 156817.5,
-				priceWithPlan: 78408.75,
-				hasPlan: true
-			}
-		];
 	}
 
 	for (const stone of fractionalStones) {
@@ -67,21 +183,60 @@ function getBorderItems(border: Border) {
 		if (!conversionFactorDictionary)
 			throw new Error(`Stone ${stone.skuId} can not be used as a border`);
 
-		const runningFootSegment =
+		const fractionalSegmentLength =
 			runningFoot * (stone.coverage.value / fractionalTotal);
-		const borderSegmentArea =
-			runningFootSegment * conversionFactorDictionary[orientation];
+		const fractionalSegmentArea =
+			fractionalSegmentLength * conversionFactorDictionary[orientation];
 
+		borderArea += fractionalSegmentArea;
 		stones.push({
 			skuId: stone.skuId,
 			displayName: stone.metadata.displayName,
-			sqftCoverage: borderSegmentArea,
+			sqftCoverage: fractionalSegmentArea,
 			sqftPrice: stone.metadata.price,
 			signatures: ['border']
 		});
 	}
 
-	return stones;
+	return {
+		area: borderArea,
+		items: stones
+	};
+}
+
+function mergeItems(
+	inputItems: {
+		skuId: string;
+		displayName: string;
+		sqftCoverage: number;
+		sqftPrice: number;
+		signatures: string[];
+	}[]
+) {
+	const outputItems: {
+		skuId: string;
+		displayName: string;
+		sqftCoverage: number;
+		sqftPrice: number;
+		signatures: string[];
+	}[] = [];
+
+	for (const item of inputItems) {
+		const existingItem = outputItems.find((i) => i.skuId === item.skuId);
+		if (existingItem) {
+			existingItem.sqftCoverage += item.sqftCoverage;
+
+			const itemSignature = item.signatures[0] as string;
+			const containsItemSignature =
+				existingItem.signatures.includes(itemSignature);
+
+			if (!containsItemSignature) existingItem.signatures.push(itemSignature);
+		} else {
+			outputItems.push(item);
+		}
+	}
+
+	return outputItems;
 }
 
 export function BorderStage() {
@@ -91,8 +246,19 @@ export function BorderStage() {
 		<StageForm
 			className="space-y-16 px-32"
 			onSubmit={(newValues) => {
-				const items = getBorderItems(newValues.border);
-				console.log(items);
+				const projectArea = calculateProjectArea(
+					newValues.shape,
+					newValues.dimensions
+				);
+				const border = getBorderItems(newValues.border);
+				const infill = getInfillItems(
+					projectArea - border.area,
+					newValues.infill
+				);
+
+				const mergedItems = mergeItems([...infill.items, ...border.items]);
+
+				console.log(mergedItems);
 
 				setItems([
 					{

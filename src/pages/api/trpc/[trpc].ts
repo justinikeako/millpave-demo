@@ -5,7 +5,8 @@ import { appRouter } from '@/server/api/routers/root';
 import { NextRequest } from 'next/server';
 
 export const config = {
-	runtime: 'edge'
+	runtime: 'edge',
+	reigons: ['cle1', 'iad1']
 };
 
 export default async function handler(req: NextRequest) {

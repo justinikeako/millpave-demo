@@ -80,7 +80,7 @@ function Page() {
 				<title>Inspiration Gallery — Millennium Paving Stones</title>
 			</Head>
 
-			<Main className="space-y-32 pt-16 md:pt-24">
+			<Main className="space-y-32 !pt-16 md:!pt-24">
 				<section className="space-y-24">
 					<motion.h1
 						initial={{ y: 100, opacity: 0 }}

@@ -133,7 +133,7 @@ function Page() {
 				<title>Millennium Paving Stones</title>
 			</Head>
 
-			<Main className="space-y-48 pt-24 md:pt-24">
+			<Main className="space-y-48 !pt-24">
 				{/* Hero */}
 				<Hero />
 

@@ -27,7 +27,7 @@ function Page() {
 				<title>Contact — Millennium Paving Stones</title>
 			</Head>
 
-			<Main className="space-y-16 pt-16 md:pt-24">
+			<Main className="space-y-16 !pt-16 md:!pt-24">
 				<motion.h1
 					initial={{ y: 100, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}

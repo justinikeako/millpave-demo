@@ -7,6 +7,9 @@ dependencies:
   '@pinecone-database/pinecone':
     specifier: ^0.0.14
     version: 0.0.14
+  '@planetscale/database':
+    specifier: ^1.7.0
+    version: 1.7.0
   '@radix-ui/react-dialog':
     specifier: ^1.0.3
     version: 1.0.3(@types/react@18.0.35)(react-dom@18.2.0)(react@18.2.0)
@@ -66,7 +69,7 @@ dependencies:
     version: 16.0.3
   drizzle-orm:
     specifier: 0.26.0-5f2b067
-    version: 0.26.0-5f2b067(mysql2@3.3.1)
+    version: 0.26.0-5f2b067(@planetscale/database@1.7.0)(mysql2@3.3.1)
   framer-motion:
     specifier: ^10.11.6
     version: 10.11.6(react-dom@18.2.0)(react@18.2.0)
@@ -753,6 +756,11 @@ packages:
       picocolors: 1.0.0
       tslib: 2.5.0
     dev: true
+
+  /@planetscale/database@1.7.0:
+    resolution: {integrity: sha512-lWR6biXChUyQnxsT4RT1CIeR3ZJvwTQXiQ+158MnY3VjLwjHEGakDzdH9kwUGPk6CHvu6UeqRXp1DgUOVHJFTw==}
+    engines: {node: '>=16'}
+    dev: false
 
   /@radix-ui/number@1.0.0:
     resolution: {integrity: sha512-Ofwh/1HX69ZfJRiRBMTy7rgjAzHmwe4kW9C9Y99HTRUcYLUuVT0KESFj15rPjRgKJs20GPq8Bm5aEDJ8DuA3vA==}
@@ -2492,7 +2500,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.26.0-5f2b067(mysql2@3.3.1):
+  /drizzle-orm@0.26.0-5f2b067(@planetscale/database@1.7.0)(mysql2@3.3.1):
     resolution: {integrity: sha512-8DHjqBSrDjVS+msFijhgZQPHj/RoBVYELNAwLAqCJPUD4DCkcD1kIf7aLXzFX6UGd24nnbFBFsVJ8ZIjrhkkYw==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -2551,6 +2559,7 @@ packages:
       sqlite3:
         optional: true
     dependencies:
+      '@planetscale/database': 1.7.0
       mysql2: 3.3.1
     dev: false
 

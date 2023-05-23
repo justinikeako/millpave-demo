@@ -6,5 +6,6 @@ dotenv.config();
 export default {
 	schema: './drizzle/schema.ts',
 	out: './drizzle',
-	connectionString: process.env.DATABASE_URL
+	// connectionString: process.env.LOCAL_DATABASE_URL
+	connectionString: process.env.PROD_DATABASE_URL
 } satisfies Config;

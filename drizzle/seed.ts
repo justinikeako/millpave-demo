@@ -1,3 +1,4 @@
+import { addBusinessDays, addHours } from 'date-fns';
 import { InferModel } from 'drizzle-orm';
 import {
 	categories,
@@ -9,15 +10,24 @@ import {
 	skuStock,
 	skus
 } from './schema';
-import mysql from 'mysql2/promise';
-import { drizzle } from 'drizzle-orm/mysql2';
-import { addBusinessDays, addHours } from 'date-fns';
 
-const connection = await mysql.createConnection({
-	database: process.env.DB_NAME,
-	host: process.env.DB_HOST,
-	user: process.env.DB_USER,
-	password: process.env.DB_PASS
+// import { drizzle } from 'drizzle-orm/mysql2';
+// import mysql from 'mysql2/promise';
+
+// const connection = await mysql.createConnection({
+// 	database: process.env.LOCAL_DB_NAME,
+// 	host: process.env.LOCAL_DB_HOST,
+// 	user: process.env.LOCAL_DB_USER,
+// 	password: process.env.LOCAL_DB_PASS
+// });
+
+import { drizzle } from 'drizzle-orm/planetscale-serverless';
+import { connect } from '@planetscale/database';
+
+const connection = connect({
+	host: process.env['PROD_DATABASE_HOST'],
+	username: process.env['PROD_DATABASE_USERNAME'],
+	password: process.env['PROD_DATABASE_PASSWORD']
 });
 
 export const db = drizzle(connection);
@@ -1191,12 +1201,8 @@ try {
 	await main();
 
 	console.log('Successfully executed seed script.');
-
-	await connection.end();
 } catch (e) {
 	console.error(e);
-
-	await connection.end();
 
 	process.exit(1);
 }

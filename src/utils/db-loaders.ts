@@ -3,8 +3,6 @@ import { Document } from 'langchain/document';
 import { formatPrice } from './format';
 import { Sku } from '@/types/product';
 import { db } from '@/server/db';
-import { productToProduct } from '@/db/schema';
-import { desc } from 'drizzle-orm';
 import { ExtendedPaverDetails } from '@/types/product';
 
 export async function getProductDocuments() {
@@ -17,10 +15,11 @@ export async function getProductDocuments() {
 		},
 		with: {
 			skus: true,
-			similar: {
-				orderBy: desc(productToProduct.relevance),
+			recommendations: {
+				orderBy: (productRecommendations, { desc }) =>
+					desc(productRecommendations.relevance),
 				with: {
-					similarProduct: {
+					recommending: {
 						columns: { displayName: true }
 					}
 				}
@@ -69,7 +68,7 @@ export async function getProductDocuments() {
 			};
 
 			const getSimilar = () =>
-				formatObjectList(product.similar, 'similarProduct.displayName');
+				formatObjectList(product.recommendations, 'recommending.displayName');
 
 			function getLowestAndHighestPrice(skus: Sku[]) {
 				if (skus.length === 0) {

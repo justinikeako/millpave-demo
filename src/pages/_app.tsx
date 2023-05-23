@@ -31,8 +31,6 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 		(pageProps as { id: string }).id = router.query.id;
 	}
 
-	console.log(router);
-
 	return (
 		<>
 			{/* give root access to the font variable */}

@@ -39,11 +39,11 @@ export function StageProvider(props: StageProviderProps) {
 			diameter: { value: 0, unit: 'ft' },
 			circumference: { value: 0, unit: 'ft' },
 			area: { value: 0, unit: 'sqft' },
-			runningFoot: { value: 0, unit: 'ft' }
+			runningLength: { value: 0, unit: 'ft' }
 		},
 		infill: [],
 		border: {
-			runningFoot: { value: 0, unit: 'ft' },
+			runningLength: { value: 0, unit: 'ft' },
 			orientation: 'SOLDIER_ROW',
 			stones: []
 		}

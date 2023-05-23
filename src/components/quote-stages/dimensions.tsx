@@ -109,7 +109,7 @@ export function DimensionsStage() {
 			onSubmit={(values) => {
 				const newValues = set(
 					structuredClone(values),
-					'border.runningFoot.value',
+					'border.runningLength.value',
 					calculateRunningFoot(values.shape, values.dimensions)
 				);
 

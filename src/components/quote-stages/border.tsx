@@ -121,7 +121,7 @@ function getInfillItems(area: number, infill: Infill) {
 
 function getBorderItems(border: Border) {
 	let borderArea = 0;
-	let runningFoot = border.runningFoot.value;
+	let runningFoot = border.runningLength.value;
 	const orientation = border.orientation;
 
 	const stones: {
@@ -309,28 +309,28 @@ function BorderOptions() {
 	return (
 		<div className="flex flex-wrap justify-center gap-4">
 			<div className="max-w-xs flex-1 space-y-4">
-				<label htmlFor="border.runningFoot.value" className="font-semibold">
+				<label htmlFor="border.runningLength.value" className="font-semibold">
 					Running Foot
 				</label>
 				<label
-					htmlFor="border.runningFoot.value"
+					htmlFor="border.runningLength.value"
 					className="flex w-full rounded-md bg-gray-200 p-4"
 				>
 					<input
 						type="number"
-						id="border.runningFoot.value"
-						{...register('border.runningFoot.value')}
+						id="border.runningLength.value"
+						{...register('border.runningLength.value')}
 						className="no-arrows w-full flex-1 bg-transparent outline-none"
 						placeholder="Amount"
 					/>
 
 					<Controller
 						control={control}
-						name="border.runningFoot.unit"
-						render={(runningFootUnit) => (
+						name="border.runningLength.unit"
+						render={(runningLengthUnit) => (
 							<Select.Root
-								value={runningFootUnit.field.value}
-								onValueChange={runningFootUnit.field.onChange}
+								value={runningLengthUnit.field.value}
+								onValueChange={runningLengthUnit.field.onChange}
 							>
 								<Select.Trigger basic />
 

@@ -89,7 +89,7 @@ export const Infill = Stone2D.array();
 export type Infill = z.infer<typeof Infill>;
 
 export const Border = z.object({
-	runningFoot: DimensionInput1D,
+	runningLength: DimensionInput1D,
 	orientation: z.enum(['SOLDIER_ROW', 'TIP_TO_TIP']),
 	stones: Stone1D.array()
 });

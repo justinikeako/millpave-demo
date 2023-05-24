@@ -28,6 +28,10 @@ const bigprice = customType<{ data: number; driverData: string | number }>({
 	fromDriver: (value) => (typeof value === 'number' ? value : parseFloat(value))
 });
 
+const id = customType<{ data: number; driverData: number }>({
+	dataType: () => 'bigint unsigned auto_increment'
+});
+
 export const categories = mysqlTable('categories', {
 	id: varchar('id', { length: 32 }).primaryKey().notNull(),
 	displayName: varchar('display_name', { length: 64 }).notNull()
@@ -69,10 +73,7 @@ export const skus = mysqlTable(
 		detailsMatcher: varchar('details_matcher', { length: 48 }).notNull()
 	},
 	(table) => ({
-		skuDetailsMatcherIdx: index('skus_details_matcher_idx').on(
-			table.detailsMatcher
-		),
-		skuProductIdIdx: index('skus_product_id_idx').on(table.productId)
+		skusProductIdIdx: index('skus_product_id_idx').on(table.productId)
 	})
 );
 
@@ -96,7 +97,7 @@ export const skuDetails = mysqlTable(
 export const quotes = mysqlTable(
 	'quotes',
 	{
-		id: char('id', { length: 16 }).primaryKey().notNull(),
+		id: id('id').primaryKey().notNull(),
 		createdAt: datetime('created_at', { mode: 'date', fsp: 3 })
 			.default(sql`(CURRENT_TIMESTAMP(3))`)
 			.notNull(),
@@ -109,7 +110,7 @@ export const quotes = mysqlTable(
 		total: bigprice('total').notNull()
 	},
 	(table) => ({
-		quoteTitleIdx: index('quotes_title_idx').on(table.title)
+		quotesTitleIdx: index('quotes_title_idx').on(table.title)
 	})
 );
 
@@ -128,11 +129,7 @@ export const quoteItems = mysqlTable(
 		metadata: json('metadata')
 	},
 	(table) => ({
-		quoteItemPickupLocationIdIdx: index(
-			'quote_items_pickup_location_id_idx'
-		).on(table.pickupLocationId),
 		quoteItemsQuoteIdIdx: index('quote_items_quote_id_idx').on(table.quoteId),
-		quoteItemsSkuIdIdx: index('quote_items_sku_id_idx').on(table.skuId),
 		quoteItemsSkuIdPickupLocationIdQuoteId: primaryKey(
 			table.skuId,
 			table.pickupLocationId,
@@ -174,9 +171,6 @@ export const productRecommendations = mysqlTable(
 		productRecommendationsRecommenderIdIdx: index(
 			'product_recommendations_recommender_id_idx'
 		).on(table.recommenderId),
-		productRecommendationsRecommendingIdIdx: index(
-			'product_recommendations_recommending_id_idx'
-		).on(table.recommendingId),
 		productRecommendationsRecommenderIdRecommendingId: primaryKey(
 			table.recommenderId,
 			table.recommendingId

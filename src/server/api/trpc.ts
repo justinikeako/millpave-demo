@@ -14,7 +14,7 @@
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
-import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
+import { type FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 
 import { db } from '@/server/db';
 
@@ -26,7 +26,7 @@ type CreateContextOptions = Record<string, never>;
  *
  * Examples of things you may need it for:
  * - testing, so we don't have to mock Next.js' req/res
- * - tRPC's `createSSGHelpers`, where we don't have req/res
+ * - tRPC's `createServerSideHelpers`, where we don't have req/res
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
@@ -44,7 +44,7 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const createTRPCContext = (_opts: CreateNextContextOptions) => {
+export const createTRPCContext = (_opts: FetchCreateContextFnOptions) => {
 	return createInnerTRPCContext({});
 };
 

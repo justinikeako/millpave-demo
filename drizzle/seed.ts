@@ -30,7 +30,7 @@ const connection = connect({
 	password: process.env['PROD_DATABASE_PASSWORD']
 });
 
-export const db = drizzle(connection);
+const db = drizzle(connection);
 
 type NewCategory = InferModel<typeof categories, 'insert'>;
 type NewProduct = InferModel<typeof products, 'insert'>;

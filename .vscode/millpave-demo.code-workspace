@@ -8,6 +8,7 @@
 		"tailwindCSS.experimental.classRegex": [
 			["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
 			["w(?:\\.[a-zA-Z]+)?\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
-		]
+		],
+		"typescript.tsdk": "node_modules\\typescript\\lib"
 	}
 }

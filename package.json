@@ -12,6 +12,7 @@
 		"db-introspect": "drizzle-kit introspect:mysql",
 		"db-push": "drizzle-kit push:mysql",
 		"db-seed": "tsx -r dotenv/config drizzle/seed.ts",
+		"db-nuke": "tsx -r dotenv/config drizzle/nuke-db.ts",
 		"sembed": "tsx -r dotenv/config src/scripts/scrape-embed.ts"
 	},
 	"dependencies": {

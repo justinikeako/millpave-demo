@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { ProductCard } from '@/components/product-card';
 import { w } from 'windstitch';
 import { appRouter } from '@/server/api/routers/root';
-import { createContextInner } from '@/server/api/context';
+import { createInnerTRPCContext } from '@/server/api/trpc';
 import superjson from 'superjson';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import { api } from '@/utils/api';
@@ -18,6 +18,7 @@ import { Category } from '@/types/product';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { Main } from '@/components/main';
+import { db } from '@/server/db';
 
 const StyledProductCard = w(ProductCard, {
 	className: 'md:col-span-6 lg:col-span-4 xl:col-span-3'
@@ -172,7 +173,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 export const getStaticProps = async (
 	context: GetStaticPropsContext<{ category: string }>
 ) => {
-	const ssgContext = await createContextInner({});
+	const ssgContext = await createInnerTRPCContext({});
 
 	const ssg = await createServerSideHelpers({
 		router: appRouter,
@@ -198,8 +199,6 @@ export const getStaticProps = async (
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const { db } = await createContextInner({});
-
 	const categories = await db.query.categories.findMany({
 		columns: { id: true }
 	});

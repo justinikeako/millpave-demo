@@ -13,7 +13,7 @@ import { InspirationSection } from '@/components/inspiration-section';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
 import { formatPrice } from '@/utils/format';
-import { createContextInner } from '@/server/api/context';
+import { createInnerTRPCContext } from '@/server/api/trpc';
 import {
 	GetStaticPaths,
 	GetStaticPropsContext,
@@ -287,7 +287,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 export const getStaticProps = async (
 	context: GetStaticPropsContext<{ id: string }>
 ) => {
-	const ssgContext = await createContextInner({});
+	const ssgContext = await createInnerTRPCContext({});
 
 	const ssg = await createServerSideHelpers({
 		router: appRouter,

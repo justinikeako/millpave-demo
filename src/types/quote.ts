@@ -42,6 +42,8 @@ const StoneMetadata = z.object({
 	displayName: z.string(),
 	price: z.number(),
 	details: z.object({
+		type: z.enum(['paver']),
+		sqft_per_pallet: z.number(),
 		pcs_per_sqft: z.number(),
 		pcs_per_pallet: z.number(),
 		lbs_per_unit: z.number(),
@@ -88,8 +90,12 @@ export type Dimensions = z.infer<typeof Dimensions>;
 export const Infill = Stone2D.array();
 export type Infill = z.infer<typeof Infill>;
 
+const BorderLength = z.object({
+	value: z.number(),
+	unit: z.union([Unit1D, z.enum(['auto'])])
+});
 export const Border = z.object({
-	runningLength: DimensionInput1D,
+	runningLength: BorderLength,
 	orientation: z.enum(['SOLDIER_ROW', 'TIP_TO_TIP']),
 	stones: Stone1D.array()
 });

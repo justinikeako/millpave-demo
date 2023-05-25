@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { StoneProject, Unit } from '@/types/quote';
 
 type Item = {
@@ -11,13 +12,12 @@ type Item = {
 };
 
 type StageContextValue = {
-	values: StoneProject;
 	items: Item[];
 	currentStageIndex: number;
 	queuedStageIndex: number;
+	setStageIndex(newStageIndex: number): void;
 	queueStageIndex(newStageIndex: number): void;
 	commitQueuedIndex(): void;
-	setValues(newValues: StoneProject): void;
 	setItems(newValues: Item[]): void;
 };
 
@@ -30,47 +30,49 @@ type StageProviderProps = React.PropsWithChildren<{
 }>;
 
 export function StageProvider(props: StageProviderProps) {
-	const [values, setValues] = useState<StoneProject>({
-		shape: 'rect',
+	const formMethods = useForm<StoneProject>({
+		defaultValues: {
+			shape: '' as 'rect',
 
-		dimensions: {
-			width: { value: 0, unit: 'ft' },
-			length: { value: 0, unit: 'ft' },
-			diameter: { value: 0, unit: 'ft' },
-			circumference: { value: 0, unit: 'ft' },
-			area: { value: 0, unit: 'sqft' },
-			runningLength: { value: 0, unit: 'ft' }
-		},
-		infill: [],
-		border: {
-			runningLength: { value: 0, unit: 'ft' },
-			orientation: 'SOLDIER_ROW',
-			stones: []
+			dimensions: {
+				width: { value: 0, unit: 'ft' },
+				length: { value: 0, unit: 'ft' },
+				diameter: { value: 0, unit: 'ft' },
+				circumference: { value: 0, unit: 'ft' },
+				area: { value: 0, unit: 'sqft' },
+				runningLength: { value: 0, unit: 'ft' }
+			},
+			infill: [],
+			border: {
+				runningLength: { value: 0, unit: 'auto' },
+				orientation: 'SOLDIER_ROW',
+				stones: []
+			}
 		}
 	});
+
 	const [items, setItems] = useState<Item[]>([]);
 	const [currentStageIndex, setCurrentStageIndex] = useState(0);
-	const [queueIndex, setQueueIndex] = useState<number>(0);
+	const [queuedStageIndex, queueStageIndex] = useState<number>(0);
 
 	const commitQueuedIndex = useCallback(() => {
-		if (queueIndex >= 0 && queueIndex <= props.maximumStageIndex)
-			setCurrentStageIndex(queueIndex);
-	}, [queueIndex, props.maximumStageIndex]);
+		if (queuedStageIndex >= 0 && queuedStageIndex <= props.maximumStageIndex)
+			setCurrentStageIndex(queuedStageIndex);
+	}, [queuedStageIndex, props.maximumStageIndex]);
 
 	return (
 		<StageContext.Provider
 			value={{
-				values,
 				items,
 				currentStageIndex,
-				queuedStageIndex: queueIndex,
-				setValues,
+				queuedStageIndex,
 				setItems,
-				commitQueuedIndex,
-				queueStageIndex: setQueueIndex
+				setStageIndex: setCurrentStageIndex,
+				queueStageIndex,
+				commitQueuedIndex
 			}}
 		>
-			{props.children}
+			<FormProvider {...formMethods}>{props.children}</FormProvider>
 		</StageContext.Provider>
 	);
 }

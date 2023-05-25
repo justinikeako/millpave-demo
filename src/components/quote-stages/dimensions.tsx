@@ -1,25 +1,26 @@
 import * as Select from '@/components/select';
-import { Controller, useFormContext } from 'react-hook-form';
-import { useStageContext } from './stage-context';
-import { Dimensions, Shape } from '@/types/quote';
+import { Controller, Path, useFormContext } from 'react-hook-form';
+import { StoneProject } from '@/types/quote';
 import { StageForm } from './form';
-import { set } from 'lodash-es';
-import { unitDisplayNameDictionary } from '@/lib/utils';
+import { calculateRunningFoot, unitDisplayNameDictionary } from '@/lib/utils';
+import { useState } from 'react';
 
 type DimensionInputProps = React.PropsWithChildren<{
-	fieldName: string;
+	fieldName: Path<StoneProject>;
 	label: string;
 	placeholder?: string;
 	dimension?: '1D' | '2D';
+	required?: boolean;
 }>;
 
 function DimensionInput({
 	fieldName,
 	label,
 	placeholder,
+	required,
 	dimension = '1D'
 }: DimensionInputProps) {
-	const { register, control } = useFormContext();
+	const { register, control, watch, setValue } = useFormContext();
 
 	return (
 		<div className="max-w-xs flex-1 space-y-4">
@@ -29,7 +30,17 @@ function DimensionInput({
 				className="flex w-full rounded-md bg-gray-200 p-4 pr-2"
 			>
 				<input
-					{...register(`${fieldName}.value`)}
+					{...register(`${fieldName}.value`, {
+						required,
+						onChange() {
+							if (watch('border.runningLength.unit') === 'auto') {
+								setValue(
+									'border.runningLength.value',
+									calculateRunningFoot(watch('shape'), watch('dimensions'))
+								);
+							}
+						}
+					})}
 					id={`${fieldName}.value`}
 					type="number"
 					className="no-arrows w-full flex-1 bg-transparent outline-none"
@@ -38,6 +49,7 @@ function DimensionInput({
 				<Controller
 					name={`${fieldName}.unit`}
 					control={control}
+					rules={{ required }}
 					render={({ field }) => (
 						<Select.Root value={field.value} onValueChange={field.onChange}>
 							<Select.Trigger basic />
@@ -88,59 +100,168 @@ function DimensionInput({
 	);
 }
 
-function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
-	switch (shape) {
-		case 'rect':
-			return dimensions.length.value * 2 + dimensions.width.value * 2;
-		case 'circle':
-			return dimensions.circumference.value
-				? dimensions.circumference.value
-				: Math.PI * dimensions.diameter.value;
-		case 'arbitrary':
-			return dimensions.runningLength.value;
-	}
+type SelectDimensionInputProps = React.PropsWithChildren<{
+	fields: { name: Path<StoneProject>; label: string; required: boolean }[];
+	placeholder?: string;
+	dimension?: '1D' | '2D';
+}>;
+
+function DimensionSelectInput({
+	fields,
+	placeholder,
+	dimension = '1D'
+}: SelectDimensionInputProps) {
+	const { register, control, watch, setValue } = useFormContext();
+	const [fieldIndex, setFieldIndex] = useState(0);
+
+	const field = fields[fieldIndex] as {
+		name: string;
+		label: string;
+		required: boolean;
+	};
+
+	return (
+		<div className="max-w-xs flex-1 space-y-4">
+			<Select.Root
+				value={fieldIndex.toString()}
+				onValueChange={(newFieldIndex) =>
+					setFieldIndex(parseInt(newFieldIndex))
+				}
+			>
+				<Select.Trigger basic />
+
+				<Select.Content>
+					<Select.ScrollUpButton />
+					<Select.Viewport>
+						{fields.map((field, index) => (
+							<Select.Item key={field.name} value={index.toString()}>
+								{field.label}
+							</Select.Item>
+						))}
+					</Select.Viewport>
+					<Select.ScrollDownButton />
+				</Select.Content>
+			</Select.Root>
+			<label
+				htmlFor={`${field.name}.value`}
+				className="flex w-full rounded-md bg-gray-200 p-4 pr-2"
+			>
+				<input
+					{...register(`${field.name}.value`, {
+						required: field.required,
+						onChange() {
+							if (watch('border.runningLength.unit') === 'auto') {
+								setValue(
+									'border.runningLength.value',
+									calculateRunningFoot(watch('shape'), watch('dimensions'))
+								);
+							}
+						}
+					})}
+					id={`${field.name}.value`}
+					inputMode="decimal"
+					type="number"
+					className="no-arrows w-full flex-1 bg-transparent outline-none"
+					placeholder={placeholder}
+				/>
+				<Controller
+					name={`${field.name}.unit`}
+					control={control}
+					rules={{ required: field.required }}
+					render={({ field }) => (
+						<Select.Root value={field.value} onValueChange={field.onChange}>
+							<Select.Trigger basic />
+
+							<Select.Content>
+								<Select.ScrollUpButton />
+								<Select.Viewport>
+									{dimension === '1D' && (
+										<>
+											<Select.Item value="ft">
+												{unitDisplayNameDictionary['ft'][0]}
+											</Select.Item>
+											<Select.Item value="in">
+												{unitDisplayNameDictionary['in'][0]}
+											</Select.Item>
+											<Select.Item value="m">
+												{unitDisplayNameDictionary['m'][0]}
+											</Select.Item>
+											<Select.Item value="cm">
+												{unitDisplayNameDictionary['cm'][0]}
+											</Select.Item>
+										</>
+									)}
+									{dimension === '2D' && (
+										<>
+											<Select.Item value="sqft">
+												{unitDisplayNameDictionary['sqft'][0]}
+											</Select.Item>
+											<Select.Item value="sqin">
+												{unitDisplayNameDictionary['sqin'][0]}
+											</Select.Item>
+											<Select.Item value="sqm">
+												{unitDisplayNameDictionary['sqm'][0]}
+											</Select.Item>
+											<Select.Item value="sqcm">
+												{unitDisplayNameDictionary['sqcm'][0]}
+											</Select.Item>
+										</>
+									)}
+								</Select.Viewport>
+								<Select.ScrollDownButton />
+							</Select.Content>
+						</Select.Root>
+					)}
+				/>
+			</label>
+		</div>
+	);
 }
 
 export function DimensionsStage() {
-	const { values, setValues } = useStageContext();
+	const { watch } = useFormContext<StoneProject>();
+
+	const shape = watch('shape');
 
 	return (
-		<StageForm
-			onSubmit={(values) => {
-				const newValues = set(
-					structuredClone(values),
-					'border.runningLength.value',
-					calculateRunningFoot(values.shape, values.dimensions)
-				);
-
-				setValues(newValues);
-			}}
-		>
+		<StageForm>
 			<div className="space-y-16 px-32">
 				<h2 className="text-center text-2xl">Now, enter your measurements.</h2>
 				<div className="flex justify-center gap-4">
-					{values.shape === 'rect' && (
+					{shape === 'rect' && (
 						<>
 							<DimensionInput
 								fieldName="dimensions.width"
 								label="Width"
 								placeholder="Amount"
+								required
 							/>
 							<DimensionInput
 								fieldName="dimensions.length"
-								label="Height"
+								label="Length"
 								placeholder="Amount"
+								required
 							/>
 						</>
 					)}
-					{values.shape === 'circle' && (
-						<DimensionInput
-							fieldName="dimensions.circumference"
-							label="Circumference"
+					{shape === 'circle' && (
+						<DimensionSelectInput
+							fields={[
+								{
+									label: 'Circumference',
+									name: 'dimensions.circumference',
+									required: true
+								},
+								{
+									label: 'Diameter',
+									name: 'dimensions.diameter',
+									required: true
+								}
+							]}
 							placeholder="Amount"
 						/>
 					)}
-					{values.shape === 'arbitrary' && (
+					{shape === 'arbitrary' && (
 						<>
 							<DimensionInput
 								fieldName="dimensions.area"
@@ -149,8 +270,8 @@ export function DimensionsStage() {
 								dimension="2D"
 							/>
 							<DimensionInput
-								fieldName="dimensions.runningFoot"
-								label="Running Foot"
+								fieldName="dimensions.runningLength"
+								label="Running Length"
 								placeholder="Amount"
 							/>
 						</>

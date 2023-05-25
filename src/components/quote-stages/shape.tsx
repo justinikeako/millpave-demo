@@ -19,7 +19,7 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 				className="relative flex aspect-square w-full cursor-pointer flex-col rounded-md p-6 hover:bg-gray-100"
 			>
 				<input
-					{...register('shape')}
+					{...register('shape', { required: true })}
 					id={id}
 					value={id}
 					type="radio"

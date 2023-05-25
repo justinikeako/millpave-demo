@@ -12,8 +12,11 @@ import {
 	StoneProject,
 	Unit
 } from '@/types/quote';
-import { unitDisplayNameDictionary } from '@/lib/utils';
+import { calculateRunningFoot, unitDisplayNameDictionary } from '@/lib/utils';
 import { useStageContext } from './stage-context';
+import { roundTo } from '@/utils/number';
+import { round } from 'mathjs';
+import { PaverDetails } from '@/types/product';
 
 function toFt(value: number, unit: Exclude<Unit, 'fr' | 'pal' | 'unit'>) {
 	switch (unit) {
@@ -60,16 +63,27 @@ function calculateProjectArea(shape: Shape, dimensions: Dimensions) {
 	}
 }
 
-function getInfillItems(area: number, infill: Infill) {
+type Item = {
+	skuId: string;
+	displayName: string;
+	sqftCoverage: number;
+	sqftPrice: number;
+	details: PaverDetails;
+	signatures: string[];
+};
+
+type CartItem = {
+	displayName: string;
+	cost: number;
+	area: number;
+	quantity: number;
+	unit: 'pal' | 'pcs';
+};
+
+function getInfill(area: number, infill: Infill) {
 	let infillArea = area;
 
-	const stones: {
-		skuId: string;
-		displayName: string;
-		sqftCoverage: number;
-		sqftPrice: number;
-		signatures: string[];
-	}[] = [];
+	const stones: Item[] = [];
 
 	// Cut out fixed values first; divy up ratio values afterwards
 	const fractionalStones: Stone2D[] = [];
@@ -90,15 +104,15 @@ function getInfillItems(area: number, infill: Infill) {
 			unit === 'unit'
 				? stone.coverage.value / stone.metadata.details.pcs_per_sqft
 				: toSqft(stone.coverage.value, unit);
-		infillArea -= fixedSegmentArea;
 
-		console.log('Fixed infill segment area:', fixedSegmentArea);
+		infillArea -= fixedSegmentArea;
 
 		stones.push({
 			skuId: stone.skuId,
 			displayName: stone.metadata.displayName,
 			sqftCoverage: fixedSegmentArea,
 			sqftPrice: stone.metadata.price,
+			details: stone.metadata.details,
 			signatures: ['infill']
 		});
 	}
@@ -112,6 +126,7 @@ function getInfillItems(area: number, infill: Infill) {
 			displayName: stone.metadata.displayName,
 			sqftCoverage: fractionalSegmentArea,
 			sqftPrice: stone.metadata.price,
+			details: stone.metadata.details,
 			signatures: ['infill']
 		});
 	}
@@ -119,18 +134,15 @@ function getInfillItems(area: number, infill: Infill) {
 	return { items: stones };
 }
 
-function getBorderItems(border: Border) {
+function getBorder(border: Border) {
 	let borderArea = 0;
-	let runningFoot = border.runningLength.value;
+	let runningFoot = toFt(
+		border.runningLength.value,
+		border.runningLength.unit === 'auto' ? 'ft' : border.runningLength.unit
+	);
 	const orientation = border.orientation;
 
-	const stones: {
-		skuId: string;
-		displayName: string;
-		sqftCoverage: number;
-		sqftPrice: number;
-		signatures: string[];
-	}[] = [];
+	const stones: Item[] = [];
 	// Cut out fixed values first; divy up ratio values afterwards
 	const fractionalStones: Stone1D[] = [];
 	let fractionalTotal = 0;
@@ -173,6 +185,7 @@ function getBorderItems(border: Border) {
 			displayName: stone.metadata.displayName,
 			sqftCoverage: fixedSegmentArea,
 			sqftPrice: stone.metadata.price,
+			details: stone.metadata.details,
 			signatures: ['border']
 		});
 	}
@@ -194,6 +207,7 @@ function getBorderItems(border: Border) {
 			displayName: stone.metadata.displayName,
 			sqftCoverage: fractionalSegmentArea,
 			sqftPrice: stone.metadata.price,
+			details: stone.metadata.details,
 			signatures: ['border']
 		});
 	}
@@ -204,22 +218,8 @@ function getBorderItems(border: Border) {
 	};
 }
 
-function mergeItems(
-	inputItems: {
-		skuId: string;
-		displayName: string;
-		sqftCoverage: number;
-		sqftPrice: number;
-		signatures: string[];
-	}[]
-) {
-	const outputItems: {
-		skuId: string;
-		displayName: string;
-		sqftCoverage: number;
-		sqftPrice: number;
-		signatures: string[];
-	}[] = [];
+function mergeItems(inputItems: Item[]) {
+	const outputItems: Item[] = [];
 
 	for (const item of inputItems) {
 		const existingItem = outputItems.find((i) => i.skuId === item.skuId);
@@ -239,6 +239,56 @@ function mergeItems(
 	return outputItems;
 }
 
+function getCartItems(item: Item) {
+	const { sqft_per_pallet, pcs_per_sqft } = item.details;
+	const sqft_per_half_pallet = sqft_per_pallet / 2;
+
+	const palletArea = round(
+		roundTo(item.sqftCoverage, sqft_per_half_pallet, 'down'),
+		2
+	);
+	const palletCount = Math.floor(palletArea / sqft_per_half_pallet) / 2;
+	const pieceArea = round(
+		roundTo(item.sqftCoverage - palletArea, 1 / pcs_per_sqft, 'up'),
+		2
+	);
+	const pieceCount = Math.round(pieceArea * pcs_per_sqft);
+
+	const factoryCost = palletArea * item.sqftPrice;
+	const showroomCost = pieceArea * (item.sqftPrice + 20);
+
+	return [
+		{
+			displayName: item.displayName,
+			cost: factoryCost,
+			area: palletArea,
+			quantity: palletCount,
+			unit: 'pal' as const
+		},
+		{
+			displayName: item.displayName,
+			cost: showroomCost,
+			area: pieceArea,
+			quantity: pieceCount,
+			unit: 'pcs' as const
+		}
+	];
+}
+
+function getOrderDetails(cartItems: CartItem[]) {
+	let subtotal = 0;
+
+	for (const cartItem of cartItems) {
+		subtotal += cartItem.cost;
+	}
+
+	subtotal = round(subtotal, 2);
+	const tax = round(subtotal * 0.15, 2);
+	const total = round(subtotal + tax, 2);
+
+	return { subtotal, tax, total };
+}
+
 export function BorderStage() {
 	const { setItems } = useStageContext();
 
@@ -250,15 +300,16 @@ export function BorderStage() {
 					newValues.shape,
 					newValues.dimensions
 				);
-				const border = getBorderItems(newValues.border);
-				const infill = getInfillItems(
-					projectArea - border.area,
-					newValues.infill
-				);
+				const border = getBorder(newValues.border);
+				const infill = getInfill(projectArea - border.area, newValues.infill);
 
 				const mergedItems = mergeItems([...infill.items, ...border.items]);
 
-				console.log(mergedItems);
+				const cartItems = mergedItems.flatMap((item) => getCartItems(item));
+				const orderDetails = getOrderDetails(cartItems);
+
+				console.table(cartItems);
+				console.log(orderDetails);
 
 				setItems([
 					{
@@ -304,13 +355,15 @@ export function BorderStage() {
 }
 
 function BorderOptions() {
-	const { register, control } = useFormContext<StoneProject>();
+	const { register, watch, control, setValue } = useFormContext<StoneProject>();
+
+	const runningLengthUnit = watch('border.runningLength.unit');
 
 	return (
 		<div className="flex flex-wrap justify-center gap-4">
 			<div className="max-w-xs flex-1 space-y-4">
 				<label htmlFor="border.runningLength.value" className="font-semibold">
-					Running Foot
+					Running Length
 				</label>
 				<label
 					htmlFor="border.runningLength.value"
@@ -320,7 +373,8 @@ function BorderOptions() {
 						type="number"
 						id="border.runningLength.value"
 						{...register('border.runningLength.value')}
-						className="no-arrows w-full flex-1 bg-transparent outline-none"
+						readOnly={runningLengthUnit === 'auto'}
+						className="no-arrows w-full flex-1 bg-transparent outline-none read-only:text-gray-400"
 						placeholder="Amount"
 					/>
 
@@ -330,13 +384,23 @@ function BorderOptions() {
 						render={(runningLengthUnit) => (
 							<Select.Root
 								value={runningLengthUnit.field.value}
-								onValueChange={runningLengthUnit.field.onChange}
+								onValueChange={(value) => {
+									if (value === 'auto') {
+										setValue(
+											'border.runningLength.value',
+											calculateRunningFoot(watch('shape'), watch('dimensions'))
+										);
+									}
+
+									runningLengthUnit.field.onChange(value);
+								}}
 							>
 								<Select.Trigger basic />
 
 								<Select.Content>
 									<Select.ScrollUpButton />
 									<Select.Viewport>
+										<Select.Item value="auto">auto (ft)</Select.Item>
 										<Select.Item value="ft">
 											{unitDisplayNameDictionary['ft'][0]}
 										</Select.Item>

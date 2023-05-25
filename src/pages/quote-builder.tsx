@@ -12,6 +12,7 @@ import {
 } from '@/components/quote-stages/stage-context';
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
+import { useFormContext } from 'react-hook-form';
 
 const stages = [
 	ShapeStage,
@@ -28,20 +29,32 @@ type StageSelectorProps = React.PropsWithChildren<{
 }>;
 
 function StageSelector({ index, children }: StageSelectorProps) {
-	const { currentStageIndex, queueStageIndex } = useStageContext();
+	const { currentStageIndex, setStageIndex, queueStageIndex } =
+		useStageContext();
+	const { formState } = useFormContext();
 
 	const selected = currentStageIndex === index,
 		completed = currentStageIndex > index;
 
+	const currentStageIsValid = formState.isValid;
+	const currentStageIsInvalid = !currentStageIsValid;
+
+	const shouldSubmit = index > currentStageIndex;
+
 	return (
 		<li>
 			<button
+				disabled={currentStageIsInvalid || index > currentStageIndex + 1}
+				{...(shouldSubmit
+					? { type: 'submit', form: 'stage-form' }
+					: { type: 'button' })}
 				data-selected={selected || undefined}
 				data-completed={completed || undefined}
-				type="submit"
-				form="stage-form"
-				className="flex items-center gap-2 text-gray-500 data-[completed]:font-semibold data-[selected]:font-semibold data-[selected]:text-gray-900"
-				onClick={() => queueStageIndex(index)}
+				className="flex items-center gap-2 disabled:cursor-not-allowed disabled:text-gray-400 data-[completed]:font-semibold data-[selected]:font-semibold data-[selected]:text-gray-900"
+				onClick={() => {
+					if (shouldSubmit) queueStageIndex(index);
+					else setStageIndex(index);
+				}}
 			>
 				{children}
 			</button>
@@ -50,20 +63,22 @@ function StageSelector({ index, children }: StageSelectorProps) {
 }
 
 function StageFooter() {
-	const { currentStageIndex, queueStageIndex } = useStageContext();
+	const { currentStageIndex, setStageIndex, queueStageIndex } =
+		useStageContext();
+	const { formState } = useFormContext();
 
 	return (
 		<footer className="sticky bottom-0 z-40 flex justify-between bg-white px-32 pb-8 pt-6">
 			<nav>
-				<ul className="flex items-center justify-center gap-3">
+				<ul className="flex select-none items-center justify-center gap-3">
 					<StageSelector index={0}>Shape</StageSelector>
-					<li>&middot;</li>
+					<li className="[li:has(:disabled)+&]:text-gray-400">&middot;</li>
 					<StageSelector index={1}>Dimensions</StageSelector>
-					<li>&middot;</li>
+					<li className="[li:has(:disabled)+&]:text-gray-400">&middot;</li>
 					<StageSelector index={2}>Infill</StageSelector>
-					<li>&middot;</li>
+					<li className="[li:has(:disabled)+&]:text-gray-400">&middot;</li>
 					<StageSelector index={3}>Border</StageSelector>
-					<li>&middot;</li>
+					<li className="[li:has(:disabled)+&]:text-gray-400">&middot;</li>
 					<StageSelector index={4}>Review Items</StageSelector>
 				</ul>
 			</nav>
@@ -71,18 +86,20 @@ function StageFooter() {
 			<div className="flex gap-2">
 				<Button
 					variant="secondary"
-					type="submit"
-					form="stage-form"
+					type="button"
 					disabled={currentStageIndex <= 0}
-					onClick={() => queueStageIndex(currentStageIndex - 1)}
+					onClick={() => setStageIndex(currentStageIndex - 1)}
 				>
 					Back
 				</Button>
 				<Button
+					id="next"
 					variant="primary"
 					type="submit"
 					form="stage-form"
-					disabled={currentStageIndex >= maximumStageIndex}
+					disabled={
+						!formState.isValid || currentStageIndex >= maximumStageIndex
+					}
 					onClick={() => queueStageIndex(currentStageIndex + 1)}
 				>
 					Next
@@ -100,9 +117,21 @@ function CurrentStage() {
 	return CurrentStage ? <CurrentStage /> : null;
 }
 
+/**
+ * SPEC
+ * - Submit on enter
+ * - Persist values between navigations
+ * - Navigation buttons should react in real time to the form's validity
+ * - Navigation must be animated
+ * - Allow optional stages to be skipped
+ * - Invalidate dependent stages when the stage they depend on changes
+ * - Indicate which dependent stages have become invalid once invalidated
+ * - Allow navigation to previous stages even if invalid
+ * - Allow navigation to arbitrary stages only when all have been valid
+ */
 function Page() {
 	return (
-		<div className="flex min-h-full flex-col">
+		<>
 			<Head>
 				<title>Get a Quote — Millennium Paving Stones</title>
 			</Head>
@@ -123,7 +152,7 @@ function Page() {
 				</main>
 				<StageFooter />
 			</StageProvider>
-		</div>
+		</>
 	);
 }
 

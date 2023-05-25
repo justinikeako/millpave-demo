@@ -1,7 +1,24 @@
 import classNames from 'classnames';
-import { Unit } from '@/types/quote';
-import { Sku } from '@/types/product';
-import { ExtendedPaverDetails } from '@/types/product';
+import { Sku, ExtendedPaverDetails } from '@/types/product';
+import { Dimensions, Shape, Unit } from '@/types/quote';
+import { round } from 'mathjs';
+
+export function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
+	function inner(shape: Shape, dimensions: Dimensions) {
+		switch (shape) {
+			case 'rect':
+				return dimensions.length.value * 2 + dimensions.width.value * 2;
+			case 'circle':
+				return dimensions.circumference.value
+					? dimensions.circumference.value
+					: Math.PI * dimensions.diameter.value;
+			case 'arbitrary':
+				return dimensions.runningLength.value;
+		}
+	}
+
+	return round(inner(shape, dimensions), 2);
+}
 
 export function findSku(
 	skuId: string | undefined,

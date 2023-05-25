@@ -1,6 +1,6 @@
-import { FormProvider, useForm } from 'react-hook-form';
-import { useStageContext } from './stage-context';
+import { useFormContext } from 'react-hook-form';
 import { StoneProject } from '@/types/quote';
+import { useStageContext } from './stage-context';
 
 type StageFormProps = Omit<
 	React.ComponentPropsWithoutRef<'form'>,
@@ -10,26 +10,20 @@ type StageFormProps = Omit<
 };
 
 export function StageForm({ onSubmit, ...props }: StageFormProps) {
-	const { values, setValues, commitQueuedIndex } = useStageContext();
-	const formMethods = useForm<StoneProject>({
-		defaultValues: values
-	});
-
-	const { handleSubmit } = formMethods;
-
-	function saveData(newValues: StoneProject) {
-		setValues({ ...values, ...newValues });
-
-		if (onSubmit) onSubmit({ ...values, ...newValues });
-
-		commitQueuedIndex();
-	}
+	const { handleSubmit } = useFormContext<StoneProject>();
+	const { commitQueuedIndex } = useStageContext();
 
 	return (
-		<FormProvider {...formMethods}>
-			<form {...props} id="stage-form" onSubmit={handleSubmit(saveData)}>
-				{props.children}
-			</form>
-		</FormProvider>
+		<form
+			{...props}
+			id="stage-form"
+			onSubmit={handleSubmit((values) => {
+				if (onSubmit) onSubmit(values);
+
+				commitQueuedIndex();
+			})}
+		>
+			{props.children}
+		</form>
 	);
 }

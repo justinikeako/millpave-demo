@@ -108,6 +108,7 @@ type StoneEditorProps = {
 
 export function StoneEditor(props: StoneEditorProps) {
 	const { control } = useFormContext<StoneProject>();
+
 	const { fields, append, update, remove } = useFieldArray({
 		control,
 		keyName: 'id',
@@ -116,6 +117,13 @@ export function StoneEditor(props: StoneEditorProps) {
 
 	const [editIndex, setEditIndex] = useState(0);
 	const [sheetOpen, setSheetOpen] = useState(false);
+
+	const defaultSkuQuery = api.product.getSkuById.useQuery(
+		{ skuId: 'colonial_classic:grey' },
+		{ refetchOnWindowFocus: false }
+	);
+
+	const defaultSku = defaultSkuQuery.data;
 
 	const addStone = (stone: Stone) => append(stone);
 	const editStone = (index: number, stone: Stone) => update(index, stone);
@@ -130,34 +138,42 @@ export function StoneEditor(props: StoneEditorProps) {
 	return (
 		<div className="flex flex-wrap justify-center gap-4">
 			<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-				<div className="flex h-64 w-64 flex-col gap-4">
-					<SheetTrigger asChild>
+				{defaultSku ? (
+					<div className="flex h-64 w-64 flex-col gap-4">
+						<SheetTrigger asChild>
+							<button
+								type="button"
+								className={cn(
+									'flex w-full flex-1 items-center justify-center gap-2 rounded-lg p-6 ring-1 ring-inset ring-gray-400 hover:bg-gray-100 disabled:pointer-events-none disabled:text-gray-400 disabled:ring-gray-200',
+									sheetOpen &&
+										editIndex === -1 &&
+										'bg-gray-100 ring-2 ring-black'
+								)}
+								onClick={() => {
+									setEditIndex(-1);
+								}}
+							>
+								<span className="font-semibold">Add Stone</span>
+								<RectangleHorizontal className="h-5 w-5" />
+							</button>
+						</SheetTrigger>
 						<button
 							type="button"
-							className={cn(
-								'flex w-full flex-1 items-center justify-center gap-2 rounded-lg p-6 ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
-								sheetOpen && editIndex === -1 && 'bg-gray-100 ring-2 ring-black'
-							)}
-							onClick={() => {
-								setEditIndex(-1);
-							}}
+							disabled
+							className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg p-6 ring-1 ring-inset ring-gray-400 hover:bg-gray-100 disabled:pointer-events-none disabled:text-gray-400 disabled:ring-gray-200"
 						>
-							<span className="font-semibold">Add Stone</span>
-							<RectangleHorizontal className="h-5 w-5" />
+							<span className="font-semibold">Add Pattern</span>
+							<LayoutTemplate className="h-5 w-5" />
+							<span className="inline-block rounded-sm bg-gray-200 px-1 py-0.5 text-sm">
+								Coming Soon
+							</span>
 						</button>
-					</SheetTrigger>
-					<button
-						type="button"
-						disabled
-						className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 p-6 disabled:text-gray-400"
-					>
-						<span className="font-semibold">Add Pattern</span>
-						<LayoutTemplate className="h-5 w-5" />
-						<span className="inline-block rounded-sm bg-gray-200 px-1 py-0.5 text-sm">
-							Coming Soon
-						</span>
-					</button>
-				</div>
+					</div>
+				) : (
+					<div className="flex h-64 w-64 items-center justify-center gap-4 ">
+						Loading...
+					</div>
+				)}
 
 				<ul className="contents">
 					{fields.map((stone, index) => (
@@ -174,37 +190,37 @@ export function StoneEditor(props: StoneEditorProps) {
 				</ul>
 
 				<SheetContent position="right" size="sm">
-					<StoneForm
-						initialValues={fields[editIndex] as Stone}
-						onSubmit={handleSubmit}
-						dimension={props.dimension}
-					/>
+					{defaultSku && (
+						<StoneForm
+							initialValues={
+								fields[editIndex] || {
+									skuId: defaultSku.id,
+									metadata: {
+										displayName: defaultSku.displayName,
+										price: defaultSku.price,
+										details: defaultSku.details.rawData as PaverDetails
+									},
+									coverage: { value: 1, unit: 'fr' }
+								}
+							}
+							onSubmit={handleSubmit}
+							dimension={props.dimension}
+						/>
+					)}
 				</SheetContent>
 			</Sheet>
 		</div>
 	);
 }
 
-type StoneWithOptionalMetadata = Omit<Stone, 'metadata'> &
-	Partial<Pick<Stone, 'metadata'>>;
-
 type StoneFormProps = {
 	dimension: '1D' | '2D';
-	initialValues?: StoneWithOptionalMetadata;
-	onSubmit(stone: StoneWithOptionalMetadata): void;
+	initialValues: Stone;
+	onSubmit(stone: Stone): void;
 };
 
-const defaultStone: StoneWithOptionalMetadata = {
-	skuId: 'colonial_classic:grey',
-	coverage: { value: 1, unit: 'fr' }
-};
-
-function StoneForm({
-	dimension,
-	initialValues = defaultStone,
-	onSubmit
-}: StoneFormProps) {
-	const formMethods = useForm<StoneWithOptionalMetadata>({
+function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
+	const formMethods = useForm<Stone>({
 		defaultValues: initialValues
 	});
 	const { register, setValue, watch, handleSubmit } = formMethods;
@@ -229,18 +245,22 @@ function StoneForm({
 		currentPaver?.details
 	);
 
-	const currentMetadata: StoneMetadata | undefined = currentSku
+	const currentMetadata: StoneMetadata = currentSku
 		? {
 				displayName: currentSku.displayName,
 				price: currentSku.price,
 				details: currentSku.details.rawData as PaverDetails
 		  }
-		: undefined;
+		: initialValues.metadata;
+
+	const [previousMetadata, setPreviousMetadata] = useState(
+		initialValues.metadata
+	);
 
 	// Update metadata once it changes
-	const [previousMetadata, setPreviousMetadata] = useState(watch('metadata'));
+	if (currentMetadata && !isEqual(previousMetadata, currentMetadata)) {
+		console.log('Updating Metadata');
 
-	if (!isEqual(previousMetadata, currentMetadata)) {
 		setValue('metadata', currentMetadata);
 		setPreviousMetadata(currentMetadata);
 	}
@@ -258,7 +278,7 @@ function StoneForm({
 				<Button
 					variant="tertiary"
 					type="submit"
-					disabled={watch('metadata') === undefined}
+					disabled={currentSku === undefined}
 				>
 					<Check />
 				</Button>

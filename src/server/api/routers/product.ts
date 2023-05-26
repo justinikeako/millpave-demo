@@ -148,5 +148,15 @@ export const productRouter = createTRPCRouter({
 			});
 
 			return pavers;
+		}),
+	getSkuById: publicProcedure
+		.input(z.object({ skuId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const sku = await ctx.db.query.skus.findFirst({
+				where: eq(skus.id, input.skuId),
+				with: { details: true }
+			});
+
+			return sku;
 		})
 });

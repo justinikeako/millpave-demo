@@ -29,7 +29,7 @@ type StageSelectorProps = React.PropsWithChildren<{
 }>;
 
 function StageSelector({ index, children }: StageSelectorProps) {
-	const { currentStageIndex, setStageIndex, queueStageIndex } =
+	const { currentStageIndex, setStageIndex, queueStageIndex, stagesValidity } =
 		useStageContext();
 	const { formState } = useFormContext();
 
@@ -39,12 +39,19 @@ function StageSelector({ index, children }: StageSelectorProps) {
 	const currentStageIsValid = formState.isValid;
 	const currentStageIsInvalid = !currentStageIsValid;
 
-	const shouldSubmit = index > currentStageIndex;
+	const allStagesValid = !stagesValidity.includes(false);
+
+	const disabled = !(allStagesValid && stagesValidity[index])
+		? (currentStageIsInvalid && index > currentStageIndex) ||
+		  (currentStageIsValid && index > currentStageIndex + 1)
+		: false;
+
+	const shouldSubmit = !disabled && index > currentStageIndex;
 
 	return (
 		<li>
 			<button
-				disabled={currentStageIsInvalid || index > currentStageIndex + 1}
+				disabled={disabled}
 				{...(shouldSubmit
 					? { type: 'submit', form: 'stage-form' }
 					: { type: 'button' })}
@@ -120,14 +127,14 @@ function CurrentStage() {
 /**
  * SPEC
  * - Submit on enter
- * - Persist values between navigations
- * - Navigation buttons should react in real time to the form's validity
+ * - Persist values between navigations ✅
+ * - Navigation buttons should react in real time to the form's validity ✅
  * - Navigation must be animated
  * - Allow optional stages to be skipped
  * - Invalidate dependent stages when the stage they depend on changes
  * - Indicate which dependent stages have become invalid once invalidated
- * - Allow navigation to previous stages even if invalid
- * - Allow navigation to arbitrary stages only when all have been valid
+ * - Allow navigation to previous stages even if invalid ✅
+ * - Allow navigation to arbitrary stages only when all are valid ✅
  */
 function Page() {
 	return (

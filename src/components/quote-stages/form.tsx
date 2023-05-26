@@ -2,27 +2,14 @@ import { useFormContext } from 'react-hook-form';
 import { StoneProject } from '@/types/quote';
 import { useStageContext } from './stage-context';
 
-type StageFormProps = Omit<
-	React.ComponentPropsWithoutRef<'form'>,
-	'onSubmit'
-> & {
-	onSubmit?(newValues: StoneProject): void;
-};
+type StageFormProps = React.ComponentPropsWithoutRef<'form'>;
 
-export function StageForm({ onSubmit, ...props }: StageFormProps) {
+export function StageForm(props: StageFormProps) {
 	const { handleSubmit } = useFormContext<StoneProject>();
 	const { commitQueuedIndex } = useStageContext();
 
 	return (
-		<form
-			{...props}
-			id="stage-form"
-			onSubmit={handleSubmit((values) => {
-				if (onSubmit) onSubmit(values);
-
-				commitQueuedIndex();
-			})}
-		>
+		<form {...props} id="stage-form" onSubmit={handleSubmit(commitQueuedIndex)}>
 			{props.children}
 		</form>
 	);

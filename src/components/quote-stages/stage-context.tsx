@@ -1,8 +1,15 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useState
+} from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { StoneProject } from '@/types/quote';
 
 type StageContextValue = {
+	stagesValidity: boolean[];
 	currentStageIndex: number;
 	queuedStageIndex: number;
 	setStageIndex(newStageIndex: number): void;
@@ -41,7 +48,29 @@ export function StageProvider(props: StageProviderProps) {
 	});
 
 	const [currentStageIndex, setCurrentStageIndex] = useState(0);
-	const [queuedStageIndex, queueStageIndex] = useState<number>(0);
+	const [queuedStageIndex, queueStageIndex] = useState(0);
+	const [stagesValidity, setStagesValidity] = useState<boolean[]>([
+		false,
+		false,
+		true,
+		true,
+		true
+	]);
+
+	function setStageValidity(stageIndex: number, stageValidity: boolean) {
+		setStagesValidity((currentStagesValidity) => {
+			const newStagesValidity = structuredClone(currentStagesValidity);
+
+			newStagesValidity[stageIndex] = stageValidity;
+
+			return newStagesValidity;
+		});
+	}
+
+	useEffect(() => {
+		// Handle form validity change
+		setStageValidity(currentStageIndex, formMethods.formState.isValid);
+	}, [currentStageIndex, formMethods.formState.isValid]);
 
 	const commitQueuedIndex = useCallback(() => {
 		if (queuedStageIndex >= 0 && queuedStageIndex <= props.maximumStageIndex)
@@ -51,6 +80,7 @@ export function StageProvider(props: StageProviderProps) {
 	return (
 		<StageContext.Provider
 			value={{
+				stagesValidity,
 				currentStageIndex,
 				queuedStageIndex,
 				setStageIndex: setCurrentStageIndex,

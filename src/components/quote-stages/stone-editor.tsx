@@ -259,8 +259,6 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 
 	// Update metadata once it changes
 	if (currentMetadata && !isEqual(previousMetadata, currentMetadata)) {
-		console.log('Updating Metadata');
-
 		setValue('metadata', currentMetadata);
 		setPreviousMetadata(currentMetadata);
 	}

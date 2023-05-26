@@ -43,6 +43,7 @@ export const unitDisplayNameDictionary: {
 } = {
 	fr: ['part', 'parts'],
 	pal: ['pallet', 'pallets'],
+	pcs: ['piece', 'pieces'],
 	unit: ['unit', 'units'],
 	ft: ['ft', 'ft'],
 	in: ['in', 'in'],

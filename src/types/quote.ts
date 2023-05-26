@@ -9,7 +9,7 @@ type Unit1D = z.infer<typeof Unit1D>;
 const Unit2D = z.enum(['sqft', 'sqin', 'sqm', 'sqcm']);
 type Unit2D = z.infer<typeof Unit2D>;
 
-const CoverageUnit = z.enum(['fr', 'pal', 'unit']);
+const CoverageUnit = z.enum(['fr', 'pal', 'unit', 'pcs']);
 
 export const Unit = z.union([Unit1D, Unit2D, CoverageUnit]);
 export type Unit = z.infer<typeof Unit>;

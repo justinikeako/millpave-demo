@@ -1,24 +1,13 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { StoneProject, Unit } from '@/types/quote';
-
-type Item = {
-	displayName: string;
-	quantity: number;
-	unit: Unit;
-	price: number;
-	hasPlan: boolean;
-	priceWithPlan?: number;
-};
+import { StoneProject } from '@/types/quote';
 
 type StageContextValue = {
-	items: Item[];
 	currentStageIndex: number;
 	queuedStageIndex: number;
 	setStageIndex(newStageIndex: number): void;
 	queueStageIndex(newStageIndex: number): void;
 	commitQueuedIndex(): void;
-	setItems(newValues: Item[]): void;
 };
 
 export const StageContext = createContext<StageContextValue>(
@@ -51,7 +40,6 @@ export function StageProvider(props: StageProviderProps) {
 		}
 	});
 
-	const [items, setItems] = useState<Item[]>([]);
 	const [currentStageIndex, setCurrentStageIndex] = useState(0);
 	const [queuedStageIndex, queueStageIndex] = useState<number>(0);
 
@@ -63,10 +51,8 @@ export function StageProvider(props: StageProviderProps) {
 	return (
 		<StageContext.Provider
 			value={{
-				items,
 				currentStageIndex,
 				queuedStageIndex,
-				setItems,
 				setStageIndex: setCurrentStageIndex,
 				queueStageIndex,
 				commitQueuedIndex

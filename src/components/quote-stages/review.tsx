@@ -87,7 +87,7 @@ type OrderItem = {
 };
 
 function getInfill(area: number, infill: Infill) {
-	let infillArea = area;
+	let infillArea = Math.max(0, area);
 
 	const stones: Item[] = [];
 
@@ -137,7 +137,7 @@ function getInfill(area: number, infill: Infill) {
 		});
 	}
 
-	return { items: stones };
+	return { area: Math.max(0, area), items: stones };
 }
 
 function getBorder(border: Border) {
@@ -318,6 +318,14 @@ export function ReviewStage() {
 	const projectArea = calculateProjectArea(values.shape, values.dimensions);
 	const border = getBorder(values.border);
 	const infill = getInfill(projectArea - border.area, values.infill);
+
+	console.table([
+		{
+			'Project Area': projectArea,
+			'Border Area': border.area,
+			'Infill Area': infill.area
+		}
+	]);
 
 	const mergedItems = mergeItems([...infill.items, ...border.items]);
 

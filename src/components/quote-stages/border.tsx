@@ -1,14 +1,54 @@
+import { useState } from 'react';
 import * as Select from '@/components/select';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
 import { StoneProject } from '@/types/quote';
 import { calculateRunningFoot, unitDisplayNameDictionary } from '@/lib/utils';
+import { useStageContext } from './stage-context';
+import { Button } from '../button';
+import Balancer from 'react-wrap-balancer';
 
 export function BorderStage() {
+	const { currentStageIndex, setStageIndex, setStageValidity } =
+		useStageContext();
+	const [touched, setTouched] = useState(false);
+
+	if (!touched)
+		return (
+			<StageForm className="space-y-8 px-32">
+				<h2 className="text-center text-2xl">Add a border.</h2>
+				<p className="mx-auto max-w-sm text-center">
+					<Balancer ratio={1}>
+						A border consists of the pavers that create a defined edge or
+						boundary around the paved area.
+					</Balancer>
+				</p>
+				<div className="mx-auto flex w-fit gap-2">
+					<Button
+						variant="secondary"
+						type="button"
+						onClick={() => {
+							setStageValidity(currentStageIndex, true);
+							setStageIndex(currentStageIndex + 1);
+						}}
+					>
+						Skip
+					</Button>
+					<Button
+						variant="primary"
+						type="button"
+						onClick={() => setTouched(true)}
+					>
+						Add Border
+					</Button>
+				</div>
+			</StageForm>
+		);
+
 	return (
 		<StageForm className="space-y-16 px-32">
-			<h2 className="text-center text-2xl">Add a border.</h2>
+			<h2 className="text-center text-2xl">Add stones to your border.</h2>
 
 			<BorderOptions />
 

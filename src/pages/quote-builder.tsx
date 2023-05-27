@@ -127,15 +127,16 @@ function CurrentStage() {
 /**
  * SPEC
  * - Submit on enter
- * - Persist values between navigations ✅
- * - Navigation buttons should react in real time to the form's validity ✅
  * - Navigation must be animated
  * - Allow optional stages to be skipped
- * - Invalidate dependent stages when the stage they depend on changes
- * - Indicate which dependent stages have become invalid once invalidated
+ * - Persist values between navigations ✅
+ * - Navigation buttons should react in real time to the form's validity ✅
+ * - Invalidate dependent stages when the stage they depend on changes ✅
+ * - Indicate which dependent stages have become invalid once invalidated ✅
  * - Allow navigation to previous stages even if invalid ✅
  * - Allow navigation to arbitrary stages only when all are valid ✅
  */
+
 function Page() {
 	return (
 		<>

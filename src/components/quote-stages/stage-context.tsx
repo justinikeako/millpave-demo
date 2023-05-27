@@ -53,8 +53,8 @@ export function StageProvider(props: StageProviderProps) {
 	const [stagesValidity, setStagesValidity] = useState<boolean[]>([
 		false,
 		false,
-		true,
-		true,
+		false,
+		false,
 		true
 	]);
 

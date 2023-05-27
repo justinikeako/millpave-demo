@@ -112,6 +112,9 @@ dependencies:
   react-qr-code:
     specifier: ^2.0.11
     version: 2.0.11(react@18.2.0)
+  react-wrap-balancer:
+    specifier: ^0.5.0
+    version: 0.5.0(react@18.2.0)
   superjson:
     specifier: ^1.12.2
     version: 1.12.2
@@ -5370,6 +5373,14 @@ packages:
       debounce: 1.2.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /react-wrap-balancer@0.5.0(react@18.2.0):
+    resolution: {integrity: sha512-5vwe5QDczQ9zwAtv3iEVj8hdMbNwQtM/QlSNLJfDUzRE9noPtxevb+Kon916Mu2RUorCrAtashQ1F9BVBjdeZg==}
+    peerDependencies:
+      react: '>=16.8.0 || ^17.0.0 || ^18'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react@18.2.0:

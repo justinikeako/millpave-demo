@@ -112,7 +112,8 @@ export function StoneEditor(props: StoneEditorProps) {
 	const { fields, append, update, remove } = useFieldArray({
 		control,
 		keyName: 'id',
-		name: props.name
+		name: props.name,
+		rules: { minLength: 1, required: true }
 	});
 
 	const [editIndex, setEditIndex] = useState(0);

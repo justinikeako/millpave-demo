@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { StageForm } from './form';
 import { StoneEditor } from './stone-editor';
 import { Button } from '../button';
@@ -6,11 +5,17 @@ import { useStageContext } from './stage-context';
 import Balancer from 'react-wrap-balancer';
 
 export function InfillStage() {
-	const { currentStageIndex, setStageIndex, setStageValidity } =
-		useStageContext();
-	const [touched, setTouched] = useState(false);
+	const {
+		skippedStages,
+		currentStageIndex,
+		setStageIndex,
+		setStageValidity,
+		setStageSkipped
+	} = useStageContext();
 
-	if (!touched)
+	const isSkipped = skippedStages[currentStageIndex];
+
+	if (isSkipped === undefined || isSkipped === true)
 		return (
 			<StageForm className="space-y-8 px-32">
 				<h2 className="text-center text-2xl">Add an infill.</h2>
@@ -27,6 +32,7 @@ export function InfillStage() {
 						type="button"
 						onClick={() => {
 							setStageValidity(currentStageIndex, true);
+							setStageSkipped(currentStageIndex, true);
 							setStageIndex(currentStageIndex + 1);
 						}}
 					>
@@ -35,7 +41,7 @@ export function InfillStage() {
 					<Button
 						variant="primary"
 						type="button"
-						onClick={() => setTouched(true)}
+						onClick={() => setStageSkipped(currentStageIndex, false)}
 					>
 						Add Infill
 					</Button>

@@ -9,12 +9,14 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { StoneProject } from '@/types/quote';
 
 type StageContextValue = {
+	skippedStages: (boolean | undefined)[];
 	stagesValidity: boolean[];
 	currentStageIndex: number;
 	queuedStageIndex: number;
 	setStageIndex(newStageIndex: number): void;
 	queueStageIndex(newStageIndex: number): void;
 	setStageValidity(stageIndex: number, stageValidity: boolean): void;
+	setStageSkipped(stageIndex: number, stageIsSkipped: boolean): void;
 	commitQueuedIndex(): void;
 };
 
@@ -57,6 +59,23 @@ export function StageProvider(props: StageProviderProps) {
 		false,
 		true
 	]);
+	const [skippedStages, setSkippedStages] = useState<(boolean | undefined)[]>([
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		undefined
+	]);
+
+	function setStageSkipped(stageIndex: number, stageIsSkipped: boolean) {
+		setSkippedStages((currentSkippedStages) => {
+			const newSkippedStages = structuredClone(currentSkippedStages);
+
+			newSkippedStages[stageIndex] = stageIsSkipped;
+
+			return newSkippedStages;
+		});
+	}
 
 	function setStageValidity(stageIndex: number, stageValidity: boolean) {
 		setStagesValidity((currentStagesValidity) => {
@@ -81,13 +100,15 @@ export function StageProvider(props: StageProviderProps) {
 	return (
 		<StageContext.Provider
 			value={{
+				skippedStages,
 				stagesValidity,
 				currentStageIndex,
 				queuedStageIndex,
 				setStageIndex: setCurrentStageIndex,
 				queueStageIndex,
 				commitQueuedIndex,
-				setStageValidity
+				setStageValidity,
+				setStageSkipped
 			}}
 		>
 			<FormProvider {...formMethods}>{props.children}</FormProvider>

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import * as Select from '@/components/select';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -10,11 +9,21 @@ import { Button } from '../button';
 import Balancer from 'react-wrap-balancer';
 
 export function BorderStage() {
-	const { currentStageIndex, setStageIndex, setStageValidity } =
-		useStageContext();
-	const [touched, setTouched] = useState(false);
+	const {
+		skippedStages,
+		currentStageIndex,
+		setStageIndex,
+		setStageValidity,
+		setStageSkipped
+	} = useStageContext();
 
-	if (!touched)
+	const isSkipped = skippedStages[currentStageIndex];
+	const infillStageIsSkipped = skippedStages[currentStageIndex - 1];
+
+	if (
+		infillStageIsSkipped === false &&
+		(isSkipped === undefined || isSkipped === true)
+	)
 		return (
 			<StageForm className="space-y-8 px-32">
 				<h2 className="text-center text-2xl">Add a border.</h2>
@@ -30,6 +39,7 @@ export function BorderStage() {
 						type="button"
 						onClick={() => {
 							setStageValidity(currentStageIndex, true);
+							setStageSkipped(currentStageIndex, true);
 							setStageIndex(currentStageIndex + 1);
 						}}
 					>
@@ -38,7 +48,7 @@ export function BorderStage() {
 					<Button
 						variant="primary"
 						type="button"
-						onClick={() => setTouched(true)}
+						onClick={() => setStageSkipped(currentStageIndex, false)}
 					>
 						Add Border
 					</Button>

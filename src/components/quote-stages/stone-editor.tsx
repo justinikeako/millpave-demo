@@ -33,88 +33,33 @@ import {
 import { PaverDetails } from '@/types/product';
 import { isEqual } from 'lodash-es';
 import { Trash } from 'lucide-react';
-
-type StoneProps = React.PropsWithChildren<{
-	index: number;
-	displayName: string;
-	coverage: Coverage;
-	selected: boolean;
-	onSelect(): void;
-	onDelete(index: number): void;
-}>;
-
-export function StoneListItem({
-	index,
-	displayName,
-	coverage,
-	selected,
-	onSelect,
-	onDelete
-}: StoneProps) {
-	const coverageUnitDisplayName =
-		unitDisplayNameDictionary[coverage.unit][coverage.value == 1 ? 0 : 1];
-
-	return (
-		<li className="relative flex h-64 w-64 flex-col p-6">
-			<div className="flex-1" />
-			<SheetTrigger asChild>
-				<button
-					type="button"
-					className={cn(
-						'absolute inset-0 rounded-lg ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
-						selected && 'bg-gray-100 ring-2 ring-black'
-					)}
-					onClick={onSelect}
-				/>
-			</SheetTrigger>
-			<div className="pointer-events-none z-10 flex items-start gap-4">
-				<div className="flex-1">
-					<p className="font-semibold">{displayName}</p>
-					<p className="text-sm">
-						{coverage.value} {coverageUnitDisplayName}
-					</p>
-				</div>
-
-				<Button
-					variant="tertiary"
-					type="button"
-					className="pointer-events-auto z-10"
-					onClick={() => onDelete(index)}
-				>
-					<Trash className="h-5 w-5" />
-				</Button>
-			</div>
-		</li>
-	);
-}
-
-type SectionProps = React.PropsWithChildren<{
-	heading: string;
-}>;
-
-function Section({ heading, children }: SectionProps) {
-	return (
-		<section className="space-y-4">
-			<h3 className="text-md font-semibold">{heading}</h3>
-			{children}
-		</section>
-	);
-}
+import { useStageContext } from './stage-context';
 
 type StoneEditorProps = {
 	name: FieldArrayPath<StoneProject>;
 	dimension: '1D' | '2D';
+	stageIndex: number;
 };
 
 export function StoneEditor(props: StoneEditorProps) {
+	const { setStageValidity } = useStageContext();
 	const { control } = useFormContext<StoneProject>();
 
 	const { fields, append, update, remove } = useFieldArray({
 		control,
 		keyName: 'id',
-		name: props.name,
-		rules: { minLength: 1, required: true }
+		name: props.name
 	});
+
+	const currentStageValidity = fields.length > 0;
+	const [currentStagePreviousValidity, setcurrentStagePreviousValidity] =
+		useState(currentStageValidity);
+
+	if (currentStagePreviousValidity !== currentStageValidity) {
+		setStageValidity(props.stageIndex, fields.length > 0);
+
+		setcurrentStagePreviousValidity(currentStageValidity);
+	}
 
 	const [editIndex, setEditIndex] = useState(0);
 	const [sheetOpen, setSheetOpen] = useState(false);
@@ -211,6 +156,60 @@ export function StoneEditor(props: StoneEditorProps) {
 				</SheetContent>
 			</Sheet>
 		</div>
+	);
+}
+
+type StoneListItemProps = React.PropsWithChildren<{
+	index: number;
+	displayName: string;
+	coverage: Coverage;
+	selected: boolean;
+	onSelect(): void;
+	onDelete(index: number): void;
+}>;
+
+function StoneListItem({
+	index,
+	displayName,
+	coverage,
+	selected,
+	onSelect,
+	onDelete
+}: StoneListItemProps) {
+	const coverageUnitDisplayName =
+		unitDisplayNameDictionary[coverage.unit][coverage.value == 1 ? 0 : 1];
+
+	return (
+		<li className="relative flex h-64 w-64 flex-col p-6">
+			<div className="flex-1" />
+			<SheetTrigger asChild>
+				<button
+					type="button"
+					className={cn(
+						'absolute inset-0 rounded-lg ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
+						selected && 'bg-gray-100 ring-2 ring-black'
+					)}
+					onClick={onSelect}
+				/>
+			</SheetTrigger>
+			<div className="pointer-events-none z-10 flex items-start gap-4">
+				<div className="flex-1">
+					<p className="font-semibold">{displayName}</p>
+					<p className="text-sm">
+						{coverage.value} {coverageUnitDisplayName}
+					</p>
+				</div>
+
+				<Button
+					variant="tertiary"
+					type="button"
+					className="pointer-events-auto z-10"
+					onClick={() => onDelete(index)}
+				>
+					<Trash className="h-5 w-5" />
+				</Button>
+			</div>
+		</li>
 	);
 }
 
@@ -441,5 +440,18 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 				/>
 			</SheetBody>
 		</form>
+	);
+}
+
+type SectionProps = React.PropsWithChildren<{
+	heading: string;
+}>;
+
+function Section({ heading, children }: SectionProps) {
+	return (
+		<section className="space-y-4">
+			<h3 className="text-md font-semibold">{heading}</h3>
+			{children}
+		</section>
 	);
 }

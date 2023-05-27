@@ -17,8 +17,8 @@ export function BorderStage() {
 		setStageSkipped
 	} = useStageContext();
 
-	const isSkipped = skippedStages[currentStageIndex];
-	const infillStageIsSkipped = skippedStages[currentStageIndex - 1];
+	const isSkipped = skippedStages[3];
+	const infillStageIsSkipped = skippedStages[2];
 
 	if (
 		infillStageIsSkipped === false &&
@@ -62,7 +62,7 @@ export function BorderStage() {
 
 			<BorderOptions />
 
-			<StoneEditor name="border.stones" dimension="1D" />
+			<StoneEditor name="border.stones" dimension="1D" stageIndex={3} />
 		</StageForm>
 	);
 }

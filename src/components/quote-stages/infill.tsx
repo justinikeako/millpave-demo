@@ -13,7 +13,7 @@ export function InfillStage() {
 		setStageSkipped
 	} = useStageContext();
 
-	const isSkipped = skippedStages[currentStageIndex];
+	const isSkipped = skippedStages[2];
 
 	if (isSkipped === undefined || isSkipped === true)
 		return (
@@ -53,7 +53,7 @@ export function InfillStage() {
 		<StageForm className="space-y-16 px-32">
 			<h2 className="text-center text-2xl">Add stones to your infill.</h2>
 
-			<StoneEditor name="infill" dimension="2D" />
+			<StoneEditor name="infill" dimension="2D" stageIndex={2} />
 		</StageForm>
 	);
 }

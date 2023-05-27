@@ -12,7 +12,6 @@ import {
 } from '@/components/quote-stages/stage-context';
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
-import { useFormContext } from 'react-hook-form';
 import { AnimatePresence, Variants, motion } from 'framer-motion';
 
 const stages = [
@@ -70,9 +69,8 @@ function StageSelector({ index, children }: StageSelectorProps) {
 }
 
 function StageFooter() {
-	const { currentStageIndex, setStageIndex, queueStageIndex } =
+	const { currentStageIndex, stagesValidity, setStageIndex, queueStageIndex } =
 		useStageContext();
-	const { formState } = useFormContext();
 
 	return (
 		<footer className="sticky bottom-0 z-40 flex justify-between bg-white px-32 pb-8 pt-6">
@@ -105,7 +103,8 @@ function StageFooter() {
 					type="submit"
 					form="stage-form"
 					disabled={
-						!formState.isValid || currentStageIndex >= maximumStageIndex
+						!stagesValidity[currentStageIndex] ||
+						currentStageIndex >= maximumStageIndex
 					}
 					onClick={() => queueStageIndex(currentStageIndex + 1)}
 				>

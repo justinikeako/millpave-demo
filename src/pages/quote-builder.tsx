@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import Head from 'next/head';
 import { ShapeStage } from '@/components/quote-stages/shape';
 import { DimensionsStage } from '@/components/quote-stages/dimensions';
@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
 import { AnimatePresence, Variants, motion } from 'framer-motion';
+import { OrchestratedReveal } from '@/components/reveal';
 
 const stages = [
 	ShapeStage,
@@ -68,12 +69,19 @@ function StageSelector({ index, children }: StageSelectorProps) {
 	);
 }
 
-function StageFooter() {
+const StageFooter = forwardRef<
+	React.ElementRef<'footer'>,
+	React.HTMLAttributes<HTMLDivElement>
+>((props, ref) => {
 	const { currentStageIndex, stagesValidity, setStageIndex, queueStageIndex } =
 		useStageContext();
 
 	return (
-		<footer className="sticky bottom-0 z-40 flex justify-between bg-white px-32 pb-8 pt-6">
+		<footer
+			{...props}
+			ref={ref}
+			className="sticky bottom-0 z-40 flex justify-between bg-white px-32 pb-8 pt-6"
+		>
 			<nav>
 				<ul className="flex select-none items-center justify-center gap-3">
 					<StageSelector index={0}>Shape</StageSelector>
@@ -113,7 +121,9 @@ function StageFooter() {
 			</div>
 		</footer>
 	);
-}
+});
+
+StageFooter.displayName = 'StageFooter';
 
 const variants: Variants = {
 	enter: (direction: number) => {
@@ -192,21 +202,28 @@ function Page() {
 				}
 			`}</style>
 
-			<header className="flex select-none items-center justify-between px-8 py-8 md:px-24 lg:px-32">
-				<Link scroll={false} href="/">
-					<Logo />
-				</Link>
+			<OrchestratedReveal asChild>
+				<header className="flex select-none items-center justify-between px-8 py-8 md:px-24 lg:px-32">
+					<Link scroll={false} href="/">
+						<Logo />
+					</Link>
 
-				<Link scroll={false} href="/">
-					Close Editor
-				</Link>
-			</header>
+					<Link scroll={false} href="/">
+						Close Editor
+					</Link>
+				</header>
+			</OrchestratedReveal>
 
 			<StageProvider maximumStageIndex={maximumStageIndex}>
-				<main className="flex flex-1 flex-col gap-y-24 overflow-x-hidden py-24">
-					<CurrentStage />
-				</main>
-				<StageFooter />
+				<OrchestratedReveal asChild delay={0.1}>
+					<main className="flex flex-1 flex-col gap-y-24 overflow-x-hidden py-24">
+						<CurrentStage />
+					</main>
+				</OrchestratedReveal>
+
+				<OrchestratedReveal asChild delay={0.1}>
+					<StageFooter />
+				</OrchestratedReveal>
 			</StageProvider>
 		</>
 	);

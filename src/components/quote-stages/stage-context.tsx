@@ -14,6 +14,7 @@ type StageContextValue = {
 	queuedStageIndex: number;
 	setStageIndex(newStageIndex: number): void;
 	queueStageIndex(newStageIndex: number): void;
+	setStageValidity(stageIndex: number, stageValidity: boolean): void;
 	commitQueuedIndex(): void;
 };
 
@@ -85,7 +86,8 @@ export function StageProvider(props: StageProviderProps) {
 				queuedStageIndex,
 				setStageIndex: setCurrentStageIndex,
 				queueStageIndex,
-				commitQueuedIndex
+				commitQueuedIndex,
+				setStageValidity
 			}}
 		>
 			<FormProvider {...formMethods}>{props.children}</FormProvider>

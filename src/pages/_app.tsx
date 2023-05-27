@@ -61,8 +61,9 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 				}}
 			>
 				<motion.div
+					id="nav-transition"
 					key={key}
-					className={showLayout ? 'min-h-full' : 'flex min-h-[100dvh] flex-col'}
+					className="min-h-full"
 					initial={{ y: 5, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					exit={{ y: 5, opacity: 0 }}

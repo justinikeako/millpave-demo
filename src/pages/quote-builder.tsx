@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
 import { useFormContext } from 'react-hook-form';
+import { AnimatePresence, Variants, motion } from 'framer-motion';
 
 const stages = [
 	ShapeStage,
@@ -31,12 +32,11 @@ type StageSelectorProps = React.PropsWithChildren<{
 function StageSelector({ index, children }: StageSelectorProps) {
 	const { currentStageIndex, setStageIndex, queueStageIndex, stagesValidity } =
 		useStageContext();
-	const { formState } = useFormContext();
 
 	const selected = currentStageIndex === index,
 		completed = currentStageIndex > index;
 
-	const currentStageIsValid = formState.isValid;
+	const currentStageIsValid = stagesValidity[currentStageIndex];
 	const currentStageIsInvalid = !currentStageIsValid;
 
 	const allStagesValid = !stagesValidity.includes(false);
@@ -116,18 +116,51 @@ function StageFooter() {
 	);
 }
 
+const variants: Variants = {
+	enter: (direction: number) => {
+		return {
+			x: direction > 0 ? 50 : -50,
+			opacity: 0
+		};
+	},
+	center: {
+		zIndex: 1,
+		x: 0,
+		opacity: 1
+	},
+	exit: {
+		zIndex: 0,
+		x: 0,
+		opacity: 0
+	}
+};
+
 function CurrentStage() {
-	const { currentStageIndex } = useStageContext();
+	const { navDirection, currentStageIndex } = useStageContext();
 
 	const CurrentStage = stages[currentStageIndex];
 
-	return CurrentStage ? <CurrentStage /> : null;
+	return (
+		<AnimatePresence initial={false} mode="wait">
+			<motion.div
+				key={currentStageIndex}
+				custom={navDirection}
+				variants={variants}
+				transition={{ type: 'spring', duration: 0.5 }}
+				initial="enter"
+				animate="center"
+				exit="exit"
+			>
+				{CurrentStage ? <CurrentStage /> : null}
+			</motion.div>
+		</AnimatePresence>
+	);
 }
 
 /**
  * SPEC
  * - Submit on enter 🤔
- * - Navigation must be animated
+ * - Navigation must be animated ✅
  * - Allow optional stages to be skipped ✅
  * - Persist values between navigations ✅
  * - Navigation buttons should react in real time to the form's validity ✅
@@ -144,6 +177,22 @@ function Page() {
 				<title>Get a Quote — Millennium Paving Stones</title>
 			</Head>
 
+			<style jsx global>{`
+				body {
+					overflow-y: scroll !important;
+				}
+
+				#__next {
+					height: 100% !important;
+				}
+
+				#nav-transition {
+					display: flex;
+					flex-direction: column;
+					min-height: 100%;
+				}
+			`}</style>
+
 			<header className="flex select-none items-center justify-between px-8 py-8 md:px-24 lg:px-32">
 				<Link scroll={false} href="/">
 					<Logo />
@@ -155,7 +204,7 @@ function Page() {
 			</header>
 
 			<StageProvider maximumStageIndex={maximumStageIndex}>
-				<main className="flex flex-1 flex-col gap-y-24 py-24">
+				<main className="flex flex-1 flex-col gap-y-24 overflow-x-hidden py-24">
 					<CurrentStage />
 				</main>
 				<StageFooter />

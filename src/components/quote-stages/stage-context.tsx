@@ -9,6 +9,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { StoneProject } from '@/types/quote';
 
 type StageContextValue = {
+	navDirection: number;
 	skippedStages: (boolean | undefined)[];
 	stagesValidity: boolean[];
 	currentStageIndex: number;
@@ -50,7 +51,18 @@ export function StageProvider(props: StageProviderProps) {
 		}
 	});
 
-	const [currentStageIndex, setCurrentStageIndex] = useState(0);
+	const [[currentStageIndex, navDirection], _setCurrentStageIndex] = useState([
+		0, 0
+	]);
+
+	function setCurrentStageIndex(newStageIndex: number) {
+		_setCurrentStageIndex(([oldStageIndex]) => {
+			const newDirection = newStageIndex - oldStageIndex;
+
+			return [newStageIndex, newDirection];
+		});
+	}
+
 	const [queuedStageIndex, queueStageIndex] = useState(0);
 	const [stagesValidity, setStagesValidity] = useState<boolean[]>([
 		false,
@@ -100,6 +112,7 @@ export function StageProvider(props: StageProviderProps) {
 	return (
 		<StageContext.Provider
 			value={{
+				navDirection,
 				skippedStages,
 				stagesValidity,
 				currentStageIndex,

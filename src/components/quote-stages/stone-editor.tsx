@@ -341,6 +341,7 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 							{...register('coverage.value')}
 							id="coverage.value"
 							type="number"
+							step="any"
 							className="no-arrows w-full flex-1 bg-transparent outline-none"
 							placeholder="Amount"
 						/>

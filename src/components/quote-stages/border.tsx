@@ -35,6 +35,7 @@ function BorderOptions() {
 					<input
 						type="number"
 						id="border.runningLength.value"
+						step="any"
 						{...register('border.runningLength.value')}
 						readOnly={runningLengthUnit === 'auto'}
 						className="no-arrows w-full flex-1 bg-transparent outline-none read-only:text-gray-400"

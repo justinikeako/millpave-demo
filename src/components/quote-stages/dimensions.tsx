@@ -43,6 +43,7 @@ function DimensionInput({
 					})}
 					id={`${fieldName}.value`}
 					type="number"
+					step="any"
 					className="no-arrows w-full flex-1 bg-transparent outline-none"
 					placeholder={placeholder}
 				/>
@@ -161,6 +162,7 @@ function DimensionSelectInput({
 					id={`${field.name}.value`}
 					inputMode="decimal"
 					type="number"
+					step="any"
 					className="no-arrows w-full flex-1 bg-transparent outline-none"
 					placeholder={placeholder}
 				/>

@@ -273,7 +273,7 @@ function getOrderItems(item: Item) {
 			area: palletArea,
 			quantity: palletCount,
 			unit: 'pal' as const,
-			weight: (palletCount / pcs_per_pallet) * lbs_per_unit,
+			weight: palletCount * pcs_per_pallet * lbs_per_unit,
 			signatures: item.signatures
 		});
 

@@ -112,3 +112,24 @@ export const StoneProject = z.object({
 });
 
 export type StoneProject = z.infer<typeof StoneProject>;
+
+export type QuoteItem = {
+	displayName: string;
+	cost: number;
+	quantity: number;
+	area: number;
+	weight: number;
+	unit: 'pal' | 'pcs';
+	signatures: string[];
+};
+
+export type Quote = {
+	items: QuoteItem[];
+	details: {
+		totalArea: number;
+		totalWeight: number;
+		subtotal: number;
+		tax: number;
+		total: number;
+	};
+};

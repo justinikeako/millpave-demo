@@ -81,8 +81,13 @@ const StageFooter = forwardRef<
 	React.ElementRef<'footer'>,
 	React.HTMLAttributes<HTMLDivElement>
 >((props, ref) => {
-	const { currentStageIndex, stagesValidity, setStageIndex, queueStageIndex } =
-		useStageContext();
+	const {
+		currentStageIndex,
+		stagesValidity,
+		setStageIndex,
+		queueStageIndex,
+		quote
+	} = useStageContext();
 
 	const currentStageIsValid = stagesValidity[currentStageIndex];
 	const maxValidIndex = countConsecutiveTrueValues(stagesValidity);
@@ -96,9 +101,8 @@ const StageFooter = forwardRef<
 			<nav>
 				<ul className="flex select-none items-center justify-center gap-3">
 					{stageDisplayNames.map((displayName, index) => (
-						<>
+						<React.Fragment key={'stage-selector-' + index}>
 							<StageSelector
-								key={'stage-selector-' + index}
 								index={index}
 								disabled={
 									index === 4
@@ -114,7 +118,7 @@ const StageFooter = forwardRef<
 									&middot;
 								</li>
 							)}
-						</>
+						</React.Fragment>
 					))}
 				</ul>
 			</nav>
@@ -128,18 +132,27 @@ const StageFooter = forwardRef<
 				>
 					Back
 				</Button>
-				<Button
-					id="next"
-					variant="primary"
-					type="submit"
-					form="stage-form"
-					disabled={
-						!currentStageIsValid || currentStageIndex >= maximumStageIndex
-					}
-					onClick={() => queueStageIndex(currentStageIndex + 1)}
-				>
-					Next
-				</Button>
+				{currentStageIndex >= maximumStageIndex ? (
+					<Button
+						variant="primary"
+						type="submit"
+						form="stage-form"
+						disabled={!currentStageIsValid}
+					>
+						Add {quote.items.length}{' '}
+						{quote.items.length === 1 ? 'Item' : 'Items'} to Quote
+					</Button>
+				) : (
+					<Button
+						variant="primary"
+						type="submit"
+						form="stage-form"
+						disabled={!currentStageIsValid}
+						onClick={() => queueStageIndex(currentStageIndex + 1)}
+					>
+						Next
+					</Button>
+				)}
 			</div>
 		</footer>
 	);

@@ -1,11 +1,15 @@
-function Logo({ withText }: { withText?: boolean }) {
+function Logo({
+	withText,
+	...props
+}: React.ComponentProps<'svg'> & { withText?: boolean }) {
 	const logoWithoutText = (
 		<svg
-			width="2.5em"
-			height="2.5em"
+			width="2.5rem"
+			height="2.5rem"
 			viewBox="0 0 40 40"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
+			{...props}
 		>
 			<path
 				fillRule="evenodd"
@@ -24,8 +28,8 @@ function Logo({ withText }: { withText?: boolean }) {
 
 	const logoWithText = (
 		<svg
-			width="12em"
-			height="3em"
+			width="10rem"
+			height="2.5rem"
 			viewBox="0 0 164 41"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"

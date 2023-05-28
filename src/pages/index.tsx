@@ -91,7 +91,7 @@ function Hero() {
 				<OrchestratedReveal delay={0.2} asChild>
 					<div className="flex space-x-2">
 						<Button variant="primary" asChild>
-							<Link scroll={false} href="/contact?form=quote">
+							<Link scroll={false} href="/quote-builder">
 								<span>Get a Quote</span>
 							</Link>
 						</Button>

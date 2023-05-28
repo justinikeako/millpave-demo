@@ -62,6 +62,10 @@ input.no-arrows[type='number'] {
 	font-size: inherit;
 }
 
+:root {
+	overflow-y: scroll;
+}
+
 :root,
 body {
 	height: 100%;
@@ -69,8 +73,6 @@ body {
 
 #__next {
 	min-height: 100%;
-
-	-webkit-tap-highlight-color: transparent;
 }
 
 b {

@@ -24,10 +24,11 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 	let key = router.asPath as string;
 
 	if (router.route === '/') key = '/';
+	if (router.route.startsWith('/contact')) key = '/contact';
 	if (router.route.startsWith('/products/')) key = '/products';
 	if (router.route.startsWith('/product/')) {
 		key = router.query.id;
-		// Super ugly hack, but there will will throw wierd errors if I don't use it :(
+		// Super ugly hack, but gSP will throw wierd errors if I don't use it :(
 		(pageProps as { id: string }).id = router.query.id;
 	}
 
@@ -52,7 +53,7 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 				Top
 			</div>
 
-			{showLayout && <Header />}
+			<Header simple={!showLayout} />
 			<AnimatePresence
 				mode="wait"
 				initial={false}

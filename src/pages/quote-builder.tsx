@@ -10,8 +10,6 @@ import {
 	useStageContext,
 	StageProvider
 } from '@/components/quote-stages/stage-context';
-import Link from 'next/link';
-import { Logo } from '@/components/logo';
 import { AnimatePresence, Variants, motion } from 'framer-motion';
 import { OrchestratedReveal } from '@/components/reveal';
 
@@ -80,7 +78,7 @@ const StageFooter = forwardRef<
 		<footer
 			{...props}
 			ref={ref}
-			className="sticky bottom-0 z-40 flex justify-between bg-white px-32 pb-8 pt-6"
+			className="sticky bottom-0 z-40 flex items-center justify-between bg-white px-32 pb-8 pt-6"
 		>
 			<nav>
 				<ul className="flex select-none items-center justify-center gap-3">
@@ -188,31 +186,20 @@ function Page() {
 
 			<style jsx global>{`
 				body {
-					overflow-y: scroll !important;
+					display: flex;
+					flex-direction: column;
 				}
 
 				#__next {
-					height: 100% !important;
+					display: contents;
 				}
 
 				#nav-transition {
 					display: flex;
 					flex-direction: column;
-					min-height: 100%;
+					flex: 1 1 0%;
 				}
 			`}</style>
-
-			<OrchestratedReveal asChild>
-				<header className="flex select-none items-center justify-between px-8 py-8 md:px-24 lg:px-32">
-					<Link scroll={false} href="/">
-						<Logo />
-					</Link>
-
-					<Link scroll={false} href="/">
-						Close Editor
-					</Link>
-				</header>
-			</OrchestratedReveal>
 
 			<StageProvider maximumStageIndex={maximumStageIndex}>
 				<OrchestratedReveal asChild delay={0.1}>

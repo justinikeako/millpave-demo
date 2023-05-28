@@ -6,6 +6,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Logo } from './logo';
 import { OrchestratedReveal } from './reveal';
 import { Menu, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type NavLinkProps = {
 	href: string;
@@ -86,14 +87,14 @@ const variants = {
 
 const MotionNavLink = motion(NavLink);
 
-function Header() {
+function Header({ simple }: { simple: boolean }) {
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [promoOpen, setPromoOpen] = useState(true);
 
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>
-			<OrchestratedReveal asChild>
-				{promoOpen && (
+			{!simple && promoOpen && (
+				<OrchestratedReveal asChild>
 					<div className="relative flex flex-col items-center justify-center gap-4 bg-gray-900 p-4 text-white md:flex-row">
 						<p>Prices from $203/ft² in our Summer Sale!</p>{' '}
 						<div className="flex gap-2">
@@ -122,35 +123,40 @@ function Header() {
 							<X />
 						</Button>
 					</div>
-				)}
-			</OrchestratedReveal>
-			<div className="md:h-4" />
+				</OrchestratedReveal>
+			)}
 			<OrchestratedReveal asChild>
-				<header className="sticky top-0 z-40 bg-white">
+				<header
+					className={cn('bg-white md:mt-4', !simple && 'sticky top-0 z-40')}
+				>
 					<nav className="flex select-none items-center justify-between px-8 py-4 md:px-24 lg:px-32">
 						<Link scroll={false} href="/">
-							<div className="max-sm:hidden">
-								<Logo withText />
-							</div>
-							<div className="sm:hidden">
+							{simple ? (
 								<Logo />
-							</div>
+							) : (
+								<>
+									<Logo withText className="max-sm:hidden" />
+									<Logo className="sm:hidden" />
+								</>
+							)}
 						</Link>
 
 						{/* Desktop Links */}
-						<ul className="flex flex-row items-center gap-8 bg-transparent px-0 font-normal text-gray-900 max-lg:hidden">
-							<NavLink href="/products/all">Products</NavLink>
-							<NavLink href="/gallery">Get Inspired</NavLink>
-							<NavLink href="/#where-to-buy">Where to Buy</NavLink>
-							<NavLink href="/contact">Contact Us</NavLink>
-							<li>
-								<Button variant="primary" asChild>
-									<Link scroll={false} href="/quote-builder">
-										Get A Quote
-									</Link>
-								</Button>
-							</li>
-						</ul>
+						{!simple && (
+							<ul className="flex flex-row items-center gap-8 bg-transparent px-0 font-normal text-gray-900 max-lg:hidden">
+								<NavLink href="/products/all">Products</NavLink>
+								<NavLink href="/gallery">Get Inspired</NavLink>
+								<NavLink href="/#where-to-buy">Where to Buy</NavLink>
+								<NavLink href="/contact">Contact Us</NavLink>
+								<li>
+									<Button variant="primary" asChild>
+										<Link scroll={false} href="/quote-builder">
+											Get A Quote
+										</Link>
+									</Button>
+								</li>
+							</ul>
+						)}
 
 						{/* Mobile Menu */}
 						<AnimatePresence>
@@ -238,7 +244,10 @@ function Header() {
 						</AnimatePresence>
 
 						<Dialog.Trigger asChild>
-							<Button variant="tertiary" className=" lg:hidden">
+							<Button
+								variant="tertiary"
+								className={simple ? undefined : 'lg:hidden'}
+							>
 								<Menu />
 							</Button>
 						</Dialog.Trigger>

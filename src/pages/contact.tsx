@@ -45,7 +45,7 @@ function Page() {
 						transition={{ delay: 0.2, ...slowTransition }}
 						className="top-8 flex-1 space-y-8"
 					>
-						<h2 className="text-xl">Contact Form</h2>
+						<h2 className="text-lg">Contact Form</h2>
 
 						<form className="space-y-8">
 							<Select.Root
@@ -82,7 +82,7 @@ function Page() {
 						transition={{ delay: 0.3, ...slowTransition }}
 						className="top-8 flex-1 space-y-8 self-start lg:sticky lg:block"
 					>
-						<h2 className="text-xl">Millennium Locations</h2>
+						<h2 className="text-lg">Millennium Locations</h2>
 						<ul className="flex gap-4">
 							<li>
 								<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 font-semibold text-white">

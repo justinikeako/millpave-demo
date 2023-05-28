@@ -25,24 +25,15 @@ const maximumStageIndex = stages.length - 1;
 
 type StageSelectorProps = React.PropsWithChildren<{
 	index: number;
+	disabled: boolean;
 }>;
 
-function StageSelector({ index, children }: StageSelectorProps) {
-	const { currentStageIndex, setStageIndex, queueStageIndex, stagesValidity } =
+function StageSelector({ index, disabled, children }: StageSelectorProps) {
+	const { currentStageIndex, setStageIndex, queueStageIndex } =
 		useStageContext();
 
 	const selected = currentStageIndex === index,
 		completed = currentStageIndex > index;
-
-	const currentStageIsValid = stagesValidity[currentStageIndex];
-	const currentStageIsInvalid = !currentStageIsValid;
-
-	const allStagesValid = !stagesValidity.includes(false);
-
-	const disabled = !(allStagesValid && stagesValidity[index])
-		? (currentStageIsInvalid && index > currentStageIndex) ||
-		  (currentStageIsValid && index > currentStageIndex + 1)
-		: false;
 
 	const shouldSubmit = !disabled && index > currentStageIndex;
 
@@ -67,12 +58,34 @@ function StageSelector({ index, children }: StageSelectorProps) {
 	);
 }
 
+function countConsecutiveTrueValues(arr: boolean[]): number {
+	let count = 0;
+
+	for (let i = 0; i < arr.length; i++) {
+		if (arr[i]) count++;
+		else break; // Exit the loop if a false value is encountered
+	}
+
+	return count - 1;
+}
+
+const stageDisplayNames = [
+	'Shape',
+	'Dimensions',
+	'Infill',
+	'Border',
+	'Review Items'
+];
+
 const StageFooter = forwardRef<
 	React.ElementRef<'footer'>,
 	React.HTMLAttributes<HTMLDivElement>
 >((props, ref) => {
 	const { currentStageIndex, stagesValidity, setStageIndex, queueStageIndex } =
 		useStageContext();
+
+	const currentStageIsValid = stagesValidity[currentStageIndex];
+	const maxValidIndex = countConsecutiveTrueValues(stagesValidity);
 
 	return (
 		<footer
@@ -82,15 +95,27 @@ const StageFooter = forwardRef<
 		>
 			<nav>
 				<ul className="flex select-none items-center justify-center gap-3">
-					<StageSelector index={0}>Shape</StageSelector>
-					<li className="[li:has(:disabled)+&]:text-gray-400">&middot;</li>
-					<StageSelector index={1}>Dimensions</StageSelector>
-					<li className="[li:has(:disabled)+&]:text-gray-400">&middot;</li>
-					<StageSelector index={2}>Infill</StageSelector>
-					<li className="[li:has(:disabled)+&]:text-gray-400">&middot;</li>
-					<StageSelector index={3}>Border</StageSelector>
-					<li className="[li:has(:disabled)+&]:text-gray-400">&middot;</li>
-					<StageSelector index={4}>Review Items</StageSelector>
+					{stageDisplayNames.map((displayName, index) => (
+						<>
+							<StageSelector
+								key={'stage-selector-' + index}
+								index={index}
+								disabled={
+									index === 4
+										? (stagesValidity[2] && stagesValidity[3]) === false
+										: index >
+										  (currentStageIsValid ? maxValidIndex + 1 : maxValidIndex)
+								}
+							>
+								{displayName}
+							</StageSelector>
+							{index < stageDisplayNames.length - 1 && (
+								<li className="[li:has(:disabled)+&]:text-gray-400">
+									&middot;
+								</li>
+							)}
+						</>
+					))}
 				</ul>
 			</nav>
 
@@ -109,8 +134,7 @@ const StageFooter = forwardRef<
 					type="submit"
 					form="stage-form"
 					disabled={
-						!stagesValidity[currentStageIndex] ||
-						currentStageIndex >= maximumStageIndex
+						!currentStageIsValid || currentStageIndex >= maximumStageIndex
 					}
 					onClick={() => queueStageIndex(currentStageIndex + 1)}
 				>
@@ -150,7 +174,7 @@ function CurrentStage() {
 	return (
 		<AnimatePresence initial={false} mode="wait">
 			<motion.div
-				key={currentStageIndex}
+				key={'stage-' + currentStageIndex}
 				custom={navDirection}
 				variants={variants}
 				transition={{ type: 'spring', duration: 0.5 }}
@@ -203,7 +227,7 @@ function Page() {
 
 			<StageProvider maximumStageIndex={maximumStageIndex}>
 				<OrchestratedReveal asChild delay={0.1}>
-					<main className="flex flex-1 flex-col gap-y-24 overflow-x-hidden py-24">
+					<main className="flex flex-shrink-0 flex-grow flex-col gap-y-24 overflow-x-hidden py-24">
 						<CurrentStage />
 					</main>
 				</OrchestratedReveal>

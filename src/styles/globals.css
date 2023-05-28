@@ -7,8 +7,18 @@
 	font-family: var(--font-inter);
 }
 
+:root,
+body {
+	height: 100%;
+}
+
 body {
 	font-size: 14px;
+	overflow-y: scroll;
+}
+
+#__next {
+	min-height: 100%;
 }
 
 #top {
@@ -60,19 +70,6 @@ input.no-arrows[type='number'] {
 .markdownanswer h2,
 .markdownanswer h3 {
 	font-size: inherit;
-}
-
-:root {
-	overflow-y: scroll;
-}
-
-:root,
-body {
-	height: 100%;
-}
-
-#__next {
-	min-height: 100%;
 }
 
 b {

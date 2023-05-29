@@ -108,7 +108,16 @@ export const StoneProject = z.object({
 
 	infill: Infill,
 
-	border: Border
+	border: Border,
+
+	addons: z
+		.object({
+			id: z.string(),
+			displayName: z.string(),
+			description: z.string(),
+			enabled: z.boolean()
+		})
+		.array()
 });
 
 export type StoneProject = z.infer<typeof StoneProject>;

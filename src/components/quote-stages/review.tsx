@@ -1,9 +1,10 @@
 import { formatNumber, formatPrice } from '@/utils/format';
-import { Plus } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { StageForm } from './form';
 import { unitDisplayNameDictionary } from '@/lib/utils';
 import { useStageContext } from './stage-context';
-import { QuoteItem } from '@/types/quote';
+import { QuoteItem, StoneProject } from '@/types/quote';
 
 export function ReviewStage() {
 	const { quote } = useStageContext();
@@ -13,20 +14,7 @@ export function ReviewStage() {
 			<h2 className="text-center text-2xl">Review your items.</h2>
 
 			<div className="flex justify-center">
-				<ul className="grid grid-flow-col grid-cols-[repeat(3,256px)] gap-4">
-					<Addons
-						title="Sealant"
-						description="Enhance the color of your stones. Protect them from the elements."
-					/>
-					<Addons
-						title="Polymeric Sand"
-						description="Prevent your pavers from shifting. Reduce weed growth between them."
-					/>
-					<Addons
-						title="5% Area Overage"
-						description="For repairs and adjustments; Future batches may not match exactly."
-					/>
-				</ul>
+				<Addons />
 			</div>
 
 			<ul>
@@ -62,23 +50,36 @@ export function ReviewStage() {
 	);
 }
 
-type AddonsProps = React.PropsWithChildren<{
-	title: string;
-	description: string;
-}>;
+function Addons() {
+	const { control } = useFormContext<StoneProject>();
+	const { fields, update } = useFieldArray({
+		control,
+		keyName: 'key',
+		name: 'addons'
+	});
 
-function Addons({ title, description }: AddonsProps) {
 	return (
-		<li>
-			<button className="flex h-full w-full items-center gap-2 rounded-lg border p-6 text-left hover:bg-gray-100">
-				<span className="flex-1">
-					<p className="font-semibold">{title}</p>
-					<p className="text-sm">{description}</p>
-				</span>
+		<ul className="grid grid-flow-col grid-cols-[repeat(3,256px)] gap-4">
+			{fields.map(({ key, ...addon }, index) => (
+				<li key={key}>
+					<button
+						className="flex h-full w-full items-center gap-2 rounded-lg border px-6 py-4 text-left hover:bg-gray-100 active:bg-gray-200"
+						onClick={() => update(index, { ...addon, enabled: !addon.enabled })}
+					>
+						<span className="flex-1 space-y-0.5">
+							<p className="font-medium">{addon.displayName}</p>
+							<p className="text-sm">{addon.description}</p>
+						</span>
 
-				<Plus />
-			</button>
-		</li>
+						{addon.enabled ? (
+							<Minus className="h-5 w-5 " />
+						) : (
+							<Plus className="h-5 w-5 " />
+						)}
+					</button>
+				</li>
+			))}
+		</ul>
 	);
 }
 

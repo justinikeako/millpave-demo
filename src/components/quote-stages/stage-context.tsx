@@ -320,7 +320,17 @@ function getQuote(project: StoneProject) {
 
 	const mergedItems = mergeItems([...infill.items, ...border.items]);
 
-	const orderItems = mergedItems.flatMap((item) => getQuoteItems(item));
+	const addAreaOverage = project.addons.some(
+		({ id, enabled }) => id === 'area_overage' && enabled
+	);
+
+	const orderItems = mergedItems.flatMap((item) =>
+		getQuoteItems(
+			addAreaOverage
+				? { ...item, sqftCoverage: round(item.sqftCoverage * 1.05, 2) }
+				: item
+		)
+	);
 	const orderDetails = getQuoteDetails(orderItems);
 
 	return {
@@ -367,7 +377,31 @@ const defaultValues: StoneProject = {
 		runningLength: { value: 0, unit: 'auto' },
 		orientation: 'SOLDIER_ROW',
 		stones: []
-	}
+	},
+
+	addons: [
+		{
+			id: 'sealant',
+			displayName: 'Sealant',
+			description:
+				'Enhance the color of your stones. Protect them from the elements.',
+			enabled: false
+		},
+		{
+			id: 'polymeric',
+			displayName: 'Polymeric Sand',
+			description:
+				'Prevent your pavers from shifting. Reduce weed growth between them.',
+			enabled: false
+		},
+		{
+			id: 'area_overage',
+			displayName: '5% Area Overage',
+			description:
+				'For repairs and adjustments; Future batches may not match exactly.',
+			enabled: false
+		}
+	]
 };
 
 export function StageProvider(props: StageProviderProps) {

@@ -12,7 +12,6 @@ import {
 import { LayoutTemplate, RectangleHorizontal, X } from 'lucide-react';
 import {
 	Controller,
-	FieldArrayPath,
 	useFieldArray,
 	useForm,
 	useFormContext
@@ -36,7 +35,7 @@ import { Trash } from 'lucide-react';
 import { useStageContext } from './stage-context';
 
 type StoneEditorProps = {
-	name: FieldArrayPath<StoneProject>;
+	name: 'infill' | 'border.stones';
 	dimension: '1D' | '2D';
 	stageIndex: number;
 };

@@ -16,13 +16,15 @@ export function BorderStage() {
 		setStageValidity,
 		setStageSkipped
 	} = useStageContext();
+	const { watch } = useFormContext<StoneProject>();
 
+	const hasStones = watch('border.stones').length > 0;
 	const isSkipped = skippedStages[3];
 	const infillStageIsSkipped = skippedStages[2];
 
 	if (
 		infillStageIsSkipped === false &&
-		(isSkipped === undefined || isSkipped === true)
+		((!hasStones && isSkipped === undefined) || isSkipped === true)
 	)
 		return (
 			<StageForm className="space-y-8 px-32">

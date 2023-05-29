@@ -117,7 +117,11 @@ function getInfill(area: number, infill: Infill) {
 		});
 	}
 
+	infillArea = Math.max(infillArea, 0);
+
 	for (const stone of fractionalStones) {
+		if (infillArea <= 0) break;
+
 		const fractionalSegmentArea =
 			infillArea * (stone.coverage.value / fractionalTotal);
 
@@ -190,7 +194,11 @@ function getBorder(border: Border) {
 		});
 	}
 
+	runningFoot = Math.max(runningFoot, 0);
+
 	for (const stone of fractionalStones) {
+		if (runningFoot <= 0) break;
+
 		const conversionFactorDictionary =
 			stone.metadata.details.conversion_factors;
 		if (!conversionFactorDictionary)
@@ -415,8 +423,8 @@ export function StageProvider(props: StageProviderProps) {
 		});
 	}
 
+	// Handle form validity change
 	useEffect(() => {
-		// Handle form validity change
 		setStageValidity(currentStageIndex, formMethods.formState.isValid);
 	}, [currentStageIndex, formMethods.formState.isValid]);
 
@@ -437,6 +445,7 @@ export function StageProvider(props: StageProviderProps) {
 		}
 	});
 
+	// Generate the quote when on the review stage. Regenerating if anything has changed.
 	if (currentStageIndex === 4) {
 		const currentProject = formMethods.watch();
 
@@ -445,7 +454,7 @@ export function StageProvider(props: StageProviderProps) {
 
 			setQuote(quote);
 
-			// If you don't clone the value, the state will be updated inadvertently.
+			// Cloning the current project ensures that this block runs whenever it changes. If it isn't cloned, the previous object will be subscribed to all form updates which means this the the current and previous project objects will only ever be unequal once.
 			setPreviousProject(structuredClone(currentProject));
 		}
 	}

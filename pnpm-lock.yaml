@@ -68,8 +68,8 @@ dependencies:
     specifier: ^16.0.3
     version: 16.0.3
   drizzle-orm:
-    specifier: 0.26.0-5f2b067
-    version: 0.26.0-5f2b067(@planetscale/database@1.7.0)(mysql2@3.3.1)
+    specifier: 0.26.2
+    version: 0.26.2(@planetscale/database@1.7.0)(mysql2@3.3.1)
   framer-motion:
     specifier: ^10.11.6
     version: 10.11.6(react-dom@18.2.0)(react@18.2.0)
@@ -160,8 +160,8 @@ devDependencies:
     specifier: ^10.4.14
     version: 10.4.14(postcss@8.4.21)
   drizzle-kit:
-    specifier: ^0.18.0
-    version: 0.18.0
+    specifier: ^0.18.1
+    version: 0.18.1
   eslint:
     specifier: 8.38.0
     version: 8.38.0
@@ -2485,8 +2485,8 @@ packages:
       wordwrap: 1.0.0
     dev: true
 
-  /drizzle-kit@0.18.0:
-    resolution: {integrity: sha512-43oH0XNWJDfMmVtDVnW8OV+tIs3xXDb1MjdsDiv0a7unQAylr0hpGG0HD5uEPWSbt7oxBots+hnYWxo98D0KAg==}
+  /drizzle-kit@0.18.1:
+    resolution: {integrity: sha512-Oqie227W2Dd7FuqX4pvQWeClSvnoPCIn2cO9JueeLWZqj3tpdBhnbgt4nLHhBbOdWRlTLYwXnkTDW3hYym/gGQ==}
     hasBin: true
     dependencies:
       camelcase: 7.0.1
@@ -2503,13 +2503,14 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.26.0-5f2b067(@planetscale/database@1.7.0)(mysql2@3.3.1):
-    resolution: {integrity: sha512-8DHjqBSrDjVS+msFijhgZQPHj/RoBVYELNAwLAqCJPUD4DCkcD1kIf7aLXzFX6UGd24nnbFBFsVJ8ZIjrhkkYw==}
+  /drizzle-orm@0.26.2(@planetscale/database@1.7.0)(mysql2@3.3.1):
+    resolution: {integrity: sha512-/iqKfPNgPu5hnmwDG65bNol6ClIC6NPJ86C5Tejx4Wn5CGDYfQEihM4bfqvHpVWjrEjhuAVOhDcA/bqadiK/hA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
       '@libsql/client': '*'
       '@neondatabase/serverless': '>=0.1'
+      '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
@@ -2532,6 +2533,8 @@ packages:
       '@libsql/client':
         optional: true
       '@neondatabase/serverless':
+        optional: true
+      '@opentelemetry/api':
         optional: true
       '@planetscale/database':
         optional: true

@@ -31,8 +31,8 @@ export function formatRestockDate(date?: Date) {
 
 	const difference = differenceInCalendarDays(date, new Date());
 
-	if (difference === 0) return format(date, "'Restocks at' h:mm bbb");
-	else if (difference === 1) return 'Restocks tomorrow';
+	if (difference === 0) return format(date, "'at' h:mm bbb");
+	else if (difference === 1) return 'tomorrow';
 
-	return format(date, "'Restocks' EEE, LLL d");
+	return format(date, 'EEE, LLL d');
 }

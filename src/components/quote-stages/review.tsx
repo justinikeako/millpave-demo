@@ -1,13 +1,24 @@
-import { formatNumber, formatPrice } from '@/utils/format';
+import { formatNumber, formatPrice, formatRestockDate } from '@/utils/format';
 import { Minus, Plus } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { StageForm } from './form';
 import { unitDisplayNameDictionary } from '@/lib/utils';
 import { useStageContext } from './stage-context';
-import { QuoteItem, StoneProject } from '@/types/quote';
+import { StoneProject } from '@/types/quote';
+import { api } from '@/utils/api';
+import { addWeeks } from 'date-fns';
 
 export function ReviewStage() {
 	const { quote } = useStageContext();
+
+	const itemsSkuIds = quote.items.map(({ skuId }) => skuId);
+
+	const itemsFulfillmentQuery = api.quote.getFulfillment.useQuery(
+		{ skuIds: itemsSkuIds },
+		{ refetchOnWindowFocus: false }
+	);
+
+	const itemsFulfillment = itemsFulfillmentQuery.data;
 
 	return (
 		<StageForm className="space-y-16 px-32">
@@ -18,9 +29,83 @@ export function ReviewStage() {
 			</div>
 
 			<ul>
-				{quote.items.map((item, index) => (
-					<Item key={index} {...item} />
-				))}
+				{quote.items.map((item, index) => {
+					const unitDisplayName =
+						unitDisplayNameDictionary[item.unit][item.quantity === 1 ? 0 : 1];
+					const fulfillment = itemsFulfillment?.find(
+						({ id }) => id === item.skuId
+					);
+
+					const hasStock =
+						fulfillment?.stock.find(
+							({ locationId }) => locationId === item.pickupLocationId
+						)?.quantity || 0 > 0;
+					const restockDate =
+						fulfillment?.restocks[0]?.locationId === item.pickupLocationId
+							? formatRestockDate(fulfillment?.restocks[0]?.date)
+							: undefined;
+					return (
+						<li
+							key={index}
+							className="-mx-8 flex gap-8 rounded-lg border border-transparent p-8 focus-within:bg-gray-100"
+						>
+							<div className="h-32 w-32 bg-gray-300" />
+
+							<div className="flex-1 space-y-4">
+								<div className="flex gap-16">
+									<h3 className="flex-[2] text-lg">{item.displayName}</h3>
+									<p
+										className="flex-1 text-lg"
+										title={
+											item.area ? `${formatNumber(item.area)} sqft` : undefined
+										}
+									>
+										{item.quantity} {unitDisplayName}
+									</p>
+									<p className="flex-1 text-right text-lg">
+										{formatPrice(item.cost)}
+									</p>
+								</div>
+								{item.area && item.area > 2000 && (
+									<div className="flex justify-between">
+										<p>Using our 50/50 payment plan:</p>
+										<p>{formatPrice(item.cost / 2)} upfront</p>
+									</div>
+								)}
+
+								<div className="flex items-center justify-between">
+									<div>
+										<p className="mb-2 font-semibold">Availability</p>
+										{itemsFulfillmentQuery.isLoading ? (
+											<p>Loading stock info...</p>
+										) : (
+											<>
+												<p>Order Today. Pick up on-site:</p>
+												<p>
+													Available{' '}
+													{hasStock
+														? 'Today'
+														: restockDate
+														? restockDate
+														: formatRestockDate(addWeeks(new Date(), 4))}{' '}
+													at Our{' '}
+													{item.pickupLocationId === 'STT_FACTORY'
+														? 'St. Thomas Factory'
+														: 'Kingston Showroom'}
+												</p>
+											</>
+										)}
+									</div>
+
+									<div className="flex flex-col items-end gap-2">
+										<button className="block">Remove</button>
+										<button className="block">Edit</button>
+									</div>
+								</div>
+							</div>
+						</li>
+					);
+				})}
 			</ul>
 
 			<div className="space-y-4 pl-40">
@@ -80,50 +165,5 @@ function Addons() {
 				</li>
 			))}
 		</ul>
-	);
-}
-
-type QuoteItemProps = QuoteItem;
-
-function Item(props: QuoteItemProps) {
-	const unit =
-		unitDisplayNameDictionary[props.unit][props.quantity === 1 ? 0 : 1];
-
-	return (
-		<li className="-mx-8 flex gap-8 rounded-lg border border-transparent p-8 focus-within:bg-gray-100">
-			<div className="h-32 w-32 bg-gray-300" />
-
-			<div className="flex-1 space-y-4">
-				<div className="flex gap-16">
-					<h3 className="flex-[2] text-lg">{props.displayName}</h3>
-					<p
-						className="flex-1 text-lg"
-						title={props.area ? `${formatNumber(props.area)} sqft` : undefined}
-					>
-						{props.quantity} {unit}
-					</p>
-					<p className="flex-1 text-right text-lg">{formatPrice(props.cost)}</p>
-				</div>
-				{props.area && props.area > 2000 && (
-					<div className="flex justify-between">
-						<p>Using our 50/50 payment plan:</p>
-						<p>{formatPrice(props.cost / 2)} upfront</p>
-					</div>
-				)}
-
-				<div className="flex items-center justify-between">
-					<div>
-						<p className="mb-2 font-semibold">Availability</p>
-						<p>Order Today. Pick up on-site:</p>
-						<p>Available Fri, May 7 at Our St. Thomas Factory</p>
-					</div>
-
-					<div className="flex flex-col items-end gap-2">
-						<button className="block">Remove</button>
-						<button className="block">Edit</button>
-					</div>
-				</div>
-			</div>
-		</li>
 	);
 }

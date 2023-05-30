@@ -248,7 +248,9 @@ export const skusRelations = relations(skus, ({ one, many }) => ({
 		fields: [skus.detailsMatcher],
 		references: [skuDetails.matcher]
 	}),
-	quoteItems: many(quoteItems)
+	quoteItems: many(quoteItems),
+	stock: many(skuStock),
+	restocks: many(skuRestocks)
 }));
 
 export const skuStockRelations = relations(skuStock, ({ one }) => ({

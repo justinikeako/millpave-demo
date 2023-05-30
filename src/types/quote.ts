@@ -122,6 +122,8 @@ export const StoneProject = z.object({
 export type StoneProject = z.infer<typeof StoneProject>;
 
 export type QuoteItem = {
+	skuId: string;
+	pickupLocationId: string;
 	displayName: string;
 	cost: number;
 	quantity: number;

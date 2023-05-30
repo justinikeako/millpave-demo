@@ -264,6 +264,8 @@ function getQuoteItems(item: Item) {
 
 	if (factoryCost > 0)
 		quoteItems.push({
+			skuId: item.skuId,
+			pickupLocationId: 'STT_FACTORY',
 			displayName: item.displayName,
 			cost: factoryCost,
 			area: palletArea,
@@ -275,6 +277,8 @@ function getQuoteItems(item: Item) {
 
 	if (showroomCost > 0)
 		quoteItems.push({
+			pickupLocationId: 'KNG_SHOWROOM',
+			skuId: item.skuId,
 			displayName: item.displayName,
 			cost: showroomCost,
 			area: pieceArea,
@@ -300,6 +304,8 @@ function getSealant(area: number) {
 
 	if (fiveGalPrice)
 		quoteItems.push({
+			skuId: 'oil_sealant:five_gallon',
+			pickupLocationId: 'STT_FACTORY',
 			displayName: 'DYNA Oil-Based Sealant (5 gallon)',
 			cost: fiveGalPrice,
 			quantity: fiveGalQuantity,
@@ -310,6 +316,8 @@ function getSealant(area: number) {
 
 	if (oneGalPrice)
 		quoteItems.push({
+			skuId: 'oil_sealant:one_gallon',
+			pickupLocationId: 'KNG_SHOWROOM',
 			displayName: 'DYNA Oil-Based Sealant (1 gallon)',
 			cost: oneGalPrice,
 			quantity: oneGalQuantity,
@@ -328,6 +336,8 @@ function getPolymeric(area: number) {
 	const price = round(2695.65 * quantity, 2);
 
 	return {
+		skuId: 'polymeric_sand:fifty_pound',
+		pickupLocationId: 'STT_FACTORY',
 		displayName: 'DYNA Polymeric Sand (50 pound)',
 		cost: price,
 		quantity: quantity,

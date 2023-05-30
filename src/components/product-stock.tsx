@@ -49,7 +49,7 @@ export function ProductStock({
 		return (
 			<p>
 				{formattedRestockDate
-					? formattedRestockDate
+					? 'Restocks ' + formattedRestockDate
 					: outOfStockMessage || 'Out of stock'}
 			</p>
 		);

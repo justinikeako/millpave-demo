@@ -63,10 +63,12 @@ export const productRouter = createTRPCRouter({
 		.query(async ({ ctx, input }) => {
 			const fulfillment = await ctx.db.query.products.findFirst({
 				where: eq(products.id, input.productId),
+				columns: {},
 				with: {
 					skuStock: true,
 					skuRestocks: {
-						where: gte(skuRestocks.date, new Date())
+						where: gte(skuRestocks.date, new Date()),
+						limit: 1
 					}
 				}
 			});

@@ -1,12 +1,12 @@
 import { Document } from 'langchain/document';
 import * as fs from 'fs/promises';
-import { CustomWebLoader } from '../utils/custom_web_loader';
+import { CustomWebLoader } from './utils/custom_web_loader';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { supabaseClient } from '../utils/supabase-client';
-import { getCatalogueDocument, getProductDocuments } from '../utils/db-loaders';
+import { supabaseClient } from '../src/utils/supabase-client';
+import { getCatalogueDocument, getProductDocuments } from './utils/db-loaders';
 
 async function getUrls() {
 	return [

@@ -6,7 +6,7 @@ import {
 	skuRestocks,
 	skuStock,
 	skus
-} from '@/db/schema';
+} from '@/drizzle/schema';
 
 export type Category = InferModel<typeof categories, 'select'>;
 type Product = InferModel<typeof products, 'select'>;

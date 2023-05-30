@@ -1,9 +1,74 @@
 import * as Select from '@/components/select';
-import { Controller, Path, useFormContext } from 'react-hook-form';
+import { Control, Controller, Path, useFormContext } from 'react-hook-form';
 import { StoneProject } from '@/types/quote';
 import { StageForm } from './form';
 import { calculateRunningFoot, unitDisplayNameDictionary } from '@/lib/utils';
 import { useState } from 'react';
+import { round } from 'mathjs';
+
+function UnitSelect({
+	control,
+	name,
+	dimension,
+	required
+}: {
+	name: string;
+	required?: boolean;
+	dimension?: '1D' | '2D';
+	control: Control;
+}) {
+	return (
+		<Controller
+			name={name}
+			control={control}
+			rules={{ required }}
+			render={({ field }) => (
+				<Select.Root value={field.value} onValueChange={field.onChange}>
+					<Select.Trigger basic />
+
+					<Select.Content>
+						<Select.ScrollUpButton />
+						<Select.Viewport>
+							{dimension === '1D' && (
+								<>
+									<Select.Item value="ft">
+										{unitDisplayNameDictionary['ft'][0]}
+									</Select.Item>
+									<Select.Item value="in">
+										{unitDisplayNameDictionary['in'][0]}
+									</Select.Item>
+									<Select.Item value="m">
+										{unitDisplayNameDictionary['m'][0]}
+									</Select.Item>
+									<Select.Item value="cm">
+										{unitDisplayNameDictionary['cm'][0]}
+									</Select.Item>
+								</>
+							)}
+							{dimension === '2D' && (
+								<>
+									<Select.Item value="sqft">
+										{unitDisplayNameDictionary['sqft'][0]}
+									</Select.Item>
+									<Select.Item value="sqin">
+										{unitDisplayNameDictionary['sqin'][0]}
+									</Select.Item>
+									<Select.Item value="sqm">
+										{unitDisplayNameDictionary['sqm'][0]}
+									</Select.Item>
+									<Select.Item value="sqcm">
+										{unitDisplayNameDictionary['sqcm'][0]}
+									</Select.Item>
+								</>
+							)}
+						</Select.Viewport>
+						<Select.ScrollDownButton />
+					</Select.Content>
+				</Select.Root>
+			)}
+		/>
+	);
+}
 
 type DimensionInputProps = React.PropsWithChildren<{
 	fieldName: Path<StoneProject>;
@@ -48,177 +113,120 @@ function DimensionInput({
 					className="no-arrows w-full flex-1 bg-transparent outline-none"
 					placeholder={placeholder}
 				/>
-				<Controller
-					name={`${fieldName}.unit`}
+				<UnitSelect
 					control={control}
-					rules={{ required }}
-					render={({ field }) => (
-						<Select.Root value={field.value} onValueChange={field.onChange}>
-							<Select.Trigger basic />
-
-							<Select.Content>
-								<Select.ScrollUpButton />
-								<Select.Viewport>
-									{dimension === '1D' && (
-										<>
-											<Select.Item value="ft">
-												{unitDisplayNameDictionary['ft'][0]}
-											</Select.Item>
-											<Select.Item value="in">
-												{unitDisplayNameDictionary['in'][0]}
-											</Select.Item>
-											<Select.Item value="m">
-												{unitDisplayNameDictionary['m'][0]}
-											</Select.Item>
-											<Select.Item value="cm">
-												{unitDisplayNameDictionary['cm'][0]}
-											</Select.Item>
-										</>
-									)}
-									{dimension === '2D' && (
-										<>
-											<Select.Item value="sqft">
-												{unitDisplayNameDictionary['sqft'][0]}
-											</Select.Item>
-											<Select.Item value="sqin">
-												{unitDisplayNameDictionary['sqin'][0]}
-											</Select.Item>
-											<Select.Item value="sqm">
-												{unitDisplayNameDictionary['sqm'][0]}
-											</Select.Item>
-											<Select.Item value="sqcm">
-												{unitDisplayNameDictionary['sqcm'][0]}
-											</Select.Item>
-										</>
-									)}
-								</Select.Viewport>
-								<Select.ScrollDownButton />
-							</Select.Content>
-						</Select.Root>
-					)}
+					name={`${fieldName}.unit`}
+					dimension={dimension}
+					required
 				/>
 			</label>
 		</div>
 	);
 }
 
-type SelectDimensionInputProps = React.PropsWithChildren<{
-	fields: { name: Path<StoneProject>; label: string; required: boolean }[];
-	placeholder?: string;
-	dimension?: '1D' | '2D';
-}>;
+function CircleInputs() {
+	const { watch, setValue, control } = useFormContext();
+	const radius = structuredClone(watch('dimensions.radius.value'));
 
-function DimensionSelectInput({
-	fields,
-	placeholder,
-	dimension = '1D'
-}: SelectDimensionInputProps) {
-	const { register, control, watch, setValue } = useFormContext();
-	const [fieldIndex, setFieldIndex] = useState(0);
-
-	const field = fields[fieldIndex] as {
-		name: string;
-		label: string;
-		required: boolean;
-	};
+	const [{ diameter, circumference }, setCircleDimensions] = useState({
+		diameter: round(radius * 2, 2),
+		circumference: round(2 * Math.PI * radius, 2)
+	});
 
 	return (
-		<div className="max-w-xs flex-1 space-y-4">
-			<Select.Root
-				value={fieldIndex.toString()}
-				onValueChange={(newFieldIndex) =>
-					setFieldIndex(parseInt(newFieldIndex))
+		<Controller
+			control={control}
+			name="dimensions.radius.value"
+			rules={{
+				required: true,
+				min: 0.01,
+				onChange() {
+					if (watch('border.runningLength.unit') === 'auto') {
+						setValue(
+							'border.runningLength.value',
+							calculateRunningFoot(watch('shape'), watch('dimensions'))
+						);
+					}
 				}
-			>
-				<Select.Trigger basic />
+			}}
+			render={({ field }) => {
+				function handleDiameterChange(newDiameter: number) {
+					setCircleDimensions({
+						diameter: newDiameter,
+						circumference: round(Math.PI * newDiameter, 2)
+					});
 
-				<Select.Content>
-					<Select.ScrollUpButton />
-					<Select.Viewport>
-						{fields.map((field, index) => (
-							<Select.Item key={field.name} value={index.toString()}>
-								{field.label}
-							</Select.Item>
-						))}
-					</Select.Viewport>
-					<Select.ScrollDownButton />
-				</Select.Content>
-			</Select.Root>
-			<label
-				htmlFor={`${field.name}.value`}
-				className="flex w-full rounded-md bg-gray-200 p-4 pr-2"
-			>
-				<input
-					{...register(`${field.name}.value`, {
-						required: field.required,
-						min: 0.01,
-						onChange() {
-							if (watch('border.runningLength.unit') === 'auto') {
-								setValue(
-									'border.runningLength.value',
-									calculateRunningFoot(watch('shape'), watch('dimensions'))
-								);
-							}
-						}
-					})}
-					id={`${field.name}.value`}
-					inputMode="decimal"
-					type="number"
-					step="any"
-					className="no-arrows w-full flex-1 bg-transparent outline-none"
-					placeholder={placeholder}
-				/>
-				<Controller
-					name={`${field.name}.unit`}
-					control={control}
-					rules={{ required: field.required }}
-					render={({ field }) => (
-						<Select.Root value={field.value} onValueChange={field.onChange}>
-							<Select.Trigger basic />
+					field.onChange(round(newDiameter / 2, 2));
+				}
 
-							<Select.Content>
-								<Select.ScrollUpButton />
-								<Select.Viewport>
-									{dimension === '1D' && (
-										<>
-											<Select.Item value="ft">
-												{unitDisplayNameDictionary['ft'][0]}
-											</Select.Item>
-											<Select.Item value="in">
-												{unitDisplayNameDictionary['in'][0]}
-											</Select.Item>
-											<Select.Item value="m">
-												{unitDisplayNameDictionary['m'][0]}
-											</Select.Item>
-											<Select.Item value="cm">
-												{unitDisplayNameDictionary['cm'][0]}
-											</Select.Item>
-										</>
-									)}
-									{dimension === '2D' && (
-										<>
-											<Select.Item value="sqft">
-												{unitDisplayNameDictionary['sqft'][0]}
-											</Select.Item>
-											<Select.Item value="sqin">
-												{unitDisplayNameDictionary['sqin'][0]}
-											</Select.Item>
-											<Select.Item value="sqm">
-												{unitDisplayNameDictionary['sqm'][0]}
-											</Select.Item>
-											<Select.Item value="sqcm">
-												{unitDisplayNameDictionary['sqcm'][0]}
-											</Select.Item>
-										</>
-									)}
-								</Select.Viewport>
-								<Select.ScrollDownButton />
-							</Select.Content>
-						</Select.Root>
-					)}
-				/>
-			</label>
-		</div>
+				// Event handler for circumference field change
+				function handleCircumferenceChange(newCircumference: number) {
+					setCircleDimensions({
+						circumference: newCircumference,
+						diameter: round(newCircumference / Math.PI, 2)
+					});
+
+					field.onChange(round(newCircumference / (2 * Math.PI), 2));
+				}
+
+				return (
+					<>
+						<div className="max-w-xs flex-1 space-y-4">
+							<label htmlFor="diameter">Diameter</label>
+							<label
+								htmlFor="diameter"
+								className="flex w-full rounded-md bg-gray-200 p-4 pr-2"
+							>
+								<input
+									{...field}
+									value={diameter}
+									onChange={(e) =>
+										handleDiameterChange(e.target.valueAsNumber || 0)
+									}
+									id="diameter"
+									type="number"
+									step="any"
+									className="no-arrows w-full flex-1 bg-transparent outline-none"
+									placeholder="Amount"
+								/>
+								<UnitSelect
+									control={control}
+									name="dimensions.radius.unit"
+									dimension="1D"
+									required
+								/>
+							</label>
+						</div>
+						<div className="max-w-xs flex-1 space-y-4">
+							<label htmlFor="circumference">Circumference</label>
+							<label
+								htmlFor="circumference"
+								className="flex w-full rounded-md bg-gray-200 p-4 pr-2"
+							>
+								<input
+									{...field}
+									value={circumference}
+									onChange={(e) =>
+										handleCircumferenceChange(e.target.valueAsNumber || 0)
+									}
+									id="circumference"
+									type="number"
+									step="any"
+									className="no-arrows w-full flex-1 bg-transparent outline-none"
+									placeholder="Amount"
+								/>
+								<UnitSelect
+									control={control}
+									name="dimensions.radius.unit"
+									dimension="1D"
+									required
+								/>
+							</label>
+						</div>
+					</>
+				);
+			}}
+		/>
 	);
 }
 
@@ -248,23 +256,7 @@ export function DimensionsStage() {
 							/>
 						</>
 					)}
-					{shape === 'circle' && (
-						<DimensionSelectInput
-							fields={[
-								{
-									label: 'Circumference',
-									name: 'dimensions.circumference',
-									required: true
-								},
-								{
-									label: 'Diameter',
-									name: 'dimensions.diameter',
-									required: true
-								}
-							]}
-							placeholder="Amount"
-						/>
-					)}
+					{shape === 'circle' && <CircleInputs />}
 					{shape === 'arbitrary' && (
 						<>
 							<DimensionInput

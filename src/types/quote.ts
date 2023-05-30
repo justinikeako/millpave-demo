@@ -80,8 +80,7 @@ export type Coverage = { value: number; unit: Unit };
 const Dimensions = z.object({
 	width: DimensionInput1D,
 	length: DimensionInput1D,
-	diameter: DimensionInput1D,
-	circumference: DimensionInput1D,
+	radius: DimensionInput1D,
 	area: DimensionInput2D,
 	runningLength: DimensionInput1D
 });

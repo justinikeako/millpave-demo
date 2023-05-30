@@ -52,20 +52,14 @@ const toSqft = toFt;
 function calculateProjectArea(shape: Shape, dimensions: Dimensions) {
 	const length = toFt(dimensions.length.value, dimensions.length.unit);
 	const width = toFt(dimensions.width.value, dimensions.width.unit);
-	const circumference = toFt(
-		dimensions.circumference.value,
-		dimensions.circumference.unit
-	);
-	const diameter = toFt(dimensions.diameter.value, dimensions.diameter.unit);
+	const radius = toFt(dimensions.radius.value, dimensions.radius.unit);
 	const area = toFt(dimensions.area.value, dimensions.area.unit);
 
 	switch (shape) {
 		case 'rect':
 			return length * width;
 		case 'circle':
-			return circumference
-				? Math.pow(circumference, 2) / (4 * Math.PI)
-				: Math.PI * Math.pow(diameter / 2, 2);
+			return Math.PI * Math.pow(radius, 2);
 		case 'arbitrary':
 			return area;
 	}
@@ -367,8 +361,7 @@ const defaultValues: StoneProject = {
 	dimensions: {
 		width: { value: 0, unit: 'ft' },
 		length: { value: 0, unit: 'ft' },
-		diameter: { value: 0, unit: 'ft' },
-		circumference: { value: 0, unit: 'ft' },
+		radius: { value: 0, unit: 'ft' },
 		area: { value: 0, unit: 'sqft' },
 		runningLength: { value: 0, unit: 'ft' }
 	},

@@ -9,9 +9,7 @@ export function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
 			case 'rect':
 				return dimensions.length.value * 2 + dimensions.width.value * 2;
 			case 'circle':
-				return dimensions.circumference.value
-					? dimensions.circumference.value
-					: Math.PI * dimensions.diameter.value;
+				return 2 * Math.PI * dimensions.radius.value;
 			case 'arbitrary':
 				return dimensions.runningLength.value;
 		}

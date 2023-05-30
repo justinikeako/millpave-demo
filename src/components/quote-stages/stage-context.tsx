@@ -260,10 +260,10 @@ function getQuoteItems(item: Item) {
 	const factoryCost = round(palletArea * item.sqftPrice, 2);
 	const showroomCost = round(pieceArea * (item.sqftPrice + 20), 2);
 
-	const orderItems: QuoteItem[] = [];
+	const quoteItems: QuoteItem[] = [];
 
 	if (factoryCost > 0)
-		orderItems.push({
+		quoteItems.push({
 			displayName: item.displayName,
 			cost: factoryCost,
 			area: palletArea,
@@ -274,7 +274,7 @@ function getQuoteItems(item: Item) {
 		});
 
 	if (showroomCost > 0)
-		orderItems.push({
+		quoteItems.push({
 			displayName: item.displayName,
 			cost: showroomCost,
 			area: pieceArea,
@@ -284,17 +284,67 @@ function getQuoteItems(item: Item) {
 			signatures: item.signatures
 		});
 
-	return orderItems;
+	return quoteItems;
 }
 
-function getQuoteDetails(orderItems: QuoteItem[]) {
+function getSealant(area: number) {
+	const fiveGalCoverage = roundTo(area, 500, 'down');
+	const fiveGalQuantity = fiveGalCoverage / 500;
+	const oneGalCoverage = roundTo(area - fiveGalCoverage, 100, 'up');
+	const oneGalQuantity = oneGalCoverage / 100;
+
+	const fiveGalPrice = round(25826.09 * fiveGalQuantity, 2);
+	const oneGalPrice = round(5913.04 * oneGalQuantity, 2);
+
+	const quoteItems: QuoteItem[] = [];
+
+	if (fiveGalPrice)
+		quoteItems.push({
+			displayName: 'DYNA Oil-Based Sealant (5 gallon)',
+			cost: fiveGalPrice,
+			quantity: fiveGalQuantity,
+			signatures: [],
+			weight: fiveGalQuantity * 25,
+			unit: 'unit'
+		});
+
+	if (oneGalPrice)
+		quoteItems.push({
+			displayName: 'DYNA Oil-Based Sealant (1 gallon)',
+			cost: oneGalPrice,
+			quantity: oneGalQuantity,
+			signatures: [],
+			weight: oneGalQuantity * 5,
+			unit: 'unit'
+		});
+
+	return quoteItems;
+}
+
+function getPolymeric(area: number) {
+	const coverage = roundTo(area, 100, 'up');
+	const quantity = coverage / 100;
+
+	const price = round(2695.65 * quantity, 2);
+
+	return {
+		displayName: 'DYNA Polymeric Sand (50 pound)',
+		cost: price,
+		quantity: quantity,
+		signatures: [],
+		weight: quantity * 50,
+		unit: 'unit' as const
+	};
+}
+
+function getQuoteDetails(quoteItems: QuoteItem[]) {
 	let subtotal = 0,
 		totalArea = 0,
 		totalWeight = 0;
 
-	for (const cartItem of orderItems) {
+	for (const cartItem of quoteItems) {
 		subtotal += cartItem.cost;
-		totalArea += cartItem.area;
+		totalArea += cartItem?.area || 0;
 		totalWeight += cartItem.weight;
 	}
 
@@ -317,19 +367,29 @@ function getQuote(project: StoneProject) {
 	const addAreaOverage = project.addons.some(
 		({ id, enabled }) => id === 'area_overage' && enabled
 	);
+	const addSealant = project.addons.some(
+		({ id, enabled }) => id === 'sealant' && enabled
+	);
+	const addPolymeric = project.addons.some(
+		({ id, enabled }) => id === 'polymeric' && enabled
+	);
 
-	const orderItems = mergedItems.flatMap((item) =>
+	const quoteItems = mergedItems.flatMap((item) =>
 		getQuoteItems(
 			addAreaOverage
 				? { ...item, sqftCoverage: round(item.sqftCoverage * 1.05, 2) }
 				: item
 		)
 	);
-	const orderDetails = getQuoteDetails(orderItems);
+
+	if (addSealant) quoteItems.push(...getSealant(projectArea));
+	if (addPolymeric) quoteItems.push(getPolymeric(projectArea));
+
+	const quoteDetails = getQuoteDetails(quoteItems);
 
 	return {
-		items: orderItems,
-		details: orderDetails
+		items: quoteItems,
+		details: quoteDetails
 	};
 }
 

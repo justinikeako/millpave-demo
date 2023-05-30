@@ -245,7 +245,7 @@ function Page() {
 					</main>
 				</OrchestratedReveal>
 
-				<OrchestratedReveal asChild delay={0.1}>
+				<OrchestratedReveal asChild delay={0.2}>
 					<StageFooter />
 				</OrchestratedReveal>
 			</StageProvider>

@@ -125,9 +125,9 @@ export type QuoteItem = {
 	displayName: string;
 	cost: number;
 	quantity: number;
-	area: number;
+	area?: number;
 	weight: number;
-	unit: 'pal' | 'pcs';
+	unit: 'pal' | 'pcs' | 'unit';
 	signatures: string[];
 };
 

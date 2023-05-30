@@ -95,16 +95,16 @@ function Item(props: QuoteItemProps) {
 
 			<div className="flex-1 space-y-4">
 				<div className="flex gap-16">
-					<h3 className="flex-1 text-lg">{props.displayName}</h3>
+					<h3 className="flex-[2] text-lg">{props.displayName}</h3>
 					<p
 						className="flex-1 text-lg"
-						title={`${formatNumber(props.area)} sqft`}
+						title={props.area ? `${formatNumber(props.area)} sqft` : undefined}
 					>
 						{props.quantity} {unit}
 					</p>
-					<p className="text-lg">{formatPrice(props.cost)}</p>
+					<p className="flex-1 text-right text-lg">{formatPrice(props.cost)}</p>
 				</div>
-				{props.area > 2000 && (
+				{props.area && props.area > 2000 && (
 					<div className="flex justify-between">
 						<p>Using our 50/50 payment plan:</p>
 						<p>{formatPrice(props.cost / 2)} upfront</p>

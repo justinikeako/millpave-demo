@@ -106,7 +106,7 @@ const StageFooter = forwardRef<
 								index={index}
 								disabled={
 									index === 4
-										? (stagesValidity[2] && stagesValidity[3]) === false
+										? maxValidIndex < 3
 										: index >
 										  (currentStageIsValid ? maxValidIndex + 1 : maxValidIndex)
 								}

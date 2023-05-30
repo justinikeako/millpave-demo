@@ -32,7 +32,7 @@ function DimensionInput({
 				<input
 					{...register(`${fieldName}.value`, {
 						required,
-						min: 1,
+						min: 0.01,
 						onChange() {
 							if (watch('border.runningLength.unit') === 'auto') {
 								setValue(
@@ -151,7 +151,7 @@ function DimensionSelectInput({
 				<input
 					{...register(`${field.name}.value`, {
 						required: field.required,
-						min: 1,
+						min: 0.01,
 						onChange() {
 							if (watch('border.runningLength.unit') === 'auto') {
 								setValue(

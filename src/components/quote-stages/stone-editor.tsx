@@ -337,7 +337,7 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 						className="flex w-full rounded-md bg-gray-200 p-4 pr-2"
 					>
 						<input
-							{...register('coverage.value')}
+							{...register('coverage.value', { min: 0.01 })}
 							id="coverage.value"
 							type="number"
 							step="any"

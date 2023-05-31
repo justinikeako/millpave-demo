@@ -53,6 +53,10 @@ export const unitDisplayNameDictionary: {
 	sqcm: ['cm²', 'cm²']
 };
 
+export function pluralize(value: number, [singular, plural]: [string, string]) {
+	return value + ' ' + (value === 1 ? singular : plural);
+}
+
 export function stopPropagate(
 	callback: (e: React.FormEvent<HTMLFormElement>) => void
 ) {

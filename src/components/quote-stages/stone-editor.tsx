@@ -26,6 +26,7 @@ import { StoneProject, Stone, Coverage, StoneMetadata } from '@/types/quote';
 import {
 	cn,
 	findSku,
+	pluralize,
 	stopPropagate,
 	unitDisplayNameDictionary
 } from '@/lib/utils';
@@ -175,8 +176,7 @@ function StoneListItem({
 	onSelect,
 	onDelete
 }: StoneListItemProps) {
-	const coverageUnitDisplayName =
-		unitDisplayNameDictionary[coverage.unit][coverage.value == 1 ? 0 : 1];
+	const coverageUnitDisplayName = unitDisplayNameDictionary[coverage.unit];
 
 	return (
 		<li className="relative flex h-64 w-64 flex-col p-6">
@@ -195,7 +195,7 @@ function StoneListItem({
 				<div className="flex-1">
 					<p className="font-semibold">{displayName}</p>
 					<p className="text-sm">
-						{coverage.value} {coverageUnitDisplayName}
+						{pluralize(coverage.value, coverageUnitDisplayName)}
 					</p>
 				</div>
 

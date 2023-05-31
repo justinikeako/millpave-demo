@@ -72,8 +72,8 @@ dependencies:
     specifier: ^16.0.3
     version: 16.0.3
   drizzle-orm:
-    specifier: 0.26.0-5f2b067
-    version: 0.26.0-5f2b067(@planetscale/database@1.7.0)(mysql2@3.3.1)
+    specifier: 0.26.3
+    version: 0.26.3(@planetscale/database@1.7.0)(mysql2@3.3.1)
   framer-motion:
     specifier: ^10.12.16
     version: 10.12.16(react-dom@18.2.0)(react@18.2.0)
@@ -2503,13 +2503,14 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.26.0-5f2b067(@planetscale/database@1.7.0)(mysql2@3.3.1):
-    resolution: {integrity: sha512-8DHjqBSrDjVS+msFijhgZQPHj/RoBVYELNAwLAqCJPUD4DCkcD1kIf7aLXzFX6UGd24nnbFBFsVJ8ZIjrhkkYw==}
+  /drizzle-orm@0.26.3(@planetscale/database@1.7.0)(mysql2@3.3.1):
+    resolution: {integrity: sha512-KefTFAXxFtBmDRZWgM71ucxUuDvNEiPgv0lg7qAPEfrQVfyzSz0ukUfNz2Ck4Pro6PEmYFJmA6oNQwwgENkk7g==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
       '@libsql/client': '*'
       '@neondatabase/serverless': '>=0.1'
+      '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
@@ -2532,6 +2533,8 @@ packages:
       '@libsql/client':
         optional: true
       '@neondatabase/serverless':
+        optional: true
+      '@opentelemetry/api':
         optional: true
       '@planetscale/database':
         optional: true

@@ -36,8 +36,8 @@ function ViewportReveal({ asChild, ...props }: ViewportRevealProps) {
 		<Comp
 			{...props}
 			ref={elementRef}
-			initial={{ y: 100, opacity: 0 }}
-			animate={elementIsInView && { y: 0, opacity: 1 }}
+			initial={{ opacity: 0 }}
+			animate={elementIsInView && { opacity: 1 }}
 			transition={slowTransition}
 		/>
 	);
@@ -58,7 +58,7 @@ function OrchestratedReveal({
 	return (
 		<Comp
 			{...props}
-			initial={{ y: 100, opacity: 0 }}
+			initial={{ y: -50, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
 			transition={{ ...slowTransition, delay }}
 		>

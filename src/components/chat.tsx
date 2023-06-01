@@ -8,6 +8,8 @@ import { MessagesSquare } from 'lucide-react';
 import { Send } from 'lucide-react';
 import { ChevronDown } from 'lucide-react';
 import { RefreshCcw } from 'lucide-react';
+import { OrchestratedReveal } from './reveal';
+
 type Message = {
 	text: string;
 	sender: string;
@@ -232,23 +234,12 @@ function Chat() {
 					)}
 				</AnimatePresence>
 
-				<motion.button
-					initial={{ y: 100, opacity: 0 }}
-					animate={{
-						y: 0,
-						opacity: 1,
-						transition: {
-							delay: 0.4,
-							type: 'spring',
-							stiffness: 100,
-							damping: 20
-						}
-					}}
-					exit={{ opacity: 0 }}
-					onClick={toggleOpen}
-					className="relative flex select-none rounded-lg bg-gray-900 p-4 text-white shadow-button  hover:bg-gray-800 active:bg-gray-700"
-				>
-					{/* {unreadMessageCount > 0 && (
+				<OrchestratedReveal asChild delay={0.4}>
+					<button
+						onClick={toggleOpen}
+						className="relative flex select-none rounded-lg bg-gray-900 p-4 text-white shadow-button  hover:bg-gray-800 active:bg-gray-700"
+					>
+						{/* {unreadMessageCount > 0 && (
 						<span className="absolute -left-1 -top-1 block rounded-full bg-red-600 p-1 font-semibold text-white">
 							<span className="block h-4 w-4 leading-4">
 								{unreadMessageCount}
@@ -256,8 +247,9 @@ function Chat() {
 						</span>
 					)} */}
 
-					<MessagesSquare className="h-8 w-8" />
-				</motion.button>
+						<MessagesSquare className="h-8 w-8" />
+					</button>
+				</OrchestratedReveal>
 			</div>
 		</div>
 	);

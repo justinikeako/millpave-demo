@@ -12,6 +12,9 @@ import {
 } from '@/components/quote-stages/stage-context';
 import { AnimatePresence, Variants, motion } from 'framer-motion';
 import { OrchestratedReveal } from '@/components/reveal';
+import { api } from '@/utils/api';
+import { pluralize } from '@/lib/utils';
+import Link from 'next/link';
 
 const stages = [
 	ShapeStage,
@@ -86,11 +89,15 @@ const StageFooter = forwardRef<
 		stagesValidity,
 		setStageIndex,
 		queueStageIndex,
-		quote
+		quote,
+		setQuoteId
 	} = useStageContext();
 
 	const currentStageIsValid = stagesValidity[currentStageIndex];
 	const maxValidIndex = countConsecutiveTrueValues(stagesValidity);
+	const createQuote = api.quote.addItems.useMutation();
+
+	const reachedLastStage = currentStageIndex >= maximumStageIndex;
 
 	return (
 		<footer
@@ -132,17 +139,35 @@ const StageFooter = forwardRef<
 				>
 					Back
 				</Button>
-				{currentStageIndex >= maximumStageIndex ? (
+				{reachedLastStage && !createQuote.isSuccess && (
 					<Button
 						variant="primary"
 						type="submit"
 						form="stage-form"
-						disabled={!currentStageIsValid}
+						disabled={createQuote.isLoading}
+						onClick={async () => {
+							const { quoteId } = await createQuote.mutateAsync({
+								items: quote.items
+							});
+
+							setQuoteId(quoteId);
+						}}
 					>
-						Add {quote.items.length}{' '}
-						{quote.items.length === 1 ? 'Item' : 'Items'} to Quote
+						Add {pluralize(quote.items.length, ['Item', 'Items'])} to Quote
 					</Button>
-				) : (
+				)}
+				{reachedLastStage && createQuote.isSuccess && (
+					<Button
+						variant="primary"
+						type="submit"
+						form="stage-form"
+						disabled={createQuote.isLoading}
+						asChild
+					>
+						<Link href={`/quote/${quote.id}`}>Go to Quote #{quote.id}</Link>
+					</Button>
+				)}
+				{!reachedLastStage && (
 					<Button
 						variant="primary"
 						type="submit"

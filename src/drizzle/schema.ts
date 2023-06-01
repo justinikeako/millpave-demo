@@ -8,9 +8,8 @@ import {
 	datetime,
 	double,
 	int,
-	boolean,
 	customType,
-	char
+	bigint
 } from 'drizzle-orm/mysql-core';
 import { relations, sql } from 'drizzle-orm';
 import {
@@ -20,16 +19,19 @@ import {
 } from '@/types/product';
 
 const price = customType<{ data: number; driverData: string | number }>({
-	dataType: () => 'decimal(10, 2)',
-	fromDriver: (value) => (typeof value === 'number' ? value : parseFloat(value))
-});
-const bigprice = customType<{ data: number; driverData: string | number }>({
-	dataType: () => 'decimal(14, 2)',
+	dataType: () => 'decimal(10,2)',
 	fromDriver: (value) => (typeof value === 'number' ? value : parseFloat(value))
 });
 
-const id = customType<{ data: number; driverData: number }>({
-	dataType: () => 'bigint unsigned auto_increment'
+const bigprice = customType<{ data: number; driverData: string | number }>({
+	dataType: () => 'decimal(14,2)',
+	fromDriver: (value) => (typeof value === 'number' ? value : parseFloat(value))
+});
+
+const boolean = customType<{ data: boolean; driverData: number }>({
+	dataType: () => 'tinyint',
+	toDriver: (value) => Number(value),
+	fromDriver: (value) => value > 0
 });
 
 export const categories = mysqlTable('categories', {
@@ -97,17 +99,19 @@ export const skuDetails = mysqlTable(
 export const quotes = mysqlTable(
 	'quotes',
 	{
-		id: id('id').primaryKey().notNull(),
+		id: bigint('id', { mode: 'number' }).autoincrement().primaryKey().notNull(),
 		createdAt: datetime('created_at', { mode: 'date', fsp: 3 })
-			.default(sql`(CURRENT_TIMESTAMP(3))`)
+			.default(sql`CURRENT_TIMESTAMP(3)`)
 			.notNull(),
-		updatedAt: datetime('updated_at', { mode: 'date', fsp: 3 }).notNull(),
-		title: varchar('title', { length: 191 }).notNull(),
-		area: double('area').notNull(),
-		weight: double('weight').notNull(),
-		subtotal: bigprice('subtotal').notNull(),
-		tax: bigprice('tax').notNull(),
-		total: bigprice('total').notNull()
+		updatedAt: datetime('updated_at', { mode: 'date', fsp: 3 })
+			.default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+			.notNull(),
+		title: varchar('title', { length: 64 }).default('Untitled Quote').notNull(),
+		totalArea: double('area').default(0).notNull(),
+		totalWeight: double('weight').default(0).notNull(),
+		subtotal: bigprice('subtotal').default(0).notNull(),
+		tax: bigprice('tax').default(0).notNull(),
+		total: bigprice('total').default(0).notNull()
 	},
 	(table) => ({
 		quotesTitleIdx: index('quotes_title_idx').on(table.title)
@@ -118,14 +122,16 @@ export const quoteItems = mysqlTable(
 	'quote_items',
 	{
 		createdAt: datetime('created_at', { mode: 'date', fsp: 3 })
-			.default(sql`(CURRENT_TIMESTAMP(3))`)
+			.default(sql`CURRENT_TIMESTAMP(3)`)
 			.notNull(),
-		updatedAt: datetime('updated_at', { mode: 'date', fsp: 3 }).notNull(),
-		quantity: int('quantity').notNull(),
-		price: bigprice('price').notNull(),
 		skuId: varchar('sku_id', { length: 48 }).notNull(),
+		quantity: int('quantity').notNull(),
+		unit: varchar('unit', { length: 4 }).notNull(),
+		cost: bigprice('cost').notNull(),
+		area: double('area'),
+		weight: double('weight').notNull(),
 		pickupLocationId: varchar('pickup_location_id', { length: 24 }).notNull(),
-		quoteId: char('quote_id', { length: 16 }).notNull(),
+		quoteId: bigint('id', { mode: 'number' }).notNull(),
 		metadata: json('metadata')
 	},
 	(table) => ({

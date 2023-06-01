@@ -1,7 +1,29 @@
 import classNames from 'classnames';
 import { Sku, ExtendedPaverDetails } from '@/types/product';
-import { Dimensions, Shape, Unit } from '@/types/quote';
+import { Dimensions, QuoteItem, Shape, Unit } from '@/types/quote';
 import { round } from 'mathjs';
+
+export function getQuoteDetails(
+	quoteItems: Omit<QuoteItem, 'displayName' | 'signatures' | 'unit'>[]
+) {
+	let subtotal = 0,
+		totalArea = 0,
+		totalWeight = 0;
+
+	for (const cartItem of quoteItems) {
+		subtotal += cartItem.cost;
+		totalArea += cartItem?.area || 0;
+		totalWeight += cartItem.weight;
+	}
+
+	totalArea = round(totalArea, 2);
+	totalWeight = round(totalWeight, 2);
+	subtotal = round(subtotal, 2);
+	const tax = round(subtotal * 0.15, 2);
+	const total = round(subtotal + tax, 2);
+
+	return { totalArea, totalWeight, subtotal, tax, total };
+}
 
 export function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
 	function inner(shape: Shape, dimensions: Dimensions) {

@@ -22,6 +22,7 @@ import { roundTo } from '@/utils/number';
 import { round } from 'mathjs';
 import { PaverDetails } from '@/types/product';
 import { isEqual } from 'lodash-es';
+import { getQuoteDetails } from '@/lib/utils';
 
 function toFt(
 	value: number,
@@ -347,26 +348,6 @@ function getPolymeric(area: number) {
 	};
 }
 
-function getQuoteDetails(quoteItems: QuoteItem[]) {
-	let subtotal = 0,
-		totalArea = 0,
-		totalWeight = 0;
-
-	for (const cartItem of quoteItems) {
-		subtotal += cartItem.cost;
-		totalArea += cartItem?.area || 0;
-		totalWeight += cartItem.weight;
-	}
-
-	totalArea = round(totalArea, 2);
-	totalWeight = round(totalWeight, 2);
-	subtotal = round(subtotal, 2);
-	const tax = round(subtotal * 0.15, 2);
-	const total = round(subtotal + tax, 2);
-
-	return { totalArea, totalWeight, subtotal, tax, total };
-}
-
 function getQuote(project: StoneProject) {
 	const projectArea = calculateProjectArea(project.shape, project.dimensions);
 	const border = getBorder(project.border);
@@ -410,6 +391,7 @@ type StageContextValue = {
 	stagesValidity: boolean[];
 	currentStageIndex: number;
 	queuedStageIndex: number;
+	setQuoteId(quoteId: string): void;
 	setStageIndex(newStageIndex: number): void;
 	queueStageIndex(newStageIndex: number): void;
 	setStageValidity(stageIndex: number, stageValidity: boolean): void;
@@ -492,6 +474,7 @@ export function StageProvider(props: StageProviderProps) {
 		false,
 		true
 	]);
+
 	const [skippedStages, setSkippedStages] = useState<(boolean | undefined)[]>([
 		undefined,
 		undefined,
@@ -532,6 +515,7 @@ export function StageProvider(props: StageProviderProps) {
 
 	const [previousProject, setPreviousProject] = useState(defaultValues);
 	const [quote, setQuote] = useState<Quote>({
+		id: undefined,
 		items: [],
 		details: {
 			totalArea: 0,
@@ -542,14 +526,18 @@ export function StageProvider(props: StageProviderProps) {
 		}
 	});
 
+	function setQuoteId(quoteId: string) {
+		setQuote({ ...quote, id: quoteId });
+	}
+
 	// Generate the quote when on the review stage. Regenerating if anything has changed.
 	if (currentStageIndex === 4) {
 		const currentProject = formMethods.watch();
 
 		if (!isEqual(previousProject, currentProject)) {
-			const quote = getQuote(currentProject);
+			const newQuote = getQuote(currentProject);
 
-			setQuote(quote);
+			setQuote({ ...quote, ...newQuote });
 
 			// Cloning the current project ensures that this block runs whenever it changes. If it isn't cloned, the previous object will be subscribed to all form updates which means this the the current and previous project objects will only ever be unequal once.
 			setPreviousProject(structuredClone(currentProject));
@@ -565,6 +553,7 @@ export function StageProvider(props: StageProviderProps) {
 				stagesValidity,
 				currentStageIndex,
 				queuedStageIndex,
+				setQuoteId,
 				setStageIndex: setCurrentStageIndex,
 				queueStageIndex,
 				commitQueuedIndex,

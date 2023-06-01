@@ -26,7 +26,9 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 	if (router.route === '/') key = '/';
 	if (router.route.startsWith('/contact')) key = '/contact';
 	if (router.route.startsWith('/products/')) key = '/products';
-	if (router.route.startsWith('/product/')) {
+	if (
+		['/product/', '/quote/'].some((string) => router.route.startsWith(string))
+	) {
 		key = router.query.id;
 		// Super ugly hack, but gSP will throw wierd errors if I don't use it :(
 		(pageProps as { id: string }).id = router.query.id;

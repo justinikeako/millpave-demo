@@ -121,19 +121,22 @@ export const StoneProject = z.object({
 
 export type StoneProject = z.infer<typeof StoneProject>;
 
-export type QuoteItem = {
-	skuId: string;
-	pickupLocationId: string;
-	displayName: string;
-	cost: number;
-	quantity: number;
-	area?: number;
-	weight: number;
-	unit: 'pal' | 'pcs' | 'unit';
-	signatures: string[];
-};
+export const QuoteItem = z.object({
+	skuId: z.string(),
+	pickupLocationId: z.string(),
+	displayName: z.string(),
+	cost: z.number(),
+	quantity: z.number(),
+	area: z.number().nullable().optional(),
+	weight: z.number(),
+	unit: z.enum(['pal', 'pcs', 'unit']),
+	signatures: z.string().array()
+});
+
+export type QuoteItem = z.infer<typeof QuoteItem>;
 
 export type Quote = {
+	id: string | undefined;
 	items: QuoteItem[];
 	details: {
 		totalArea: number;

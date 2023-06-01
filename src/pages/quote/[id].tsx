@@ -1,14 +1,14 @@
 import Head from 'next/head';
 import NextError from 'next/error';
-import { api } from '@/utils/api';
+import { api } from '~/utils/api';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
-import { createInnerTRPCContext } from '@/server/api/trpc';
+import { createInnerTRPCContext } from '~/server/api/trpc';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { appRouter } from '@/server/api/routers/root';
-import { Main } from '@/components/main';
+import { appRouter } from '~/server/api/routers/root';
+import { Main } from '~/components/main';
 import { useRouter } from 'next/router';
-import { Button } from '@/components/button';
+import { Button } from '~/components/button';
 
 function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	const router = useRouter();

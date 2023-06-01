@@ -1,5 +1,5 @@
-import { Button } from '@/components/button';
-import * as Select from '@/components/select';
+import { Button } from '~/components/button';
+import * as Select from '~/components/select';
 import {
 	Sheet,
 	SheetBody,
@@ -8,7 +8,7 @@ import {
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger
-} from '@/components/sheet';
+} from '~/components/sheet';
 import { LayoutTemplate, RectangleHorizontal, X } from 'lucide-react';
 import {
 	Controller,
@@ -17,20 +17,20 @@ import {
 	useFormContext
 } from 'react-hook-form';
 import { SkuPickerProvider, ProductPicker, VariantPicker } from '../sku-picker';
-import { api } from '@/utils/api';
+import { api } from '~/utils/api';
 import { useState } from 'react';
-import { formatPrice } from '@/utils/format';
+import { formatPrice } from '~/utils/format';
 import { ProductStock } from '../product-stock';
 import { Check } from 'lucide-react';
-import { StoneProject, Stone, Coverage, StoneMetadata } from '@/types/quote';
+import { StoneProject, Stone, Coverage, StoneMetadata } from '~/types/quote';
 import {
 	cn,
 	findSku,
 	pluralize,
 	stopPropagate,
 	unitDisplayNameDictionary
-} from '@/lib/utils';
-import { PaverDetails } from '@/types/product';
+} from '~/lib/utils';
+import { PaverDetails } from '~/types/product';
 import { isEqual } from 'lodash-es';
 import { Trash } from 'lucide-react';
 import { useStageContext } from './stage-context';

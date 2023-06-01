@@ -6,7 +6,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Logo } from './logo';
 import { OrchestratedReveal } from './reveal';
 import { Menu, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '~/lib/utils';
 
 type NavLinkProps = {
 	href: string;

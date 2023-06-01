@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { StoneProject } from '@/types/quote';
+import { StoneProject } from '~/types/quote';
 import { useStageContext } from './stage-context';
 
 type StageFormProps = React.ComponentPropsWithoutRef<'form'>;

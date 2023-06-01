@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { inArray, gte, eq } from 'drizzle-orm';
-import { quotes, skus, skuRestocks, quoteItems } from '@/drizzle/schema';
-import { QuoteItem } from '@/types/quote';
-import { getQuoteDetails } from '@/lib/utils';
+import { quotes, skus, skuRestocks, quoteItems } from '~/drizzle/schema';
+import { QuoteItem } from '~/types/quote';
+import { getQuoteDetails } from '~/lib/utils';
 
 export const quoteRouter = createTRPCRouter({
 	getById: publicProcedure

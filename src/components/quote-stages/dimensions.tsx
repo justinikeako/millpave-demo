@@ -1,8 +1,8 @@
-import * as Select from '@/components/select';
+import * as Select from '~/components/select';
 import { Control, Controller, Path, useFormContext } from 'react-hook-form';
-import { StoneProject } from '@/types/quote';
+import { StoneProject } from '~/types/quote';
 import { StageForm } from './form';
-import { calculateRunningFoot, unitDisplayNameDictionary } from '@/lib/utils';
+import { calculateRunningFoot, unitDisplayNameDictionary } from '~/lib/utils';
 import { useState } from 'react';
 import { round } from 'mathjs';
 

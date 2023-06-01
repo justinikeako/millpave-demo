@@ -1,35 +1,35 @@
 import Head from 'next/head';
-import { VariantPicker, SkuPickerProvider } from '@/components/sku-picker';
-import { ProductCard } from '@/components/product-card';
-import { Button } from '@/components/button';
+import { VariantPicker, SkuPickerProvider } from '~/components/sku-picker';
+import { ProductCard } from '~/components/product-card';
+import { Button } from '~/components/button';
 import Link from 'next/link';
 import NextError from 'next/error';
-import { Sku } from '@/types/product';
-import { api } from '@/utils/api';
+import { Sku } from '~/types/product';
+import { api } from '~/utils/api';
 import classNames from 'classnames';
-import { PaverEstimator } from '@/components/estimator';
+import { PaverEstimator } from '~/components/estimator';
 import { Suspense, useState } from 'react';
-import { InspirationSection } from '@/components/inspiration-section';
+import { InspirationSection } from '~/components/inspiration-section';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
-import { formatPrice } from '@/utils/format';
-import { createInnerTRPCContext } from '@/server/api/trpc';
+import { formatPrice } from '~/utils/format';
+import { createInnerTRPCContext } from '~/server/api/trpc';
 import {
 	GetStaticPaths,
 	GetStaticPropsContext,
 	InferGetStaticPropsType
 } from 'next';
-import { appRouter } from '@/server/api/routers/root';
+import { appRouter } from '~/server/api/routers/root';
 import dynamic from 'next/dynamic';
-import { ViewportReveal } from '@/components/reveal';
+import { ViewportReveal } from '~/components/reveal';
 import { motion } from 'framer-motion';
-import { ProductStock } from '@/components/product-stock';
-import { findSku, unitDisplayNameDictionary } from '@/lib/utils';
-import { Main } from '@/components/main';
-import { db } from '@/server/db';
+import { ProductStock } from '~/components/product-stock';
+import { findSku, unitDisplayNameDictionary } from '~/lib/utils';
+import { Main } from '~/components/main';
+import { db } from '~/server/db';
 
 const ProductViewer3D = dynamic(
-	() => import('@/components/product-viewer-3d'),
+	() => import('~/components/product-viewer-3d'),
 	{ suspense: true }
 );
 

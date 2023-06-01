@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { Sku, ExtendedPaverDetails } from '@/types/product';
-import { Dimensions, QuoteItem, Shape, Unit } from '@/types/quote';
+import { Sku, ExtendedPaverDetails } from '~/types/product';
+import { Dimensions, QuoteItem, Shape, Unit } from '~/types/quote';
 import { round } from 'mathjs';
 
 export function getQuoteDetails(

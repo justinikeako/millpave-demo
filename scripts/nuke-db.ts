@@ -7,7 +7,7 @@ import {
 	skuRestocks,
 	pickupLocations,
 	skus
-} from '@/drizzle/schema';
+} from '~/drizzle/schema';
 
 import { drizzle } from 'drizzle-orm/planetscale-serverless';
 import { connect } from '@planetscale/database';

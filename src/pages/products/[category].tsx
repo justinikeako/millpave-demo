@@ -1,24 +1,24 @@
 import Head from 'next/head';
-import { ProductCard } from '@/components/product-card';
+import { ProductCard } from '~/components/product-card';
 import { w } from 'windstitch';
-import { appRouter } from '@/server/api/routers/root';
-import { createInnerTRPCContext } from '@/server/api/trpc';
+import { appRouter } from '~/server/api/routers/root';
+import { createInnerTRPCContext } from '~/server/api/trpc';
 import superjson from 'superjson';
 import { createServerSideHelpers } from '@trpc/react-query/server';
-import { api } from '@/utils/api';
+import { api } from '~/utils/api';
 import NextError from 'next/error';
-import { Button } from '@/components/button';
+import { Button } from '~/components/button';
 import {
 	GetStaticPaths,
 	GetStaticPropsContext,
 	InferGetStaticPropsType
 } from 'next';
 import { useRouter } from 'next/router';
-import { Category } from '@/types/product';
+import { Category } from '~/types/product';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
-import { Main } from '@/components/main';
-import { db } from '@/server/db';
+import { Main } from '~/components/main';
+import { db } from '~/server/db';
 
 const StyledProductCard = w(ProductCard, {
 	className: 'md:col-span-6 lg:col-span-4 xl:col-span-3'

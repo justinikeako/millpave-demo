@@ -2,8 +2,8 @@ import Head from 'next/head';
 import * as Select from '../components/select';
 import { Button } from '../components/button';
 import { useRouter } from 'next/router';
-import { Main } from '@/components/main';
-import { OrchestratedReveal } from '@/components/reveal';
+import { Main } from '~/components/main';
+import { OrchestratedReveal } from '~/components/reveal';
 
 type FormType = 'general' | 'quote' | 'sample';
 

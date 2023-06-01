@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
-import { supabaseClient } from '@/utils/supabase-client';
+import { supabaseClient } from '~/utils/supabase-client';
 import { OpenAIChat } from 'langchain/llms/openai';
 import { CallbackManager } from 'langchain/callbacks';
 import { LLMChain } from 'langchain/chains';

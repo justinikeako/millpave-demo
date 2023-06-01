@@ -1,5 +1,5 @@
-import { api } from '@/utils/api';
-import { formatNumber, formatRestockDate } from '@/utils/format';
+import { api } from '~/utils/api';
+import { formatNumber, formatRestockDate } from '~/utils/format';
 
 type ProductStockProps = {
 	productId: string;

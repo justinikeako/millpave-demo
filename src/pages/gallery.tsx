@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
 import { X } from 'lucide-react';
 import { Maximize2 } from 'lucide-react';
-import { Main } from '@/components/main';
+import { Main } from '~/components/main';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{

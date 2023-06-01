@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import { useStageContext } from './stage-context';
 import { StageForm } from './form';
-import { StoneProject } from '@/types/quote';
+import { StoneProject } from '~/types/quote';
 
 type OptionProps = React.PropsWithChildren<{
 	value: string;

@@ -1,9 +1,9 @@
-import * as Select from '@/components/select';
+import * as Select from '~/components/select';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
-import { StoneProject } from '@/types/quote';
-import { calculateRunningFoot, unitDisplayNameDictionary } from '@/lib/utils';
+import { StoneProject } from '~/types/quote';
+import { calculateRunningFoot, unitDisplayNameDictionary } from '~/lib/utils';
 import { useStageContext } from './stage-context';
 import { Button } from '../button';
 import Balancer from 'react-wrap-balancer';

@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/planetscale-serverless';
 import { connect } from '@planetscale/database';
-import * as schema from '@/drizzle/schema';
+import * as schema from '~/drizzle/schema';
 
 // Create the connection
 const connection = connect({

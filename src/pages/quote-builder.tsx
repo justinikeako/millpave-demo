@@ -1,19 +1,19 @@
 import React, { forwardRef } from 'react';
 import Head from 'next/head';
-import { ShapeStage } from '@/components/quote-stages/shape';
-import { DimensionsStage } from '@/components/quote-stages/dimensions';
-import { InfillStage } from '@/components/quote-stages/infill';
-import { BorderStage } from '@/components/quote-stages/border';
-import { ReviewStage } from '@/components/quote-stages/review';
-import { Button } from '@/components/button';
+import { ShapeStage } from '~/components/quote-stages/shape';
+import { DimensionsStage } from '~/components/quote-stages/dimensions';
+import { InfillStage } from '~/components/quote-stages/infill';
+import { BorderStage } from '~/components/quote-stages/border';
+import { ReviewStage } from '~/components/quote-stages/review';
+import { Button } from '~/components/button';
 import {
 	useStageContext,
 	StageProvider
-} from '@/components/quote-stages/stage-context';
+} from '~/components/quote-stages/stage-context';
 import { AnimatePresence, Variants, motion } from 'framer-motion';
-import { OrchestratedReveal } from '@/components/reveal';
-import { api } from '@/utils/api';
-import { pluralize } from '@/lib/utils';
+import { OrchestratedReveal } from '~/components/reveal';
+import { api } from '~/utils/api';
+import { pluralize } from '~/lib/utils';
 import Link from 'next/link';
 
 const stages = [

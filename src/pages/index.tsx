@@ -2,12 +2,12 @@ import { AnimatePresence, motion, Transition } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/button';
-import { ProductCard } from '@/components/product-card';
-import { ViewportReveal } from '@/components/reveal';
-import { InspirationSection } from '@/components/inspiration-section';
-import { OrchestratedReveal } from '@/components/reveal';
-import { Main } from '@/components/main';
+import { Button } from '~/components/button';
+import { ProductCard } from '~/components/product-card';
+import { ViewportReveal } from '~/components/reveal';
+import { InspirationSection } from '~/components/inspiration-section';
+import { OrchestratedReveal } from '~/components/reveal';
+import { Main } from '~/components/main';
 
 function getMiddleIndex(arr: unknown[]) {
 	const middleIndex = Math.floor(arr.length / 2);

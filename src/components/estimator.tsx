@@ -1,8 +1,8 @@
 import { round } from 'mathjs';
 import { useState } from 'react';
-import { PaverDetails, Sku } from '@/types/product';
-import { formatPrice } from '@/utils/format';
-import { roundTo } from '@/utils/number';
+import { PaverDetails, Sku } from '~/types/product';
+import { formatPrice } from '~/utils/format';
+import { roundTo } from '~/utils/number';
 import * as Select from './select';
 
 type PaverEstimatorProps = {

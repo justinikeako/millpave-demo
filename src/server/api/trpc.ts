@@ -16,7 +16,7 @@
  */
 import { type FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 
-import { db } from '@/server/db';
+import { db } from '~/server/db';
 
 type CreateContextOptions = Record<string, never>;
 

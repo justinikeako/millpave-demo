@@ -2,13 +2,13 @@ import { type AppType } from 'next/app';
 import Head from 'next/head';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
-import { Chat } from '@/components/chat';
+import { Header } from '~/components/header';
+import { Footer } from '~/components/footer';
+import { Chat } from '~/components/chat';
 
-import { api } from '@/utils/api';
+import { api } from '~/utils/api';
 
-import '@/styles/globals.css';
+import '~/styles/globals.css';
 
 import { Inter } from 'next/font/google';
 

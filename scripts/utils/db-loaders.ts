@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Document } from 'langchain/document';
 import { formatPrice } from '../../src/utils/format';
-import { Sku } from '@/types/product';
-import { db } from '@/server/db';
-import { ExtendedPaverDetails } from '@/types/product';
+import { Sku } from '~/types/product';
+import { db } from '~/server/db';
+import { ExtendedPaverDetails } from '~/types/product';
 
 export async function getProductDocuments() {
 	const products = await db.query.products.findMany({

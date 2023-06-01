@@ -16,7 +16,7 @@ import {
 	FormattedProductDetails,
 	PaverDetails,
 	VariantIdTemplate
-} from '@/types/product';
+} from '~/types/product';
 
 const price = customType<{ data: number; driverData: string | number }>({
 	dataType: () => 'decimal(10,2)',

@@ -17,12 +17,12 @@ import {
 	Stone2D,
 	StoneProject,
 	Unit
-} from '@/types/quote';
-import { roundTo } from '@/utils/number';
+} from '~/types/quote';
+import { roundTo } from '~/utils/number';
 import { round } from 'mathjs';
-import { PaverDetails } from '@/types/product';
+import { PaverDetails } from '~/types/product';
 import { isEqual } from 'lodash-es';
-import { getQuoteDetails } from '@/lib/utils';
+import { getQuoteDetails } from '~/lib/utils';
 
 function toFt(
 	value: number,

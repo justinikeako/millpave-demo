@@ -326,4 +326,4 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	};
 };
 
-export default api.withTRPC(Page);
+export default Page;

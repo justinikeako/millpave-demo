@@ -6,6 +6,8 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Chat } from '@/components/chat';
 
+import { api } from '@/utils/api';
+
 import '@/styles/globals.css';
 
 import { Inter } from 'next/font/google';
@@ -86,4 +88,4 @@ const App: AppType = ({ Component, pageProps, router }) => {
 	);
 };
 
-export default App;
+export default api.withTRPC(App);

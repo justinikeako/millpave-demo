@@ -15,10 +15,10 @@ import {
 } from 'next';
 import { useRouter } from 'next/router';
 import { Category } from '~/types/product';
-import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { Main } from '~/components/main';
 import { db } from '~/server/db';
+import { OrchestratedReveal } from '~/components/reveal';
 
 const StyledProductCard = w(ProductCard, {
 	className: 'md:col-span-6 lg:col-span-4 xl:col-span-3'
@@ -55,12 +55,6 @@ function Chip({ value, children, ...props }: ChipProps) {
 		</li>
 	);
 }
-
-const slowTransition = {
-	type: 'spring',
-	stiffness: 100,
-	damping: 20
-};
 
 function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 	const router = useRouter();
@@ -99,20 +93,13 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 			</Head>
 
 			<Main className="space-y-8">
-				<motion.h1
-					initial={{ y: 100, opacity: 0 }}
-					animate={{ y: 0, opacity: 1 }}
-					transition={{ delay: 0.1, ...slowTransition }}
-					className="text-center text-4xl"
-				>
-					Product Catalogue
-				</motion.h1>
+				<OrchestratedReveal asChild delay={0.1}>
+					<h1 className="text-center text-4xl">Product Catalogue</h1>
+				</OrchestratedReveal>
 
 				<div className="flex flex-col items-center gap-8 lg:gap-12">
-					<motion.div
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.2, ...slowTransition }}
+					<OrchestratedReveal
+						delay={0.2}
 						className="no-scrollbar -mx-8 self-stretch overflow-x-scroll"
 					>
 						<ul className="mx-auto flex w-fit space-x-2  px-8">
@@ -129,41 +116,38 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 								</Chip>
 							))}
 						</ul>
-					</motion.div>
+					</OrchestratedReveal>
 
 					{/* Products */}
-					<motion.section
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.3, ...slowTransition }}
-						className="space-y-16 self-stretch"
-					>
-						<div className="space-y-8">
-							<ul className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-8">
-								{products.pages.map((page) =>
-									page.products.map((product) => (
-										<StyledProductCard
-											key={product.id}
-											name={product.displayName}
-											startingSku={product.startingSku}
-											link={`/product/${product.id}`}
-										/>
-									))
-								)}
-							</ul>
+					<OrchestratedReveal asChild delay={0.3}>
+						<section className="space-y-16 self-stretch">
+							<div className="space-y-8">
+								<ul className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-8">
+									{products.pages.map((page) =>
+										page.products.map((product) => (
+											<StyledProductCard
+												key={product.id}
+												name={product.displayName}
+												startingSku={product.startingSku}
+												link={`/product/${product.id}`}
+											/>
+										))
+									)}
+								</ul>
 
-							{productsQuery.hasNextPage && (
-								<Button
-									variant="secondary"
-									onClick={() => productsQuery.fetchNextPage()}
-									disabled={productsQuery.isFetchingNextPage}
-									className="mx-auto"
-								>
-									See More
-								</Button>
-							)}
-						</div>
-					</motion.section>
+								{productsQuery.hasNextPage && (
+									<Button
+										variant="secondary"
+										onClick={() => productsQuery.fetchNextPage()}
+										disabled={productsQuery.isFetchingNextPage}
+										className="mx-auto"
+									>
+										See More
+									</Button>
+								)}
+							</div>
+						</section>
+					</OrchestratedReveal>
 				</div>
 			</Main>
 		</>

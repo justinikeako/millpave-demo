@@ -21,8 +21,7 @@ import {
 } from 'next';
 import { appRouter } from '~/server/api/routers/root';
 import dynamic from 'next/dynamic';
-import { ViewportReveal } from '~/components/reveal';
-import { motion } from 'framer-motion';
+import { OrchestratedReveal, ViewportReveal } from '~/components/reveal';
 import { ProductStock } from '~/components/product-stock';
 import { findSku, unitDisplayNameDictionary } from '~/lib/utils';
 import { Main } from '~/components/main';
@@ -32,12 +31,6 @@ const ProductViewer3D = dynamic(
 	() => import('~/components/product-viewer-3d'),
 	{ suspense: true }
 );
-
-const slowTransition = {
-	type: 'spring',
-	stiffness: 100,
-	damping: 20
-};
 
 type GalleryProps = {
 	sku: Sku;
@@ -50,10 +43,8 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 	const [selectedIndex, setSelectedIndex] = useState(0);
 
 	return (
-		<motion.div
-			initial={{ y: 100, opacity: 0 }}
-			animate={{ y: 0, opacity: 1 }}
-			transition={{ delay: 0.1, ...slowTransition }}
+		<OrchestratedReveal
+			delay={0.1}
 			className="flex flex-col items-center gap-2 md:sticky md:top-16 md:flex-[2] lg:flex-[3]"
 		>
 			<div className="relative aspect-square w-full bg-gray-200">
@@ -94,7 +85,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 					);
 				})}
 			</div>
-		</motion.div>
+		</OrchestratedReveal>
 	);
 }
 
@@ -152,10 +143,8 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 					<Gallery sku={currentSku} showModelViewer={product.hasModels} />
 
 					{/* Supporting Details */}
-					<motion.div
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.2, ...slowTransition }}
+					<OrchestratedReveal
+						delay={0.2}
 						className="space-y-8 md:flex-[3] lg:flex-[4] lg:space-y-12"
 					>
 						{/* Basic Info */}
@@ -247,7 +236,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 								))}
 							</ul>
 						</Section>
-					</motion.div>
+					</OrchestratedReveal>
 				</section>
 
 				{/* Similar Products */}

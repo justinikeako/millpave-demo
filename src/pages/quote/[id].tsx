@@ -63,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	});
 
 	const quoteId = context.params?.id as string;
-	// prefetch `product.getById`
+	// prefetch `quote.getById`
 	await ssr.quote.getById.prefetch({ quoteId });
 
 	return {

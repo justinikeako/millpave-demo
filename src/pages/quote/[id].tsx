@@ -74,4 +74,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	};
 };
 
-export default Page;
+export default api.withTRPC(Page);

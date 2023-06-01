@@ -6,8 +6,6 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Chat } from '@/components/chat';
 
-import { api } from '../utils/api';
-
 import '@/styles/globals.css';
 
 import { Inter } from 'next/font/google';
@@ -18,7 +16,7 @@ const inter = Inter({
 	variable: '--font-inter'
 });
 
-const MyApp: AppType = ({ Component, pageProps, router }) => {
+const App: AppType = ({ Component, pageProps, router }) => {
 	const showLayout = router.route !== '/quote-builder';
 
 	let key = router.asPath as string;
@@ -88,4 +86,4 @@ const MyApp: AppType = ({ Component, pageProps, router }) => {
 	);
 };
 
-export default api.withTRPC(MyApp);
+export default App;

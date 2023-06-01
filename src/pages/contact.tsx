@@ -2,16 +2,10 @@ import Head from 'next/head';
 import * as Select from '../components/select';
 import { Button } from '../components/button';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
 import { Main } from '@/components/main';
+import { OrchestratedReveal } from '@/components/reveal';
 
 type FormType = 'general' | 'quote' | 'sample';
-
-const slowTransition = {
-	type: 'spring',
-	stiffness: 100,
-	damping: 20
-};
 
 function Page() {
 	const router = useRouter();
@@ -28,23 +22,13 @@ function Page() {
 			</Head>
 
 			<Main className="space-y-16 !pt-16 md:!pt-24">
-				<motion.h1
-					initial={{ y: 100, opacity: 0 }}
-					animate={{ y: 0, opacity: 1 }}
-					transition={{ delay: 0.1, ...slowTransition }}
-					className="text-center text-4xl"
-				>
-					Get in touch.
-				</motion.h1>
+				<OrchestratedReveal delay={0.1}>
+					<h1 className="text-center text-4xl">Get in touch.</h1>
+				</OrchestratedReveal>
 
 				<div className="flex flex-col gap-16 lg:flex-row lg:gap-16">
 					{/* Form */}
-					<motion.div
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.2, ...slowTransition }}
-						className="top-8 flex-1 space-y-8"
-					>
+					<OrchestratedReveal delay={0.2} className="top-8 flex-1 space-y-8">
 						<h2 className="text-lg">Contact Form</h2>
 
 						<form className="space-y-8">
@@ -73,13 +57,11 @@ function Page() {
 								Submit
 							</Button>
 						</form>
-					</motion.div>
+					</OrchestratedReveal>
 
 					{/* Locations */}
-					<motion.div
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.3, ...slowTransition }}
+					<OrchestratedReveal
+						delay={0.3}
 						className="top-8 flex-1 space-y-8 self-start lg:sticky lg:block"
 					>
 						<h2 className="text-lg">Millennium Locations</h2>
@@ -164,7 +146,7 @@ function Page() {
 								</ul>
 							</li>
 						</ul>
-					</motion.div>
+					</OrchestratedReveal>
 				</div>
 			</Main>
 		</>

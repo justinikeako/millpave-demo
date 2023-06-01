@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { Button } from '../components/button';
-import { motion } from 'framer-motion';
-import { ViewportReveal } from '../components/reveal';
+import { OrchestratedReveal, ViewportReveal } from '../components/reveal';
 import * as Dialog from '@radix-ui/react-dialog';
 import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
@@ -50,12 +49,6 @@ const categories = [
 	}
 ] as const;
 
-const slowTransition = {
-	type: 'spring',
-	stiffness: 100,
-	damping: 20
-};
-
 function GalleryImage() {
 	return (
 		<li className="flex h-[30vmax] items-end justify-end bg-gray-200 p-2 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]">
@@ -82,32 +75,26 @@ function Page() {
 
 			<Main className="space-y-32 !pt-16 md:!pt-24">
 				<section className="space-y-24">
-					<motion.h1
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.1, ...slowTransition }}
-						className="mx-auto max-w-[20ch] text-center text-3xl"
-					>
-						Which types of projects would you like to see?
-					</motion.h1>
+					<OrchestratedReveal delay={0.1} asChild>
+						<h1 className="mx-auto max-w-[20ch] text-center text-3xl">
+							Which types of projects would you like to see?
+						</h1>
+					</OrchestratedReveal>
 
-					<motion.ul
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.2, ...slowTransition }}
-						className="no-scrollbar -mx-8 flex snap-x snap-mandatory gap-4 overflow-scroll px-8 md:-mx-32 md:px-32 lg:-mx-32 lg:px-32"
-					>
-						{categories.map(({ id, displayName }) => (
-							<GalleryFilter
-								key={id}
-								value={id}
-								checked={id === categoryId}
-								onChange={() => setCategoryId(id)}
-							>
-								{displayName.plural}
-							</GalleryFilter>
-						))}
-					</motion.ul>
+					<OrchestratedReveal asChild delay={0.2}>
+						<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory gap-4 overflow-scroll px-8 md:-mx-32 md:px-32 lg:-mx-32 lg:px-32">
+							{categories.map(({ id, displayName }) => (
+								<GalleryFilter
+									key={id}
+									value={id}
+									checked={id === categoryId}
+									onChange={() => setCategoryId(id)}
+								>
+									{displayName.plural}
+								</GalleryFilter>
+							))}
+						</ul>
+					</OrchestratedReveal>
 				</section>
 
 				<ViewportReveal className="space-y-4 md:space-y-8">

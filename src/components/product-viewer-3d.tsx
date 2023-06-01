@@ -125,6 +125,7 @@ function IOSARLink({ scene, ...props }: IOSARLinkProps) {
 		callToAction: encodeURIComponent(props.callToAction)
 	};
 
+	// This feels bad as an effect, but idk how to get it to work if I don't use one :(
 	useEffect(() => {
 		async function generateAndSetBlobLink() {
 			if (scene) {
@@ -161,9 +162,7 @@ function IOSARLink({ scene, ...props }: IOSARLinkProps) {
 		linkButton?.addEventListener('message', handleBannerClick, false);
 
 		return () => linkButton?.removeEventListener('message', handleBannerClick);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [router]);
 
 	return (
 		<Button asChild variant="secondary" className="relative">

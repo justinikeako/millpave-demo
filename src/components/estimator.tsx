@@ -1,10 +1,8 @@
-import { Sku } from '@prisma/client';
 import { round } from 'mathjs';
 import { useState } from 'react';
-import { PaverDetails } from '../types/product';
-import { formatPrice } from '../utils/format';
-import { roundTo } from '../utils/number';
-import { extractDetail } from '../utils/product';
+import { PaverDetails, Sku } from '@/types/product';
+import { formatPrice } from '@/utils/format';
+import { roundTo } from '@/utils/number';
 import * as Select from './select';
 
 type PaverEstimatorProps = {
@@ -113,8 +111,8 @@ function convertToSqft(
 	fromUnit: EstimatorUnit,
 	paverDetails: PaverDetails
 ) {
-	const sqft_per_pallet = extractDetail(paverDetails, 'sqft_per_pallet'),
-		pcs_per_sqft = extractDetail(paverDetails, 'pcs_per_sqft');
+	const sqft_per_pallet = paverDetails.sqft_per_pallet,
+		pcs_per_sqft = paverDetails.pcs_per_sqft;
 
 	const convertToSqft: Record<EstimatorUnit, (value: number) => number> = {
 		SQFT: (squarefeet) => squarefeet,
@@ -130,8 +128,8 @@ const convertFromSqft = (
 	unit: EstimatorUnit,
 	paverDetails: PaverDetails
 ) => {
-	const sqft_per_pallet = extractDetail(paverDetails, 'sqft_per_pallet'),
-		pcs_per_sqft = extractDetail(paverDetails, 'pcs_per_sqft');
+	const sqft_per_pallet = paverDetails.sqft_per_pallet,
+		pcs_per_sqft = paverDetails.pcs_per_sqft;
 
 	const convertFromSqft: Record<EstimatorUnit, (value: number) => number> = {
 		SQFT: (sqft) => sqft,
@@ -152,8 +150,8 @@ function convert(value: number, paverDetails: PaverDetails) {
 }
 
 function splitArea(area: number, paverDetails: PaverDetails) {
-	const sqft_per_pallet = extractDetail(paverDetails, 'sqft_per_pallet'),
-		pcs_per_sqft = extractDetail(paverDetails, 'pcs_per_sqft');
+	const sqft_per_pallet = paverDetails.sqft_per_pallet,
+		pcs_per_sqft = paverDetails.pcs_per_sqft;
 
 	const sqft_per_half_pallet = sqft_per_pallet / 2;
 

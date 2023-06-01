@@ -1,34 +1,35 @@
 import Head from 'next/head';
-import SkuPicker from '../../components/sku-picker';
-import { ProductCard } from '../../components/product-card';
-import { Button } from '../../components/button';
+import { VariantPicker, SkuPickerProvider } from '@/components/sku-picker';
+import { ProductCard } from '@/components/product-card';
+import { Button } from '@/components/button';
 import Link from 'next/link';
 import NextError from 'next/error';
-import { Sku } from '@prisma/client';
-import { ExtendedPaverDetails } from '../../types/product';
-import { trpc } from '../../utils/trpc';
+import { Sku } from '@/types/product';
+import { api } from '@/utils/api';
 import classNames from 'classnames';
-import { PaverEstimator } from '../../components/estimator';
+import { PaverEstimator } from '@/components/estimator';
 import { Suspense, useState } from 'react';
-import { InspirationSection } from '../../sections/inspiration';
+import { InspirationSection } from '@/components/inspiration-section';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
+import { formatPrice } from '@/utils/format';
+import { createInnerTRPCContext } from '@/server/api/trpc';
 import {
-	formatPrice,
-	formatNumber,
-	formatRestockDate
-} from '../../utils/format';
-import { createContextInner } from '../../server/trpc/context';
-import { GetStaticPaths, GetStaticPropsContext } from 'next';
-import { appRouter } from '../../server/trpc/router/_app';
-import { useRouter } from 'next/router';
+	GetStaticPaths,
+	GetStaticPropsContext,
+	InferGetStaticPropsType
+} from 'next';
+import { appRouter } from '@/server/api/routers/root';
 import dynamic from 'next/dynamic';
-import { extractDetail } from '../../utils/product';
-import { RevealSection } from '../../components/reveal-section';
+import { ViewportReveal } from '@/components/reveal';
 import { motion } from 'framer-motion';
+import { ProductStock } from '@/components/product-stock';
+import { findSku, unitDisplayNameDictionary } from '@/lib/utils';
+import { Main } from '@/components/main';
+import { db } from '@/server/db';
 
 const ProductViewer3D = dynamic(
-	() => import('../../components/product-viewer-3d'),
+	() => import('@/components/product-viewer-3d'),
 	{ suspense: true }
 );
 
@@ -47,12 +48,13 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 	const images = [0, 0, 0, 0];
 
 	const [selectedIndex, setSelectedIndex] = useState(0);
+
 	return (
 		<motion.div
 			initial={{ y: 100, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
 			transition={{ delay: 0.1, ...slowTransition }}
-			className="flex flex-col items-center gap-2 md:sticky md:top-8 md:flex-[2] lg:flex-[3]"
+			className="flex flex-col items-center gap-2 md:sticky md:top-16 md:flex-[2] lg:flex-[3]"
 		>
 			<div className="relative aspect-square w-full bg-gray-200">
 				{showModelViewer && selectedIndex === 3 && (
@@ -84,7 +86,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 							<label
 								htmlFor={id}
-								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center border border-gray-200 bg-gray-200 text-lg text-gray-400 inner-border-2 inner-border-white peer-checked:border-2 peer-checked:border-black"
+								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-200 peer-checked:ring-2 peer-checked:ring-black"
 							>
 								{showModelViewer && index === 3 && '3D'}
 							</label>
@@ -94,62 +96,6 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 			</div>
 		</motion.div>
 	);
-}
-
-type ProductStockProps = {
-	productId: string;
-	skuId: string;
-	outOfStockMessage?: string;
-};
-
-function ProductStock({
-	productId,
-	skuId,
-	outOfStockMessage
-}: ProductStockProps) {
-	const fulfillmentQuery = trpc.product.getFulfillmentData.useQuery(
-		{ productId },
-		{ refetchOnWindowFocus: false }
-	);
-
-	const fulfillment = fulfillmentQuery.data;
-
-	if (!fulfillment) {
-		return <p>Loading Stock Info...</p>;
-	}
-
-	const currentStock = fulfillment.stock.reduce((totalQuantity, item) => {
-		if (item.skuId !== skuId) return totalQuantity;
-
-		return totalQuantity + item.quantity;
-	}, 0);
-
-	const closestRestock = fulfillment.restock
-		.filter((restock) => restock.skuId === skuId)
-		.reduce<Date | undefined>((closestDate, curr) => {
-			// If closestDate isn't defined or the current item's date is closer, return the current date.
-			if (!closestDate || curr.date < closestDate) {
-				return curr.date;
-			}
-
-			// Otherwise the
-			return closestDate;
-		}, undefined);
-
-	const formatedStock = formatNumber(currentStock);
-	const formattedRestockDate = formatRestockDate(closestRestock);
-
-	if (currentStock > 0) {
-		return <p>{formatedStock} units available</p>;
-	} else {
-		return (
-			<p>
-				{formattedRestockDate
-					? formattedRestockDate
-					: outOfStockMessage || 'Out of stock'}
-			</p>
-		);
-	}
 }
 
 type SectionProps = {
@@ -169,18 +115,10 @@ function Section({
 	);
 }
 
-function findDetails(skuId?: string, details?: ExtendedPaverDetails[]) {
-	return details?.find((details) => skuId?.includes(details.matcher))?.data;
-}
+function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
+	const productId = props.id;
 
-function findSKU(searchId?: string, skus?: Sku[]) {
-	return skus?.find((currentSku) => currentSku.id === searchId);
-}
-
-function Page() {
-	const productId = useRouter().query.id as string;
-
-	const productQuery = trpc.product.getById.useQuery(
+	const productQuery = api.product.getById.useQuery(
 		{ productId },
 		{ refetchOnWindowFocus: false }
 	);
@@ -188,14 +126,14 @@ function Page() {
 	const product = productQuery.data;
 
 	const [skuId, setSkuId] = useState(product?.defaultSkuId);
-	const currentSku = findSKU(skuId, product?.skus);
-	const productDetails = findDetails(skuId, product?.details);
+	const currentSku = findSku(skuId, product?.skus, product?.details);
 
-	if (!product || !currentSku || !productDetails || !skuId) {
+	if (!product || !currentSku || !skuId) {
 		const productNotFound = productQuery.error?.data?.code === 'NOT_FOUND';
 		const skuNotFound = currentSku === undefined;
 
-		if (!product || productNotFound) return <NextError statusCode={404} />;
+		if (!product) return null;
+		if (productNotFound) return <NextError statusCode={404} />;
 		if (skuNotFound && product.defaultSkuId) setSkuId(product.defaultSkuId);
 
 		return <NextError statusCode={500} />;
@@ -207,9 +145,9 @@ function Page() {
 				<title>{`${product.displayName} — Millennium Paving Stones`}</title>
 			</Head>
 
-			<div className="space-y-32 px-8 md:px-24 lg:px-32">
+			<Main className="space-y-32">
 				{/* Main Content */}
-				<main className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
+				<section className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
 					{/* Gallery */}
 					<Gallery sku={currentSku} showModelViewer={product.hasModels} />
 
@@ -223,26 +161,31 @@ function Page() {
 						{/* Basic Info */}
 						<section className="space-y-2">
 							<div>
-								<p className="font-display text-lg">
-									<Link href={`/products/${product.category.id}`}>
+								<p className="text-lg">
+									<Link
+										scroll={false}
+										href={`/products/${product.category.id}`}
+									>
 										{product.category.displayName}
 									</Link>
 								</p>
-								<h1 className="font-display text-4xl">{product.displayName}</h1>
+								<h1 className="text-4xl">{product.displayName}</h1>
 							</div>
-							<div className="flex flex-wrap justify-between text-lg">
+							<div className="flex flex-wrap justify-between gap-x-4 text-lg">
 								<div className="flex items-center gap-4">
 									<p>
-										<del>{formatPrice(currentSku.price)}</del>&nbsp;
-										{formatPrice(currentSku.price - 0.01)} per {currentSku.unit}
+										{formatPrice(currentSku.price)} per&nbsp;
+										{currentSku.unit === 'sqft'
+											? unitDisplayNameDictionary['sqft'][0]
+											: currentSku.unit}
 									</p>
-									{currentSku.unit === 'sqft' && (
+									{currentSku.details.rawData?.pcs_per_sqft && (
 										<>
-											<div className="h-8 w-[2px] bg-current" />
+											<div className="h-full w-[2px] bg-current" />
 											<p>
 												{formatPrice(
 													currentSku.price /
-														extractDetail(productDetails, 'pcs_per_sqft')
+														currentSku.details.rawData.pcs_per_sqft
 												)}
 												&nbsp;per unit
 											</p>
@@ -270,26 +213,32 @@ function Page() {
 						</Section>
 
 						{/* Sku Picker */}
-						<SkuPicker
-							value={skuId}
-							skuIdTemplateFragments={product.skuIdFragments}
-							section={Section}
+						<SkuPickerProvider
+							skuId={skuId}
 							onChange={(newSkuId) => {
 								setSkuId(newSkuId);
 							}}
-						/>
+						>
+							<VariantPicker
+								variantIdTemplate={product.variantIdTemplate}
+								section={Section}
+							/>
+						</SkuPickerProvider>
 
 						{/* Paver Estimator */}
-						{product.estimator === 'paver' && (
-							<PaverEstimator paverDetails={productDetails} sku={currentSku} />
+						{product.estimator === 'paver' && currentSku.details?.rawData && (
+							<PaverEstimator
+								paverDetails={currentSku.details.rawData}
+								sku={currentSku}
+							/>
 						)}
 
 						{/* Specifications */}
 						<Section heading="Specifications">
 							<ul>
-								{productDetails.map((detail) => (
+								{currentSku.details.formattedData.map((detail, index) => (
 									<li
-										key={detail.id}
+										key={index}
 										className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100"
 									>
 										<p>{detail.displayName}</p>
@@ -299,11 +248,11 @@ function Page() {
 							</ul>
 						</Section>
 					</motion.div>
-				</main>
+				</section>
 
 				{/* Similar Products */}
-				<RevealSection className="flex flex-col space-y-8">
-					<h2 className="max-w-[28ch] self-center text-center font-display text-2xl">
+				<ViewportReveal className="flex flex-col space-y-8">
+					<h2 className="max-w-[28ch] self-center text-center text-2xl">
 						Similar to {product.displayName}
 					</h2>
 
@@ -321,14 +270,16 @@ function Page() {
 							))}
 						</ul>
 						<Button variant="secondary" className="self-center" asChild>
-							<Link href="/products/all">View Product Catalogue</Link>
+							<Link scroll={false} href="/products/all">
+								View Product Catalogue
+							</Link>
 						</Button>
 					</div>
-				</RevealSection>
+				</ViewportReveal>
 
 				{/* Inspiration */}
 				<InspirationSection />
-			</div>
+			</Main>
 		</>
 	);
 }
@@ -336,11 +287,11 @@ function Page() {
 export const getStaticProps = async (
 	context: GetStaticPropsContext<{ id: string }>
 ) => {
-	const { prisma } = await createContextInner({});
+	const ssgContext = await createInnerTRPCContext({});
 
 	const ssg = await createServerSideHelpers({
 		router: appRouter,
-		ctx: { prisma },
+		ctx: ssgContext,
 		transformer: superjson
 	});
 
@@ -353,17 +304,16 @@ export const getStaticProps = async (
 
 	return {
 		props: {
-			trpcState: ssg.dehydrate()
+			trpcState: ssg.dehydrate(),
+			id: productId
 		},
 		revalidate: ONE_MONTH_IN_SECONDS
 	};
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const { prisma } = await createContextInner({});
-
-	const products = await prisma.product.findMany({
-		select: { id: true }
+	const products = await db.query.products.findMany({
+		columns: { id: true }
 	});
 
 	return {

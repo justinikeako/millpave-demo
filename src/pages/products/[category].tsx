@@ -1,18 +1,24 @@
 import Head from 'next/head';
-import { ProductCard } from '../../components/product-card';
+import { ProductCard } from '@/components/product-card';
 import { w } from 'windstitch';
-import { MdCheck } from 'react-icons/md';
-import { appRouter } from '../../server/trpc/router/_app';
-import { createContextInner } from '../../server/trpc/context';
+import { appRouter } from '@/server/api/routers/root';
+import { createInnerTRPCContext } from '@/server/api/trpc';
 import superjson from 'superjson';
 import { createServerSideHelpers } from '@trpc/react-query/server';
-import { trpc } from '../../utils/trpc';
+import { api } from '@/utils/api';
 import NextError from 'next/error';
-import { Button } from '../../components/button';
-import { GetStaticPaths, GetStaticPropsContext } from 'next';
+import { Button } from '@/components/button';
+import {
+	GetStaticPaths,
+	GetStaticPropsContext,
+	InferGetStaticPropsType
+} from 'next';
 import { useRouter } from 'next/router';
-import { Category } from '@prisma/client';
+import { Category } from '@/types/product';
 import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
+import { Main } from '@/components/main';
+import { db } from '@/server/db';
 
 const StyledProductCard = w(ProductCard, {
 	className: 'md:col-span-6 lg:col-span-4 xl:col-span-3'
@@ -26,7 +32,7 @@ type ChipProps = React.PropsWithChildren<
 
 function Chip({ value, children, ...props }: ChipProps) {
 	return (
-		<li className="relative flex gap-1  whitespace-nowrap px-4 py-2 font-semibold">
+		<li className="relative flex items-center gap-1 whitespace-nowrap px-4 py-2 font-semibold">
 			<input
 				type="radio"
 				name="category"
@@ -42,7 +48,10 @@ function Chip({ value, children, ...props }: ChipProps) {
 			<span className="pointer-events-none z-[1] peer-checked:text-white">
 				{children}
 			</span>
-			<MdCheck className="pointer-events-none z-[1] hidden text-[1.5rem] text-white peer-checked:inline" />
+			<Check
+				className="pointer-events-none z-[1] mt-0.5 hidden h-4 w-4 text-white peer-checked:inline"
+				strokeWidth={3}
+			/>
 		</li>
 	);
 }
@@ -53,15 +62,15 @@ const slowTransition = {
 	damping: 20
 };
 
-function Page() {
+function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 	const router = useRouter();
-	const categoryId = router.query.category as string | undefined;
+	const categoryId = props.category;
 
-	const categoriesQuery = trpc.category.getAll.useQuery(undefined, {
+	const categoriesQuery = api.category.getAll.useQuery(undefined, {
 		refetchOnWindowFocus: false
 	});
 
-	const productsQuery = trpc.product.getByCategory.useInfiniteQuery(
+	const productsQuery = api.product.getByCategory.useInfiniteQuery(
 		{ categoryId },
 		{
 			refetchOnWindowFocus: false,
@@ -89,12 +98,12 @@ function Page() {
 				<title>Product Catalogue — Millennium Paving Stones</title>
 			</Head>
 
-			<main className="space-y-8 px-8 md:px-24 lg:space-y-16 lg:px-32">
+			<Main className="space-y-8">
 				<motion.h1
 					initial={{ y: 100, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					transition={{ delay: 0.1, ...slowTransition }}
-					className="text-center font-display text-4xl"
+					className="text-center text-4xl"
 				>
 					Product Catalogue
 				</motion.h1>
@@ -156,7 +165,7 @@ function Page() {
 						</div>
 					</motion.section>
 				</div>
-			</main>
+			</Main>
 		</>
 	);
 }
@@ -164,11 +173,11 @@ function Page() {
 export const getStaticProps = async (
 	context: GetStaticPropsContext<{ category: string }>
 ) => {
-	const { prisma } = await createContextInner({});
+	const ssgContext = await createInnerTRPCContext({});
 
 	const ssg = await createServerSideHelpers({
 		router: appRouter,
-		ctx: { prisma },
+		ctx: ssgContext,
 		transformer: superjson // optional - adds superjson serialization
 	});
 
@@ -182,17 +191,16 @@ export const getStaticProps = async (
 
 	return {
 		props: {
-			trpcState: ssg.dehydrate()
+			trpcState: ssg.dehydrate(),
+			category: categoryId
 		},
 		revalidate: ONE_MONTH_IN_SECONDS
 	};
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const { prisma } = await createContextInner({});
-
-	const categories = await prisma.category.findMany({
-		select: { id: true }
+	const categories = await db.query.categories.findMany({
+		columns: { id: true }
 	});
 
 	return {

@@ -1,10 +1,13 @@
 import classNames from 'classnames';
 import { useMemo, useRef, useState } from 'react';
 import { Button } from './button';
-import { MdExpandMore, MdForum, MdSend, MdRefresh } from 'react-icons/md';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { MessagesSquare } from 'lucide-react';
+import { Send } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import { RefreshCcw } from 'lucide-react';
 type Message = {
 	text: string;
 	sender: string;
@@ -155,14 +158,14 @@ function Chat() {
 										className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
 										onClick={resetChatState}
 									>
-										<MdRefresh />
+										<RefreshCcw className="h-4 w-4" />
 									</Button>
 									<Button
 										variant="tertiary"
 										className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
 										onClick={() => setOpen(false)}
 									>
-										<MdExpandMore />
+										<ChevronDown className="h-4 w-4" />
 									</Button>
 								</div>
 							</div>
@@ -221,7 +224,7 @@ function Chat() {
 										type="submit"
 										className="flex select-none p-3 text-[1.5rem] text-gray-700 hover:bg-gray-100 active:bg-gray-200 disabled:text-gray-300 disabled:hover:bg-transparent disabled:active:bg-transparent"
 									>
-										<MdSend />
+										<Send className="h-5 w-5" />
 									</button>
 								</div>
 							</form>
@@ -253,7 +256,7 @@ function Chat() {
 						</span>
 					)} */}
 
-					<MdForum name="forum" className="text-[2em]" />
+					<MessagesSquare className="h-8 w-8" />
 				</motion.button>
 			</div>
 		</div>

@@ -2,7 +2,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from './button';
-import { MdClose } from 'react-icons/md';
+import { X } from 'lucide-react';
 
 type ContentProps = React.PropsWithChildren<{
 	open: boolean;
@@ -60,14 +60,12 @@ type HeaderProps = {
 
 function Header({ title }: HeaderProps) {
 	return (
-		<div className="flex items-center justify-between px-8 pt-8 pb-4">
-			<DialogPrimitive.Title className="font-display text-lg">
-				{title}
-			</DialogPrimitive.Title>
+		<div className="flex items-center justify-between px-8 pb-4 pt-8">
+			<DialogPrimitive.Title className="text-lg">{title}</DialogPrimitive.Title>
 
 			<DialogPrimitive.Close asChild>
 				<Button variant="tertiary" className="text-gray-500">
-					<MdClose className="text-[1.5em]" />
+					<X className="w-6" />
 				</Button>
 			</DialogPrimitive.Close>
 		</div>

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { Button } from '../components/button';
-import { motion } from 'framer-motion';
-import { RevealSection } from '../components/reveal-section';
+import { OrchestratedReveal, ViewportReveal } from '../components/reveal';
 import * as Dialog from '@radix-ui/react-dialog';
 import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
-import { MdClose, MdOpenInFull } from 'react-icons/md';
+import { X } from 'lucide-react';
+import { Maximize2 } from 'lucide-react';
+import { Main } from '@/components/main';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{
@@ -26,11 +27,9 @@ function GalleryFilter({ children, value, ...props }: GalleryFilterProps) {
 			/>
 			<label
 				htmlFor={value}
-				className="absolute inset-0 border border-gray-200 bg-gray-200 inner-border-4 inner-border-white peer-checked:border-2 peer-checked:border-black"
+				className="absolute inset-0 bg-gray-200 bg-clip-content p-1 text-lg ring-1 ring-inset ring-gray-200 peer-checked:ring-2 peer-checked:ring-black"
 			/>
-			<p className="pointer-events-none z-[1] font-display text-lg">
-				{children}
-			</p>
+			<p className="pointer-events-none z-[1] text-lg">{children}</p>
 		</li>
 	);
 }
@@ -50,18 +49,12 @@ const categories = [
 	}
 ] as const;
 
-const slowTransition = {
-	type: 'spring',
-	stiffness: 100,
-	damping: 20
-};
-
 function GalleryImage() {
 	return (
 		<li className="flex h-[30vmax] items-end justify-end bg-gray-200 p-2 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]">
 			<Dialog.Trigger asChild>
-				<Button variant="secondary" className="px-2">
-					<MdOpenInFull />
+				<Button variant="secondary" className="!p-2">
+					<Maximize2 />
 				</Button>
 			</Dialog.Trigger>
 		</li>
@@ -70,7 +63,7 @@ function GalleryImage() {
 
 function Page() {
 	const [categoryId, setCategoryId] =
-		useState<typeof categories[number]['id']>('walkway');
+		useState<(typeof categories)[number]['id']>('walkway');
 
 	const currentCategory = categories.find(({ id }) => id === categoryId);
 
@@ -80,40 +73,34 @@ function Page() {
 				<title>Inspiration Gallery — Millennium Paving Stones</title>
 			</Head>
 
-			<main className="space-y-32 px-8 md:px-24 lg:space-y-48 lg:px-32">
+			<Main className="space-y-32 !pt-16 md:!pt-24">
 				<section className="space-y-24">
-					<motion.h1
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.1, ...slowTransition }}
-						className="mx-auto max-w-[20ch] text-center font-display text-3xl"
-					>
-						Which types of projects would you like to see?
-					</motion.h1>
+					<OrchestratedReveal delay={0.1} asChild>
+						<h1 className="mx-auto max-w-[20ch] text-center text-3xl">
+							Which types of projects would you like to see?
+						</h1>
+					</OrchestratedReveal>
 
-					<motion.ul
-						initial={{ y: 100, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						transition={{ delay: 0.2, ...slowTransition }}
-						className="no-scrollbar -mx-8 flex snap-x snap-mandatory gap-4 overflow-scroll px-8 md:-mx-32 md:px-32 lg:-mx-32 lg:px-32"
-					>
-						{categories.map(({ id, displayName }) => (
-							<GalleryFilter
-								key={id}
-								value={id}
-								checked={id === categoryId}
-								onChange={() => setCategoryId(id)}
-							>
-								{displayName.plural}
-							</GalleryFilter>
-						))}
-					</motion.ul>
+					<OrchestratedReveal asChild delay={0.2}>
+						<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory gap-4 overflow-scroll px-8 md:-mx-32 md:px-32 lg:-mx-32 lg:px-32">
+							{categories.map(({ id, displayName }) => (
+								<GalleryFilter
+									key={id}
+									value={id}
+									checked={id === categoryId}
+									onChange={() => setCategoryId(id)}
+								>
+									{displayName.plural}
+								</GalleryFilter>
+							))}
+						</ul>
+					</OrchestratedReveal>
 				</section>
 
-				<RevealSection className="space-y-4 md:space-y-8">
+				<ViewportReveal className="space-y-4 md:space-y-8">
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
 						<div className="mb-8 flex items-center md:col-span-3 md:mb-0 lg:col-span-3 xl:col-span-2">
-							<p className="text-center font-display text-2xl md:text-left">
+							<p className="text-center text-2xl md:text-left">
 								Get inspiration for your new&nbsp;
 								{currentCategory?.displayName.singular.toLowerCase()}.
 							</p>
@@ -133,7 +120,7 @@ function Page() {
 													variant="tertiary"
 													className="absolute right-8 top-8 text-white md:top-12 md:text-gray-900"
 												>
-													<MdClose />
+													<X />
 												</Button>
 											</Dialog.Close>
 
@@ -141,11 +128,12 @@ function Page() {
 												<div className="aspect-video w-full bg-gray-200" />
 											</div>
 
-											<div className="h-fit space-y-16 py-16 px-8 md:flex-1 md:px-12 lg:px-16">
+											<div className="h-fit space-y-16 px-8 py-16 md:flex-1 md:px-12 lg:px-16">
 												<section>
 													<p className="font-bold">
 														By&nbsp;
 														<Link
+															scroll={false}
 															target="_blank"
 															href="https://www.instagram.com/najobriks"
 															className="underline"
@@ -205,19 +193,17 @@ function Page() {
 					<Button variant="secondary" className="mx-auto">
 						See More
 					</Button>
-				</RevealSection>
+				</ViewportReveal>
 
 				{/* Process */}
-				<RevealSection className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-32">
+				<ViewportReveal className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-32">
 					<div className="flex-1 lg:order-2">
-						<p className="font-display text-lg">Our Process</p>
-						<h2 className="max-w-[20ch] font-display text-3xl">
-							Starting from zero.
-						</h2>
+						<p className="text-lg">Our Process</p>
+						<h2 className="max-w-[20ch] text-3xl">Starting from zero.</h2>
 
 						<br />
 
-						<p className="font-display text-lg">
+						<p className="text-lg">
 							Integer a velit in sapien aliquam consectetur et vitae ligula.
 							Integer ornare egestas enim a malesuada. Suspendisse arcu lectus,
 							blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula
@@ -231,8 +217,8 @@ function Page() {
 					</div>
 
 					<div className="aspect-video w-full bg-gray-200 lg:w-[70vmin]"></div>
-				</RevealSection>
-			</main>
+				</ViewportReveal>
+			</Main>
 		</>
 	);
 }

@@ -1,20 +1,48 @@
 import { type AppType } from 'next/app';
-
-import { trpc } from '../utils/trpc';
-
-import '../styles/globals.css';
-import { Header } from '../components/header';
-import { Footer } from '../components/footer';
 import Head from 'next/head';
-import { Chat } from '../components/chat';
 
-import localFont from 'next/font/local';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
+import { Chat } from '@/components/chat';
 
-const inter = localFont({ src: '../fonts/Inter.var.woff2' });
+import { api } from '../utils/api';
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+import '@/styles/globals.css';
+
+import { Inter } from 'next/font/google';
+
+const inter = Inter({
+	display: 'swap',
+	subsets: ['latin'],
+	variable: '--font-inter'
+});
+
+const MyApp: AppType = ({ Component, pageProps, router }) => {
+	const showLayout = router.route !== '/quote-builder';
+
+	let key = router.asPath as string;
+
+	if (router.route === '/') key = '/';
+	if (router.route.startsWith('/contact')) key = '/contact';
+	if (router.route.startsWith('/products/')) key = '/products';
+	if (
+		['/product/', '/quote/'].some((string) => router.route.startsWith(string))
+	) {
+		key = router.query.id;
+		// Super ugly hack, but gSP will throw wierd errors if I don't use it :(
+		(pageProps as { id: string }).id = router.query.id;
+	}
+
 	return (
 		<>
+			{/* give root access to the font variable */}
+			<style jsx global>{`
+				:root {
+					--font-inter: ${inter.style.fontFamily};
+				}
+			`}</style>
+
 			<Head>
 				<meta
 					name="viewport"
@@ -22,15 +50,42 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 				/>
 			</Head>
 
-			<div className={inter.className}>
-				<Header />
-				<Component {...pageProps} />
-				<Footer />
+			{/* This prevents the header's enter animation from offsetting scroll on reload */}
+			<div id="top" aria-hidden>
+				Top
 			</div>
 
-			<Chat />
+			<Header simple={!showLayout} />
+			<AnimatePresence
+				mode="wait"
+				initial={false}
+				onExitComplete={() => {
+					window.scrollTo({ top: 0 });
+				}}
+			>
+				<motion.div
+					id="nav-transition"
+					key={key}
+					className="min-h-full"
+					initial={{ y: 5, opacity: 0 }}
+					animate={{ y: 0, opacity: 1 }}
+					exit={{ y: 5, opacity: 0 }}
+					transition={{
+						type: 'spring',
+						duration: 0.3
+					}}
+				>
+					<AnimatePresence initial>
+						<Component {...pageProps} />
+					</AnimatePresence>
+
+					{showLayout && <Footer />}
+				</motion.div>
+			</AnimatePresence>
+
+			{showLayout && <Chat />}
 		</>
 	);
 };
 
-export default trpc.withTRPC(MyApp);
+export default api.withTRPC(MyApp);

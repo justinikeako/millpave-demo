@@ -1,18 +1,35 @@
+import { InferModel } from 'drizzle-orm';
 import {
-	Category,
-	Prisma,
-	Product,
-	ProductDetails,
-	Restock,
-	Sku,
-	Stock
-} from '@prisma/client';
+	categories,
+	products,
+	skuDetails,
+	skuRestocks,
+	skuStock,
+	skus
+} from '@/drizzle/schema';
 
-type ExtendedProductDetails<TDetails extends Prisma.JsonArray> =
-	ProductDetails & { data: TDetails };
+export type Category = InferModel<typeof categories, 'select'>;
+type Product = InferModel<typeof products, 'select'>;
+type SkuDetails = InferModel<typeof skuDetails, 'select'>;
+type Restock = InferModel<typeof skuRestocks, 'select'>;
+type Stock = InferModel<typeof skuStock, 'select'>;
+export type Sku = InferModel<typeof skus, 'select'>;
 
-type SkuWithDetails<TDetails extends Prisma.JsonArray> = Sku & {
-	details: ExtendedProductDetails<TDetails>;
+export type FormattedProductDetails = {
+	displayName: string;
+	value: string | number;
+}[];
+
+type ExtendedProductDetails<TRawDetails> = Omit<
+	SkuDetails,
+	'rawData' | 'formattedData'
+> & {
+	rawData: TRawDetails | null;
+	formattedData: FormattedProductDetails;
+};
+
+type SkuWithDetails<TRawDetails> = Sku & {
+	details: ExtendedProductDetails<TRawDetails>;
 };
 
 type Similar = Pick<
@@ -25,11 +42,8 @@ type Similar = Pick<
 	};
 };
 
-type FullProduct<
-	TDetails extends Prisma.JsonArray,
-	TSkuIdFragments extends Prisma.JsonArray
-> = Product & {
-	details: ExtendedProductDetails<TDetails>[];
+type FullProduct<TRawDetails, TSkuIdFragments> = Product & {
+	details: ExtendedProductDetails<TRawDetails>[];
 	skus: Sku[];
 	category: Category;
 	stock: Stock[];
@@ -38,15 +52,16 @@ type FullProduct<
 	skuIdFragments: TSkuIdFragments;
 };
 
-export type PaverDetails = [
-	{ id: 'dimensions'; displayName: string; value: [number, number, number] },
-	{ id: 'lbs_per_unit'; displayName: string; value: number },
-	{ id: 'sqft_per_pallet'; displayName: string; value: number },
-	{ id: 'units_per_pallet'; displayName: string; value: number },
-	{ id: 'pcs_per_sqft'; displayName: string; value: number }
-];
+export type PaverDetails = {
+	type: 'paver';
+	lbs_per_unit: number;
+	sqft_per_pallet: number;
+	pcs_per_pallet: number;
+	pcs_per_sqft: number;
+	conversion_factors?: { TIP_TO_TIP: number; SOLDIER_ROW: number };
+};
 
-type PaverSkuIdFragments =
+export type VariantIdTemplate = (
 	| {
 			type: 'color';
 			displayName: string;
@@ -56,9 +71,10 @@ type PaverSkuIdFragments =
 			type: 'variant';
 			displayName: string;
 			fragments: { id: string; displayName: string }[];
-	  };
+	  }
+)[];
 
-export type FullPaver = FullProduct<PaverDetails, PaverSkuIdFragments[]>;
+export type FullPaver = FullProduct<PaverDetails, VariantIdTemplate>;
 
 export type ExtendedPaverDetails = ExtendedProductDetails<PaverDetails>;
 export type PaverSkuWithDetails = SkuWithDetails<PaverDetails>;

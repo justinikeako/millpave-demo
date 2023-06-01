@@ -2,13 +2,8 @@
 
 import * as React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import cx from 'classnames';
-import {
-	MdArrowDropDown,
-	MdCheck,
-	MdKeyboardArrowDown,
-	MdKeyboardArrowUp
-} from 'react-icons/md';
+import { Check, ChevronUp, ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type TriggerProps = {
 	basic?: boolean;
@@ -18,19 +13,16 @@ function Trigger({ basic, ...props }: TriggerProps) {
 	return (
 		<SelectPrimitive.Trigger
 			{...props}
-			className={cx(
+			className={cn(
 				basic
-					? 'flex outline-none'
-					: 'flex justify-between rounded-sm bg-gray-200 p-4 outline-none focus:inner-border-2 focus:inner-border-gray-900',
+					? 'flex items-center justify-between gap-1 outline-none'
+					: 'flex items-center justify-between rounded-sm bg-gray-200 p-4 outline-none focus:ring-2 focus:ring-gray-900',
 				props.className
 			)}
 		>
 			<SelectPrimitive.Value />
 			<SelectPrimitive.Icon>
-				<MdArrowDropDown
-					name="arrow_drop_down"
-					className="text-[1.5em] text-gray-500"
-				/>
+				<ChevronDown className="h-4 w-4" />
 			</SelectPrimitive.Icon>
 		</SelectPrimitive.Trigger>
 	);
@@ -58,11 +50,11 @@ function Item({ value, children }: SelectPrimitive.SelectItemProps) {
 	return (
 		<SelectPrimitive.Item
 			value={value}
-			className="relative flex select-none items-center justify-between space-x-2 rounded-sm p-4 radix-highlighted:bg-gray-200"
+			className="relative flex select-none items-center justify-between space-x-2 rounded-sm p-4 data-[highlighted]:bg-gray-200"
 		>
 			<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
 			<SelectPrimitive.ItemIndicator>
-				<MdCheck className="text-[1.5em]" />
+				<Check className="h-4 w-4" />
 			</SelectPrimitive.ItemIndicator>
 		</SelectPrimitive.Item>
 	);
@@ -71,7 +63,7 @@ function Item({ value, children }: SelectPrimitive.SelectItemProps) {
 function ScrollUpButton() {
 	return (
 		<SelectPrimitive.ScrollUpButton className="flex cursor-default items-center justify-center bg-gray-100 py-4">
-			<MdKeyboardArrowUp className="text-[1.5em]" />
+			<ChevronUp className="h-4 w-4" />
 		</SelectPrimitive.ScrollUpButton>
 	);
 }
@@ -79,7 +71,7 @@ function ScrollUpButton() {
 function ScrollDownButton() {
 	return (
 		<SelectPrimitive.ScrollDownButton className="flex cursor-default items-center justify-center bg-gray-100 py-4">
-			<MdKeyboardArrowDown />
+			<ChevronDown className="h-4 w-4" />
 		</SelectPrimitive.ScrollDownButton>
 	);
 }

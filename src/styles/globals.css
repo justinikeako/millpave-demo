@@ -4,11 +4,30 @@
 
 :root {
 	min-height: 0vw;
+	font-family: var(--font-inter);
+}
+
+:root,
+body {
+	height: 100%;
 }
 
 body {
-	font-size: 14px;
+	font-size: 13px;
+	overflow-y: scroll;
 }
+
+#__next {
+	min-height: 100%;
+}
+
+#top {
+	pointer-events: none;
+	user-select: none;
+	margin-bottom: -21px;
+	color: transparent;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input.no-arrows::-webkit-outer-spin-button,
 input.no-arrows::-webkit-inner-spin-button {
@@ -53,22 +72,24 @@ input.no-arrows[type='number'] {
 	font-size: inherit;
 }
 
-:root,
-body,
-#__next,
-#__next > div {
-	height: 100%;
-
-	-webkit-tap-highlight-color: transparent;
-}
-
 b {
 	@apply font-semibold;
 }
 
 @layer utilities {
-	.font-display {
-		font-variation-settings: 'opsz' 48;
+	.text-4xl,
+	.text-3xl,
+	.text-2xl,
+	.text-xl {
+		font-variation-settings: 'opsz' 32;
+	}
+
+	.text-lg {
+		font-variation-settings: 'opsz' 24;
+	}
+
+	.text-sm {
+		font-variation-settings: 'opsz' 12;
 	}
 
 	.no-scrollbar::-webkit-scrollbar {

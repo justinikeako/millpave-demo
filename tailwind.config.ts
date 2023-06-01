@@ -9,7 +9,7 @@ module.exports = {
 		},
 
 		fontSize: {
-			sm: ['0.8em', { lineHeight: '1.5' }],
+			sm: ['0.85em', { lineHeight: '1.5' }],
 			base: ['1em', { lineHeight: '1.5' }],
 			lg: [
 				'clamp(1.2em, calc(1.2em + ((1vw - 0.4em) * 0.4)), 1.4em)',

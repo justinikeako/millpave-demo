@@ -128,7 +128,10 @@ function CircleInputs() {
 	const { watch, setValue, control } = useFormContext();
 	const radius = structuredClone(watch('dimensions.radius.value'));
 
-	const [{ diameter, circumference }, setCircleDimensions] = useState({
+	const [{ diameter, circumference }, setCircleDimensions] = useState<{
+		diameter: number | string;
+		circumference: number | string;
+	}>({
 		diameter: round(radius * 2, 2),
 		circumference: round(2 * Math.PI * radius, 2)
 	});
@@ -151,22 +154,32 @@ function CircleInputs() {
 			}}
 			render={({ field }) => {
 				function handleDiameterChange(newDiameter: number) {
-					setCircleDimensions({
-						diameter: newDiameter,
-						circumference: round(Math.PI * newDiameter, 2)
-					});
+					if (isNaN(newDiameter)) {
+						setCircleDimensions({ diameter: '', circumference: '' });
+						field.onChange(0);
+					} else {
+						setCircleDimensions({
+							diameter: newDiameter,
+							circumference: round(Math.PI * newDiameter, 2)
+						});
 
-					field.onChange(round(newDiameter / 2, 2));
+						field.onChange(round(newDiameter / 2, 2));
+					}
 				}
 
 				// Event handler for circumference field change
 				function handleCircumferenceChange(newCircumference: number) {
-					setCircleDimensions({
-						circumference: newCircumference,
-						diameter: round(newCircumference / Math.PI, 2)
-					});
+					if (isNaN(newCircumference)) {
+						setCircleDimensions({ diameter: '', circumference: '' });
+						field.onChange(0);
+					} else {
+						setCircleDimensions({
+							circumference: newCircumference,
+							diameter: round(newCircumference / Math.PI, 2)
+						});
 
-					field.onChange(round(newCircumference / (2 * Math.PI), 2));
+						field.onChange(round(newCircumference / (2 * Math.PI), 2));
+					}
 				}
 
 				return (
@@ -180,9 +193,7 @@ function CircleInputs() {
 								<input
 									{...field}
 									value={diameter}
-									onChange={(e) =>
-										handleDiameterChange(e.target.valueAsNumber || 0)
-									}
+									onChange={(e) => handleDiameterChange(e.target.valueAsNumber)}
 									id="diameter"
 									type="number"
 									step="any"
@@ -207,7 +218,7 @@ function CircleInputs() {
 									{...field}
 									value={circumference}
 									onChange={(e) =>
-										handleCircumferenceChange(e.target.valueAsNumber || 0)
+										handleCircumferenceChange(e.target.valueAsNumber)
 									}
 									id="circumference"
 									type="number"

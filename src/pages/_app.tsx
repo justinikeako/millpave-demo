@@ -67,9 +67,9 @@ const App: AppType = ({ Component, pageProps, router }) => {
 					id="nav-transition"
 					key={key}
 					className="min-h-full"
-					initial={{ y: 5, opacity: 0 }}
+					initial={{ y: -5, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
-					exit={{ y: 5, opacity: 0 }}
+					exit={{ y: -5, opacity: 0 }}
 					transition={{
 						type: 'spring',
 						duration: 0.3

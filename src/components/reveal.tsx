@@ -58,7 +58,7 @@ function OrchestratedReveal({
 	return (
 		<Comp
 			{...props}
-			initial={{ y: -50, opacity: 0 }}
+			initial={{ y: 50, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
 			transition={{ ...slowTransition, delay }}
 		>

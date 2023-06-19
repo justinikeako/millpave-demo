@@ -163,7 +163,7 @@ function CircleInputs() {
 							circumference: round(Math.PI * newDiameter, 2)
 						});
 
-						field.onChange(round(newDiameter / 2, 2));
+						field.onChange(newDiameter / 2);
 					}
 				}
 
@@ -178,7 +178,7 @@ function CircleInputs() {
 							diameter: round(newCircumference / Math.PI, 2)
 						});
 
-						field.onChange(round(newCircumference / (2 * Math.PI), 2));
+						field.onChange(newCircumference / (2 * Math.PI));
 					}
 				}
 

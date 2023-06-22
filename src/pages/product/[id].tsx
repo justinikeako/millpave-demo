@@ -29,6 +29,7 @@ import { LocationsSection } from '~/components/sections/locations';
 import { InspirationSection } from '~/components/sections/inspiration';
 import { LearnSection } from '~/components/sections/learn';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
+import { Main } from '~/components/main';
 
 const ProductViewer3D = dynamic(
 	() => import('~/components/product-viewer-3d'),
@@ -139,9 +140,9 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 				<title>{`${product.displayName} — Millennium Paving Stones`}</title>
 			</Head>
 
-			<main className="space-y-32">
+			<Main>
 				{/* Main Content */}
-				<section className="flex gap-16 p-16">
+				<section className="flex gap-16 py-16">
 					{/* Gallery */}
 
 					<OrchestratedReveal delay={0.1} className="flex-1">
@@ -246,7 +247,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 				</section>
 
 				{/* Similar Products */}
-				<ViewportReveal className="flex flex-col space-y-8 p-16">
+				<ViewportReveal className="flex flex-col space-y-16 py-16">
 					<h2 className="max-w-[28ch] self-center text-center font-display text-2xl">
 						Similar to {product.displayName}
 					</h2>
@@ -285,7 +286,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 				<LearnSection />
 
 				<AugmentedRealityGallerySection />
-			</main>
+			</Main>
 		</>
 	);
 }

@@ -1,4 +1,5 @@
 import { ViewportReveal } from '~/components/reveal';
+import { FullWidthSection } from './full-width';
 
 type SplitSectionProps = {
 	tagline: string;
@@ -17,7 +18,7 @@ export function SplitSection({
 }: SplitSectionProps) {
 	return (
 		<ViewportReveal asChild>
-			<section className="flex">
+			<FullWidthSection className="flex">
 				<div className="flex-[6]">{slot}</div>
 				<div className="flex flex-[5] flex-col justify-center py-48 pr-16">
 					<div className="max-w-sm">
@@ -27,7 +28,7 @@ export function SplitSection({
 						<div className="mt-8 flex gap-2">{actions}</div>
 					</div>
 				</div>
-			</section>
+			</FullWidthSection>
 		</ViewportReveal>
 	);
 }

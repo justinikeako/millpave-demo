@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRef } from 'react';
 import { Button } from '../button';
 import { ViewportReveal } from '../reveal';
+import { FullWidthSection } from './full-width';
 
 function InspirationSection() {
 	const carouselRef = useRef<HTMLDivElement>(null);
@@ -15,7 +16,7 @@ function InspirationSection() {
 
 	return (
 		<ViewportReveal className="space-y-16 p-16" asChild>
-			<section>
+			<FullWidthSection>
 				<div className="space-y-4">
 					<p className="m-auto text-center font-display text-lg">
 						Inspiration Gallery
@@ -45,7 +46,7 @@ function InspirationSection() {
 						<div className="flex aspect-video shrink-0 bg-gray-200" />
 					</motion.div>
 				</div>
-			</section>
+			</FullWidthSection>
 		</ViewportReveal>
 	);
 }

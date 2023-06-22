@@ -17,6 +17,8 @@ import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery
 import { InspirationSection } from '~/components/sections/inspiration';
 import { LocationsSection } from '~/components/sections/locations';
 import { LearnSection } from '~/components/sections/learn';
+import { Main } from '~/components/main';
+import { FullWidthSection } from '~/components/sections/full-width';
 
 function Hero() {
 	const heroRef = useRef<HTMLDivElement>(null);
@@ -126,11 +128,11 @@ function Page() {
 				<title>Millennium Paving Stones</title>
 			</Head>
 
-			<main className="2xl:container">
+			<Main>
 				<Hero />
 
 				<ViewportReveal asChild>
-					<section className="space-y-12 p-16">
+					<FullWidthSection className="space-y-12 p-16">
 						<div className="flex justify-between">
 							<h2 className="font-display text-3xl">Products</h2>
 							<p className="w-80 text-right font-display text-lg">
@@ -177,7 +179,7 @@ function Page() {
 								View All Products
 							</Link>
 						</Button>
-					</section>
+					</FullWidthSection>
 				</ViewportReveal>
 
 				<InspirationSection />
@@ -187,7 +189,7 @@ function Page() {
 				<LearnSection />
 
 				<AugmentedRealityGallerySection />
-			</main>
+			</Main>
 		</>
 	);
 }

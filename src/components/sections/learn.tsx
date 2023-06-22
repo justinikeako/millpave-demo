@@ -7,7 +7,7 @@ import { ViewportReveal } from '../reveal';
 function LearnSection() {
 	return (
 		<ViewportReveal asChild>
-			<section className="flex gap-4 p-16">
+			<section className="flex gap-4 py-16">
 				<Link
 					href="/contractors"
 					className="flex h-96 flex-[2] flex-col items-start justify-between bg-gray-600 p-6 text-white"

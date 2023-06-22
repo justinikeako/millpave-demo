@@ -13,7 +13,7 @@ type ButtonProps = {
 >;
 
 const buttonVariants = cva(
-	'flex items-center justify-center gap-1 font-semibold select-none disabled:pointer-events-none [&>span]:z-[1]',
+	'flex items-center justify-center gap-1 font-semibold text-center select-none disabled:pointer-events-none [&>span]:z-[1]',
 	{
 		variants: {
 			intent: {

@@ -8,8 +8,8 @@ import { Sku } from '~/types/product';
 import { api } from '~/utils/api';
 import classNames from 'classnames';
 import { PaverEstimator } from '~/components/estimator';
+import { Icon } from '~/components/icon';
 import { Suspense, useState } from 'react';
-import { InspirationSection } from '~/components/inspiration-section';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
 import { formatPrice } from '~/utils/format';
@@ -24,8 +24,11 @@ import dynamic from 'next/dynamic';
 import { OrchestratedReveal, ViewportReveal } from '~/components/reveal';
 import { ProductStock } from '~/components/product-stock';
 import { findSku, unitDisplayNameDictionary } from '~/lib/utils';
-import { Main } from '~/components/main';
 import { db } from '~/server/db';
+import { LocationsSection } from '~/components/sections/locations';
+import { InspirationSection } from '~/components/sections/inspiration';
+import { LearnSection } from '~/components/sections/learn';
+import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
 
 const ProductViewer3D = dynamic(
 	() => import('~/components/product-viewer-3d'),
@@ -43,24 +46,8 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 	const [selectedIndex, setSelectedIndex] = useState(0);
 
 	return (
-		<OrchestratedReveal
-			delay={0.1}
-			className="flex flex-col items-center gap-2 md:sticky md:top-16 md:flex-[2] lg:flex-[3]"
-		>
-			<div className="relative aspect-square w-full bg-gray-200">
-				{showModelViewer && selectedIndex === 3 && (
-					<Suspense
-						fallback={
-							<div className="grid h-full w-full place-items-center">
-								<p>Loading 3D Model</p>
-							</div>
-						}
-					>
-						<ProductViewer3D skuId={sku.id} displayName={sku.displayName} />
-					</Suspense>
-				)}
-			</div>
-			<div className="flex w-full justify-center gap-2">
+		<div className="sticky top-24 flex w-full items-center gap-2">
+			<div className="flex flex-col items-center justify-center gap-2">
 				{images.map((_, index) => {
 					const id = 'image-' + index;
 
@@ -77,15 +64,31 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 							<label
 								htmlFor={id}
-								className="flex aspect-square max-w-[80px] flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-200 peer-checked:ring-2 peer-checked:ring-black"
+								className="flex aspect-square w-20 flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700"
 							>
-								{showModelViewer && index === 3 && '3D'}
+								{showModelViewer && index === 3 && (
+									<Icon name="3d_rotation" size={40} opticalSize={40} />
+								)}
 							</label>
 						</div>
 					);
 				})}
 			</div>
-		</OrchestratedReveal>
+
+			<div className="relative aspect-square w-full bg-gray-200">
+				{showModelViewer && selectedIndex === 3 && (
+					<Suspense
+						fallback={
+							<div className="grid h-full w-full place-items-center">
+								<p>Loading 3D Model</p>
+							</div>
+						}
+					>
+						<ProductViewer3D skuId={sku.id} displayName={sku.displayName} />
+					</Suspense>
+				)}
+			</div>
+		</div>
 	);
 }
 
@@ -99,8 +102,8 @@ function Section({
 	...props
 }: React.PropsWithChildren<SectionProps>) {
 	return (
-		<section className={classNames('space-y-2', props.className)}>
-			<h2 className="text-lg">{heading}</h2>
+		<section className={classNames('space-y-4', props.className)}>
+			<h2 className="font-display text-lg">{heading}</h2>
 			{children}
 		</section>
 	);
@@ -136,21 +139,24 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 				<title>{`${product.displayName} — Millennium Paving Stones`}</title>
 			</Head>
 
-			<Main className="space-y-32">
+			<main className="space-y-32">
 				{/* Main Content */}
-				<section className="flex flex-col gap-8 md:flex-row md:items-start md:gap-16 lg:gap-32">
+				<section className="flex gap-16 p-16">
 					{/* Gallery */}
-					<Gallery sku={currentSku} showModelViewer={product.hasModels} />
+
+					<OrchestratedReveal delay={0.1} className="flex-1">
+						<Gallery sku={currentSku} showModelViewer={product.hasModels} />
+					</OrchestratedReveal>
 
 					{/* Supporting Details */}
 					<OrchestratedReveal
 						delay={0.2}
-						className="space-y-8 md:flex-[3] lg:flex-[4] lg:space-y-12"
+						className="flex-1 space-y-8 lg:space-y-12"
 					>
 						{/* Basic Info */}
 						<section className="space-y-2">
 							<div>
-								<p className="text-lg">
+								<p className="font-display text-lg">
 									<Link
 										scroll={false}
 										href={`/products/${product.category.id}`}
@@ -158,9 +164,9 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 										{product.category.displayName}
 									</Link>
 								</p>
-								<h1 className="text-4xl">{product.displayName}</h1>
+								<h1 className="font-display text-4xl">{product.displayName}</h1>
 							</div>
-							<div className="flex flex-wrap justify-between gap-x-4 text-lg">
+							<div className="flex flex-wrap justify-between gap-x-4 font-display text-lg">
 								<div className="flex items-center gap-4">
 									<p>
 										{formatPrice(currentSku.price)} per&nbsp;
@@ -228,7 +234,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 								{currentSku.details.formattedData.map((detail, index) => (
 									<li
 										key={index}
-										className="flex justify-between rounded-sm px-4 py-3 odd:bg-white even:bg-gray-100"
+										className="flex justify-between rounded-sm border-b border-gray-300 py-3 last:border-none"
 									>
 										<p>{detail.displayName}</p>
 										<p>{detail.value}</p>
@@ -240,35 +246,46 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 				</section>
 
 				{/* Similar Products */}
-				<ViewportReveal className="flex flex-col space-y-8">
-					<h2 className="max-w-[28ch] self-center text-center text-2xl">
+				<ViewportReveal className="flex flex-col space-y-8 p-16">
+					<h2 className="max-w-[28ch] self-center text-center font-display text-2xl">
 						Similar to {product.displayName}
 					</h2>
 
 					<div className="flex flex-col space-y-8">
-						<ul className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
+						<ul className="flex gap-4">
 							{product.similar.map((similarProduct) => (
 								<ProductCard
 									key={similarProduct.id}
 									name={similarProduct.displayName}
 									startingSku={similarProduct.startingSku}
 									link={`/product/${similarProduct.id}`}
-									className="md:col-span-3 lg:col-span-2"
-									variant="display"
+									className="flex-1"
 								/>
 							))}
+							<li className="flex-1">
+								<Button
+									asChild
+									intent="secondary"
+									className="h-full flex-col !rounded-md font-display text-lg italic"
+								>
+									<Link href="/products/all">
+										<span className="block w-[15ch]">Explore All Products</span>
+										<Icon name="arrow_right_alt" size={24} />
+									</Link>
+								</Button>
+							</li>
 						</ul>
-						<Button variant="secondary" className="self-center" asChild>
-							<Link scroll={false} href="/products/all">
-								View Product Catalogue
-							</Link>
-						</Button>
 					</div>
 				</ViewportReveal>
 
-				{/* Inspiration */}
+				<LocationsSection />
+
 				<InspirationSection />
-			</Main>
+
+				<LearnSection />
+
+				<AugmentedRealityGallerySection />
+			</main>
 		</>
 	);
 }

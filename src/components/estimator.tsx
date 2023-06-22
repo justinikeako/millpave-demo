@@ -22,9 +22,9 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 	const total = calculateTotal(pallet.area, piece.area, sku);
 
 	return (
-		<section data-ai-hidden className="bg-gray-900 text-white">
+		<section data-ai-hidden className="bg-gray-200 text-gray-900">
 			<div className="align-center flex justify-between p-8">
-				<h2 className="text-lg">Cost Estimator</h2>
+				<h2 className="font-display text-lg">Cost Estimator</h2>
 
 				<Select.Root
 					value={unit}
@@ -49,7 +49,7 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 					</Select.Content>
 				</Select.Root>
 			</div>
-			<div className="space-y-8 px-8 pb-8">
+			<div className="space-y-4 px-8 pb-8">
 				<div className="flex items-center space-x-4">
 					<Label unit={unit} />
 
@@ -58,8 +58,8 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 						id="paver-estimator"
 						type="number"
 						min={0}
-						placeholder="Area"
-						className="w-32 rounded-sm p-4 font-semibold text-black outline-none placeholder:font-normal placeholder:text-gray-500"
+						placeholder="Amount"
+						className="w-24 rounded-sm border border-gray-400 bg-gray-100 p-4 font-semibold text-gray-900 placeholder:font-normal placeholder:text-gray-500 focus:outline-pink-700"
 						value={value}
 						onChange={(e) => {
 							setValue(e.target.value);
@@ -75,17 +75,18 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 				</div>
 
 				<p>
-					{pallet.count} pallets ({pallet.area}ft²) & {piece.count} pieces (
-					{piece.area}ft²) ≈&nbsp;
+					{pallet.count} pallets ({pallet.area} ft²) & {piece.count} pieces (
+					{piece.area} ft²) ≈&nbsp;
 					<b>
 						{totalArea}ft<sup>2</sup>
 					</b>
 				</p>
-				<hr />
 
-				<div>
+				<hr className="border-gray-300" />
+
+				<div className="space-y-1">
 					<p className="text-lg">{formatPrice(total)}</p>
-					<p>Incl. GCT</p>
+					<p className="text-sm">Incl. GCT</p>
 				</div>
 			</div>
 		</section>

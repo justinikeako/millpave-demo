@@ -4,7 +4,7 @@ type IconProps = React.ComponentProps<'span'> & {
 	grade?: number;
 	fill?: boolean;
 	size?: number;
-	opticalSize?: number;
+	opticalSize?: 20 | 24 | 40 | 48;
 };
 
 export function Icon({

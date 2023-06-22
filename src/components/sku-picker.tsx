@@ -93,7 +93,7 @@ function ProductPicker({ products }: ProductPickerProps) {
 								}}
 							/>
 
-							<div className="flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-300 peer-checked:bg-gray-100 peer-checked:text-gray-950 peer-checked:ring-2 peer-checked:ring-gray-950 peer-focus:bg-blue-50 peer-focus:text-blue-500 peer-focus:ring-blue-500">
+							<div className="flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-400 peer-checked:bg-gray-100 peer-checked:text-gray-950 peer-checked:ring-2 peer-checked:ring-gray-950 peer-focus:bg-blue-50 peer-focus:text-pink-700 peer-focus:ring-pink-700">
 								{displayName}
 							</div>
 						</label>
@@ -189,7 +189,7 @@ function VariantFragmentPicker({
 							onChange={(e) => onChange(e.target.value)}
 						/>
 
-						<div className="flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-300 peer-checked:bg-gray-100 peer-checked:text-gray-700 peer-checked:ring-2 peer-checked:ring-gray-700 peer-focus:bg-blue-50 peer-focus:text-blue-500 peer-focus:ring-blue-500">
+						<div className="flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-400 peer-checked:bg-gray-100 peer-checked:text-gray-700 peer-checked:ring-2 peer-checked:ring-gray-700 peer-focus:bg-blue-50 peer-focus:text-pink-700 peer-focus:ring-pink-700">
 							{displayName}
 						</div>
 					</label>
@@ -228,7 +228,7 @@ function ColorFragmentPicker({
 							onChange={(e) => onChange(e.target.value)}
 						/>
 						<div
-							className="h-10 w-10 cursor-pointer rounded-full bg-clip-content p-[3px] ring-1 ring-inset ring-gray-300 peer-checked:p-1 peer-checked:ring-2 peer-checked:ring-gray-950 peer-focus:ring-blue-500"
+							className="h-10 w-10 cursor-pointer rounded-full bg-clip-content p-[3px] ring-1 ring-inset ring-gray-400 peer-checked:p-1 peer-checked:ring-2 peer-checked:ring-pink-700 peer-focus:ring-pink-700"
 							style={{ backgroundColor: css, backgroundImage: css }}
 						/>
 					</label>

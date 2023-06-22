@@ -92,7 +92,7 @@ function Header() {
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>
 			<OrchestratedReveal asChild>
-				<header className="sticky top-0 z-40">
+				<header className="sticky top-0 z-10">
 					<div className="flex items-center px-16 py-4 2xl:container">
 						<div className="flex-1">
 							<Link scroll={false} href="/" className="block w-fit">

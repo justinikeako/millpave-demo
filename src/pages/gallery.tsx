@@ -5,67 +5,68 @@ import { OrchestratedReveal, ViewportReveal } from '../components/reveal';
 import * as Dialog from '@radix-ui/react-dialog';
 import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
-import { X } from 'lucide-react';
-import { Maximize2 } from 'lucide-react';
 import { Main } from '~/components/main';
+import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
+import { LearnSection } from '~/components/sections/learn';
+import { Balancer } from 'react-wrap-balancer';
+import { Icon } from '~/components/icon';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{
+		image: boolean;
 		value: string;
 	} & React.HTMLProps<HTMLInputElement>
 >;
 
-function GalleryFilter({ children, value, ...props }: GalleryFilterProps) {
+function GalleryFilter({ image, children, ...props }: GalleryFilterProps) {
 	return (
-		<li className="relative flex aspect-square w-[60vw] shrink-0 snap-center items-end p-6 md:w-[25vmax] md:p-8 lg:w-[30vmin]">
+		<li className="contents">
 			<input
 				{...props}
 				type="radio"
 				name="category"
 				className="peer hidden"
-				id={value}
+				id={props.value}
 			/>
 			<label
-				htmlFor={value}
-				className="absolute inset-0 bg-gray-200 bg-clip-content p-1 text-lg ring-1 ring-inset ring-gray-200 peer-checked:ring-2 peer-checked:ring-black"
-			/>
-			<p className="pointer-events-none z-[1] text-lg">{children}</p>
+				htmlFor={props.value}
+				className="flex shrink-0 items-center overflow-hidden rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-pink-700 transition-colors hover:bg-gray-900/5 active:bg-gray-900/10 active:transition-none peer-checked:bg-pink-400/10 peer-checked:text-pink-700 peer-checked:outline peer-checked:transition-none peer-checked:hover:bg-pink-400/20 peer-checked:active:bg-pink-400/30"
+			>
+				{image && <div className="aspect-square w-12 bg-gray-200" />}
+				<p className="select-none whitespace-nowrap px-4 align-middle font-semibold">
+					{children}
+				</p>
+			</label>
 		</li>
 	);
 }
 
-const categories = [
-	{ id: 'walkway', displayName: { singular: 'Walkway', plural: 'Walkways' } },
-	{ id: 'patio', displayName: { singular: 'Patio', plural: 'Patios' } },
-	{ id: 'garden', displayName: { singular: 'Garden', plural: 'Gardens' } },
-	{ id: 'plaza', displayName: { singular: 'Plaza', plural: 'Plazas' } },
-	{
-		id: 'driveway',
-		displayName: { singular: 'Driveway', plural: 'Driveways' }
-	},
-	{
-		id: 'pool_deck',
-		displayName: { singular: 'Pool Deck', plural: 'Pool Decks' }
-	}
-] as const;
-
 function GalleryImage() {
 	return (
-		<li className="flex h-[30vmax] items-end justify-end bg-gray-200 p-2 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]">
-			<Dialog.Trigger asChild>
-				<Button intent="secondary" className="!p-2">
-					<Maximize2 />
-				</Button>
-			</Dialog.Trigger>
-		</li>
+		<Dialog.Trigger asChild>
+			<li className="group aspect-square bg-gray-200 [&:nth-child(11n+4)]:col-span-2 [&:nth-child(11n+4)]:row-span-2">
+				<p className="p-4 font-display text-lg opacity-0 transition-opacity group-hover:opacity-100">
+					Post Title
+				</p>
+			</li>
+		</Dialog.Trigger>
 	);
 }
 
 function Page() {
+	const categories = [
+		{ id: 'all', displayName: 'All Projects', image: false },
+		{ id: 'patio', displayName: 'Patios', image: true },
+		{ id: 'garden', displayName: 'Gardens', image: true },
+		{ id: 'plaza', displayName: 'Plazas', image: true },
+		{ id: 'driveway', displayName: 'Driveways', image: true },
+		{ id: 'pool_deck', displayName: 'Pool Decks', image: true },
+		{ id: 'walkway', displayName: 'Walkways', image: true },
+		{ id: 'parking_lot', displayName: 'Parking Lots', image: true }
+	] as const;
+
 	const [categoryId, setCategoryId] =
 		useState<(typeof categories)[number]['id']>('walkway');
-
-	const currentCategory = categories.find(({ id }) => id === categoryId);
 
 	return (
 		<>
@@ -76,21 +77,22 @@ function Page() {
 			<Main className="space-y-32 !pt-16 md:!pt-24">
 				<section className="space-y-24">
 					<OrchestratedReveal delay={0.1} asChild>
-						<h1 className="mx-auto max-w-[20ch] text-center text-3xl">
+						<h1 className="mx-auto max-w-[20ch] text-center font-display text-3xl">
 							Which types of projects would you like to see?
 						</h1>
 					</OrchestratedReveal>
 
 					<OrchestratedReveal asChild delay={0.2}>
-						<ul className="no-scrollbar -mx-8 flex snap-x snap-mandatory gap-4 overflow-scroll px-8 md:-mx-32 md:px-32 lg:-mx-32 lg:px-32">
-							{categories.map(({ id, displayName }) => (
+						<ul className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2">
+							{categories.map(({ id, displayName, image }) => (
 								<GalleryFilter
 									key={id}
 									value={id}
+									image={image}
 									checked={id === categoryId}
 									onChange={() => setCategoryId(id)}
 								>
-									{displayName.plural}
+									{displayName}
 								</GalleryFilter>
 							))}
 						</ul>
@@ -98,39 +100,29 @@ function Page() {
 				</section>
 
 				<ViewportReveal className="space-y-4 md:space-y-8">
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
-						<div className="mb-8 flex items-center md:col-span-3 md:mb-0 lg:col-span-3 xl:col-span-2">
-							<p className="text-center text-2xl md:text-left">
-								Get inspiration for your new&nbsp;
-								{currentCategory?.displayName.singular.toLowerCase()}.
+					<div className="grid grid-cols-4 gap-4">
+						<div className="mb-8 flex items-center">
+							<p className="mx-auto text-center font-display text-xl">
+								<Balancer>
+									See how our products can transform your outdoor space.
+								</Balancer>
 							</p>
 						</div>
 
 						<Dialog.Root>
 							<Dialog.Portal>
-								<Dialog.Overlay>
-									<div className="fixed inset-0 bg-gray-900/50" />
-								</Dialog.Overlay>
+								<Dialog.Overlay className="fixed inset-0 z-50 bg-gray-900/75" />
 
 								<Dialog.Content>
-									<div className="pointer-events-none fixed inset-0 flex items-end justify-center md:items-center [&>*]:pointer-events-auto">
-										<div className="relative flex aspect-[2/1] h-[90vh] w-full flex-col overflow-y-auto rounded-t-lg bg-white md:h-auto md:w-[90vw] md:flex-row md:rounded-none lg:w-[80vw]">
-											<Dialog.Close asChild>
-												<Button
-													intent="tertiary"
-													className="absolute right-8 top-8 text-white md:top-12 md:text-gray-900"
-												>
-													<X />
-												</Button>
-											</Dialog.Close>
+									<div className="pointer-events-none fixed inset-0 z-50 flex items-end justify-center md:items-center">
+										<div className="flex aspect-square shrink-0 items-center md:sticky md:top-0 md:flex-1">
+											<div className=" pointer-events-auto aspect-video w-full bg-gray-200" />
+										</div>
 
-											<div className="flex aspect-square shrink-0 items-center bg-gray-400 md:sticky md:top-0 md:flex-1">
-												<div className="aspect-video w-full bg-gray-200" />
-											</div>
-
-											<div className="h-fit space-y-16 px-8 py-16 md:flex-1 md:px-12 lg:px-16">
+										<aside className="pointer-events-auto relative flex h-full max-w-sm flex-col overflow-y-auto bg-white">
+											<div className="h-fit space-y-16 px-8 py-8">
 												<section>
-													<p className="font-bold">
+													<p className="font-semibold">
 														By&nbsp;
 														<Link
 															scroll={false}
@@ -141,7 +133,9 @@ function Page() {
 															Najo Briks Construction
 														</Link>
 													</p>
-													<h1 className="text-2xl">Residential Driveway</h1>
+													<h1 className="font-display text-xl">
+														Residential Driveway
+													</h1>
 													<br />
 													<p>
 														Lorem ipsum, dolor sit amet consectetur adipisicing
@@ -156,7 +150,9 @@ function Page() {
 													</p>
 												</section>
 												<section>
-													<h2 className="text-lg">Products in this photo</h2>
+													<h2 className="font-display text-lg">
+														Products in this photo
+													</h2>
 
 													<ul className="mt-8 space-y-4">
 														<ProductCard
@@ -172,20 +168,26 @@ function Page() {
 													</ul>
 												</section>
 											</div>
-										</div>
+										</aside>
+
+										<Dialog.Close asChild>
+											<Button
+												intent="tertiary"
+												backdrop="dark"
+												className="pointer-events-auto absolute left-8 top-8 bg-gray-900/90 hover:bg-gray-700/90 active:bg-gray-500/75"
+											>
+												<Icon name="close" />
+												Return To Gallery
+											</Button>
+										</Dialog.Close>
 									</div>
 								</Dialog.Content>
 							</Dialog.Portal>
 
 							<ul className="contents">
-								<GalleryImage />
-								<GalleryImage />
-								<GalleryImage />
-								<GalleryImage />
-								<GalleryImage />
-								<GalleryImage />
-								<GalleryImage />
-								<GalleryImage />
+								{[...Array(21).keys()].map((index) => (
+									<GalleryImage key={index} />
+								))}
 							</ul>
 						</Dialog.Root>
 					</div>
@@ -196,28 +198,8 @@ function Page() {
 				</ViewportReveal>
 
 				{/* Process */}
-				<ViewportReveal className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-32">
-					<div className="flex-1 lg:order-2">
-						<p className="text-lg">Our Process</p>
-						<h2 className="max-w-[20ch] text-3xl">Starting from zero.</h2>
-
-						<br />
-
-						<p className="text-lg">
-							Integer a velit in sapien aliquam consectetur et vitae ligula.
-							Integer ornare egestas enim a malesuada. Suspendisse arcu lectus,
-							blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula
-							neque at laoreet. Nullam efficitur mauris sit amet accumsan
-							pulvinar.
-						</p>
-
-						<br />
-
-						<Button intent="primary">Find an Installer</Button>
-					</div>
-
-					<div className="aspect-video w-full bg-gray-200 lg:w-[70vmin]"></div>
-				</ViewportReveal>
+				<LearnSection />
+				<AugmentedRealityGallerySection />
 			</Main>
 		</>
 	);

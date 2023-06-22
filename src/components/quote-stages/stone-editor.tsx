@@ -200,7 +200,7 @@ function StoneListItem({
 				</div>
 
 				<Button
-					variant="tertiary"
+					intent="tertiary"
 					type="button"
 					className="pointer-events-auto z-10"
 					onClick={() => onDelete(index)}
@@ -273,14 +273,14 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 		<form onSubmit={stopPropagate(handleSubmit(onSubmit))} className="contents">
 			<SheetHeader>
 				<Button
-					variant="tertiary"
+					intent="tertiary"
 					type="submit"
 					disabled={currentSku === undefined}
 				>
 					<Check />
 				</Button>
 				<SheetClose asChild>
-					<Button variant="tertiary" type="button">
+					<Button intent="tertiary" type="button">
 						<X />
 					</Button>
 				</SheetClose>

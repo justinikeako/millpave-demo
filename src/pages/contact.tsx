@@ -53,7 +53,7 @@ function Page() {
 								</Select.Content>
 							</Select.Root>
 
-							<Button variant="primary" type="submit" className="mx-auto">
+							<Button intent="primary" type="submit" className="mx-auto">
 								Submit
 							</Button>
 						</form>

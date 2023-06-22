@@ -156,14 +156,14 @@ function Chat() {
 								<h2 className="p-4 pb-2 font-semibold">Customer Service AI</h2>
 								<div className="flex gap-6">
 									<Button
-										variant="tertiary"
+										intent="tertiary"
 										className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
 										onClick={resetChatState}
 									>
 										<RefreshCcw className="h-4 w-4" />
 									</Button>
 									<Button
-										variant="tertiary"
+										intent="tertiary"
 										className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
 										onClick={() => setOpen(false)}
 									>

@@ -5,8 +5,7 @@ import { forwardRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Logo } from './logo';
 import { OrchestratedReveal } from './reveal';
-import { Menu, X } from 'lucide-react';
-import { cn } from '~/lib/utils';
+import { Icon } from './icon';
 
 type NavLinkProps = {
 	href: string;
@@ -87,173 +86,135 @@ const variants = {
 
 const MotionNavLink = motion(NavLink);
 
-function Header({ simple }: { simple: boolean }) {
+function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [promoOpen, setPromoOpen] = useState(false);
 
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>
-			{!simple && promoOpen && (
-				<OrchestratedReveal asChild>
-					<div className="relative flex flex-col items-center justify-center gap-4 bg-gray-900 p-4 text-white md:flex-row">
-						<p>Prices from $203/ft² in our Summer Sale!</p>{' '}
-						<div className="flex gap-2">
-							<Button
-								variant="primary"
-								className="!bg-white !text-gray-900 hover:!bg-gray-100 active:!bg-gray-200"
-								asChild
-							>
-								<Link scroll={false} href="/products/all">
-									See all Deals
+			<OrchestratedReveal asChild>
+				<header className="sticky top-0 z-40">
+					<div className="flex items-center px-16 py-4 2xl:container">
+						<div className="flex-1">
+							<Link scroll={false} href="/" className="block w-fit">
+								<Logo variant="text" className="max-sm:hidden" />
+								<Logo className="sm:hidden" />
+							</Link>
+						</div>
+						<nav className="flex select-none items-center justify-between">
+							{/* Desktop Links */}
+							<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal text-gray-900 max-lg:hidden">
+								<NavLink href="/products/all">Products</NavLink>
+								<NavLink href="/gallery">Inspiration</NavLink>
+								<NavLink href="/resources">Resources</NavLink>
+								<NavLink href="/quote-builder">
+									Get a Quote&nbsp;
+									<span className="inline-block rounded-sm border border-black/10  bg-gradient-to-t from-black/10 px-1 text-sm font-semibold">
+										New
+									</span>
+								</NavLink>
+								<NavLink href="/contact">Contact</NavLink>
+							</ul>
+						</nav>
+						<div className="flex flex-1 justify-end gap-4">
+							<Button intent="tertiary" asChild>
+								<Link href="/quote">
+									<Icon name="shopping_cart" />
 								</Link>
 							</Button>
-							<Button
-								variant="secondary"
-								className="border-gray-500 text-white hover:bg-gray-800 active:bg-gray-700 md:hidden"
-								onClick={() => setPromoOpen(false)}
-							>
-								Dismiss
-							</Button>
+							<Dialog.Trigger asChild>
+								<Button intent="tertiary" className="lg:hidden">
+									<Icon name="menu" />
+								</Button>
+							</Dialog.Trigger>
 						</div>
-						<Button
-							variant="tertiary"
-							className="absolute right-8 max-md:hidden"
-							onClick={() => setPromoOpen(false)}
-						>
-							<X />
-						</Button>
 					</div>
-				</OrchestratedReveal>
-			)}
-			<OrchestratedReveal asChild>
-				<header
-					className={cn('bg-white md:mt-4', !simple && 'sticky top-0 z-40')}
-				>
-					<nav className="flex select-none items-center justify-between px-8 py-4 md:px-24 lg:px-32">
-						<Link scroll={false} href="/">
-							{simple ? (
-								<Logo />
-							) : (
-								<>
-									<Logo withText className="max-sm:hidden" />
-									<Logo className="sm:hidden" />
-								</>
-							)}
-						</Link>
-
-						{/* Desktop Links */}
-						{!simple && (
-							<ul className="flex flex-row items-center gap-8 bg-transparent px-0 font-normal text-gray-900 max-lg:hidden">
-								<NavLink href="/products/all">Products</NavLink>
-								<NavLink href="/gallery">Get Inspired</NavLink>
-								<NavLink href="/#where-to-buy">Where to Buy</NavLink>
-								<NavLink href="/contact">Contact Us</NavLink>
-								<li>
-									<Button variant="primary" asChild>
-										<Link scroll={false} href="/quote-builder">
-											Get A Quote
-										</Link>
-									</Button>
-								</li>
-							</ul>
-						)}
-
-						{/* Mobile Menu */}
-						<AnimatePresence>
-							{menuOpen && (
-								<Dialog.DialogPortal forceMount>
-									<Dialog.Overlay />
-									<Dialog.DialogContent forceMount asChild>
-										<motion.div
-											variants={variants.content}
-											initial="hide"
-											animate="show"
-											exit="hide"
-											className="fixed inset-0 z-50 flex flex-col bg-gray-900 text-white"
-										>
-											<div className="flex items-center justify-between px-8 py-4 md:px-24 md:py-8">
-												<Link
-													scroll={false}
-													href="/"
-													onClick={() => setMenuOpen(false)}
-												>
-													<div className="max-sm:hidden">
-														<Logo withText />
-													</div>
-													<div className="sm:hidden">
-														<Logo />
-													</div>
-												</Link>
-
-												<Dialog.Close asChild>
-													<Button
-														variant="tertiary"
-														className="text-white active:bg-gray-800"
-													>
-														<X />
-													</Button>
-												</Dialog.Close>
-											</div>
-
-											<motion.ul
-												variants={variants.list}
-												initial="hide"
-												animate="show"
-												className="flex flex-1 flex-col items-start justify-center gap-8 px-16 text-3xl md:px-24"
-											>
-												<MotionNavLink
-													variants={variants.item}
-													href="/products/all"
-													onClick={() => setMenuOpen(false)}
-												>
-													Products
-												</MotionNavLink>
-												<MotionNavLink
-													variants={variants.item}
-													href="/gallery"
-													onClick={() => setMenuOpen(false)}
-												>
-													Get Inspired
-												</MotionNavLink>
-												<MotionNavLink
-													variants={variants.item}
-													href="/#where-to-buy"
-													onClick={() => setMenuOpen(false)}
-												>
-													Where to Buy
-												</MotionNavLink>
-												<MotionNavLink
-													variants={variants.item}
-													href="/contact"
-													onClick={() => setMenuOpen(false)}
-												>
-													Contact Us
-												</MotionNavLink>
-												<MotionNavLink
-													variants={variants.item}
-													href="/quote-builder"
-													onClick={() => setMenuOpen(false)}
-												>
-													Get A Quote
-												</MotionNavLink>
-											</motion.ul>
-										</motion.div>
-									</Dialog.DialogContent>
-								</Dialog.DialogPortal>
-							)}
-						</AnimatePresence>
-
-						<Dialog.Trigger asChild>
-							<Button
-								variant="tertiary"
-								className={simple ? undefined : 'lg:hidden'}
-							>
-								<Menu />
-							</Button>
-						</Dialog.Trigger>
-					</nav>
 				</header>
 			</OrchestratedReveal>
+
+			{/* Mobile Menu */}
+			<AnimatePresence>
+				{menuOpen && (
+					<Dialog.DialogPortal forceMount>
+						<Dialog.Overlay />
+						<Dialog.DialogContent forceMount asChild>
+							<motion.div
+								variants={variants.content}
+								initial="hide"
+								animate="show"
+								exit="hide"
+								className="fixed inset-0 z-50 flex flex-col bg-gray-900 text-white"
+							>
+								<div className="flex items-center justify-between px-8 py-4 md:px-24 md:py-8">
+									<Link
+										scroll={false}
+										href="/"
+										onClick={() => setMenuOpen(false)}
+									>
+										<div className="max-sm:hidden">
+											<Logo variant="text" />
+										</div>
+										<div className="sm:hidden">
+											<Logo />
+										</div>
+									</Link>
+
+									<Dialog.Close asChild>
+										<Button
+											intent="tertiary"
+											className="text-white active:bg-gray-800"
+										>
+											<Icon name="close" />
+										</Button>
+									</Dialog.Close>
+								</div>
+
+								<motion.ul
+									variants={variants.list}
+									initial="hide"
+									animate="show"
+									className="flex flex-1 flex-col items-start justify-center gap-8 px-16 text-3xl md:px-24"
+								>
+									<MotionNavLink
+										variants={variants.item}
+										href="/products/all"
+										onClick={() => setMenuOpen(false)}
+									>
+										Products
+									</MotionNavLink>
+									<MotionNavLink
+										variants={variants.item}
+										href="/gallery"
+										onClick={() => setMenuOpen(false)}
+									>
+										Get Inspired
+									</MotionNavLink>
+									<MotionNavLink
+										variants={variants.item}
+										href="/#where-to-buy"
+										onClick={() => setMenuOpen(false)}
+									>
+										Where to Buy
+									</MotionNavLink>
+									<MotionNavLink
+										variants={variants.item}
+										href="/contact"
+										onClick={() => setMenuOpen(false)}
+									>
+										Contact Us
+									</MotionNavLink>
+									<MotionNavLink
+										variants={variants.item}
+										href="/quote-builder"
+										onClick={() => setMenuOpen(false)}
+									>
+										Get A Quote
+									</MotionNavLink>
+								</motion.ul>
+							</motion.div>
+						</Dialog.DialogContent>
+					</Dialog.DialogPortal>
+				)}
+			</AnimatePresence>
 		</Dialog.Root>
 	);
 }

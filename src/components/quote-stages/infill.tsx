@@ -28,7 +28,7 @@ export function InfillStage() {
 				</p>
 				<div className="mx-auto flex w-fit gap-2">
 					<Button
-						variant="secondary"
+						intent="secondary"
 						type="button"
 						onClick={() => {
 							setStageValidity(currentStageIndex, true);
@@ -39,7 +39,7 @@ export function InfillStage() {
 						Skip
 					</Button>
 					<Button
-						variant="primary"
+						intent="primary"
 						type="button"
 						onClick={() => setStageSkipped(currentStageIndex, false)}
 					>

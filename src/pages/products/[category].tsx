@@ -20,10 +20,6 @@ import { Main } from '~/components/main';
 import { db } from '~/server/db';
 import { OrchestratedReveal } from '~/components/reveal';
 
-const StyledProductCard = w(ProductCard, {
-	className: 'md:col-span-6 lg:col-span-4 xl:col-span-3'
-});
-
 type ChipProps = React.PropsWithChildren<
 	{
 		value: string;
@@ -125,7 +121,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 								<ul className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-8">
 									{products.pages.map((page) =>
 										page.products.map((product) => (
-											<StyledProductCard
+											<ProductCard
 												key={product.id}
 												name={product.displayName}
 												startingSku={product.startingSku}
@@ -137,7 +133,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
 								{productsQuery.hasNextPage && (
 									<Button
-										variant="secondary"
+										intent="secondary"
 										onClick={() => productsQuery.fetchNextPage()}
 										disabled={productsQuery.isFetchingNextPage}
 										className="mx-auto"

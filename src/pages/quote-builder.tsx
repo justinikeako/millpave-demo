@@ -132,7 +132,7 @@ const StageFooter = forwardRef<
 
 			<div className="flex gap-2">
 				<Button
-					variant="secondary"
+					intent="secondary"
 					type="button"
 					disabled={currentStageIndex <= 0}
 					onClick={() => setStageIndex(currentStageIndex - 1)}
@@ -141,7 +141,7 @@ const StageFooter = forwardRef<
 				</Button>
 				{reachedLastStage && !createQuote.isSuccess && (
 					<Button
-						variant="primary"
+						intent="primary"
 						type="submit"
 						form="stage-form"
 						disabled={createQuote.isLoading}
@@ -158,7 +158,7 @@ const StageFooter = forwardRef<
 				)}
 				{reachedLastStage && createQuote.isSuccess && (
 					<Button
-						variant="primary"
+						intent="primary"
 						type="submit"
 						form="stage-form"
 						disabled={createQuote.isLoading}
@@ -169,7 +169,7 @@ const StageFooter = forwardRef<
 				)}
 				{!reachedLastStage && (
 					<Button
-						variant="primary"
+						intent="primary"
 						type="submit"
 						form="stage-form"
 						disabled={!currentStageIsValid}

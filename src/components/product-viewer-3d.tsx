@@ -99,7 +99,7 @@ function DesktopARPrompt({ link }: DesktopARPromptProps) {
 					</div>
 				)}
 
-				<Button variant="secondary" onClick={() => setOpen(!open)}>
+				<Button intent="secondary" onClick={() => setOpen(!open)}>
 					View in Your Space
 				</Button>
 			</div>
@@ -165,7 +165,7 @@ function IOSARLink({ scene, ...props }: IOSARLinkProps) {
 	}, [router]);
 
 	return (
-		<Button asChild variant="secondary" className="relative">
+		<Button asChild intent="secondary" className="relative">
 			<div>
 				<a
 					ref={linkButtonRef}
@@ -196,7 +196,7 @@ function AndroidARLink({ file, title, link }: AndroidARLinkProps) {
 	const fallback_url = `https://millpave.notprimitive.com/no-ar`;
 
 	return (
-		<Button variant="secondary" asChild>
+		<Button intent="secondary" asChild>
 			<a
 				href={`intent://arvr.google.com/scene-viewer/1.0?file=${file}&mode=${mode}&title=${encodedTitle}&link=${link}&resizable=${resizable}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${fallback_url};end;`}
 			>

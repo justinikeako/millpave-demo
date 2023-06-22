@@ -1,127 +1,120 @@
-import { AnimatePresence, motion, Transition } from 'framer-motion';
+import {
+	AnimatePresence,
+	motion,
+	Transition,
+	useCycle,
+	useScroll,
+	useTransform
+} from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { Balancer } from 'react-wrap-balancer';
 import { Button } from '~/components/button';
 import { ProductCard } from '~/components/product-card';
-import { ViewportReveal } from '~/components/reveal';
-import { InspirationSection } from '~/components/inspiration-section';
-import { OrchestratedReveal } from '~/components/reveal';
-import { Main } from '~/components/main';
-
-function getMiddleIndex(arr: unknown[]) {
-	const middleIndex = Math.floor(arr.length / 2);
-	return middleIndex;
-}
-
-function cycle<T>(arr: T[]) {
-	if (arr.length === 0) return arr;
-
-	const lastElement = arr[arr.length - 1] as T;
-	return [lastElement, ...arr.slice(0, arr.length - 1)];
-}
+import { OrchestratedReveal, ViewportReveal } from '~/components/reveal';
+import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
+import { InspirationSection } from '~/components/sections/inspiration';
+import { LocationsSection } from '~/components/sections/locations';
+import { LearnSection } from '~/components/sections/learn';
 
 function Hero() {
-	const [images, setImages] = useState([
+	const heroRef = useRef<HTMLDivElement>(null);
+	const [example, cycleExample] = useCycle(
 		'Driveway',
 		'Patio',
 		'Plaza',
 		'Garden',
 		'Pool Deck'
-	]);
-	const currentIndex = getMiddleIndex(images);
-	const currentImage = images[currentIndex];
+	);
+
+	const { scrollY, scrollYProgress } = useScroll({
+		target: heroRef,
+		offset: ['center end', 'end start']
+	});
+	const bgScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
+	const line1Opacity = useTransform(scrollY, [50, 150], [1, 0]);
+	const line2Opacity = useTransform(scrollY, [50, 200], [1, 0]);
 
 	useEffect(() => {
-		// Set an interavl to cycle through "images" state variable after 5 seconds
+		// Set an interval to cycle through examples state variable after 5 seconds
 		const intervalId = setInterval(() => {
-			setImages(cycle(images));
+			cycleExample();
 		}, 5000);
 
 		return () => clearInterval(intervalId);
-	}, [images]);
+	}, [cycleExample]);
 
 	const fastTransition: Transition = {
-		duration: 0.3
+		type: 'spring',
+		duration: 0.5,
+		bounce: 0
 	};
 
 	const slowTransition = {
 		type: 'spring',
-		stiffness: 100,
-		damping: 20
+		duration: 1,
+		bounce: 0
 	};
 
 	return (
-		<section className="space-y-20">
-			<div className="flex flex-col items-center space-y-12">
-				<OrchestratedReveal delay={0.1} asChild>
-					<h1 className="text-center text-4xl">
-						<span className="block">Transform Your</span>
-						<AnimatePresence initial={false} mode="wait">
-							<motion.span
-								key={currentImage}
-								transition={fastTransition}
-								exit={{ y: -10, opacity: 0 }}
-								className="block"
-							>
-								{(currentImage + '.').split('').map((char, index) => {
-									if (char === ' ')
-										return <span key={char + index}>&nbsp;</span>;
+		<section ref={heroRef} className="flex h-[200lvh] flex-col items-center">
+			<motion.div
+				style={{ scale: bgScale }}
+				className="sticky top-0 -z-10 mt-[-68px] h-[100lvh] w-[100lvw] bg-gray-200"
+			/>
 
-									return (
-										<motion.span
-											key={char + index}
-											initial={{ y: 10, opacity: 0 }}
-											transition={{
-												delay: index / 10,
-												...slowTransition
-											}}
-											animate={{ y: 0, opacity: 1 }}
-											className="inline-block"
-										>
-											{char}
-										</motion.span>
-									);
-								})}
-							</motion.span>
-						</AnimatePresence>
-					</h1>
-				</OrchestratedReveal>
+			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">
+				<motion.h1 className="text-center font-display text-5xl">
+					<motion.span className="block" style={{ opacity: line1Opacity }}>
+						<OrchestratedReveal asChild delay={0.1}>
+							<span className="block">Transform Your</span>
+						</OrchestratedReveal>
+					</motion.span>
 
-				<OrchestratedReveal delay={0.2} asChild>
-					<div className="flex space-x-2">
-						<Button variant="primary" asChild>
-							<Link scroll={false} href="/quote-builder">
-								<span>Get a Quote</span>
-							</Link>
-						</Button>
-						<Button variant="secondary" asChild>
-							<Link scroll={false} href="/gallery">
-								<span>Get Inspired</span>
-							</Link>
-						</Button>
-					</div>
-				</OrchestratedReveal>
+					<motion.span className="block" style={{ opacity: line2Opacity }}>
+						<OrchestratedReveal asChild delay={0.2}>
+							<span className="block">
+								<AnimatePresence initial={false} mode="wait">
+									<motion.span
+										key={example}
+										className="inline-block"
+										exit={{ y: -10, opacity: 0, transition: fastTransition }}
+									>
+										{(example + '.').split('').map((char, index) => {
+											if (char === ' ')
+												return <span key={char + index}>&nbsp;</span>;
+
+											return (
+												<motion.span
+													key={char + index}
+													initial={{ y: 10, opacity: 0 }}
+													transition={{
+														delay: index / 10,
+														...slowTransition
+													}}
+													animate={{ y: 0, opacity: 1 }}
+													className="inline-block"
+												>
+													{char}
+												</motion.span>
+											);
+										})}
+									</motion.span>
+								</AnimatePresence>
+							</span>
+						</OrchestratedReveal>
+					</motion.span>
+				</motion.h1>
 			</div>
 
-			<OrchestratedReveal delay={0.3} asChild>
-				<div className="-mx-8 flex h-[55vmin] items-center justify-center space-x-4 overflow-hidden md:-mx-24 lg:-mx-32 lg:space-x-8">
-					{images.map((image, index) => (
-						<motion.div
-							key={'picture' + image}
-							className="grid aspect-square place-items-center bg-gray-200 text-2xl text-gray-300"
-							layout
-							transition={slowTransition}
-							animate={{ opacity: 1 - Math.abs(index - currentIndex) * 0.5 }}
-							style={{
-								height: 100 - Math.abs(index - currentIndex) * 12.5 + '%'
-							}}
-						>
-							{image}
-						</motion.div>
-					))}
-				</div>
-			</OrchestratedReveal>
+			<motion.div
+				style={{ opacity: line1Opacity }}
+				className="fixed inset-x-0 bottom-0 flex flex-col items-center"
+			>
+				<span className="block text-sm font-semibold">Scroll</span>
+				<div className="h-2 w-[1px] bg-current" />
+			</motion.div>
 		</section>
 	);
 }
@@ -133,155 +126,68 @@ function Page() {
 				<title>Millennium Paving Stones</title>
 			</Head>
 
-			<Main className="space-y-48 !pt-24">
-				{/* Hero */}
+			<main className="2xl:container">
 				<Hero />
 
-				{/* Products */}
-				<ViewportReveal className="flex flex-col space-y-32">
-					<p className="max-w-[28ch] self-center text-center text-lg text-gray-500 md:text-xl">
-						<span className="text-gray-900">Our concrete pavers</span> can turn
-						your outdoor walkway, deck, patio, or plaza into a functional work
-						of art.
-					</p>
-
-					<div className="flex flex-col space-y-8" data-ai-hidden>
-						<ul className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-8">
+				<ViewportReveal asChild>
+					<section className="space-y-12 p-16">
+						<div className="flex justify-between">
+							<h2 className="font-display text-3xl">Products</h2>
+							<p className="w-80 text-right font-display text-lg">
+								<Balancer>
+									Our concrete pavers can turn your outdoor walkway, deck,
+									patio, or plaza into a functional work of art.
+								</Balancer>
+							</p>
+						</div>
+						<ul className="no-scrollbar -mx-16 flex gap-4 overflow-x-auto px-16">
 							<ProductCard
-								variant="display"
 								name="Colonial Classic"
 								startingSku={{ price: 203, unit: 'sqft' }}
 								link="/product/colonial_classic"
-								className="md:col-span-3"
+								className="w-80 shrink-0 grow"
 							/>
 							<ProductCard
-								variant="display"
 								name="Banjo"
 								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/banjo"
-								className="md:col-span-3"
+								className="w-80 shrink-0 grow"
 							/>
 							<ProductCard
-								variant="display"
 								name="Heritage Series"
 								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/heritage"
-								className="md:col-span-6 lg:col-span-2"
+								className="w-80 shrink-0 grow"
 							/>
 							<ProductCard
-								variant="display"
 								name="Cobble Mix"
 								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/cobble_mix"
-								className="md:col-span-3 lg:col-span-2"
+								className="w-80 shrink-0 grow"
 							/>
 							<ProductCard
-								variant="display"
 								name="Old World Cobble"
 								startingSku={{ price: 203, unit: 'sqft' }}
 								link="/product/owc"
-								className="md:col-span-3 lg:col-span-2"
+								className="w-80 shrink-0 grow"
 							/>
 						</ul>
-						<Button variant="secondary" className="self-center" asChild>
+						<Button intent="secondary" className="mx-auto w-fit" asChild>
 							<Link scroll={false} href="/products/all">
-								View Product Catalogue
+								View All Products
 							</Link>
 						</Button>
-					</div>
+					</section>
 				</ViewportReveal>
 
-				{/* Inspiration */}
 				<InspirationSection />
 
-				{/* Locations */}
-				<ViewportReveal
-					id="where-to-buy"
-					className="flex scroll-m-48 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
-				>
-					<div className="flex-1">
-						<p className="text-lg">Our Locations</p>
-						<h2 className="max-w-[20ch] text-3xl">Where to buy.</h2>
-						<br />
-						<p className="text-lg">
-							We operate from two locations, namely, our manufacturing plant in
-							Yallahs, St Thomas and our main office and showroom at 27 Mannings
-							Hill Road, Kingston.
-						</p>
-						<br />
-						<Button variant="primary" asChild className="w-fit">
-							<Link scroll={false} href="/contact?form=quote">
-								Get a Quote
-							</Link>
-						</Button>
-					</div>
+				<LocationsSection />
 
-					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
-				</ViewportReveal>
+				<LearnSection />
 
-				{/* Process */}
-				<ViewportReveal
-					className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32"
-					data-ai-hidden
-				>
-					<div className="flex-1 md:order-2">
-						<p className="text-lg">Our Process</p>
-						<h2 className="max-w-[20ch] text-3xl">Starting from zero.</h2>
-
-						<br />
-
-						<p className="text-lg">
-							Integer a velit in sapien aliquam consectetur et vitae ligula.
-							Integer ornare egestas enim a malesuada. Suspendisse arcu lectus,
-							blandit nec gravida at, maximus ut lorem. Nulla malesuada vehicula
-							neque at laoreet. Nullam efficitur mauris sit amet accumsan
-							pulvinar.
-						</p>
-
-						<br />
-
-						<Button variant="primary">Find an Installer</Button>
-					</div>
-
-					<div className="grid aspect-video w-full place-items-center bg-gray-200 text-center text-2xl text-gray-300 md:w-[30vw]">
-						Installation Video
-					</div>
-				</ViewportReveal>
-
-				{/* About */}
-				<ViewportReveal className="flex scroll-m-16 flex-col gap-8 md:flex-row md:items-center md:gap-16 lg:gap-32">
-					<div className="flex-1 space-y-8">
-						<div>
-							<p className="text-lg">About Us</p>
-							<h2 className="max-w-[20ch] text-3xl">
-								Millennium Paving Stones LTD.
-							</h2>
-							<br />
-							<p className="text-lg">
-								Millennium Paving Stones Limited is the largest manufacturer of
-								paving stones in Jamaica, and has been in operation since 2000.
-								We also manufacture stepping stones, grasscrete, curb wall and
-								distribute such complementary products as sealers, cleaners and
-								polymeric sand.
-							</p>
-						</div>
-						<div className="flex gap-4">
-							<Button variant="primary">
-								<Link scroll={false} href="/products/all">
-									Explore Products
-								</Link>
-							</Button>
-							<Button variant="secondary">
-								<Link scroll={false} href="/contact?form=quote">
-									Get a Quote
-								</Link>
-							</Button>
-						</div>
-					</div>
-
-					<div className="aspect-square bg-gray-200 md:w-[30vw]" />
-				</ViewportReveal>
-			</Main>
+				<AugmentedRealityGallerySection />
+			</main>
 		</>
 	);
 }

@@ -1,45 +1,35 @@
-import classNames from 'classnames';
-import { Button } from './button';
 import { formatPrice } from '../utils/format';
 import Link from 'next/link';
+import { Icon } from './icon';
+import { cn } from '~/lib/utils';
 
 type ProductCardProps = {
 	name: string;
 	startingSku: { price: number; unit: string };
-	link?: string;
-	variant?: 'display' | 'normal';
+	link: string;
 } & React.LiHTMLAttributes<HTMLLIElement>;
 
-function ProductCard({
-	name,
-	startingSku,
-	link = '/product/colonial_classic',
-	variant = 'normal',
-	...props
-}: ProductCardProps) {
+function ProductCard({ name, startingSku, link, ...props }: ProductCardProps) {
 	return (
-		<li
-			className={classNames(
-				'flex h-[40vmax] flex-col items-start justify-end bg-gray-200 p-8 md:h-[50vmin] xl:h-[25vmax]',
-				props.className
-			)}
-		>
-			{/*  eslint-disable-next-line @next/next/no-img-element */}
-			<div className="space-y-2">
-				{variant === 'display' ? (
-					<h3 className="text-xl">{name}</h3>
-				) : (
-					<h3 className="text-lg">{name}</h3>
-				)}
-				<p>
-					Starting at {formatPrice(startingSku.price)} per {startingSku.unit}
-				</p>
-				<Button variant="secondary" className="w-fit" asChild>
-					<Link scroll={false} href={link}>
-						Learn More
-					</Link>
-				</Button>
-			</div>
+		<li className={cn('@container', props.className)}>
+			<Link
+				scroll={false}
+				href={link}
+				className="relative space-y-4 @lg:flex @lg:h-96 @lg:items-end @lg:justify-start @lg:p-6"
+			>
+				<div className="w-fill aspect-[4/3] bg-gray-200 @lg:absolute @lg:inset-0 @lg:aspect-[unset]" />
+
+				<div className="relative space-y-2">
+					<h3 className="font-display text-lg">{name}</h3>
+					<p>
+						Starting at {formatPrice(startingSku.price)} per {startingSku.unit}
+					</p>
+					<p className="flex items-center gap-1">
+						<span className="font-semibold">Learn More</span>{' '}
+						<Icon name="arrow_right_alt" />
+					</p>
+				</div>
+			</Link>
 		</li>
 	);
 }

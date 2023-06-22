@@ -53,7 +53,7 @@ function GalleryImage() {
 	return (
 		<li className="flex h-[30vmax] items-end justify-end bg-gray-200 p-2 md:col-span-3 lg:h-[50vmin] xl:col-span-2 xl:h-[25vmax]">
 			<Dialog.Trigger asChild>
-				<Button variant="secondary" className="!p-2">
+				<Button intent="secondary" className="!p-2">
 					<Maximize2 />
 				</Button>
 			</Dialog.Trigger>
@@ -117,7 +117,7 @@ function Page() {
 										<div className="relative flex aspect-[2/1] h-[90vh] w-full flex-col overflow-y-auto rounded-t-lg bg-white md:h-auto md:w-[90vw] md:flex-row md:rounded-none lg:w-[80vw]">
 											<Dialog.Close asChild>
 												<Button
-													variant="tertiary"
+													intent="tertiary"
 													className="absolute right-8 top-8 text-white md:top-12 md:text-gray-900"
 												>
 													<X />
@@ -190,7 +190,7 @@ function Page() {
 						</Dialog.Root>
 					</div>
 
-					<Button variant="secondary" className="mx-auto">
+					<Button intent="secondary" className="mx-auto">
 						See More
 					</Button>
 				</ViewportReveal>
@@ -213,7 +213,7 @@ function Page() {
 
 						<br />
 
-						<Button variant="primary">Find an Installer</Button>
+						<Button intent="primary">Find an Installer</Button>
 					</div>
 
 					<div className="aspect-video w-full bg-gray-200 lg:w-[70vmin]"></div>

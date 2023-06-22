@@ -1,27 +1,29 @@
 'use client';
 
-import { motion, useInView, Transition, MotionProps } from 'framer-motion';
+import { motion, useInView, Transition } from 'framer-motion';
 import { Slot, SlotProps } from '@radix-ui/react-slot';
-import { RefAttributes } from 'react';
 import { useRef } from 'react';
 
-type MotionSlotProps<Props> = Omit<
-	SlotProps & MotionProps & RefAttributes<HTMLElement>,
-	'ref'
+const MotionSlot = motion(
+	Slot as React.ForwardRefExoticComponent<
+		Omit<SlotProps, 'style'> & React.RefAttributes<HTMLElement>
+	>
+);
+
+type MotionSlotProps<ExtendProps> = React.ComponentPropsWithoutRef<
+	typeof MotionSlot
 > &
-	Props;
+	ExtendProps;
+
+const transition: Transition = {
+	type: 'spring',
+	duration: 1,
+	bounce: 0
+};
 
 type ViewportRevealProps = MotionSlotProps<{
 	asChild?: boolean;
 }>;
-
-const slowTransition: Transition = {
-	type: 'spring',
-	stiffness: 100,
-	damping: 20
-};
-
-const MotionSlot = motion(Slot);
 
 function ViewportReveal({ asChild, ...props }: ViewportRevealProps) {
 	const Comp = asChild ? MotionSlot : motion.div;
@@ -38,7 +40,7 @@ function ViewportReveal({ asChild, ...props }: ViewportRevealProps) {
 			ref={elementRef}
 			initial={{ opacity: 0 }}
 			animate={elementIsInView && { opacity: 1 }}
-			transition={slowTransition}
+			transition={transition}
 		/>
 	);
 }
@@ -60,7 +62,7 @@ function OrchestratedReveal({
 			{...props}
 			initial={{ y: 50, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
-			transition={{ ...slowTransition, delay }}
+			transition={{ ...transition, delay }}
 		>
 			{props.children}
 		</Comp>

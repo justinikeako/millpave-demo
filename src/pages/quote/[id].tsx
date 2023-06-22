@@ -39,7 +39,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 			<Main className="space-y-32">
 				{JSON.stringify(quote)}{' '}
 				<Button
-					variant="primary"
+					intent="primary"
 					onClick={async () => {
 						await deleteQuote.mutateAsync({ quoteId });
 

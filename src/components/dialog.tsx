@@ -64,7 +64,7 @@ function Header({ title }: HeaderProps) {
 			<DialogPrimitive.Title className="text-lg">{title}</DialogPrimitive.Title>
 
 			<DialogPrimitive.Close asChild>
-				<Button variant="tertiary" className="text-gray-500">
+				<Button intent="tertiary" className="text-gray-500">
 					<X className="w-6" />
 				</Button>
 			</DialogPrimitive.Close>

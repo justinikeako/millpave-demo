@@ -62,8 +62,8 @@ module.exports = {
 			},
 
 			boxShadow: {
-				button: '0 0 4px 1px rgb(0 0 0 / 0.2), 0 4px 4px 1px rgb(0 0 0 / .1)'
-			}
+				button: '0px 1px 2px 1px rgb(28 25 23 / 0.5)'
+			},
 		}
 	},
 

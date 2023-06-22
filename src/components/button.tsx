@@ -18,7 +18,7 @@ const buttonVariants = cva(
 		variants: {
 			intent: {
 				primary:
-					'relative px-3 py-2 rounded-sm overflow-hidden before:absolute before:block before:inset-px before:rounded-[3px] after:absolute after:block after:inset-px after:rounded-[3px]',
+					'relative px-3 py-2 rounded-sm overflow-hidden before:absolute before:block before:inset-px before:rounded-[3px] after:absolute after:block after:inset-px after:rounded-[3px] shadow-button',
 				secondary:
 					'rounded-sm border px-3 py-2 font-semibold transition-colors active:transition-none',
 				tertiary:
@@ -64,13 +64,13 @@ const buttonVariants = cva(
 				intent: 'tertiary',
 				backdrop: 'light',
 				className:
-					'hover:bg-gray-900/10 active:bg-gray-900/20 disabled:text-gray-900'
+					'text-gray-900 hover:bg-gray-900/10 active:bg-gray-900/20 disabled:text-gray-600'
 			},
 			{
 				intent: 'tertiary',
 				backdrop: 'dark',
 				className:
-					'hover:bg-gray-100/10 active:bg-gray-100/20 disabled:text-gray-100'
+					'text-gray-100 hover:bg-gray-100/10 active:bg-gray-100/20 disabled:text-gray-400'
 			}
 		]
 	}

@@ -47,7 +47,7 @@ function Page() {
 								</label>
 								<Select value={formType} onValueChange={handleFormTypeChange}>
 									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Select a fruit" />
+										<SelectValue placeholder="Select an option" />
 									</SelectTrigger>
 
 									<SelectContent>

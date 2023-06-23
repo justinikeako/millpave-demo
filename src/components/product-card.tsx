@@ -7,26 +7,39 @@ type ProductCardProps = {
 	name: string;
 	startingSku: { price: number; unit: string };
 	link: string;
+	containerClassName?: string;
 } & React.LiHTMLAttributes<HTMLLIElement>;
 
-function ProductCard({ name, startingSku, link, ...props }: ProductCardProps) {
+function ProductCard({
+	name,
+	startingSku,
+	link,
+	containerClassName,
+	...props
+}: ProductCardProps) {
 	return (
-		<li className={cn('@container', props.className)}>
+		<li className={cn('contents', containerClassName)}>
 			<Link
 				href={link}
-				className="relative space-y-4 @lg:flex @lg:h-96 @lg:items-end @lg:justify-start @lg:p-6"
+				className={cn(
+					'relative min-w-[16rem] space-y-4 @container',
+					props.className
+				)}
 			>
-				<div className="w-fill aspect-[4/3] bg-gray-200 @lg:absolute @lg:inset-0 @lg:aspect-[unset]" />
+				<div className="@lg:flex @lg:h-full @lg:items-end @lg:justify-start @lg:p-6">
+					<div className="w-fill aspect-[4/3] bg-gray-200 @lg:absolute @lg:inset-0 @lg:aspect-[unset]" />
 
-				<div className="relative space-y-2">
-					<h3 className="font-display text-lg">{name}</h3>
-					<p>
-						Starting at {formatPrice(startingSku.price)} per {startingSku.unit}
-					</p>
-					<p className="flex items-center gap-1">
-						<span className="font-semibold">Learn More</span>{' '}
-						<Icon name="arrow_right_alt" />
-					</p>
+					<div className="relative mt-2 space-y-2">
+						<h3 className="font-display text-lg">{name}</h3>
+						<p>
+							Starting at {formatPrice(startingSku.price)} per{' '}
+							{startingSku.unit}
+						</p>
+						<p className="flex items-center gap-1">
+							<span className="font-semibold">Learn More</span>{' '}
+							<Icon name="arrow_right_alt" />
+						</p>
+					</div>
 				</div>
 			</Link>
 		</li>

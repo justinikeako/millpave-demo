@@ -1,36 +1,25 @@
-type IconProps = React.ComponentProps<'span'> & {
+import { forwardRef } from 'react';
+import { cn } from '~/lib/utils';
+
+type IconProps = React.ComponentProps<'svg'> & {
 	name: string;
-	weight?: 300 | 400;
-	grade?: number;
-	fill?: boolean;
 	size?: number;
-	opticalSize?: 20 | 24 | 40 | 48;
 };
 
-export function Icon({
-	name,
-	weight = 400,
-	grade = 1,
-	fill = false,
-	size = 20,
-	opticalSize = 24,
-	...props
-}: IconProps) {
-	return (
-		<span
-			{...props}
-			style={
-				{
-					fontSize: `${size}px`,
-					'--weight': weight,
-					'--grade': grade,
-					'--optical-size': Math.min(48, opticalSize),
-					'--fill': Number(fill)
-				} as React.CSSProperties
-			}
-			className="material-symbols-outlined select-none"
-		>
-			{name}
-		</span>
-	);
-}
+export const Icon = forwardRef<React.ElementRef<'svg'>, IconProps>(
+	({ name, size = 20, ...props }, ref) => {
+		return (
+			<svg
+				{...props}
+				ref={ref}
+				width={size}
+				height={size}
+				className={cn('inline-block fill-current', props.className)}
+			>
+				<use href={`/sprite.svg#${name}`} />
+			</svg>
+		);
+	}
+);
+
+Icon.displayName = 'Icon';

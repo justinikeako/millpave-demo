@@ -1,9 +1,16 @@
 import Head from 'next/head';
-import * as Select from '../components/select';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from '../components/ui/select';
 import { Button } from '../components/button';
 import { useRouter } from 'next/router';
 import { Main } from '~/components/main';
 import { OrchestratedReveal } from '~/components/reveal';
+import { Icon } from '~/components/icon';
 
 type FormType = 'general' | 'quote' | 'sample';
 
@@ -21,38 +28,77 @@ function Page() {
 				<title>Contact — Millennium Paving Stones</title>
 			</Head>
 
-			<Main className="space-y-16 !pt-16 md:!pt-24">
+			<Main>
 				<OrchestratedReveal delay={0.1}>
-					<h1 className="text-center text-4xl">Get in touch.</h1>
+					<h1 className="mt-16 text-center font-display text-4xl">
+						Get in touch.
+					</h1>
 				</OrchestratedReveal>
 
-				<div className="flex flex-col gap-16 lg:flex-row lg:gap-16">
+				<div className="flex flex-row gap-16 py-16">
 					{/* Form */}
 					<OrchestratedReveal delay={0.2} className="top-8 flex-1 space-y-8">
-						<h2 className="text-lg">Contact Form</h2>
+						<h2 className="font-display text-lg">Contact Form</h2>
 
 						<form className="space-y-8">
-							<Select.Root
-								value={formType}
-								onValueChange={handleFormTypeChange}
-							>
-								<Select.Trigger className="w-full" />
+							<div className="space-y-2">
+								<label className="block font-semibold">
+									How can we help you?
+								</label>
+								<Select value={formType} onValueChange={handleFormTypeChange}>
+									<SelectTrigger className="w-full">
+										<SelectValue placeholder="Select a fruit" />
+									</SelectTrigger>
 
-								<Select.Content>
-									<Select.ScrollUpButton />
-									<Select.Viewport>
-										<Select.Item value="general">General Inquiry</Select.Item>
-										<Select.Item value="quote">
+									<SelectContent>
+										<SelectItem value="general">General Inquiry</SelectItem>
+										<SelectItem value="quote">
 											I would like to a quote
-										</Select.Item>
-										<Select.Item value="samples">
+										</SelectItem>
+										<SelectItem value="samples">
 											I would like to request samples
-										</Select.Item>
-									</Select.Viewport>
-									<Select.ScrollDownButton />
-								</Select.Content>
-							</Select.Root>
+										</SelectItem>
+									</SelectContent>
+								</Select>
+							</div>
 
+							<div className="flex gap-4">
+								<div className="flex-1 space-y-2">
+									<label htmlFor="name" className="block font-semibold">
+										Your Email
+									</label>
+									<input
+										id="name"
+										type="text"
+										className="w-full rounded-sm border border-gray-400 bg-gray-200 p-4 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+										placeholder="Jane Doe"
+									/>
+								</div>
+								<div className="flex-1 space-y-2">
+									<label htmlFor="name" className="block font-semibold">
+										Your Email
+									</label>
+									<input
+										id="name"
+										type="text"
+										className="w-full rounded-sm border border-gray-400 bg-gray-200 p-4 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+										placeholder="janedoe@example.com"
+									/>
+								</div>
+							</div>
+
+							<div className="space-y-2">
+								<label className="block font-semibold" htmlFor="inquiry">
+									How can we help you?
+								</label>
+								<textarea
+									id="inquiry"
+									cols={30}
+									rows={10}
+									placeholder="Describe your inquiry..."
+									className="w-full rounded-sm border border-gray-400 bg-gray-200 p-4 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+								></textarea>
+							</div>
 							<Button intent="primary" type="submit" className="mx-auto">
 								Submit
 							</Button>
@@ -64,34 +110,33 @@ function Page() {
 						delay={0.3}
 						className="top-8 flex-1 space-y-8 self-start lg:sticky lg:block"
 					>
-						<h2 className="text-lg">Millennium Locations</h2>
+						<h2 className="font-display text-lg">Millennium Locations</h2>
+						<div className="aspect-video border border-gray-400 bg-gray-200" />
 						<ul className="flex gap-4">
-							<li>
-								<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 font-semibold text-white">
-									R
-								</span>
-								&nbsp;Retail
+							<li className="flex items-center gap-1">
+								<Icon name="retail_circle" />
+								<span>Retail</span>
 							</li>
-							<li>
-								<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 font-semibold text-white">
-									M
-								</span>
-								&nbsp;Manufacturing
+							<li className="flex items-center gap-1">
+								<Icon name="manufacturing_circle" />
+								<span>Manufacturing</span>
 							</li>
 						</ul>
 						<ul className="flex flex-wrap gap-8">
-							<li>
-								<h3 className="font-semibold">
-									Kingston, JA&nbsp;
-									<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 text-white">
-										R
-									</span>
+							<li className="space-y-5">
+								<h3 className="flex items-center gap-1 font-semibold">
+									<span>Kingston Showroom</span>
+									<Icon name="retail_circle" />
 								</h3>
-								<br />
 								<p>
 									Shop 1, 27 Mannings Hill Road <br /> Kingston 8
 								</p>
-								<br />
+
+								<ul>
+									<li>Open 9 - 5 from Mon - Fri</li>
+									<li> Open 10 - 3 on Sat</li>
+								</ul>
+
 								<ul>
 									<li>
 										Phone:&nbsp;
@@ -118,18 +163,17 @@ function Page() {
 								</ul>
 							</li>
 
-							<li>
-								<h3 className="font-semibold">
-									St. Thomas, JA&nbsp;
-									<span className="inline-grid h-6 w-6 place-items-center rounded-full bg-gray-900 text-white">
-										M
-									</span>
+							<li className="space-y-5">
+								<h3 className="flex items-center gap-1 font-semibold">
+									<span>St. Thomas Factory</span>
+									<Icon name="manufacturing_circle" />
 								</h3>
-								<br />
 								<p>
-									Shop 1, 27 Mannings Hill Road <br /> Kingston 8
+									Lot 16, Yallahs Industrial Estates
+									<br />
+									Yallahs P.O. St. Thomas
 								</p>
-								<br />
+								<p>Open 9 - 5 from Mon - Fri</p>
 								<ul>
 									<li>
 										Phone:&nbsp;

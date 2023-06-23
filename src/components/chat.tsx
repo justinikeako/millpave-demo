@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { useMemo, useRef, useState } from 'react';
 import { Button } from './button';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -9,6 +8,7 @@ import { Send } from 'lucide-react';
 import { ChevronDown } from 'lucide-react';
 import { RefreshCcw } from 'lucide-react';
 import { OrchestratedReveal } from './reveal';
+import {cn} from '~/lib/utils';
 
 type Message = {
 	text: string;
@@ -188,7 +188,7 @@ function Chat() {
 													}
 												}}
 												key={index}
-												className={classNames(
+												className={cn(
 													'max-w-[75%] rounded-lg px-3 py-2',
 													message.sender === 'gpt'
 														? 'self-start rounded-bl-none bg-gray-700 text-white'

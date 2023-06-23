@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
-import cx from 'classnames';
 import { Slot } from '@radix-ui/react-slot';
 import { cva } from 'class-variance-authority';
+import { cn } from '~/lib/utils';
 
 type ButtonProps = {
 	intent: 'primary' | 'secondary' | 'tertiary';
@@ -13,7 +13,7 @@ type ButtonProps = {
 >;
 
 const buttonVariants = cva(
-	'flex items-center justify-center gap-1 font-semibold text-center select-none disabled:pointer-events-none [&>span]:z-[1]',
+	'flex items-center justify-center gap-1 font-semibold text-center select-none focus:outline-pink-700 focus:outline-offset-2 disabled:pointer-events-none [&>span]:z-[1]',
 	{
 		variants: {
 			intent: {
@@ -86,7 +86,7 @@ const Button = forwardRef<
 		<Comp
 			{...props}
 			ref={ref}
-			className={cx(buttonVariants({ intent, backdrop }), props.className)}
+			className={cn(buttonVariants({ intent, backdrop }), props.className)}
 		/>
 	);
 });

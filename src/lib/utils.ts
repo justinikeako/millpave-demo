@@ -1,4 +1,5 @@
-import classNames from 'classnames';
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
 import { Sku, ExtendedPaverDetails } from '~/types/product';
 import { Dimensions, QuoteItem, Shape, Unit } from '~/types/quote';
 import { round } from 'mathjs';
@@ -88,5 +89,7 @@ export function stopPropagate(
 		callback(e);
 	};
 }
-
-export const cn = classNames;
+ 
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}

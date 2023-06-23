@@ -125,7 +125,6 @@ function Page() {
 													<p className="font-semibold">
 														By&nbsp;
 														<Link
-															scroll={false}
 															target="_blank"
 															href="https://www.instagram.com/najobriks"
 															className="underline"

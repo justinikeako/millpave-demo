@@ -17,9 +17,7 @@ const NavLink = forwardRef<HTMLLIElement, NavLinkProps>(function NavLink(
 ) {
 	return (
 		<li ref={ref} {...props}>
-			<Link scroll={false} href={href}>
-				{children}
-			</Link>
+			<Link href={href}>{children}</Link>
 		</li>
 	);
 });
@@ -92,10 +90,10 @@ function Header() {
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>
 			<OrchestratedReveal asChild>
-				<header className="sticky top-0 z-10">
+				<header className="sticky top-0 z-10 bg-gray-100">
 					<div className="flex items-center px-16 py-4 2xl:container">
 						<div className="flex-1">
-							<Link scroll={false} href="/" className="block w-fit">
+							<Link href="/" className="block w-fit">
 								<Logo variant="text" className="max-sm:hidden" />
 								<Logo className="sm:hidden" />
 							</Link>
@@ -118,12 +116,12 @@ function Header() {
 						<div className="flex flex-1 justify-end gap-4">
 							<Button intent="tertiary" asChild>
 								<Link href="/quote">
-									<Icon name="shopping_cart" />
+									<Icon name="shopping_cart" size={24} />
 								</Link>
 							</Button>
 							<Dialog.Trigger asChild>
 								<Button intent="tertiary" className="lg:hidden">
-									<Icon name="menu" />
+									<Icon name="menu" size={24} />
 								</Button>
 							</Dialog.Trigger>
 						</div>
@@ -145,11 +143,7 @@ function Header() {
 								className="fixed inset-0 z-50 flex flex-col bg-gray-900 text-white"
 							>
 								<div className="flex items-center justify-between px-8 py-4 md:px-24 md:py-8">
-									<Link
-										scroll={false}
-										href="/"
-										onClick={() => setMenuOpen(false)}
-									>
+									<Link href="/" onClick={() => setMenuOpen(false)}>
 										<div className="max-sm:hidden">
 											<Logo variant="text" />
 										</div>

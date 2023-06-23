@@ -13,7 +13,6 @@ function ProductCard({ name, startingSku, link, ...props }: ProductCardProps) {
 	return (
 		<li className={cn('@container', props.className)}>
 			<Link
-				scroll={false}
 				href={link}
 				className="relative space-y-4 @lg:flex @lg:h-96 @lg:items-end @lg:justify-start @lg:p-6"
 			>

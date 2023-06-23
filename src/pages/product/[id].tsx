@@ -6,7 +6,7 @@ import Link from 'next/link';
 import NextError from 'next/error';
 import { Sku } from '~/types/product';
 import { api } from '~/utils/api';
-import classNames from 'classnames';
+import { cn } from '~/lib/utils';
 import { PaverEstimator } from '~/components/estimator';
 import { Icon } from '~/components/icon';
 import { Suspense, useState } from 'react';
@@ -68,7 +68,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 								className="flex aspect-square w-20 flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700"
 							>
 								{showModelViewer && index === 3 && (
-									<Icon name="3d_rotation" size={40} opticalSize={40} />
+									<Icon name="3d_rotation_opsz-40" size={40} />
 								)}
 							</label>
 						</div>
@@ -103,7 +103,7 @@ function Section({
 	...props
 }: React.PropsWithChildren<SectionProps>) {
 	return (
-		<section className={classNames('space-y-4', props.className)}>
+		<section className={cn('space-y-4', props.className)}>
 			<h2 className="font-display text-lg">{heading}</h2>
 			{children}
 		</section>
@@ -158,10 +158,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 						<section className="space-y-2">
 							<div>
 								<p className="font-display text-lg">
-									<Link
-										scroll={false}
-										href={`/products/${product.category.id}`}
-									>
+									<Link href={`/products/${product.category.id}`}>
 										{product.category.displayName}
 									</Link>
 								</p>

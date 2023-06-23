@@ -175,9 +175,7 @@ function Page() {
 							/>
 						</ul>
 						<Button intent="secondary" className="mx-auto w-fit" asChild>
-							<Link scroll={false} href="/products/all">
-								View All Products
-							</Link>
+							<Link href="/products/all">View All Products</Link>
 						</Button>
 					</FullWidthSection>
 				</ViewportReveal>

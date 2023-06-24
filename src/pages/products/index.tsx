@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import { ProductCard } from '~/components/product-card';
-import { w } from 'windstitch';
 import { appRouter } from '~/server/api/routers/root';
 import { createInnerTRPCContext } from '~/server/api/trpc';
 import superjson from 'superjson';
@@ -9,15 +8,12 @@ import { api } from '~/utils/api';
 import NextError from 'next/error';
 import { Button } from '~/components/button';
 import {
-	GetServerSidePropsContext,
-	InferGetServerSidePropsType,
-	InferGetStaticPropsType
+	// GetServerSidePropsContext,
+	InferGetServerSidePropsType
 } from 'next';
-import { useRouter } from 'next/router';
 import { Category } from '~/types/product';
 import { Main } from '~/components/main';
 import { OrchestratedReveal } from '~/components/reveal';
-import { db } from '~/server/db';
 import { Icon } from '~/components/icon';
 import { cn } from '~/lib/utils';
 import {
@@ -27,6 +23,7 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '~/components/ui/select';
+import * as Collapsible from '@radix-ui/react-collapsible';
 import { LearnSection } from '~/components/sections/learn';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
 
@@ -51,7 +48,7 @@ function Checkbox({ name, value, className, ...props }: CheckboxProps) {
 
 			<div
 				className={cn(
-					'group relative h-5 w-5 rounded-sm border border-gray-400 bg-gray-100 from-white/50 text-gray-100 hover:border-gray-500 active:border-gray-600 peer-checked:!border-pink-800 peer-checked:bg-pink-700 peer-checked:bg-gradient-to-b peer-checked:hover:from-white/60 peer-checked:active:bg-gradient-to-t peer-checked:active:from-white/25',
+					'group relative h-5 w-5 rounded-sm border border-gray-400 bg-gray-100 from-white/50 text-gray-100 hover:border-gray-500 active:border-gray-600 peer-checked:!border-pink-700 peer-checked:bg-pink-600 peer-checked:bg-gradient-to-b peer-checked:hover:from-white/60 peer-checked:active:bg-gradient-to-t peer-checked:active:from-white/25',
 					className
 				)}
 			>
@@ -96,8 +93,40 @@ function ColorFilter({ swatch: color, ...props }: ColorFilterProps) {
 	);
 }
 
+type FilterGroupProps = React.PropsWithChildren<{
+	displayName: string;
+	collapsible?: boolean;
+}>;
+
+function FilterGroup({
+	collapsible,
+	displayName: name,
+	children
+}: FilterGroupProps) {
+	return (
+		<Collapsible.Root
+			className="group space-y-3"
+			defaultOpen
+			disabled={collapsible === undefined}
+		>
+			<Collapsible.Trigger className="-mx-4 -my-2 flex w-[calc(100%+32px)] items-end justify-between rounded-md px-4 py-2 hover:bg-gray-900/10 active:bg-gray-900/20">
+				<span className="font-semibold">{name}</span>
+
+				<Icon
+					name="expand_more"
+					className="hidden group-data-[state=closed]:block group-data-[disabled]:!hidden"
+				/>
+				<Icon
+					name="expand_less"
+					className="hidden group-data-[state=open]:block group-data-[disabled]:!hidden"
+				/>
+			</Collapsible.Trigger>
+			<Collapsible.Content>{children}</Collapsible.Content>
+		</Collapsible.Root>
+	);
+}
+
 function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const router = useRouter();
 	const categoryId = props.category;
 
 	const categoriesQuery = api.category.getAll.useQuery(undefined, {
@@ -132,20 +161,20 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 				<title>Product Catalogue — Millennium Paving Stones</title>
 			</Head>
 
-			<Main className="space-y-8 py-16">
+			<Main>
 				<OrchestratedReveal asChild delay={0.1}>
-					<h1 className="font-display text-4xl">Product Catalogue</h1>
+					<h1 className="py-16 text-center font-display text-4xl">
+						Product Catalogue
+					</h1>
 				</OrchestratedReveal>
 
-				<div className="flex items-start gap-8">
+				<div className="flex items-start gap-12">
 					<OrchestratedReveal asChild delay={0.2}>
-						<section className="w-72 space-y-8 rounded-xl bg-gray-200 p-6">
+						<section className="w-72 space-y-8 rounded-xl border border-gray-300 bg-gray-200 p-6">
 							<h2 className="font-display text-lg">Filters</h2>
 
 							{/* Price per Unit */}
-							<div className="space-y-3">
-								<h3 className="font-semibold">Price per unit</h3>
-
+							<FilterGroup displayName="Price per unit">
 								<div className="flex gap-2">
 									<div className="flex flex-1 items-center gap-2">
 										<label htmlFor="min-price">Min:</label>
@@ -179,14 +208,10 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 										</label>
 									</div>
 								</div>
-							</div>
+							</FilterGroup>
 
 							{/* Categories */}
-							<div className="space-y-3">
-								<div className="flex items-center justify-between">
-									<h3 className="font-semibold">Categories</h3>
-								</div>
-
+							<FilterGroup displayName="Categories" collapsible>
 								<ul className="space-y-2">
 									<Filter name="categories" value="all" defaultChecked>
 										All
@@ -207,14 +232,10 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 										Cleaning
 									</Filter>
 								</ul>
-							</div>
+							</FilterGroup>
 
 							{/* Weight Rating */}
-							<div className="space-y-3">
-								<div className="flex items-center justify-between">
-									<h3 className="font-semibold">Weight Rating</h3>
-								</div>
-
+							<FilterGroup displayName="Weight Rating" collapsible>
 								<ul className="space-y-2">
 									<Filter name="weight_rating" value="any" defaultChecked>
 										Any
@@ -229,14 +250,10 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 										Light Traffic
 									</Filter>
 								</ul>
-							</div>
+							</FilterGroup>
 
 							{/* Colors 🌈 */}
-							<div className="space-y-3">
-								<div className="flex items-center justify-between">
-									<h3 className="font-semibold">Colors</h3>
-								</div>
-
+							<FilterGroup displayName="Colors" collapsible>
 								<ul className="space-y-2">
 									<Filter name="colors" value="all" defaultChecked>
 										All
@@ -354,20 +371,16 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 										Custom Blend
 									</ColorFilter>
 								</ul>
-							</div>
+							</FilterGroup>
 
 							{/* Misc */}
-							<div className="space-y-3">
-								<div className="flex items-center justify-between">
-									<h3 className="font-semibold">Misc</h3>
-								</div>
-
+							<FilterGroup displayName="Misc">
 								<ul className="space-y-2">
 									<Filter name="has_models" value="true">
 										Has
 									</Filter>
 								</ul>
-							</div>
+							</FilterGroup>
 						</section>
 					</OrchestratedReveal>
 					{/* Products */}
@@ -404,7 +417,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 												name={product.displayName}
 												startingSku={product.startingSku}
 												link={`/product/${product.id}`}
-												className="[.group:first-child>&]:col-span-2 [.group:nth-child(6n)>&]:col-span-2"
+												className="pb-4 [.group:first-child>&]:col-span-2 [.group:first-child>&]:pb-0 [.group:nth-child(7n)>&]:col-span-2 [.group:nth-child(7n)>&]:pb-0"
 												containerClassName="group"
 											/>
 										))
@@ -433,30 +446,30 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	);
 }
 
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-) => {
-	const ssrContext = await createInnerTRPCContext({});
+export const getServerSideProps = async () =>
+	// context: GetServerSidePropsContext
+	{
+		const ssrContext = await createInnerTRPCContext({});
 
-	const ssr = await createServerSideHelpers({
-		router: appRouter,
-		ctx: ssrContext,
-		transformer: superjson // optional - adds superjson serialization
-	});
+		const ssr = await createServerSideHelpers({
+			router: appRouter,
+			ctx: ssrContext,
+			transformer: superjson // optional - adds superjson serialization
+		});
 
-	// const categoryId = context.query?.category as string;
-	const categoryId = 'all';
+		// const categoryId = context.query?.category as string;
+		const categoryId = 'all';
 
-	// prefetch `product.getByCategory`
-	await ssr.product.getByCategory.prefetchInfinite({ categoryId });
-	await ssr.category.getAll.prefetch();
+		// prefetch `product.getByCategory`
+		await ssr.product.getByCategory.prefetchInfinite({ categoryId });
+		await ssr.category.getAll.prefetch();
 
-	return {
-		props: {
-			trpcState: ssr.dehydrate(),
-			category: categoryId
-		}
+		return {
+			props: {
+				trpcState: ssr.dehydrate(),
+				category: categoryId
+			}
+		};
 	};
-};
 
 export default Page;

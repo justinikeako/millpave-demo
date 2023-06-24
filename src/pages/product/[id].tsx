@@ -266,7 +266,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 									intent="secondary"
 									className="h-full flex-col !rounded-md font-display text-lg italic"
 								>
-									<Link href="/products/all">
+									<Link href="/products">
 										<span className="block w-[15ch]">Explore All Products</span>
 										<Icon name="arrow_right_alt" size={24} />
 									</Link>

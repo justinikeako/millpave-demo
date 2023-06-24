@@ -164,7 +164,7 @@ export async function getCatalogueDocument() {
 
 	const metadata = {
 		title: '',
-		source: 'https://millpave.notprimitive.com/products/all',
+		source: 'https://millpave.notprimitive.com/products',
 		contentLength: cleanedContent?.match(/\b\w+\b/g)?.length ?? 0
 	};
 

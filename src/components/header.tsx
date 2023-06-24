@@ -101,7 +101,7 @@ function Header() {
 						<nav className="flex select-none items-center justify-between">
 							{/* Desktop Links */}
 							<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal text-gray-900 max-lg:hidden">
-								<NavLink href="/products/all">Products</NavLink>
+								<NavLink href="/products">Products</NavLink>
 								<NavLink href="/gallery">Inspiration</NavLink>
 								<NavLink href="/resources">Resources</NavLink>
 								<NavLink href="/quote-builder">
@@ -170,7 +170,7 @@ function Header() {
 								>
 									<MotionNavLink
 										variants={variants.item}
-										href="/products/all"
+										href="/products"
 										onClick={() => setMenuOpen(false)}
 									>
 										Products

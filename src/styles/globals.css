@@ -22,13 +22,6 @@ body {
 	min-height: 100%;
 }
 
-#top {
-	pointer-events: none;
-	user-select: none;
-	margin-bottom: -21px;
-	color: transparent;
-}
-
 /* Chrome, Safari, Edge, Opera */
 input.no-arrows::-webkit-outer-spin-button,
 input.no-arrows::-webkit-inner-spin-button {

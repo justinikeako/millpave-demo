@@ -42,11 +42,6 @@ const App: AppType = ({ Component, pageProps }) => {
 				/>
 			</Head>
 
-			{/* This prevents the header's enter animation from offsetting scroll on reload */}
-			<div id="top" aria-hidden>
-				Top
-			</div>
-
 			<Header />
 			<Component {...pageProps} />
 			<Footer />

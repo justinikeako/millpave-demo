@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { Button } from './button';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Logo } from './logo';
 import { OrchestratedReveal } from './reveal';
 import { Icon } from './icon';
+import { useRouter } from 'next/router';
 
 type NavLinkProps = {
 	href: string;
@@ -85,49 +86,94 @@ const variants = {
 const MotionNavLink = motion(NavLink);
 
 function Header() {
+	const headerRef = useRef<HTMLDivElement>(null);
+	const router = useRouter();
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [isTransparent, setTransparent] = useState(false);
+
+	useEffect(() => {
+		const headerElement = headerRef.current;
+		if (!headerElement) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					const isIntersecting =
+						entry.isIntersecting || entry.intersectionRatio > 0;
+
+					setTransparent(isIntersecting);
+				});
+			},
+			{ threshold: 0 } // Adjust the threshold as needed
+		);
+
+		const targetElements = document.querySelectorAll(
+			'[data-header-transparent]'
+		);
+
+		targetElements.forEach((targetElement) => {
+			observer.observe(targetElement);
+		});
+
+		if (targetElements.length === 0) setTransparent(false);
+
+		return () => {
+			targetElements.forEach((targetElement) => {
+				observer.unobserve(targetElement);
+			});
+		};
+	}, [router.asPath]);
 
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>
-			<OrchestratedReveal asChild>
-				<header className="sticky top-0 z-10 bg-gray-100">
-					<div className="flex items-center px-16 py-4 2xl:container">
-						<div className="flex-1">
-							<Link href="/" className="block w-fit">
-								<Logo variant="text" className="max-sm:hidden" />
-								<Logo className="sm:hidden" />
-							</Link>
-						</div>
-						<nav className="flex select-none items-center justify-between">
-							{/* Desktop Links */}
-							<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal text-gray-900 max-lg:hidden">
-								<NavLink href="/products">Products</NavLink>
-								<NavLink href="/gallery">Inspiration</NavLink>
-								<NavLink href="/resources">Resources</NavLink>
-								<NavLink href="/quote-builder">
-									Get a Quote&nbsp;
-									<span className="inline-block rounded-sm border border-black/10  bg-gradient-to-t from-black/10 px-1 text-sm font-semibold">
-										New
-									</span>
-								</NavLink>
-								<NavLink href="/contact">Contact</NavLink>
-							</ul>
-						</nav>
-						<div className="flex flex-1 justify-end gap-4">
-							<Button intent="tertiary" asChild>
-								<Link href="/quote">
-									<Icon name="shopping_cart" size={24} />
-								</Link>
-							</Button>
-							<Dialog.Trigger asChild>
-								<Button intent="tertiary" className="lg:hidden">
-									<Icon name="menu" size={24} />
-								</Button>
-							</Dialog.Trigger>
-						</div>
+			<header
+				data-transparent={isTransparent || undefined}
+				className="group sticky top-0 z-10 bg-gray-100 text-gray-900 transition-colors data-[transparent]:bg-transparent data-[transparent]:text-gray-100"
+				ref={headerRef}
+			>
+				<OrchestratedReveal className="flex items-center px-16 py-4 2xl:container">
+					<div className="flex-1">
+						<Link href="/" className="block w-fit">
+							<Logo variant="text" className="max-sm:hidden" />
+							<Logo className="sm:hidden" />
+						</Link>
 					</div>
-				</header>
-			</OrchestratedReveal>
+					<nav className="flex select-none items-center justify-between">
+						{/* Desktop Links */}
+						<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal max-lg:hidden">
+							<NavLink href="/products">Products</NavLink>
+							<NavLink href="/gallery">Inspiration</NavLink>
+							<NavLink href="/resources">Resources</NavLink>
+							<NavLink href="/quote-builder">
+								Get a Quote&nbsp;
+								<span className="inline-block rounded-sm border border-black/10  bg-gradient-to-t from-black/10 px-1 text-sm font-semibold group-data-[transparent]:border-white/25 group-data-[transparent]:bg-gradient-to-b group-data-[transparent]:from-white/25">
+									New
+								</span>
+							</NavLink>
+							<NavLink href="/contact">Contact</NavLink>
+						</ul>
+					</nav>
+					<div className="flex flex-1 justify-end gap-4">
+						<Button
+							intent="tertiary"
+							asChild
+							className="group-data-[transparent]:text-gray-100"
+						>
+							<Link href="/quote">
+								<Icon name="shopping_cart" size={24} />
+							</Link>
+						</Button>
+						<Dialog.Trigger asChild>
+							<Button
+								intent="tertiary"
+								className="group-data-[transparent]:text-gray-100 lg:hidden"
+							>
+								<Icon name="menu" size={24} />
+							</Button>
+						</Dialog.Trigger>
+					</div>
+				</OrchestratedReveal>
+			</header>
 
 			{/* Mobile Menu */}
 			<AnimatePresence>

@@ -60,10 +60,14 @@ function Hero() {
 	};
 
 	return (
-		<section ref={heroRef} className="flex h-[200lvh] flex-col items-center">
+		<section
+			ref={heroRef}
+			className="flex h-[200lvh] flex-col items-center text-gray-100"
+			data-header-transparent
+		>
 			<motion.div
 				style={{ scale: bgScale }}
-				className="sticky top-0 -z-10 mt-[-68px] h-[100lvh] w-[100lvw] bg-gray-200"
+				className="sticky top-0 -z-10 mt-[-68px] h-[100lvh] w-[100lvw] bg-gray-700"
 			/>
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">

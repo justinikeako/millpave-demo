@@ -1,3 +1,5 @@
+import { cn } from '~/lib/utils';
+
 type LogoVariant = 'mark' | 'text' | 'tagline';
 
 type LogoProps = React.ComponentProps<'svg'> & { variant?: LogoVariant };
@@ -14,9 +16,9 @@ function Logo({ variant = 'mark', ...props }: LogoProps) {
 	return (
 		<svg
 			{...variantDimensions[variant]}
-			className="fill-current"
-			xmlns="http://www.w3.org/2000/svg"
 			{...props}
+			xmlns="http://www.w3.org/2000/svg"
+			className={cn('fill-current', props.className)}
 		>
 			{variant === 'mark' && <use href="/sprite.svg#mark" />}
 			{variant === 'text' && <use href="/sprite.svg#mark_with_text" />}

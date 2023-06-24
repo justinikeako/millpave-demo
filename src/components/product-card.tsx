@@ -29,7 +29,7 @@ function ProductCard({
 				<div className="@lg:flex @lg:h-full @lg:items-end @lg:justify-start @lg:p-6">
 					<div className="w-fill aspect-[4/3] bg-gray-200 @lg:absolute @lg:inset-0 @lg:aspect-[unset]" />
 
-					<div className="relative mt-2 space-y-2">
+					<div className="relative space-y-2 px-2 pb-2 pt-3 @lg:p-0">
 						<h3 className="font-display text-lg">{name}</h3>
 						<p>
 							Starting at {formatPrice(startingSku.price)} per{' '}

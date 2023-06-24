@@ -386,7 +386,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 					{/* Products */}
 					<OrchestratedReveal asChild delay={0.3}>
 						<section className="flex-1 space-y-4">
-							<div className="flex justify-between">
+							<div className="flex items-center justify-between">
 								<h2 className="font-display text-lg">All Items</h2>
 								<div className="flex items-center gap-2">
 									<p>Sort</p>
@@ -417,7 +417,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 												name={product.displayName}
 												startingSku={product.startingSku}
 												link={`/product/${product.id}`}
-												className="pb-4 [.group:first-child>&]:col-span-2 [.group:first-child>&]:pb-0 [.group:nth-child(7n)>&]:col-span-2 [.group:nth-child(7n)>&]:pb-0"
+												className="[.group:first-child>&]:col-span-2 [.group:nth-child(7n)>&]:col-span-2"
 												containerClassName="group"
 											/>
 										))

@@ -12,13 +12,13 @@ export function LocationsSection() {
 			body="We operate from two locations, namely, our main office and showroom at 27 Mannings Hill Road, Kingston and our manufacturing plant in Yallahs, St Thomas."
 			actions={
 				<>
-					<Button intent="primary" asChild>
+					<Button asChild intent="primary">
 						<Link href="/contact">
 							<span>Contact Us</span>
 							<Icon name="arrow_right_alt" />
 						</Link>
 					</Button>
-					<Button intent="secondary">
+					<Button asChild intent="secondary" >
 						<Link href="/contact">Get Directions</Link>
 					</Button>
 				</>

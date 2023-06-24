@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { Footer } from '~/components/footer';
 import { ProductCard } from '~/components/product-card';
 import { appRouter } from '~/server/api/routers/root';
 import { createInnerTRPCContext } from '~/server/api/trpc';
@@ -109,7 +110,7 @@ function FilterGroup({
 			defaultOpen
 			disabled={collapsible === undefined}
 		>
-			<Collapsible.Trigger className="-mx-4 -my-2 flex w-[calc(100%+32px)] items-end justify-between rounded-md px-4 py-2 hover:bg-gray-900/10 active:bg-gray-900/20">
+			<Collapsible.Trigger className="-mx-4 -my-2 flex w-[calc(100%+32px)] items-end justify-between rounded-md px-4 py-2 hover:bg-gray-900/10 active:bg-gray-900/20 disabled:!bg-transparent">
 				<span className="font-semibold">{name}</span>
 
 				<Icon
@@ -442,6 +443,8 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 				<LearnSection />
 				<AugmentedRealityGallerySection />
 			</Main>
+
+			<Footer />
 		</>
 	);
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { Footer } from '~/components/footer';
 import { Button } from '../components/button';
 import { OrchestratedReveal, ViewportReveal } from '../components/reveal';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -200,6 +201,9 @@ function Page() {
 				<LearnSection />
 				<AugmentedRealityGallerySection />
 			</Main>
+
+			
+			<Footer />
 		</>
 	);
 }

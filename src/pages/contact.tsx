@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { Footer } from '~/components/footer';
 import {
 	Select,
 	SelectContent,
@@ -193,6 +194,9 @@ function Page() {
 					</OrchestratedReveal>
 				</div>
 			</Main>
+
+			
+			<Footer />
 		</>
 	);
 }

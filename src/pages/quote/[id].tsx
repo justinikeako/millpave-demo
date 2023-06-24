@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { Footer } from '~/components/footer';
 import NextError from 'next/error';
 import { api } from '~/utils/api';
 import { createServerSideHelpers } from '@trpc/react-query/server';
@@ -49,6 +50,9 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 					Delete
 				</Button>
 			</Main>
+
+			
+			<Footer />
 		</>
 	);
 }

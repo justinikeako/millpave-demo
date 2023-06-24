@@ -7,6 +7,7 @@ import {
 	useTransform
 } from 'framer-motion';
 import Head from 'next/head';
+import { Footer } from '~/components/footer';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { Balancer } from 'react-wrap-balancer';
@@ -192,6 +193,9 @@ function Page() {
 
 				<AugmentedRealityGallerySection />
 			</Main>
+
+			
+			<Footer />
 		</>
 	);
 }

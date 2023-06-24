@@ -2,7 +2,6 @@ import { type AppType } from 'next/app';
 import Head from 'next/head';
 
 import { Header } from '~/components/header';
-import { Footer } from '~/components/footer';
 import { Chat } from '~/components/chat';
 
 import { api } from '~/utils/api';
@@ -44,7 +43,6 @@ const App: AppType = ({ Component, pageProps }) => {
 
 			<Header />
 			<Component {...pageProps} />
-			<Footer />
 
 			<Chat />
 		</>

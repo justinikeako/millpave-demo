@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { Footer } from '~/components/footer';
 import { VariantPicker, SkuPickerProvider } from '~/components/sku-picker';
 import { ProductCard } from '~/components/product-card';
 import { Button } from '~/components/button';
@@ -284,6 +285,9 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
 				<AugmentedRealityGallerySection />
 			</Main>
+
+			
+			<Footer />
 		</>
 	);
 }

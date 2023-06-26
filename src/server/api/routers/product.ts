@@ -72,7 +72,6 @@ export const productRouter = createTRPCRouter({
 					}
 				}
 			});
-			console.log(fulfillment);
 			if (!fulfillment) throw new TRPCError({ code: 'NOT_FOUND' });
 
 			return fulfillment;

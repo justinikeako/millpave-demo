@@ -4,7 +4,7 @@ const Shape = z.enum(['rect', 'circle', 'arbitrary']);
 export type Shape = z.infer<typeof Shape>;
 
 const Unit1D = z.enum(['ft', 'in', 'm', 'cm']);
-type Unit1D = z.infer<typeof Unit1D>;
+export type Unit1D = z.infer<typeof Unit1D>;
 
 const Unit2D = z.enum(['sqft', 'sqin', 'sqm', 'sqcm']);
 type Unit2D = z.infer<typeof Unit2D>;
@@ -93,9 +93,13 @@ const BorderLength = z.object({
 	value: z.number(),
 	unit: z.union([Unit1D, z.enum(['auto'])])
 });
+
+const BorderOrientation = z.enum(['SOLDIER_ROW', 'TIP_TO_TIP']);
+export type BorderOrientation = z.infer<typeof BorderOrientation>;
+
 export const Border = z.object({
 	runningLength: BorderLength,
-	orientation: z.enum(['SOLDIER_ROW', 'TIP_TO_TIP']),
+	orientation: BorderOrientation,
 	stones: Stone1D.array()
 });
 export type Border = z.infer<typeof Border>;

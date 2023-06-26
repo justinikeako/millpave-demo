@@ -1,5 +1,10 @@
 import { Button } from '~/components/button';
-import * as Select from '~/components/select';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger
+} from '~/components/ui/select';
 import {
 	Sheet,
 	SheetBody,
@@ -22,7 +27,13 @@ import { useState } from 'react';
 import { formatPrice } from '~/utils/format';
 import { ProductStock } from '../product-stock';
 import { Check } from 'lucide-react';
-import { StoneProject, Stone, Coverage, StoneMetadata } from '~/types/quote';
+import {
+	StoneProject,
+	Stone,
+	Coverage,
+	StoneMetadata,
+	Unit
+} from '~/types/quote';
 import {
 	cn,
 	findSku,
@@ -334,14 +345,14 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 				<Section heading="Coverage">
 					<label
 						htmlFor="coverage.value"
-						className="flex w-full rounded-md bg-gray-200 p-4 pr-2"
+						className="flex w-full rounded-md bg-gray-200"
 					>
 						<input
 							{...register('coverage.value', { min: 0.01 })}
 							id="coverage.value"
 							type="number"
 							step="any"
-							className="no-arrows w-full flex-1 bg-transparent outline-none"
+							className="no-arrows w-full flex-1 bg-transparent p-4 pr-1 outline-none"
 							placeholder="Amount"
 						/>
 
@@ -349,63 +360,61 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 							control={formMethods.control}
 							name="coverage.unit"
 							render={(coverageUnit) => (
-								<Select.Root
+								<Select
 									value={coverageUnit.field.value}
-									onValueChange={coverageUnit.field.onChange}
+									onValueChange={(newUnit: Unit) =>
+										coverageUnit.field.onChange(newUnit)
+									}
 								>
-									<Select.Trigger basic />
+									<SelectTrigger unstyled className="h-full px-2" />
 
-									<Select.Content>
-										<Select.ScrollUpButton />
-										<Select.Viewport>
-											{dimension === '2D' && (
-												<>
-													<Select.Item value="fr">
-														{unitDisplayNameDictionary['fr'][0]}
-													</Select.Item>
-													<Select.Item value="sqft">
-														{unitDisplayNameDictionary['sqft'][0]}
-													</Select.Item>
-													<Select.Item value="sqin">
-														{unitDisplayNameDictionary['sqin'][0]}
-													</Select.Item>
-													<Select.Item value="sqm">
-														{unitDisplayNameDictionary['sqm'][0]}
-													</Select.Item>
-													<Select.Item value="sqcm">
-														{unitDisplayNameDictionary['sqcm'][0]}
-													</Select.Item>
-													<Select.Item value="unit">
-														{unitDisplayNameDictionary['unit'][0]}
-													</Select.Item>
-												</>
-											)}
-											{dimension === '1D' && (
-												<>
-													<Select.Item value="fr">
-														{unitDisplayNameDictionary['fr'][0]}
-													</Select.Item>
-													<Select.Item value="ft">
-														{unitDisplayNameDictionary['ft'][0]}
-													</Select.Item>
-													<Select.Item value="in">
-														{unitDisplayNameDictionary['in'][0]}
-													</Select.Item>
-													<Select.Item value="m">
-														{unitDisplayNameDictionary['m'][0]}
-													</Select.Item>
-													<Select.Item value="cm">
-														{unitDisplayNameDictionary['cm'][0]}
-													</Select.Item>
-													<Select.Item value="unit">
-														{unitDisplayNameDictionary['unit'][0]}
-													</Select.Item>
-												</>
-											)}
-										</Select.Viewport>
-										<Select.ScrollDownButton />
-									</Select.Content>
-								</Select.Root>
+									<SelectContent>
+										{dimension === '2D' && (
+											<>
+												<SelectItem value="fr">
+													{unitDisplayNameDictionary['fr'][0]}
+												</SelectItem>
+												<SelectItem value="sqft">
+													{unitDisplayNameDictionary['sqft'][0]}
+												</SelectItem>
+												<SelectItem value="sqin">
+													{unitDisplayNameDictionary['sqin'][0]}
+												</SelectItem>
+												<SelectItem value="sqm">
+													{unitDisplayNameDictionary['sqm'][0]}
+												</SelectItem>
+												<SelectItem value="sqcm">
+													{unitDisplayNameDictionary['sqcm'][0]}
+												</SelectItem>
+												<SelectItem value="unit">
+													{unitDisplayNameDictionary['unit'][0]}
+												</SelectItem>
+											</>
+										)}
+										{dimension === '1D' && (
+											<>
+												<SelectItem value="fr">
+													{unitDisplayNameDictionary['fr'][0]}
+												</SelectItem>
+												<SelectItem value="ft">
+													{unitDisplayNameDictionary['ft'][0]}
+												</SelectItem>
+												<SelectItem value="in">
+													{unitDisplayNameDictionary['in'][0]}
+												</SelectItem>
+												<SelectItem value="m">
+													{unitDisplayNameDictionary['m'][0]}
+												</SelectItem>
+												<SelectItem value="cm">
+													{unitDisplayNameDictionary['cm'][0]}
+												</SelectItem>
+												<SelectItem value="unit">
+													{unitDisplayNameDictionary['unit'][0]}
+												</SelectItem>
+											</>
+										)}
+									</SelectContent>
+								</Select>
 							)}
 						/>
 					</label>

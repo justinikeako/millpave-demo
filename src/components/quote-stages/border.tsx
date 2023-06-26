@@ -2,7 +2,7 @@ import * as Select from '~/components/select';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
-import { StoneProject } from '~/types/quote';
+import { BorderOrientation, StoneProject, Unit1D } from '~/types/quote';
 import { calculateRunningFoot, unitDisplayNameDictionary } from '~/lib/utils';
 import { useStageContext } from './stage-context';
 import { Button } from '../button';
@@ -100,7 +100,7 @@ function BorderOptions() {
 						render={(runningLengthUnit) => (
 							<Select.Root
 								value={runningLengthUnit.field.value}
-								onValueChange={(value) => {
+								onValueChange={(value: Unit1D | 'auto') => {
 									if (value === 'auto') {
 										setValue(
 											'border.runningLength.value',
@@ -147,7 +147,9 @@ function BorderOptions() {
 					render={(borderOrientation) => (
 						<Select.Root
 							value={borderOrientation.field.value}
-							onValueChange={borderOrientation.field.onChange}
+							onValueChange={(value: BorderOrientation) =>
+								borderOrientation.field.onChange(value)
+							}
 						>
 							<Select.Trigger className="w-full !rounded-md" />
 

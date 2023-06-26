@@ -27,13 +27,6 @@ export default defineNextConfig({
 		return config;
 	},
 
-	typescript: {
-		ignoreBuildErrors: true
-	},
-	eslint: {
-		ignoreDuringBuilds: true
-	},
-
 	headers: async () => [
 		{
 			source: '/:all*(woff2|png|bin|gltf)',

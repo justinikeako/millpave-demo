@@ -7,6 +7,7 @@ import { Logo } from './logo';
 import { OrchestratedReveal } from './reveal';
 import { Icon } from './icon';
 import { useRouter } from 'next/router';
+import { cn } from '~/lib/utils';
 
 type NavLinkProps = {
 	href: string;
@@ -85,7 +86,7 @@ const variants = {
 
 const MotionNavLink = motion(NavLink);
 
-function Header() {
+function Header({ minimal }: { minimal: boolean }) {
 	const headerRef = useRef<HTMLDivElement>(null);
 	const router = useRouter();
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -131,42 +132,49 @@ function Header() {
 				className="group sticky top-0 z-10 bg-gray-100 text-gray-900 transition-colors data-[transparent]:bg-transparent data-[transparent]:text-gray-100"
 				ref={headerRef}
 			>
-				<OrchestratedReveal className="flex items-center px-16 py-4 2xl:container">
+				<OrchestratedReveal className="flex px-16 py-4 2xl:container">
 					<div className="flex-1">
 						<Link href="/" className="block w-fit">
 							<Logo variant="text" className="max-sm:hidden" />
 							<Logo className="sm:hidden" />
 						</Link>
 					</div>
-					<nav className="flex select-none items-center justify-between">
-						{/* Desktop Links */}
-						<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal max-lg:hidden">
-							<NavLink href="/products">Products</NavLink>
-							<NavLink href="/gallery">Inspiration</NavLink>
-							<NavLink href="/resources">Resources</NavLink>
-							<NavLink href="/quote-builder">
-								Get a Quote&nbsp;
-								<span className="inline-block rounded-sm border border-black/10  bg-gradient-to-t from-black/10 px-1 text-sm font-semibold group-data-[transparent]:border-white/25 group-data-[transparent]:bg-gradient-to-b group-data-[transparent]:from-white/25">
-									New
-								</span>
-							</NavLink>
-							<NavLink href="/contact">Contact</NavLink>
-						</ul>
-					</nav>
-					<div className="flex flex-1 justify-end gap-4">
-						<Button
-							intent="tertiary"
-							asChild
-							className="group-data-[transparent]:text-gray-100"
-						>
-							<Link href="/quote">
-								<Icon name="shopping_cart" size={24} />
-							</Link>
-						</Button>
+					{!minimal && (
+						<nav className="flex select-none items-center justify-between">
+							{/* Desktop Links */}
+							<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal max-lg:hidden">
+								<NavLink href="/products">Products</NavLink>
+								<NavLink href="/gallery">Inspiration</NavLink>
+								<NavLink href="/resources">Resources</NavLink>
+								<NavLink href="/quote-builder">
+									Get a Quote&nbsp;
+									<span className="relative inline-block rounded-sm bg-gradient-to-t from-black/10 px-1 text-sm font-semibold before:absolute  before:inset-0 before:rounded-sm before:border before:border-black/10 before:gradient-mask-t-0 group-data-[transparent]:border-white/25 group-data-[transparent]:bg-gradient-to-b group-data-[transparent]:from-white/25 group-data-[transparent]:before:border-white/25 group-data-[transparent]:before:gradient-mask-b-0 ">
+										New
+									</span>
+								</NavLink>
+								<NavLink href="/contact">Contact</NavLink>
+							</ul>
+						</nav>
+					)}
+					<div className="flex flex-1 items-center justify-end gap-4">
+						{!minimal && (
+							<Button
+								intent="tertiary"
+								asChild
+								className="group-data-[transparent]:text-gray-100"
+							>
+								<Link href="/quote">
+									<Icon name="shopping_cart" size={24} />
+								</Link>
+							</Button>
+						)}
 						<Dialog.Trigger asChild>
 							<Button
 								intent="tertiary"
-								className="group-data-[transparent]:text-gray-100 lg:hidden"
+								className={cn(
+									'group-data-[transparent]:text-gray-100 ',
+									!minimal && 'lg:hidden'
+								)}
 							>
 								<Icon name="menu" size={24} />
 							</Button>

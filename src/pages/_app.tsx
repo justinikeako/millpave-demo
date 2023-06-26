@@ -23,7 +23,7 @@ const inter = Inter({
 	variable: '--font-inter'
 });
 
-const App: AppType = ({ Component, pageProps }) => {
+const App: AppType = ({ Component, pageProps, router }) => {
 	return (
 		<>
 			{/* give root access to the font variable */}
@@ -41,10 +41,11 @@ const App: AppType = ({ Component, pageProps }) => {
 				/>
 			</Head>
 
-			<Header />
+			<Header minimal={router.pathname === '/quote-builder'} />
+
 			<Component {...pageProps} />
 
-			<Chat />
+			<Chat hide={router.pathname === '/quote-builder'} />
 		</>
 	);
 };

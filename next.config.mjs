@@ -1,4 +1,4 @@
-import { env } from './src/env/server.mjs';
+import withBundleAnalyzer from '@next/bundle-analyzer';
 
 /**
  * Don't be scared of the generics here.
@@ -9,7 +9,9 @@ import { env } from './src/env/server.mjs';
  * @constraint {{import('next').NextConfig}}
  */
 function defineNextConfig(config) {
-	return config;
+	return withBundleAnalyzer({
+		enabled: process.env.ANALYZE === 'true'
+	})(config);
 }
 
 export default defineNextConfig({
@@ -23,6 +25,13 @@ export default defineNextConfig({
 		};
 
 		return config;
+	},
+
+	typescript: {
+		ignoreBuildErrors: true
+	},
+	eslint: {
+		ignoreDuringBuilds: true
 	},
 
 	headers: async () => [

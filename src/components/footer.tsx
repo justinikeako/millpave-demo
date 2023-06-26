@@ -19,7 +19,7 @@ function Footer() {
 								<li>
 									<Link
 										target="_blank"
-										className="hover:text-gray-300 active:text-gray-400"
+										className="hover:text-gray-700 active:text-gray-500"
 										href="https://www.facebook.com/millenniumpavingstones"
 									>
 										<FacebookIcon className="h-8 w-8" />
@@ -28,7 +28,7 @@ function Footer() {
 								<li>
 									<Link
 										target="_blank"
-										className="hover:text-gray-300 active:text-gray-400"
+										className="hover:text-gray-700 active:text-gray-500"
 										href="http://www.instagram.com/millpave"
 									>
 										<InstagramIcon className="h-8 w-8" />
@@ -106,10 +106,9 @@ function Footer() {
 					Product colours should be pulled from multiple pallets during
 					installation as colours may vary from pallet to pallet. Colours shown
 					on the website may vary from actual product colours. We recommend
-					colour selections be made from actual product samples. Request
-					samples&nbsp;
+					colour selections be made from actual product samples.&nbsp;
 					<Link href="/contact?form=samples" className="underline">
-						here
+						Request samples here
 					</Link>
 					.
 				</p>

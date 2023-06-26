@@ -187,6 +187,7 @@ function VariantFragmentPicker({
 							id={id}
 							checked={currentVariantId === id}
 							onChange={(e) => onChange(e.target.value)}
+							aria-label={displayName}
 						/>
 
 						<div className="flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-400 peer-checked:bg-gray-100 peer-checked:text-gray-700 peer-checked:ring-2 peer-checked:ring-gray-700 peer-focus:bg-blue-50 peer-focus:text-pink-700 peer-focus:ring-pink-700">
@@ -202,6 +203,7 @@ function VariantFragmentPicker({
 type ColorFragmentPickerProps = {
 	colors: {
 		id: string;
+		displayName: string;
 		css: string;
 	}[];
 	currentColorId: string;
@@ -215,7 +217,7 @@ function ColorFragmentPicker({
 }: ColorFragmentPickerProps) {
 	return (
 		<ul className="relative flex flex-wrap gap-2">
-			{colors.map(({ id, css }) => (
+			{colors.map(({ id, displayName, css }) => (
 				<li key={id} className="contents">
 					<label htmlFor={id} className="contents">
 						<input
@@ -225,6 +227,7 @@ function ColorFragmentPicker({
 							value={id}
 							id={id}
 							checked={currentColorId === id}
+							aria-label={displayName}
 							onChange={(e) => onChange(e.target.value)}
 						/>
 						<div

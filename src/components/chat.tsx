@@ -3,12 +3,12 @@ import { Button } from './button';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { MessagesSquare } from 'lucide-react';
 import { Send } from 'lucide-react';
 import { ChevronDown } from 'lucide-react';
 import { RefreshCcw } from 'lucide-react';
 import { OrchestratedReveal } from './reveal';
-import {cn} from '~/lib/utils';
+import { cn } from '~/lib/utils';
+import { Icon } from './icon';
 
 type Message = {
 	text: string;
@@ -24,7 +24,8 @@ const initialChatState = {
 	],
 	history: []
 };
-function Chat() {
+
+function Chat({ hide }: { hide: boolean }) {
 	const [open, setOpen] = useState(false);
 	const [draftText, setDraftText] = useState('');
 	const [loading, setLoading] = useState<boolean>(false);
@@ -234,22 +235,18 @@ function Chat() {
 					)}
 				</AnimatePresence>
 
-				<OrchestratedReveal asChild delay={0.4}>
-					<button
-						onClick={toggleOpen}
-						className="relative flex select-none rounded-lg bg-gray-900 p-4 text-white shadow-button  hover:bg-gray-800 active:bg-gray-700"
-					>
-						{/* {unreadMessageCount > 0 && (
-						<span className="absolute -left-1 -top-1 block rounded-full bg-red-600 p-1 font-semibold text-white">
-							<span className="block h-4 w-4 leading-4">
-								{unreadMessageCount}
-							</span>
-						</span>
-					)} */}
+				{!hide && (
+					<OrchestratedReveal asChild delay={0.4}>
+						<button
+							onClick={toggleOpen}
+							className="relative flex select-none rounded-lg bg-gray-900 p-4 text-white shadow-button  hover:bg-gray-800 active:bg-gray-700"
+						>
+							<span className="sr-only">Chat</span>
 
-						<MessagesSquare className="h-8 w-8" />
-					</button>
-				</OrchestratedReveal>
+							<Icon name="chat_bubble" size={32} />
+						</button>
+					</OrchestratedReveal>
+				)}
 			</div>
 		</div>
 	);

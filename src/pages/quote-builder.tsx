@@ -103,7 +103,7 @@ const StageFooter = forwardRef<
 		<footer
 			{...props}
 			ref={ref}
-			className="sticky bottom-0 z-40 flex items-center justify-between bg-white px-32 pb-8 pt-6"
+			className="sticky bottom-0 z-40 flex items-center justify-between bg-gray-100 px-16 py-4"
 		>
 			<nav>
 				<ul className="flex select-none items-center justify-center gap-3">
@@ -250,16 +250,6 @@ function Page() {
 				body {
 					display: flex;
 					flex-direction: column;
-				}
-
-				#__next {
-					display: contents;
-				}
-
-				#nav-transition {
-					display: flex;
-					flex-direction: column;
-					flex: 1 1 0%;
 				}
 			`}</style>
 

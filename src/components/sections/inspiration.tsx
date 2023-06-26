@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { Button } from '../button';
+import { Icon } from '../icon';
 import { ViewportReveal } from '../reveal';
 import { FullWidthSection } from './full-width';
 
@@ -28,9 +29,14 @@ function InspirationSection() {
 
 					<br />
 
-					<Button asChild intent="primary" className="mx-auto w-fit">
+					<Button asChild intent="primary" className="mx-auto w-fit group">
 						<Link href="/gallery">
 							<span>Get Inspired</span>
+							
+						<Icon
+							name="arrow_right_alt"
+							className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-1"
+						/>
 						</Link>
 					</Button>
 				</div>

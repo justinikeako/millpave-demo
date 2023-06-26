@@ -1,6 +1,5 @@
 import { SplitSection } from './split';
 import { Button } from '~/components/button';
-import { Icon } from '~/components/icon';
 import Link from 'next/link';
 
 export function LocationsSection() {
@@ -15,10 +14,9 @@ export function LocationsSection() {
 					<Button asChild intent="primary">
 						<Link href="/contact">
 							<span>Contact Us</span>
-							<Icon name="arrow_right_alt" />
 						</Link>
 					</Button>
-					<Button asChild intent="secondary" >
+					<Button asChild intent="secondary">
 						<Link href="/contact">Get Directions</Link>
 					</Button>
 				</>

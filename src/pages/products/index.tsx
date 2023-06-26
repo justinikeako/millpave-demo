@@ -44,12 +44,12 @@ function Checkbox({ name, value, className, ...props }: CheckboxProps) {
 				name={name}
 				value={value}
 				id={inputId}
-				className="peer hidden"
+				className="peer sr-only"
 			/>
 
 			<div
 				className={cn(
-					'group relative h-5 w-5 rounded-sm border border-gray-400 bg-gray-100 from-white/50 text-gray-100 hover:border-gray-500 active:border-gray-600 peer-checked:!border-pink-700 peer-checked:bg-pink-600 peer-checked:bg-gradient-to-b peer-checked:hover:from-white/60 peer-checked:active:bg-gradient-to-t peer-checked:active:from-white/25',
+					'group relative h-5 w-5 rounded-sm border border-gray-400 bg-gray-100 from-white/50 text-gray-100 outline-2 outline-gray-900 hover:border-gray-500 active:border-gray-600 peer-checked:!border-pink-700 peer-checked:bg-pink-600 peer-checked:bg-gradient-to-b peer-checked:hover:from-white/60 peer-checked:active:bg-gradient-to-t peer-checked:active:from-white/25 peer-focus-visible:outline',
 					className
 				)}
 			>
@@ -106,7 +106,7 @@ function FilterGroup({
 }: FilterGroupProps) {
 	return (
 		<Collapsible.Root
-			className="group space-y-3"
+			className="group space-y-3 data-[state=open]:pb-2"
 			defaultOpen
 			disabled={collapsible === undefined}
 		>
@@ -171,11 +171,35 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 				<div className="flex items-start gap-12">
 					<OrchestratedReveal asChild delay={0.2}>
-						<section className="w-72 space-y-8 rounded-xl border border-gray-300 bg-gray-200 p-6">
+						<section className="w-72 space-y-4 rounded-xl border border-gray-300 bg-gray-200 p-6">
 							<h2 className="font-display text-lg">Filters</h2>
 
-							{/* Price per Unit */}
-							<FilterGroup displayName="Price per unit">
+							{/* Categories */}
+							<FilterGroup displayName="Categories" collapsible>
+								<ul className="space-y-2">
+									<Filter name="categories" value="all" defaultChecked>
+										All
+									</Filter>
+									<Filter name="categories" value="pavers" defaultChecked>
+										Paving Stones
+									</Filter>
+									<Filter name="categories" value="slabs" defaultChecked>
+										Slabs
+									</Filter>
+									<Filter name="categories" value="blocks" defaultChecked>
+										Blocks
+									</Filter>
+									<Filter name="categories" value="maintenance" defaultChecked>
+										Maintenance
+									</Filter>
+									<Filter name="categories" value="cleaning" defaultChecked>
+										Cleaning
+									</Filter>
+								</ul>
+							</FilterGroup>
+
+							{/* Price per ft² */}
+							<FilterGroup displayName="Price per ft²" collapsible>
 								<div className="flex gap-2">
 									<div className="flex flex-1 items-center gap-2">
 										<label htmlFor="min-price">Min:</label>
@@ -211,44 +235,32 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 								</div>
 							</FilterGroup>
 
-							{/* Categories */}
-							<FilterGroup displayName="Categories" collapsible>
-								<ul className="space-y-2">
-									<Filter name="categories" value="all" defaultChecked>
-										All
-									</Filter>
-									<Filter name="categories" value="pavers" defaultChecked>
-										Paving Stones
-									</Filter>
-									<Filter name="categories" value="slabs" defaultChecked>
-										Slabs
-									</Filter>
-									<Filter name="categories" value="blocks" defaultChecked>
-										Blocks
-									</Filter>
-									<Filter name="categories" value="maintenance" defaultChecked>
-										Maintenance
-									</Filter>
-									<Filter name="categories" value="cleaning" defaultChecked>
-										Cleaning
-									</Filter>
-								</ul>
-							</FilterGroup>
-
-							{/* Weight Rating */}
-							<FilterGroup displayName="Weight Rating" collapsible>
+							{/* Strength */}
+							<FilterGroup displayName="Rated Strength" collapsible>
 								<ul className="space-y-2">
 									<Filter name="weight_rating" value="any" defaultChecked>
 										Any
 									</Filter>
-									<Filter name="weight_rating" value="heavy" defaultChecked>
-										Heavy Traffic
+									<Filter
+										name="weight_rating"
+										value="commercial"
+										defaultChecked
+									>
+										Commercial Grade
 									</Filter>
-									<Filter name="weight_rating" value="heavy" defaultChecked>
-										Medium Traffic
+									<Filter
+										name="weight_rating"
+										value="residential"
+										defaultChecked
+									>
+										Residential Grade
 									</Filter>
-									<Filter name="weight_rating" value="heavy" defaultChecked>
-										Light Traffic
+									<Filter
+										name="weight_rating"
+										value="lightweight"
+										defaultChecked
+									>
+										Lightweight
 									</Filter>
 								</ul>
 							</FilterGroup>
@@ -418,8 +430,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 												name={product.displayName}
 												startingSku={product.startingSku}
 												link={`/product/${product.id}`}
-												className="[.group:first-child>&]:col-span-2 [.group:nth-child(7n)>&]:col-span-2"
-												containerClassName="group"
+												className="first:col-span-2 [&:nth-child(7n)]:col-span-2"
 											/>
 										))
 									)}

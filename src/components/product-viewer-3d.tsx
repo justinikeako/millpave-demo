@@ -1,6 +1,7 @@
+import { Group, Mesh, MeshStandardMaterial } from 'three';
+import { GLTF, USDZExporter } from 'three-stdlib';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
-import { GLTF, USDZExporter } from 'three-stdlib';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from './button';
@@ -9,10 +10,10 @@ import QRCode from 'react-qr-code';
 
 type GLTFResult = GLTF & {
 	nodes: {
-		model: THREE.Mesh;
+		model: Mesh;
 	};
 	materials: {
-		concrete: THREE.MeshStandardMaterial;
+		concrete: MeshStandardMaterial;
 	};
 };
 
@@ -108,7 +109,7 @@ function DesktopARPrompt({ link }: DesktopARPromptProps) {
 }
 
 type IOSARLinkProps = {
-	scene: THREE.Group | undefined;
+	scene: Group | undefined;
 	title: string;
 	callToAction: string;
 };

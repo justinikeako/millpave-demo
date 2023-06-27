@@ -1,5 +1,5 @@
 import { createTRPCNext } from '@trpc/next';
-import { type AppRouter } from '~/server/api/routers/root';
+import { type AppRouter } from '~/server/api/root';
 import superjson from 'superjson';
 import { loggerLink, httpBatchLink } from '@trpc/client';
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';

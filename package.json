@@ -46,7 +46,6 @@
 		"langchain": "^0.0.96",
 		"lodash-es": "^4.17.21",
 		"lucide-react": "^0.252.0",
-		"mathjs": "^11.8.2",
 		"mysql2": "^3.4.1",
 		"nanoid": "^4.0.2",
 		"next": "13.4.4",

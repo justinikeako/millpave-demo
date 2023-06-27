@@ -1,4 +1,10 @@
-import * as Select from '~/components/select';
+import {
+	Select,
+	SelectTrigger,
+	SelectContent,
+	SelectItem,
+	SelectValue
+} from '~/components/ui/select';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
@@ -76,21 +82,18 @@ function BorderOptions() {
 
 	return (
 		<div className="flex flex-wrap justify-center gap-4">
-			<div className="max-w-xs flex-1 space-y-4">
+			<div className="max-w-xs flex-1 space-y-2">
 				<label htmlFor="border.runningLength.value" className="font-semibold">
 					Running Length
 				</label>
-				<label
-					htmlFor="border.runningLength.value"
-					className="flex w-full rounded-md bg-gray-200 p-4"
-				>
+				<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 					<input
 						type="number"
 						id="border.runningLength.value"
 						step="any"
 						{...register('border.runningLength.value', { min: 0.01 })}
 						readOnly={runningLengthUnit === 'auto'}
-						className="no-arrows w-full flex-1 bg-transparent outline-none read-only:text-gray-400"
+						className="no-arrows w-full flex-1 bg-transparent p-4 outline-none read-only:text-gray-400"
 						placeholder="Amount"
 					/>
 
@@ -98,70 +101,69 @@ function BorderOptions() {
 						control={control}
 						name="border.runningLength.unit"
 						render={(runningLengthUnit) => (
-							<Select.Root
+							<Select
 								value={runningLengthUnit.field.value}
 								onValueChange={(value: Unit1D | 'auto') => {
 									if (value === 'auto') {
 										setValue(
 											'border.runningLength.value',
-											calculateRunningFoot(watch('shape'), watch('dimensions'))
+											calculateRunningFoot(
+												watch('shape'),
+												watch('measurements')
+											)
 										);
 									}
 
 									runningLengthUnit.field.onChange(value);
 								}}
 							>
-								<Select.Trigger basic />
+								<SelectTrigger unstyled className="p-4 pl-0">
+									<SelectValue />
+								</SelectTrigger>
 
-								<Select.Content>
-									<Select.ScrollUpButton />
-									<Select.Viewport>
-										<Select.Item value="auto">auto (ft)</Select.Item>
-										<Select.Item value="ft">
-											{unitDisplayNameDictionary['ft'][0]}
-										</Select.Item>
-										<Select.Item value="in">
-											{unitDisplayNameDictionary['in'][0]}
-										</Select.Item>
-										<Select.Item value="m">
-											{unitDisplayNameDictionary['m'][0]}
-										</Select.Item>
-										<Select.Item value="cm">
-											{unitDisplayNameDictionary['cm'][0]}
-										</Select.Item>
-									</Select.Viewport>
-									<Select.ScrollDownButton />
-								</Select.Content>
-							</Select.Root>
+								<SelectContent>
+									<SelectItem value="auto">auto (ft)</SelectItem>
+									<SelectItem value="ft">
+										{unitDisplayNameDictionary['ft'][0]}
+									</SelectItem>
+									<SelectItem value="in">
+										{unitDisplayNameDictionary['in'][0]}
+									</SelectItem>
+									<SelectItem value="m">
+										{unitDisplayNameDictionary['m'][0]}
+									</SelectItem>
+									<SelectItem value="cm">
+										{unitDisplayNameDictionary['cm'][0]}
+									</SelectItem>
+								</SelectContent>
+							</Select>
 						)}
 					/>
-				</label>
+				</div>
 			</div>
 
-			<div className="max-w-xs flex-1 space-y-4">
+			<div className="max-w-xs flex-1 space-y-2">
 				<label className="font-semibold">Stone Orientation</label>
 
 				<Controller
 					control={control}
 					name="border.orientation"
 					render={(borderOrientation) => (
-						<Select.Root
+						<Select
 							value={borderOrientation.field.value}
 							onValueChange={(value: BorderOrientation) =>
 								borderOrientation.field.onChange(value)
 							}
 						>
-							<Select.Trigger className="w-full !rounded-md" />
+							<SelectTrigger className="w-full">
+								<SelectValue />
+							</SelectTrigger>
 
-							<Select.Content>
-								<Select.ScrollUpButton />
-								<Select.Viewport>
-									<Select.Item value="SOLDIER_ROW">Soldier Row</Select.Item>
-									<Select.Item value="TIP_TO_TIP">Tip to Tip</Select.Item>
-								</Select.Viewport>
-								<Select.ScrollDownButton />
-							</Select.Content>
-						</Select.Root>
+							<SelectContent>
+								<SelectItem value="SOLDIER_ROW">Soldier Row</SelectItem>
+								<SelectItem value="TIP_TO_TIP">Tip to Tip</SelectItem>
+							</SelectContent>
+						</Select>
 					)}
 				/>
 			</div>

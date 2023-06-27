@@ -1,8 +1,11 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import { Sku, ExtendedPaverDetails } from '~/types/product';
-import { Dimensions, QuoteItem, Shape, Unit } from '~/types/quote';
-import { round } from 'mathjs';
+import { Measurements, QuoteItem, Shape, Unit } from '~/types/quote';
+
+export function roundFractionDigits(value: number, fractionDigits: number) {
+	return parseFloat(value.toFixed(fractionDigits));
+}
 
 export function getQuoteDetails(
 	quoteItems: Omit<QuoteItem, 'displayName' | 'signatures' | 'unit'>[]
@@ -17,28 +20,28 @@ export function getQuoteDetails(
 		totalWeight += cartItem.weight;
 	}
 
-	totalArea = round(totalArea, 2);
-	totalWeight = round(totalWeight, 2);
-	subtotal = round(subtotal, 2);
-	const tax = round(subtotal * 0.15, 2);
-	const total = round(subtotal + tax, 2);
+	totalArea = roundFractionDigits(totalArea, 2);
+	totalWeight = roundFractionDigits(totalWeight, 2);
+	subtotal = roundFractionDigits(subtotal, 2);
+	const tax = roundFractionDigits(subtotal * 0.15, 2);
+	const total = roundFractionDigits(subtotal + tax, 2);
 
 	return { totalArea, totalWeight, subtotal, tax, total };
 }
 
-export function calculateRunningFoot(shape: Shape, dimensions: Dimensions) {
-	function inner(shape: Shape, dimensions: Dimensions) {
+export function calculateRunningFoot(shape: Shape, measurements: Measurements) {
+	function inner(shape: Shape, measurements: Measurements) {
 		switch (shape) {
 			case 'rect':
-				return dimensions.length.value * 2 + dimensions.width.value * 2;
+				return measurements.length * 2 + measurements.width * 2;
 			case 'circle':
-				return 2 * Math.PI * dimensions.radius.value;
+				return 2 * Math.PI * measurements.radius;
 			case 'arbitrary':
-				return dimensions.runningLength.value;
+				return measurements.runningLength;
 		}
 	}
 
-	return round(inner(shape, dimensions), 2);
+	return roundFractionDigits(inner(shape, measurements), 2);
 }
 
 export function findSku(
@@ -89,7 +92,7 @@ export function stopPropagate(
 		callback(e);
 	};
 }
- 
+
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+	return twMerge(clsx(inputs));
 }

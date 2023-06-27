@@ -3,7 +3,8 @@ import {
 	Select,
 	SelectContent,
 	SelectItem,
-	SelectTrigger
+	SelectTrigger,
+	SelectValue
 } from '~/components/ui/select';
 import {
 	Sheet,
@@ -343,16 +344,15 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 				)}
 
 				<Section heading="Coverage">
-					<label
-						htmlFor="coverage.value"
-						className="flex w-full rounded-md bg-gray-200"
+					<div
+					className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline"
 					>
 						<input
 							{...register('coverage.value', { min: 0.01 })}
 							id="coverage.value"
 							type="number"
 							step="any"
-							className="no-arrows w-full flex-1 bg-transparent p-4 pr-1 outline-none"
+							className="no-arrows w-full flex-1 bg-transparent p-4 outline-none"
 							placeholder="Amount"
 						/>
 
@@ -366,7 +366,9 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 										coverageUnit.field.onChange(newUnit)
 									}
 								>
-									<SelectTrigger unstyled className="h-full px-2" />
+									<SelectTrigger unstyled className="h-full py-4 pr-4">
+										<SelectValue />
+									</SelectTrigger>
 
 									<SelectContent>
 										{dimension === '2D' && (
@@ -417,7 +419,7 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 								</Select>
 							)}
 						/>
-					</label>
+					</div>
 				</Section>
 				<Controller
 					control={formMethods.control}

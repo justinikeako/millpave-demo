@@ -1,9 +1,9 @@
-import { round } from 'mathjs';
 import { useState } from 'react';
 import { PaverDetails, Sku } from '~/types/product';
 import { formatPrice } from '~/utils/format';
 import { roundTo } from '~/utils/number';
-import * as Select from './select';
+import { roundFractionDigits } from '~/lib/utils';
+import { Select, SelectTrigger, SelectContent, SelectItem } from './ui/select';
 
 type PaverEstimatorProps = {
 	paverDetails: PaverDetails;
@@ -26,7 +26,7 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 			<div className="align-center flex justify-between p-8">
 				<h2 className="font-display text-lg">Cost Estimator</h2>
 
-				<Select.Root
+				<Select
 					value={unit}
 					onValueChange={(newUnit: EstimatorUnit) => {
 						setUnit(newUnit);
@@ -36,18 +36,14 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 						setValue(String(newValue));
 					}}
 				>
-					<Select.Trigger basic />
+					<SelectTrigger unstyled />
 
-					<Select.Content>
-						<Select.ScrollUpButton />
-						<Select.Viewport>
-							<Select.Item value="SQFT">By Area</Select.Item>
-							<Select.Item value="PCS">By Unit</Select.Item>
-							<Select.Item value="PAL">By Pallet</Select.Item>
-						</Select.Viewport>
-						<Select.ScrollDownButton />
-					</Select.Content>
-				</Select.Root>
+					<SelectContent>
+						<SelectItem value="SQFT">By Area</SelectItem>
+						<SelectItem value="PCS">By Unit</SelectItem>
+						<SelectItem value="PAL">By Pallet</SelectItem>
+					</SelectContent>
+				</Select>
 			</div>
 			<div className="space-y-4 px-8 pb-8">
 				<div className="flex items-center space-x-4">
@@ -163,14 +159,17 @@ function splitArea(area: number, paverDetails: PaverDetails) {
 
 	return {
 		pallet: {
-			area: round(palletArea, 2),
+			area: roundFractionDigits(palletArea, 2),
 			count: palletCount
 		},
 		piece: {
-			area: round(pieceArea, 2),
+			area: roundFractionDigits(pieceArea, 2),
 			count: pieceCount
 		},
-		totalArea: round(round(palletArea, 2) + round(pieceArea, 2), 2)
+		totalArea: roundFractionDigits(
+			roundFractionDigits(palletArea, 2) + roundFractionDigits(pieceArea, 2),
+			2
+		)
 	};
 }
 

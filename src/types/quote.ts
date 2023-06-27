@@ -7,24 +7,12 @@ const Unit1D = z.enum(['ft', 'in', 'm', 'cm']);
 export type Unit1D = z.infer<typeof Unit1D>;
 
 const Unit2D = z.enum(['sqft', 'sqin', 'sqm', 'sqcm']);
-type Unit2D = z.infer<typeof Unit2D>;
+export type Unit2D = z.infer<typeof Unit2D>;
 
 const CoverageUnit = z.enum(['fr', 'pal', 'unit', 'pcs']);
 
 export const Unit = z.union([Unit1D, Unit2D, CoverageUnit]);
 export type Unit = z.infer<typeof Unit>;
-
-const DimensionInput1D = z.object({
-	value: z.number(),
-	unit: Unit1D
-});
-type DimensionInput1D = z.infer<typeof DimensionInput1D>;
-
-const DimensionInput2D = z.object({
-	value: z.number(),
-	unit: Unit2D
-});
-type DimensionInput2D = z.infer<typeof DimensionInput2D>;
 
 const CoverageInput1D = z.object({
 	value: z.number(),
@@ -77,14 +65,15 @@ export type Stone = z.infer<typeof Stone>;
 
 export type Coverage = { value: number; unit: Unit };
 
-const Dimensions = z.object({
-	width: DimensionInput1D,
-	length: DimensionInput1D,
-	radius: DimensionInput1D,
-	area: DimensionInput2D,
-	runningLength: DimensionInput1D
+const Measurements = z.object({
+	width: z.number(),
+	length: z.number(),
+	radius: z.number(),
+	area: z.number(),
+	runningLength: z.number(),
+	unit: Unit1D
 });
-export type Dimensions = z.infer<typeof Dimensions>;
+export type Measurements = z.infer<typeof Measurements>;
 
 export const Infill = Stone2D.array();
 export type Infill = z.infer<typeof Infill>;
@@ -107,7 +96,7 @@ export type Border = z.infer<typeof Border>;
 export const StoneProject = z.object({
 	shape: Shape,
 
-	dimensions: Dimensions,
+	measurements: Measurements,
 
 	infill: Infill,
 

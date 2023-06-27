@@ -8,7 +8,7 @@ import React, {
 import { FormProvider, useForm } from 'react-hook-form';
 import {
 	Border,
-	Dimensions,
+	Measurements,
 	Infill,
 	Quote,
 	QuoteItem,
@@ -19,10 +19,9 @@ import {
 	Unit
 } from '~/types/quote';
 import { roundTo } from '~/utils/number';
-import { round } from 'mathjs';
 import { PaverDetails } from '~/types/product';
 import { isEqual } from 'lodash-es';
-import { getQuoteDetails } from '~/lib/utils';
+import { getQuoteDetails, roundFractionDigits } from '~/lib/utils';
 
 function toFt(
 	value: number,
@@ -50,11 +49,11 @@ function toFt(
 
 const toSqft = toFt;
 
-function calculateProjectArea(shape: Shape, dimensions: Dimensions) {
-	const length = toFt(dimensions.length.value, dimensions.length.unit);
-	const width = toFt(dimensions.width.value, dimensions.width.unit);
-	const radius = toFt(dimensions.radius.value, dimensions.radius.unit);
-	const area = toFt(dimensions.area.value, dimensions.area.unit);
+function calculateProjectArea(shape: Shape, measurements: Measurements) {
+	const length = toFt(measurements.length, measurements.unit);
+	const width = toFt(measurements.width, measurements.unit);
+	const radius = toFt(measurements.radius, measurements.unit);
+	const area = toFt(measurements.area, measurements.unit);
 
 	switch (shape) {
 		case 'rect':
@@ -247,19 +246,22 @@ function getQuoteItems(item: Item) {
 		item.details;
 	const sqft_per_half_pallet = sqft_per_pallet / 2;
 
-	const palletArea = round(
+	const palletArea = roundFractionDigits(
 		roundTo(item.sqftCoverage, sqft_per_half_pallet, 'down'),
 		2
 	);
 	const palletCount = Math.floor(palletArea / sqft_per_half_pallet) / 2;
-	const pieceArea = round(
+	const pieceArea = roundFractionDigits(
 		roundTo(item.sqftCoverage - palletArea, 1 / pcs_per_sqft, 'up'),
 		2
 	);
 	const pieceCount = Math.round(pieceArea * pcs_per_sqft);
 
-	const factoryCost = round(palletArea * item.sqftPrice, 2);
-	const showroomCost = round(pieceArea * (item.sqftPrice + 20), 2);
+	const factoryCost = roundFractionDigits(palletArea * item.sqftPrice, 2);
+	const showroomCost = roundFractionDigits(
+		pieceArea * (item.sqftPrice + 20),
+		2
+	);
 
 	const quoteItems: QuoteItem[] = [];
 
@@ -298,8 +300,8 @@ function getSealant(area: number) {
 	const oneGalCoverage = roundTo(area - fiveGalCoverage, 100, 'up');
 	const oneGalQuantity = oneGalCoverage / 100;
 
-	const fiveGalPrice = round(25826.09 * fiveGalQuantity, 2);
-	const oneGalPrice = round(5913.04 * oneGalQuantity, 2);
+	const fiveGalPrice = roundFractionDigits(25826.09 * fiveGalQuantity, 2);
+	const oneGalPrice = roundFractionDigits(5913.04 * oneGalQuantity, 2);
 
 	const quoteItems: QuoteItem[] = [];
 
@@ -334,7 +336,7 @@ function getPolymeric(area: number) {
 	const coverage = roundTo(area, 100, 'up');
 	const quantity = coverage / 100;
 
-	const price = round(2695.65 * quantity, 2);
+	const price = roundFractionDigits(2695.65 * quantity, 2);
 
 	return {
 		skuId: 'polymeric_sand:fifty_pound',
@@ -349,7 +351,7 @@ function getPolymeric(area: number) {
 }
 
 function getQuote(project: StoneProject) {
-	const projectArea = calculateProjectArea(project.shape, project.dimensions);
+	const projectArea = calculateProjectArea(project.shape, project.measurements);
 	const border = getBorder(project.border);
 	const infill = getInfill(projectArea - border.area, project.infill);
 
@@ -368,7 +370,10 @@ function getQuote(project: StoneProject) {
 	const quoteItems = mergedItems.flatMap((item) =>
 		getQuoteItems(
 			addAreaOverage
-				? { ...item, sqftCoverage: round(item.sqftCoverage * 1.05, 2) }
+				? {
+						...item,
+						sqftCoverage: roundFractionDigits(item.sqftCoverage * 1.05, 2)
+				  }
 				: item
 		)
 	);
@@ -410,12 +415,13 @@ type StageProviderProps = React.PropsWithChildren<{
 const defaultValues: StoneProject = {
 	shape: '' as 'rect',
 
-	dimensions: {
-		width: { value: 0, unit: 'ft' },
-		length: { value: 0, unit: 'ft' },
-		radius: { value: 0, unit: 'ft' },
-		area: { value: 0, unit: 'sqft' },
-		runningLength: { value: 0, unit: 'ft' }
+	measurements: {
+		width: 0,
+		length: 0,
+		unit: 'ft',
+		area: 0,
+		runningLength: 0,
+		radius: 0
 	},
 	infill: [],
 	border: {

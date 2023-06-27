@@ -25,7 +25,7 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 					{...register('shape', {
 						required: true,
 						onChange: () => {
-							resetField('dimensions');
+							resetField('measurements');
 							setStageValidity(1, false);
 						}
 					})}
@@ -49,29 +49,29 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 
 export function ShapeStage() {
 	return (
-		<StageForm>
-			<section className="space-y-16 px-32">
-				<h2 className="text-center text-2xl">Pick a shape to get started.</h2>
-				<div className="flex justify-center">
-					<ul className="grid grid-flow-col grid-cols-[repeat(3,224px)] gap-4">
-						<Option
-							value="rect"
-							title="Rectangle"
-							subtitle="Requires length and width."
-						/>
-						<Option
-							value="circle"
-							title="Circle"
-							subtitle="Requires diameter or circumference"
-						/>
-						<Option
-							value="arbitrary"
-							title="Arbitrary"
-							subtitle="Requires area and/or running length"
-						/>
-					</ul>
-				</div>
-			</section>
+		<StageForm className="flex items-center gap-12">
+			<h2 className="max-w-xs shrink-0 font-display text-2xl">
+				What is the shape of your project?
+			</h2>
+			<div className="flex justify-center">
+				<ul className="grid grid-flow-col grid-cols-[repeat(3,224px)] gap-4">
+					<Option
+						value="rect"
+						title="Rectangle"
+						subtitle="Requires length and width."
+					/>
+					<Option
+						value="circle"
+						title="Circle"
+						subtitle="Requires diameter or circumference"
+					/>
+					<Option
+						value="arbitrary"
+						title="Arbitrary"
+						subtitle="Requires area and/or running length"
+					/>
+				</ul>
+			</div>
 		</StageForm>
 	);
 }

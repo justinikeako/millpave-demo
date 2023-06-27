@@ -3,9 +3,6 @@ import { Button } from './button';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { Send } from 'lucide-react';
-import { ChevronDown } from 'lucide-react';
-import { RefreshCcw } from 'lucide-react';
 import { OrchestratedReveal } from './reveal';
 import { cn } from '~/lib/utils';
 import { Icon } from './icon';
@@ -158,17 +155,17 @@ function Chat({ hide }: { hide: boolean }) {
 								<div className="flex gap-6">
 									<Button
 										intent="tertiary"
-										className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
+										backdrop="dark"
 										onClick={resetChatState}
 									>
-										<RefreshCcw className="h-4 w-4" />
+										<Icon name="refresh" />
 									</Button>
 									<Button
 										intent="tertiary"
-										className="!p-2 hover:!bg-gray-800 active:!bg-gray-700"
+										backdrop="dark"
 										onClick={() => setOpen(false)}
 									>
-										<ChevronDown className="h-4 w-4" />
+										<Icon name="chevron_down" />
 									</Button>
 								</div>
 							</div>
@@ -227,7 +224,7 @@ function Chat({ hide }: { hide: boolean }) {
 										type="submit"
 										className="flex select-none p-3 text-[1.5rem] text-gray-700 hover:bg-gray-100 active:bg-gray-200 disabled:text-gray-300 disabled:hover:bg-transparent disabled:active:bg-transparent"
 									>
-										<Send className="h-5 w-5" />
+										<Icon name="send" />
 									</button>
 								</div>
 							</form>

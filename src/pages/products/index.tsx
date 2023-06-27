@@ -114,11 +114,11 @@ function FilterGroup({
 				<span className="font-semibold">{name}</span>
 
 				<Icon
-					name="expand_more"
+					name="chevron_down"
 					className="hidden group-data-[state=closed]:block group-data-[disabled]:!hidden"
 				/>
 				<Icon
-					name="expand_less"
+					name="chevron_up"
 					className="hidden group-data-[state=open]:block group-data-[disabled]:!hidden"
 				/>
 			</Collapsible.Trigger>

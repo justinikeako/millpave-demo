@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Logo } from './logo';
-import { FacebookIcon, InstagramIcon } from 'lucide-react';
+import { Icon } from './icon';
 
 function Footer() {
 	return (
@@ -22,7 +22,7 @@ function Footer() {
 										className="hover:text-gray-700 active:text-gray-500"
 										href="https://www.facebook.com/millenniumpavingstones"
 									>
-										<FacebookIcon className="h-8 w-8" />
+										<Icon name="facebook" size={32} />
 									</Link>
 								</li>
 								<li>
@@ -31,7 +31,7 @@ function Footer() {
 										className="hover:text-gray-700 active:text-gray-500"
 										href="http://www.instagram.com/millpave"
 									>
-										<InstagramIcon className="h-8 w-8" />
+										<Icon name="instagram" size={32} />
 									</Link>
 								</li>
 							</ul>

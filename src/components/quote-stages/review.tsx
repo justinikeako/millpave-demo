@@ -1,5 +1,4 @@
 import { formatNumber, formatPrice, formatRestockDate } from '~/utils/format';
-import { Minus, Plus } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { StageForm } from './form';
 import { unitDisplayNameDictionary } from '~/lib/utils';
@@ -7,6 +6,7 @@ import { useStageContext } from './stage-context';
 import { StoneProject } from '~/types/quote';
 import { api } from '~/utils/api';
 import { addWeeks } from 'date-fns';
+import { Icon } from '../icon';
 
 export function ReviewStage() {
 	const { quote } = useStageContext();
@@ -156,11 +156,7 @@ function Addons() {
 							<p className="text-sm">{addon.description}</p>
 						</span>
 
-						{addon.enabled ? (
-							<Minus className="h-5 w-5 " />
-						) : (
-							<Plus className="h-5 w-5 " />
-						)}
+						<Icon name={addon.enabled ? 'minus' : 'plus'} />
 					</button>
 				</li>
 			))}

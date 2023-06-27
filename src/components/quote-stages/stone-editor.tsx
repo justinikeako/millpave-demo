@@ -15,7 +15,7 @@ import {
 	SheetTitle,
 	SheetTrigger
 } from '~/components/sheet';
-import { LayoutTemplate, RectangleHorizontal, X } from 'lucide-react';
+import {Icon} from '~/components/icon';
 import {
 	Controller,
 	useFieldArray,
@@ -27,7 +27,6 @@ import { api } from '~/utils/api';
 import { useState } from 'react';
 import { formatPrice } from '~/utils/format';
 import { ProductStock } from '../product-stock';
-import { Check } from 'lucide-react';
 import {
 	StoneProject,
 	Stone,
@@ -36,7 +35,6 @@ import {
 	Unit
 } from '~/types/quote';
 import {
-	cn,
 	findSku,
 	pluralize,
 	stopPropagate,
@@ -44,8 +42,8 @@ import {
 } from '~/lib/utils';
 import { PaverDetails } from '~/types/product';
 import { isEqual } from 'lodash-es';
-import { Trash } from 'lucide-react';
 import { useStageContext } from './stage-context';
+import Balancer from 'react-wrap-balancer';
 
 type StoneEditorProps = {
 	name: 'infill' | 'border.stones';
@@ -93,40 +91,113 @@ export function StoneEditor(props: StoneEditorProps) {
 		setSheetOpen(false);
 	}
 
-	return (
-		<div className="flex flex-wrap justify-center gap-4">
-			<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-				{defaultSku ? (
-					<div className="flex h-64 w-64 flex-col gap-4">
-						<SheetTrigger asChild>
+	const smallActions = (
+		<>
+			<div className="flex flex-col items-center gap-4">
+				<div
+					data-sheet-open={undefined}
+					className="relative flex w-64 flex-1 overflow-hidden rounded-lg border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
+				>
+					<div className="aspect-[2/3] h-full bg-gray-200" />
+
+					<div className="flex flex-col justify-center gap-1 p-4">
+						<h3 className="font-semibold">
 							<button
 								type="button"
-								className={cn(
-									'flex w-full flex-1 items-center justify-center gap-2 rounded-lg p-6 ring-1 ring-inset ring-gray-400 hover:bg-gray-100 disabled:pointer-events-none disabled:text-gray-400 disabled:ring-gray-200',
-									sheetOpen &&
-										editIndex === -1 &&
-										'bg-gray-100 ring-2 ring-black'
-								)}
+								className="w-full text-left after:absolute after:inset-0"
+							>
+								Add a pattern
+							</button>
+						</h3>
+						<p className="text-sm text-gray-500">
+							<Balancer>Customize the colors of pre-made patterns.</Balancer>
+						</p>
+					</div>
+				</div>
+				<div
+					data-sheet-open={(sheetOpen && editIndex === -1) || undefined}
+					className="relative flex w-64 flex-1 overflow-hidden rounded-lg border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
+				>
+					<div className="aspect-[2/3] h-full bg-gray-200" />
+
+					<div className="flex flex-col justify-center gap-1 p-4">
+						<h3 className="font-semibold">
+							<SheetTrigger
+								className="w-full text-left after:absolute after:inset-0"
 								onClick={() => {
 									setEditIndex(-1);
 								}}
 							>
-								<span className="font-semibold">Add Stone</span>
-								<RectangleHorizontal className="h-5 w-5" />
-							</button>
-						</SheetTrigger>
-						<button
-							type="button"
-							disabled
-							className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg p-6 ring-1 ring-inset ring-gray-400 hover:bg-gray-100 disabled:pointer-events-none disabled:text-gray-400 disabled:ring-gray-200"
-						>
-							<span className="font-semibold">Add Pattern</span>
-							<LayoutTemplate className="h-5 w-5" />
-							<span className="inline-block rounded-sm bg-gray-200 px-1 py-0.5 text-sm">
-								Coming Soon
-							</span>
-						</button>
+								Add a stone
+							</SheetTrigger>
+						</h3>
+						<p className="text-sm text-gray-500">
+							<Balancer>Create custom patterns from scratch.</Balancer>
+						</p>
 					</div>
+				</div>
+			</div>
+		</>
+	);
+
+	const largeActions = (
+		<>
+			<div className="flex items-center gap-4">
+				<div
+					data-sheet-open={undefined}
+					className="relative flex h-64 w-64 flex-col items-center justify-center gap-2 rounded-lg border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
+				>
+					<div className="flex-1" />
+
+					<div className="space-y-1 px-8 pb-6 pt-4 text-center">
+						<h3 className="font-semibold">
+							<button
+								type="button"
+								className="w-full after:absolute after:inset-0"
+							>
+								Start with a pattern
+							</button>
+						</h3>
+						<p className="text-sm text-gray-500">
+							<Balancer>Customize the colors of pre-made patterns.</Balancer>
+						</p>
+					</div>
+				</div>
+				<span className="font-display text-lg">or</span>
+				<div
+					data-sheet-open={(sheetOpen && editIndex === -1) || undefined}
+					className="relative flex h-64 w-64 flex-col items-center justify-center gap-2 rounded-lg border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
+				>
+					<div className="flex-1" />
+
+					<div className="space-y-1 px-8 pb-6 pt-4 text-center">
+						<h3 className="font-semibold">
+							<SheetTrigger
+								className="w-full after:absolute after:inset-0"
+								onClick={() => {
+									setEditIndex(-1);
+								}}
+							>
+								Start with a stone
+							</SheetTrigger>
+						</h3>
+						<p className="text-sm text-gray-500">
+							<Balancer>Create custom patterns from scratch.</Balancer>
+						</p>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+	return (
+		<div className="flex flex-wrap justify-center gap-4">
+			<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+				{defaultSku ? (
+					fields.length > 0 ? (
+						smallActions
+					) : (
+						largeActions
+					)
 				) : (
 					<div className="flex h-64 w-64 items-center justify-center gap-4 ">
 						Loading...
@@ -138,7 +209,7 @@ export function StoneEditor(props: StoneEditorProps) {
 						<StoneListItem
 							key={stone.id}
 							index={index}
-							selected={sheetOpen && index === editIndex}
+							selected={sheetOpen && editIndex === index}
 							displayName={stone.metadata.displayName}
 							coverage={stone.coverage}
 							onSelect={() => setEditIndex(index)}
@@ -191,21 +262,21 @@ function StoneListItem({
 	const coverageUnitDisplayName = unitDisplayNameDictionary[coverage.unit];
 
 	return (
-		<li className="relative flex h-64 w-64 flex-col p-6">
+		<li
+			data-sheet-open={selected || undefined}
+			className="relative flex h-64 w-64 flex-col rounded-lg border border-gray-400 p-6 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
+		>
 			<div className="flex-1" />
-			<SheetTrigger asChild>
-				<button
-					type="button"
-					className={cn(
-						'absolute inset-0 rounded-lg ring-1 ring-inset ring-gray-400 hover:bg-gray-100',
-						selected && 'bg-gray-100 ring-2 ring-black'
-					)}
-					onClick={onSelect}
-				/>
-			</SheetTrigger>
-			<div className="pointer-events-none z-10 flex items-start gap-4">
+			<div className="flex items-start gap-4">
 				<div className="flex-1">
-					<p className="font-semibold">{displayName}</p>
+					<p className="font-semibold">
+						<SheetTrigger
+							className="w-full text-left after:absolute after:inset-0"
+							onClick={onSelect}
+						>
+							{displayName}
+						</SheetTrigger>
+					</p>
 					<p className="text-sm">
 						{pluralize(coverage.value, coverageUnitDisplayName)}
 					</p>
@@ -217,7 +288,7 @@ function StoneListItem({
 					className="pointer-events-auto z-10"
 					onClick={() => onDelete(index)}
 				>
-					<Trash className="h-5 w-5" />
+					<Icon name="trash" />
 				</Button>
 			</div>
 		</li>
@@ -289,11 +360,11 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 					type="submit"
 					disabled={currentSku === undefined}
 				>
-					<Check />
+					<Icon name="check" />
 				</Button>
 				<SheetClose asChild>
 					<Button intent="tertiary" type="button">
-						<X />
+						<Icon name="close" />
 					</Button>
 				</SheetClose>
 			</SheetHeader>
@@ -344,9 +415,7 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 				)}
 
 				<Section heading="Coverage">
-					<div
-					className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline"
-					>
+					<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 						<input
 							{...register('coverage.value', { min: 0.01 })}
 							id="coverage.value"

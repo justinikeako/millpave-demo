@@ -18,10 +18,12 @@ export function InfillStage() {
 	if (isSkipped === undefined || isSkipped === true)
 		return (
 			<StageForm className="space-y-8 px-32">
-				<h2 className="text-center text-2xl">Add an infill.</h2>
+				<h2 className="mx-auto max-w-xs text-center font-display text-2xl">
+					<Balancer>Would you like to add an infill?</Balancer>
+				</h2>
 				<p className="mx-auto max-w-sm text-center">
-					<Balancer ratio={1}>
-						The infill consists of the pavers that fill the area inside the
+					<Balancer>
+						An infill consists of the pavers that fill the area inside the
 						border, making up the majority of the paved surface. If you only
 						require edging, an infill is not required.
 					</Balancer>
@@ -51,7 +53,9 @@ export function InfillStage() {
 
 	return (
 		<StageForm className="space-y-16 px-32">
-			<h2 className="text-center text-2xl">Add stones to your infill.</h2>
+			<h2 className="text-center font-display text-2xl">
+				Add stones to your infill.
+			</h2>
 
 			<StoneEditor name="infill" dimension="2D" stageIndex={2} />
 		</StageForm>

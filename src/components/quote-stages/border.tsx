@@ -34,11 +34,14 @@ export function BorderStage() {
 	)
 		return (
 			<StageForm className="space-y-8 px-32">
-				<h2 className="text-center text-2xl">Add a border.</h2>
+				<h2 className="mx-auto text-center text-2xl font-display">
+				<Balancer>
+					Would you like to add a border?
+					</Balancer>
+					</h2>
 				<p className="mx-auto max-w-sm text-center">
-					<Balancer ratio={1}>
-						A border consists of the pavers that create a defined edge or
-						boundary around the paved area.
+					<Balancer>
+					A border consists of the pavers that create a defined edge or boundary around the paved area.
 					</Balancer>
 				</p>
 				<div className="mx-auto flex w-fit gap-2">
@@ -66,7 +69,7 @@ export function BorderStage() {
 
 	return (
 		<StageForm className="space-y-16 px-32">
-			<h2 className="text-center text-2xl">Add stones to your border.</h2>
+			<h2 className="text-center text-2xl font-display">Add stones to your border.</h2>
 
 			<BorderOptions />
 

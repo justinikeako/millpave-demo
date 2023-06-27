@@ -3,7 +3,13 @@ import { PaverDetails, Sku } from '~/types/product';
 import { formatPrice } from '~/utils/format';
 import { roundTo } from '~/utils/number';
 import { roundFractionDigits } from '~/lib/utils';
-import { Select, SelectTrigger, SelectContent, SelectItem } from './ui/select';
+import {
+	Select,
+	SelectTrigger,
+	SelectValue,
+	SelectContent,
+	SelectItem
+} from './ui/select';
 
 type PaverEstimatorProps = {
 	paverDetails: PaverDetails;
@@ -36,7 +42,9 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 						setValue(String(newValue));
 					}}
 				>
-					<SelectTrigger unstyled />
+					<SelectTrigger unstyled>
+						<SelectValue />
+					</SelectTrigger>
 
 					<SelectContent>
 						<SelectItem value="SQFT">By Area</SelectItem>

@@ -66,7 +66,7 @@ function Page() {
 							<div className="flex gap-4">
 								<div className="flex-1 space-y-2">
 									<label htmlFor="name" className="block font-semibold">
-										Your Email
+										Your Name
 									</label>
 									<input
 										id="name"
@@ -81,7 +81,7 @@ function Page() {
 									</label>
 									<input
 										id="name"
-										type="text"
+										type="email"
 										className="w-full rounded-sm border border-gray-400 bg-gray-200 p-4 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
 										placeholder="janedoe@example.com"
 									/>
@@ -195,7 +195,6 @@ function Page() {
 				</div>
 			</Main>
 
-			
 			<Footer />
 		</>
 	);

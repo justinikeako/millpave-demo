@@ -13,12 +13,12 @@ import { Inter, Source_Serif_4 } from 'next/font/google';
 const sourceSerif4 = Source_Serif_4({
 	subsets: ['latin'],
 	axes: ['opsz'],
-	variable: '--font-source-serif-4'
+	variable: '--font-display'
 });
 
 const inter = Inter({
 	subsets: ['latin'],
-	variable: '--font-inter'
+	variable: '--font-sans'
 });
 
 const App: AppType = ({ Component, pageProps, router }) => {
@@ -27,8 +27,8 @@ const App: AppType = ({ Component, pageProps, router }) => {
 			{/* give root access to the font variable */}
 			<style jsx global>{`
 				:root {
-					--font-inter: ${inter.style.fontFamily};
-					--font-source-serif-4: ${sourceSerif4.style.fontFamily};
+					--font-display: ${sourceSerif4.style.fontFamily};
+					--font-sans: ${inter.style.fontFamily};
 				}
 			`}</style>
 

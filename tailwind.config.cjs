@@ -9,8 +9,8 @@ module.exports = {
 		},
 
 		fontFamily: {
-			display: ['var(--font-source-serif-4)', 'serif'],
-			sans: ['var(--font-inter)', 'sans-serif']
+			display: ['var(--font-display)', 'serif'],
+			sans: ['var(--font-sans)', 'sans-serif']
 		},
 
 		fontSize: {

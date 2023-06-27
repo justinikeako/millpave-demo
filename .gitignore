@@ -19,6 +19,7 @@ build
 # misc
 .DS_Store
 *.pem
+grab-n-go.svg
 
 # debug
 npm-debug.log*

@@ -6,7 +6,7 @@ import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
 import { createInnerTRPCContext } from '~/server/api/trpc';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { appRouter } from '~/server/api/routers/root';
+import { appRouter } from '~/server/api/root';
 import { Main } from '~/components/main';
 import { useRouter } from 'next/router';
 import { Button } from '~/components/button';
@@ -51,7 +51,6 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 				</Button>
 			</Main>
 
-			
 			<Footer />
 		</>
 	);

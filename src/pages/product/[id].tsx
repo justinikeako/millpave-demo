@@ -20,7 +20,7 @@ import {
 	GetStaticPropsContext,
 	InferGetStaticPropsType
 } from 'next';
-import { appRouter } from '~/server/api/routers/root';
+import { appRouter } from '~/server/api/root';
 import dynamic from 'next/dynamic';
 import { OrchestratedReveal, ViewportReveal } from '~/components/reveal';
 import { ProductStock } from '~/components/product-stock';
@@ -286,7 +286,6 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 				<AugmentedRealityGallerySection />
 			</Main>
 
-			
 			<Footer />
 		</>
 	);

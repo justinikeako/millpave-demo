@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { Footer } from '~/components/footer';
 import { ProductCard } from '~/components/product-card';
-import { appRouter } from '~/server/api/routers/root';
+import { appRouter } from '~/server/api/root';
 import { createInnerTRPCContext } from '~/server/api/trpc';
 import superjson from 'superjson';
 import { createServerSideHelpers } from '@trpc/react-query/server';

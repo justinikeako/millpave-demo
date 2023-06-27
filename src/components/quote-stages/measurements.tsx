@@ -121,7 +121,7 @@ function UnitLabel({ dimension }: { dimension: '1D' | '2D' }) {
 
 function CircleInputs() {
 	const { watch, setValue, control } = useFormContext();
-	const radius = structuredClone(watch('measurements.radius.value'));
+	const radius = structuredClone(watch('measurements.radius'));
 
 	const [{ diameter, circumference }, setCircleMeasurements] = useState<{
 		diameter: number | string;
@@ -134,7 +134,7 @@ function CircleInputs() {
 	return (
 		<Controller
 			control={control}
-			name="measurements.radius.value"
+			name="measurements.radius"
 			rules={{
 				required: true,
 				min: 0.01,

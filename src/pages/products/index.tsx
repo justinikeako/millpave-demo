@@ -53,7 +53,7 @@ function Checkbox({ name, value, className, ...props }: CheckboxProps) {
 					className
 				)}
 			>
-				<Icon name="check" className="relative -left-px -top-px" />
+				<Icon name="check_small" className="relative -left-px -top-px" />
 			</div>
 		</label>
 	);

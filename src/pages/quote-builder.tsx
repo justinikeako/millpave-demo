@@ -183,7 +183,7 @@ function StageFooter() {
 
 	return (
 		<OrchestratedReveal asChild delay={0.2}>
-			<footer className="fixed inset-x-0 bottom-0 z-[1] flex items-center justify-between bg-gray-100 px-16 py-4">
+			<footer className="fixed inset-x-0 bottom-0 z-[1] flex h-16 items-center justify-between bg-gray-100 px-16">
 				<nav>
 					<ul className="flex select-none items-center justify-center gap-3">
 						{stageDisplayNames.map((displayName, index) => (

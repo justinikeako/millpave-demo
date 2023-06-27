@@ -68,7 +68,7 @@ function Hero() {
 		>
 			<motion.div
 				style={{ scale: bgScale }}
-				className="sticky top-0 -z-10 mt-[-68px] h-[100lvh] w-[100lvw] bg-gray-700"
+				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-[100lvw] bg-gray-700"
 			/>
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">
@@ -194,7 +194,6 @@ function Page() {
 				<AugmentedRealityGallerySection />
 			</Main>
 
-			
 			<Footer />
 		</>
 	);

@@ -17,6 +17,13 @@ function defineNextConfig(config) {
 export default defineNextConfig({
 	reactStrictMode: true,
 
+	// typescript: {
+	// 	ignoreBuildErrors: true
+	// },
+	// eslint: {
+	// 	ignoreDuringBuilds: true
+	// },
+
 	webpack: (config) => {
 		config.experiments = {
 			...config.experiments,

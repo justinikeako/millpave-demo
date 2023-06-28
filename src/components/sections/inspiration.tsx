@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { MotionStyle, motion, useScroll } from 'framer-motion';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { Button } from '../button';
@@ -14,7 +14,6 @@ function InspirationSection() {
 		target: carouselRef,
 		offset: ['start end', 'end start']
 	});
-	const offset = useTransform(scrollYProgress, [0, 1], [150, -150]);
 
 	return (
 		<ViewportReveal className="space-y-16 px-6 py-16 lg:px-16" asChild>
@@ -46,10 +45,9 @@ function InspirationSection() {
 
 				<div className="-mx-6 overflow-x-hidden lg:-mx-16" ref={carouselRef}>
 					<motion.div
-						className="flex h-64 justify-start gap-4 md:gap-6 lg:h-96 lg:gap-8"
-						style={{ x: offset }}
+						className="flex h-64 w-fit translate-x-[calc(228px-var(--scroll-progress)*(100%-228px))] justify-start gap-4 md:gap-6 lg:h-96 lg:translate-x-[calc(342px-var(--scroll-progress)*(100%-342px))] lg:gap-8"
+						style={{ '--scroll-progress': scrollYProgress } as MotionStyle}
 					>
-						<div className="flex aspect-video shrink-0 bg-gray-200" />
 						<div className="flex aspect-video shrink-0 bg-gray-200" />
 						<div className="flex aspect-video shrink-0 bg-gray-200" />
 						<div className="flex aspect-video shrink-0 bg-gray-200" />

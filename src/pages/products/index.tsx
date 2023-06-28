@@ -460,30 +460,32 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	);
 }
 
-export const getServerSideProps = async () =>
-	// context: GetServerSidePropsContext
-	{
-		const ssrContext = await createInnerTRPCContext({});
+export const getServerSideProps = async () => {
+	const ssrContext = await createInnerTRPCContext({});
 
-		const ssr = await createServerSideHelpers({
-			router: appRouter,
-			ctx: ssrContext,
-			transformer: superjson // optional - adds superjson serialization
-		});
+	const ssr = await createServerSideHelpers({
+		router: appRouter,
+		ctx: ssrContext,
+		transformer: superjson // optional - adds superjson serialization
+	});
 
-		// const categoryId = context.query?.category as string;
-		const categoryId = 'all';
+	// const categoryId = context.query?.category as string;
+	const categoryId = 'all';
 
-		// prefetch `product.getByCategory`
-		await ssr.product.getByCategory.prefetchInfinite({ categoryId });
-		await ssr.category.getAll.prefetch();
+	// prefetch `product.getByCategory`
+	await ssr.product.getByCategory.prefetchInfinite({ categoryId });
+	await ssr.category.getAll.prefetch();
 
-		return {
-			props: {
-				trpcState: ssr.dehydrate(),
-				category: categoryId
-			}
-		};
+	return {
+		props: {
+			trpcState: ssr.dehydrate(),
+			category: categoryId
+		}
 	};
+};
+
+export const config = {
+	runtime: 'edge'
+};
 
 export default Page;

@@ -147,37 +147,37 @@ function Page() {
 								</Balancer>
 							</p>
 						</div>
-						<ul className="no-scrollbar -m-6 flex gap-4 overflow-x-auto lg:-mx-16">
+						<ul className="no-scrollbar -m-6 flex snap-x snap-mandatory gap-4 overflow-x-auto lg:-mx-16">
 							<div className="sticky left-0 z-[1] -mr-4 w-6 shrink-0 bg-gradient-to-r from-gray-100 lg:w-16" />
 							<ProductCard
 								name="Colonial Classic"
 								startingSku={{ price: 203, unit: 'sqft' }}
 								link="/product/colonial_classic"
-								className="w-80 shrink-0 grow"
+								className="w-80 shrink-0 grow snap-center"
 							/>
 							<ProductCard
 								name="Banjo"
 								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/banjo"
-								className="w-80 shrink-0 grow"
+								className="w-80 shrink-0 grow snap-center"
 							/>
 							<ProductCard
 								name="Heritage Series"
 								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/heritage"
-								className="w-80 shrink-0 grow"
+								className="w-80 shrink-0 grow snap-center"
 							/>
 							<ProductCard
 								name="Cobble Mix"
 								startingSku={{ price: 219, unit: 'sqft' }}
 								link="/product/cobble_mix"
-								className="w-80 shrink-0 grow"
+								className="w-80 shrink-0 grow snap-center"
 							/>
 							<ProductCard
 								name="Old World Cobble"
 								startingSku={{ price: 203, unit: 'sqft' }}
 								link="/product/owc"
-								className="w-80 shrink-0 grow"
+								className="w-80 shrink-0 grow snap-center"
 							/>
 							<div className="sticky right-0 z-[1] -ml-4 w-6 shrink-0 bg-gradient-to-l from-gray-100 lg:w-16" />
 						</ul>

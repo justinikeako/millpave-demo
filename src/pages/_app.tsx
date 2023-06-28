@@ -11,12 +11,14 @@ import '~/styles/globals.css';
 import { Inter, Source_Serif_4 } from 'next/font/google';
 
 const sourceSerif4 = Source_Serif_4({
+	display: 'swap',
 	subsets: ['latin'],
 	axes: ['opsz'],
 	variable: '--font-display'
 });
 
 const inter = Inter({
+	display: 'swap',
 	subsets: ['latin'],
 	variable: '--font-sans'
 });

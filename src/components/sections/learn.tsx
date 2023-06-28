@@ -7,8 +7,8 @@ import { ViewportReveal } from '../reveal';
 function LearnSection() {
 	return (
 		<ViewportReveal asChild>
-			<section className="flex gap-4 py-16">
-				<div className="group relative flex h-96 flex-[2] flex-col items-start justify-between bg-gray-600 p-6 text-white">
+			<section className="flex flex-col gap-4 py-16 lg:flex-row">
+				<div className="group relative flex h-96 shrink-0 flex-col items-start gap-2 bg-gray-600 p-6 text-white lg:flex-[2] lg:justify-between">
 					<div className="max-w-xs space-y-2">
 						<Link
 							href="/contractors"
@@ -36,7 +36,7 @@ function LearnSection() {
 					</Button>
 				</div>
 
-				<div className="group relative flex h-96 flex-[1] flex-col items-start justify-end space-y-2 bg-gray-200 p-6">
+				<div className="group relative flex h-96 shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6 lg:flex-1">
 					<div className="space-y-1">
 						<Link href="/resources" className="before:absolute before:inset-0">
 							<h3 className="font-display text-lg">Resources</h3>
@@ -50,7 +50,7 @@ function LearnSection() {
 						<div>Learn More</div>
 					</Button>
 				</div>
-				<div className="group relative flex h-96 flex-[1] flex-col items-start justify-start space-y-2 bg-gray-200 p-6">
+				<div className="group relative flex h-96 shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6 lg:flex-1 lg:justify-start">
 					<div className="space-y-1">
 						<Link
 							href="/blog/why-use-pavers"

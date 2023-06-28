@@ -16,26 +16,26 @@ module.exports = {
 		fontSize: {
 			sm: ['12px', { lineHeight: '18px' }],
 			base: ['13px', { lineHeight: '20px' }],
-			lg: ['20px', { lineHeight: '24px', fontWeight: '500' }],
+			lg: ['clamp(16px, calc(1rem + ((1vw - 4.2px) * 0.4651)), 20px)', { lineHeight: '1.5', fontWeight: '500' }],
 			xl: [
-				'28px',
-				{ lineHeight: '32px', fontWeight: '500', letterSpacing: '-0.01em' }
+				'clamp(24px, calc(1.5rem + ((1vw - 4.2px) * 0.4651)), 28px)',
+				{ lineHeight: '1.15', fontWeight: '500', letterSpacing: '-0.01em' }
 			],
 			'2xl': [
-				'40px',
-				{ lineHeight: '48px', fontWeight: '500', letterSpacing: '-0.01em' }
+				'clamp(32px, calc(2rem + ((1vw - 4.2px) * 0.9302)), 40px)',
+				{ lineHeight: '1.15', fontWeight: '500', letterSpacing: '-0.01em' }
 			],
 			'3xl': [
-				'64px',
-				{ lineHeight: '72px', fontWeight: '500', letterSpacing: '-0.02em' }
+				'clamp(40px, calc(2.5rem + ((1vw - 4.2px) * 2.7907)), 64px)',
+				{ lineHeight: '1.15', fontWeight: '500', letterSpacing: '-0.02em' }
 			],
 			'4xl': [
-				'80px',
-				{ lineHeight: '96px', fontWeight: '600', letterSpacing: '-0.02em' }
+				'clamp(44px, calc(2.75rem + ((1vw - 4.2px) * 4.186)), 80px)',
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.02em' }
 			],
 			'5xl': [
-				'96px',
-				{ lineHeight: '112px', fontWeight: '600', letterSpacing: '-0.02em' }
+				'clamp(48px, calc(3rem + ((1vw - 4.2px) * 5.5814)), 96px)',
+				{ lineHeight: '1.15', fontWeight: '600', letterSpacing: '-0.02em' }
 			]
 		},
 

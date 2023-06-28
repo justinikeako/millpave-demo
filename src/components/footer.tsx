@@ -5,7 +5,7 @@ import { Icon } from './icon';
 function Footer() {
 	return (
 		<footer className="bg-gray-200 text-gray-900">
-			<div className="space-y-16 px-8 pb-8 pt-8 2xl:container md:px-12 md:pt-16 lg:px-16 lg:pt-16">
+			<div className="space-y-16 px-6 pb-8 pt-8 2xl:container md:px-12 md:pt-16 lg:px-16 lg:pt-16">
 				<div className="flex flex-col justify-between gap-16 md:flex-row">
 					<Link href="/">
 						<Logo variant="tagline" height="64" width="190" />
@@ -113,7 +113,7 @@ function Footer() {
 					.
 				</p>
 
-				<div className="flex flex-wrap items-center justify-between text-gray-500">
+				<div className="flex flex-wrap items-center justify-between gap-1 text-gray-500">
 					<p>©2023 Millennium Paving Stones Ltd.</p>
 					<p>
 						<Link target="_blank" href="https://notprimitive.com">

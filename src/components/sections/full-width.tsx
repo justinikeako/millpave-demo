@@ -6,7 +6,11 @@ export const FullWidthSection = forwardRef<
 	React.ComponentPropsWithoutRef<'section'>
 >(function (props, ref) {
 	return (
-		<section {...props} ref={ref} className={cn('-mx-16', props.className)} />
+		<section
+			{...props}
+			ref={ref}
+			className={cn('-mx-6 lg:-mx-16', props.className)}
+		/>
 	);
 });
 

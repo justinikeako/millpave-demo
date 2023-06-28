@@ -132,7 +132,7 @@ function Header({ minimal }: { minimal: boolean }) {
 				className="group sticky top-0 z-10 bg-gray-100 text-gray-900 transition-colors data-[transparent]:bg-transparent data-[transparent]:text-gray-100"
 				ref={headerRef}
 			>
-				<OrchestratedReveal className="flex h-16 items-center px-16 2xl:container">
+				<OrchestratedReveal className="flex h-16 items-center px-6 2xl:container lg:px-16">
 					<div className="flex-1">
 						<Link href="/" className="block w-fit">
 							<Logo variant="text" className="max-sm:hidden" />

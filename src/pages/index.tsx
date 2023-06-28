@@ -68,7 +68,7 @@ function Hero() {
 		>
 			<motion.div
 				style={{ '--progress': scrollYProgress } as unknown as MotionStyle}
-				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-[100lvw] bg-gray-700 [clip-path:inset(calc(64px*var(--progress)))] 2xl:[clip-path:inset(calc((50vw-768px+64px)*var(--progress)))]"
+				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-[100lvw] bg-gray-700 [clip-path:inset(calc(24px*var(--progress)))] lg:[clip-path:inset(calc(64px*var(--progress)))] 2xl:[clip-path:inset(calc((50vw-768px+64px)*var(--progress)))]"
 			/>
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">
@@ -137,18 +137,18 @@ function Page() {
 				<Hero />
 
 				<ViewportReveal asChild>
-					<FullWidthSection className="space-y-12 p-16">
-						<div className="flex justify-between">
+					<FullWidthSection className="space-y-8 p-6 lg:space-y-12 lg:p-16">
+						<div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
 							<h2 className="font-display text-3xl">Products</h2>
-							<p className="w-80 text-right font-display text-lg">
+							<p className="w-80 self-end text-right font-display text-lg">
 								<Balancer>
 									Our concrete pavers can turn your outdoor walkway, deck,
 									patio, or plaza into a functional work of art.
 								</Balancer>
 							</p>
 						</div>
-						<ul className="no-scrollbar -mx-16 flex gap-4 overflow-x-auto">
-							<div className="sticky left-0 z-[1] -mr-4 w-16 shrink-0 from-gray-100 2xl:bg-gradient-to-r" />
+						<ul className="no-scrollbar -m-6 flex gap-4 overflow-x-auto lg:-mx-16">
+							<div className="sticky left-0 z-[1] -mr-4 w-6 shrink-0 bg-gradient-to-r from-gray-100 lg:w-16" />
 							<ProductCard
 								name="Colonial Classic"
 								startingSku={{ price: 203, unit: 'sqft' }}
@@ -179,7 +179,7 @@ function Page() {
 								link="/product/owc"
 								className="w-80 shrink-0 grow"
 							/>
-							<div className="sticky right-0 z-[1] -ml-4 w-16 shrink-0 from-gray-100 2xl:bg-gradient-to-l" />
+							<div className="sticky right-0 z-[1] -ml-4 w-6 shrink-0 bg-gradient-to-l from-gray-100 lg:w-16" />
 						</ul>
 						<Button intent="secondary" className="mx-auto w-fit" asChild>
 							<Link href="/products">View All Products</Link>

@@ -53,9 +53,7 @@ export function InfillStage() {
 
 	return (
 		<StageForm className="space-y-16 px-32">
-			<h2 className="text-center font-display text-2xl">
-				Add stones to your infill.
-			</h2>
+			<h2 className="text-center font-display text-2xl">Design your infill.</h2>
 
 			<StoneEditor name="infill" dimension="2D" stageIndex={2} />
 		</StageForm>

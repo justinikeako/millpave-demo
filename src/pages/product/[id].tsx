@@ -69,7 +69,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 								className="flex aspect-square w-20 flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700"
 							>
 								{showModelViewer && index === 3 && (
-									<Icon name="3d_rotation_opsz-40" size={40} />
+									<Icon name="3d_rotation-opsz_40" size={40} />
 								)}
 							</label>
 						</div>

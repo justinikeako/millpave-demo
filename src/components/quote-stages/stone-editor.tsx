@@ -44,6 +44,7 @@ import { PaverDetails } from '~/types/product';
 import { isEqual } from 'lodash-es';
 import { useStageContext } from './stage-context';
 import Balancer from 'react-wrap-balancer';
+import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
 
 type StoneEditorProps = {
 	name: 'infill' | 'border.stones';
@@ -414,7 +415,30 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 					</section>
 				)}
 
-				<Section heading="Coverage">
+				<Section
+					heading={
+						<>
+							<span>Coverage</span>
+
+							<Popover>
+								<PopoverTrigger asChild>
+									<Button type="button" intent="tertiary" className="-m-1 p-1">
+										<span className="sr-only">Help</span>
+										<Icon name="help" />
+									</Button>
+								</PopoverTrigger>
+
+								<PopoverContent>
+									Coverage refers to how much space this paver should take up.
+									You can measure it using fixed units like square feet (ft²) or
+									square meters (m²). If you have a specific ratio in mind, you
+									can use the &quot;part&quot; unit to specify the portion or
+									fraction of that ratio you want this paver to cover.
+								</PopoverContent>
+							</Popover>
+						</>
+					}
+				>
 					<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 						<input
 							{...register('coverage.value', { min: 0.01 })}
@@ -523,13 +547,13 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 }
 
 type SectionProps = React.PropsWithChildren<{
-	heading: string;
+	heading: React.ReactNode;
 }>;
 
 function Section({ heading, children }: SectionProps) {
 	return (
 		<section className="space-y-4">
-			<h3 className="text-md font-semibold">{heading}</h3>
+			<h3 className="text-md flex gap-1 font-semibold">{heading}</h3>
 			{children}
 		</section>
 	);

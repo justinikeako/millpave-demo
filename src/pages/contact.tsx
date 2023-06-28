@@ -20,7 +20,9 @@ function Page() {
 	const formType = (router.query.form as FormType | undefined) || 'general';
 
 	function handleFormTypeChange(newFormType: FormType) {
-		router.replace(`/contact?form=${newFormType}`);
+		router.replace(`/contact?form=${newFormType}`, undefined, {
+			scroll: false
+		});
 	}
 
 	return (
@@ -43,11 +45,11 @@ function Page() {
 
 						<form className="space-y-8">
 							<div className="space-y-2">
-								<label className="block font-semibold">
+								<label className="block font-semibold" htmlFor="nature">
 									How can we help you?
 								</label>
 								<Select value={formType} onValueChange={handleFormTypeChange}>
-									<SelectTrigger className="w-full">
+									<SelectTrigger id="nature" className="w-full">
 										<SelectValue placeholder="Select an option" />
 									</SelectTrigger>
 
@@ -76,11 +78,11 @@ function Page() {
 									/>
 								</div>
 								<div className="flex-1 space-y-2">
-									<label htmlFor="name" className="block font-semibold">
+									<label htmlFor="email" className="block font-semibold">
 										Your Email
 									</label>
 									<input
-										id="name"
+										id="email"
 										type="email"
 										className="w-full rounded-sm border border-gray-400 bg-gray-200 p-4 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
 										placeholder="janedoe@example.com"

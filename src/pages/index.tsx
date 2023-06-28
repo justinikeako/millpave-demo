@@ -1,6 +1,7 @@
 import {
 	AnimatePresence,
 	motion,
+	MotionStyle,
 	Transition,
 	useCycle,
 	useScroll,
@@ -35,7 +36,6 @@ function Hero() {
 		target: heroRef,
 		offset: ['center end', 'end start']
 	});
-	const bgScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
 	const line1Opacity = useTransform(scrollY, [50, 150], [1, 0]);
 	const line2Opacity = useTransform(scrollY, [50, 200], [1, 0]);
 
@@ -67,8 +67,8 @@ function Hero() {
 			data-header-transparent
 		>
 			<motion.div
-				style={{ scale: bgScale }}
-				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-[100lvw] bg-gray-700"
+				style={{ '--progress': scrollYProgress } as unknown as MotionStyle}
+				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-[100lvw] bg-gray-700 [clip-path:inset(calc(64px*var(--progress)))] 2xl:[clip-path:inset(calc((50vw-768px+64px)*var(--progress)))]"
 			/>
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">
@@ -147,7 +147,8 @@ function Page() {
 								</Balancer>
 							</p>
 						</div>
-						<ul className="no-scrollbar -mx-16 flex gap-4 overflow-x-auto px-16">
+						<ul className="no-scrollbar -mx-16 flex gap-4 overflow-x-auto">
+							<div className="sticky left-0 z-[1] -mr-4 w-16 shrink-0 from-gray-100 2xl:bg-gradient-to-r" />
 							<ProductCard
 								name="Colonial Classic"
 								startingSku={{ price: 203, unit: 'sqft' }}
@@ -178,6 +179,7 @@ function Page() {
 								link="/product/owc"
 								className="w-80 shrink-0 grow"
 							/>
+							<div className="sticky right-0 z-[1] -ml-4 w-16 shrink-0 from-gray-100 2xl:bg-gradient-to-l" />
 						</ul>
 						<Button intent="secondary" className="mx-auto w-fit" asChild>
 							<Link href="/products">View All Products</Link>

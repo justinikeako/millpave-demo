@@ -14,8 +14,8 @@ import {
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger
-} from '~/components/sheet';
-import {Icon} from '~/components/icon';
+} from '~/components/ui/sheet';
+import { Icon } from '~/components/icon';
 import {
 	Controller,
 	useFieldArray,

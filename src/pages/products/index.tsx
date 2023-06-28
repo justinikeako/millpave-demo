@@ -106,7 +106,7 @@ function FilterGroup({
 }: FilterGroupProps) {
 	return (
 		<Collapsible.Root
-			className="group space-y-3 data-[state=open]:pb-2"
+			className="group space-y-3 data-[state=open]:pb-4"
 			defaultOpen
 			disabled={collapsible === undefined}
 		>

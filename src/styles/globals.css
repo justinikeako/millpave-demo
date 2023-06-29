@@ -5,6 +5,7 @@
 :root {
 	min-height: 0vw;
 	font-family: var(--font-sans);
+	font-optical-sizing: auto;
 	height: 100%;
 }
 
@@ -16,18 +17,6 @@ body {
 
 #__next {
 	display: contents;
-}
-
-/* Chrome, Safari, Edge, Opera */
-input.no-arrows::-webkit-outer-spin-button,
-input.no-arrows::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
-}
-
-/* Firefox */
-input.no-arrows[type='number'] {
-	-moz-appearance: textfield;
 }
 
 .markdownanswer a:hover {
@@ -63,55 +52,25 @@ input.no-arrows[type='number'] {
 }
 
 b {
-	@apply font-semibold;
+	font-weight: semibold;
 }
 
 @layer utilities {
-	.text-2xl.font-display {
-		font-variation-settings: 'opsz' 40;
-	}
-	.text-xl.font-display {
-		font-variation-settings: 'opsz' 28;
-	}
-	.text-lg.font-display {
-		font-variation-settings: 'opsz' 20;
-	}
-
-	.text-3xl.font-display,
-	.text-4xl.font-display,
-	.text-5xl.font-display {
-		font-variation-settings: 'opsz' 60;
-	}
-
-	.text-4xl,
-	.text-3xl,
-	.text-2xl,
-	.text-xl {
-		font-variation-settings: 'opsz' 32;
-	}
-
-	.text-lg {
-		font-variation-settings: 'opsz' 24;
-	}
-
-	.text-sm {
-		font-variation-settings: 'opsz' 12;
-	}
-
-	.material-symbols-outlined {
-		--optical-size: 24;
-		--grade: 0;
-		--weight: 400;
-		--fill: 0;
-
-		font-size: 24px;
-
-		font-variation-settings: 'FILL' var(--fill), 'wght' var(--weight),
-			'GRAD' var(--grade), 'opsz' var(--optical-size);
-	}
-
 	.no-scrollbar::-webkit-scrollbar {
 		display: none;
 		-webkit-appearance: none;
+	}
+
+	/* Chrome, Safari, Edge, Opera */
+	input.no-arrows::-webkit-outer-spin-button,
+	input.no-arrows::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Firefox */
+	input.no-arrows[type='number'] {
+		-moz-appearance: textfield;
+		appearance: textfield;
 	}
 }

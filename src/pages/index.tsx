@@ -21,6 +21,7 @@ import { LocationsSection } from '~/components/sections/locations';
 import { LearnSection } from '~/components/sections/learn';
 import { Main } from '~/components/main';
 import { FullWidthSection } from '~/components/sections/full-width';
+import { HorizontalScroller } from '~/components/horizontal-scroller';
 
 function Hero() {
 	const heroRef = useRef<HTMLDivElement>(null);
@@ -75,15 +76,21 @@ function Hero() {
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">
 				<motion.h1 className="text-center font-display text-5xl">
-					<motion.span className="block" style={{ opacity: line1Opacity }}>
+					<motion.span
+						className="inline-block"
+						style={{ opacity: line1Opacity }}
+					>
 						<OrchestratedReveal asChild delay={0.1}>
-							<span className="block">Transform Your</span>
+							<span className="inline-block">Transform Your</span>
 						</OrchestratedReveal>
 					</motion.span>
-
-					<motion.span className="block" style={{ opacity: line2Opacity }}>
+					<br />
+					<motion.span
+						className="inline-block"
+						style={{ opacity: line2Opacity }}
+					>
 						<OrchestratedReveal asChild delay={0.2}>
-							<span className="block">
+							<span className="inline-block">
 								<AnimatePresence initial={false} mode="wait">
 									<motion.span
 										key={example}
@@ -149,8 +156,7 @@ function Page() {
 								</Balancer>
 							</p>
 						</div>
-						<ul className="no-scrollbar -m-6 flex snap-x snap-mandatory gap-4 overflow-x-auto lg:-mx-16">
-							<div className="sticky left-0 z-[1] -mr-4 w-6 shrink-0 bg-gradient-to-r from-gray-100 lg:w-16" />
+						<HorizontalScroller className="gap-4" snap>
 							<ProductCard
 								name="Colonial Classic"
 								startingSku={{ price: 203, unit: 'sqft' }}
@@ -181,8 +187,7 @@ function Page() {
 								link="/product/owc"
 								className="w-80 shrink-0 grow snap-center"
 							/>
-							<div className="sticky right-0 z-[1] -ml-4 w-6 shrink-0 bg-gradient-to-l from-gray-100 lg:w-16" />
-						</ul>
+						</HorizontalScroller>
 						<Button intent="secondary" className="mx-auto w-fit" asChild>
 							<Link href="/products">View All Products</Link>
 						</Button>

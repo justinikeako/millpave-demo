@@ -7,8 +7,8 @@ import { ViewportReveal } from '../reveal';
 function LearnSection() {
 	return (
 		<ViewportReveal asChild>
-			<section className="flex flex-col gap-4 py-16 lg:flex-row">
-				<div className="group relative flex h-96 shrink-0 flex-col items-start gap-2 bg-gray-600 p-6 text-white lg:flex-[2] lg:justify-between">
+			<section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 py-16">
+				<div className="group relative flex h-96 shrink-0 md:col-span-2 flex-col items-start gap-2 bg-gray-600 p-6 text-white md:justify-between">
 					<div className="max-w-xs space-y-2">
 						<Link
 							href="/contractors"
@@ -36,22 +36,25 @@ function LearnSection() {
 					</Button>
 				</div>
 
-				<div className="group relative flex h-96 shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6 lg:flex-1">
-					<div className="space-y-1">
+				<div className="group relative flex h-96 shrink-0 flex-col justify-end space-y-2 bg-gray-200 p-6 xs:items-start">
+					<div className="max-w-xs space-y-1">
 						<Link href="/resources" className="before:absolute before:inset-0">
 							<h3 className="font-display text-lg">Resources</h3>
 						</Link>
 						<p>
-							Peruse frequently asked questions, DIY guides and product cost
-							calculators.
+							<Balancer>
+								Peruse frequently asked questions, DIY guides and product cost
+								calculators.
+							</Balancer>
 						</p>
 					</div>
 					<Button asChild intent="secondary" backdrop="light">
 						<div>Learn More</div>
 					</Button>
 				</div>
-				<div className="group relative flex h-96 shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6 lg:flex-1 lg:justify-start">
-					<div className="space-y-1">
+
+				<div className="group relative flex h-96 shrink-0 flex-col justify-end space-y-2 bg-gray-200 p-6 xs:items-start lg:justify-start">
+					<div className="max-w-xs space-y-1">
 						<Link
 							href="/blog/why-use-pavers"
 							className="before:absolute before:inset-0"
@@ -59,7 +62,9 @@ function LearnSection() {
 							<h3 className="font-display text-lg">Why use paving stones?</h3>
 						</Link>
 						<p>
-							Compare the benefits of paving stones to other paving solutions.
+							<Balancer>
+								Compare the benefits of paving stones to other paving solutions.
+							</Balancer>
 						</p>
 					</div>
 

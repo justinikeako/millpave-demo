@@ -45,7 +45,7 @@ function InspirationSection() {
 
 				<div className="-mx-6 overflow-x-hidden lg:-mx-16" ref={carouselRef}>
 					<motion.div
-						className="flex h-64 w-fit translate-x-[calc(228px-var(--scroll-progress)*(100%-228px))] justify-start gap-4 md:gap-6 lg:h-96 lg:translate-x-[calc(342px-var(--scroll-progress)*(100%-342px))] lg:gap-8"
+						className="flex h-64 w-fit translate-x-[calc(50vw-var(--scroll-progress)*67%)] justify-start gap-4 md:gap-6 lg:h-96 lg:translate-x-[calc(50vw-var(--scroll-progress)*67%)] lg:gap-8"
 						style={{ '--scroll-progress': scrollYProgress } as MotionStyle}
 					>
 						<div className="flex aspect-video shrink-0 bg-gray-200" />

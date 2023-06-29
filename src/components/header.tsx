@@ -7,7 +7,6 @@ import { Logo } from './logo';
 import { OrchestratedReveal } from './reveal';
 import { Icon } from './icon';
 import { useRouter } from 'next/router';
-import { cn } from '~/lib/utils';
 
 type NavLinkProps = {
 	href: string;
@@ -29,18 +28,16 @@ const content: Variants = {
 		opacity: 0,
 		transition: {
 			type: 'spring',
-			mass: 1,
-			damping: 30,
-			stiffness: 300
+			duration: 0.3,
+			bounce: 0
 		}
 	},
 	show: {
 		opacity: 1,
 		transition: {
 			type: 'spring',
-			mass: 1,
-			damping: 30,
-			stiffness: 300
+			duration: 0.5,
+			bounce: 0
 		}
 	}
 };
@@ -50,7 +47,7 @@ const list: Variants = {
 	show: {
 		transition: {
 			delayChildren: 0.1,
-			staggerChildren: 0.075
+			staggerChildren: 0.1
 		}
 	}
 };
@@ -58,12 +55,11 @@ const list: Variants = {
 const item: Variants = {
 	hide: {
 		opacity: 0,
-		x: -25,
+		x: -50,
 		transition: {
 			type: 'spring',
-			mass: 1,
-			damping: 30,
-			stiffness: 300
+			duration: 0.3,
+			bounce: 0
 		}
 	},
 	show: {
@@ -71,9 +67,8 @@ const item: Variants = {
 		x: 0,
 		transition: {
 			type: 'spring',
-			mass: 1,
-			damping: 30,
-			stiffness: 300
+			duration: 1,
+			bounce: 0.1
 		}
 	}
 };
@@ -90,7 +85,7 @@ function Header({ minimal }: { minimal: boolean }) {
 	const headerRef = useRef<HTMLDivElement>(null);
 	const router = useRouter();
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [isTransparent, setTransparent] = useState(false);
+	const [isTransparent, setTransparent] = useState(router.pathname === '/');
 
 	useEffect(() => {
 		const headerElement = headerRef.current;
@@ -128,62 +123,57 @@ function Header({ minimal }: { minimal: boolean }) {
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>
 			<header
+				data-minimal={minimal}
 				data-transparent={isTransparent || undefined}
 				className="group sticky top-0 z-10 bg-gray-100 text-gray-900 transition-colors data-[transparent]:bg-transparent data-[transparent]:text-gray-100"
 				ref={headerRef}
 			>
 				<OrchestratedReveal className="flex h-16 items-center px-6 2xl:container lg:px-16">
-					<div className="flex-1">
+					<Dialog.Trigger asChild>
+						<Button
+							intent="tertiary"
+							className="group-data-[minimal=true]:order-3 group-data-[transparent]:text-gray-100 group-data-[minimal=false]:lg:hidden"
+						>
+							<Icon name="menu" size={24} />
+						</Button>
+					</Dialog.Trigger>
+
+					<div className="flex flex-1 justify-center group-data-[minimal=true]:justify-start lg:justify-start">
 						<Link href="/" className="block w-fit">
 							<Logo variant="text" className="max-sm:hidden" />
 							<Logo className="sm:hidden" />
 						</Link>
 					</div>
-					{!minimal && (
-						<nav className="flex select-none items-center justify-between">
-							{/* Desktop Links */}
-							<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal max-lg:hidden">
-								<NavLink href="/products">Products</NavLink>
-								<NavLink href="/gallery">Inspiration</NavLink>
-								<NavLink href="/resources">Resources</NavLink>
-								<NavLink href="/quote-builder">
-									Get a Quote&nbsp;
-									<span className="relative inline-block rounded-sm bg-gradient-to-t from-black/10 px-1 text-sm font-semibold before:absolute  before:inset-0 before:rounded-sm before:border before:border-black/10 before:gradient-mask-t-0 group-data-[transparent]:border-white/25 group-data-[transparent]:bg-gradient-to-b group-data-[transparent]:from-white/25 group-data-[transparent]:before:border-white/25 group-data-[transparent]:before:gradient-mask-b-0 ">
-										New
-									</span>
-								</NavLink>
-								<NavLink href="/contact">Contact</NavLink>
-							</ul>
-						</nav>
-					)}
-					<div className="flex flex-1 items-center justify-end gap-4">
-						{!minimal && (
-							<Button
-								intent="tertiary"
-								asChild
-								className="group-data-[transparent]:text-gray-100"
-							>
-								<Link href="/quote">
-									<Icon name="shopping_cart" size={24} />
-								</Link>
-							</Button>
-						)}
-						<Dialog.Trigger asChild>
-							<Button
-								intent="tertiary"
-								className={cn(
-									'group-data-[transparent]:text-gray-100 ',
-									!minimal && 'lg:hidden'
-								)}
-							>
-								<Icon name="menu" size={24} />
-							</Button>
-						</Dialog.Trigger>
+					<nav className="flex select-none items-center justify-between group-data-[minimal=true]:hidden">
+						{/* Desktop Links */}
+						<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal max-lg:hidden">
+							<NavLink href="/products">Products</NavLink>
+							<NavLink href="/gallery">Inspiration</NavLink>
+							<NavLink href="/resources">Resources</NavLink>
+							<NavLink href="/quote-builder">
+								Get a Quote&nbsp;
+								<span className="relative inline-block rounded-sm bg-gradient-to-t from-black/10 px-1 text-sm font-semibold before:absolute  before:inset-0 before:rounded-sm before:border before:border-black/10 before:gradient-mask-t-0 group-data-[transparent]:border-white/25 group-data-[transparent]:bg-gradient-to-b group-data-[transparent]:from-white/25 group-data-[transparent]:before:border-white/25 group-data-[transparent]:before:gradient-mask-b-0 ">
+									New
+								</span>
+							</NavLink>
+							<NavLink href="/contact">Contact</NavLink>
+						</ul>
+					</nav>
+					<div className="flex items-center justify-end gap-4 lg:flex-1">
+						<Button
+							asChild
+							intent="tertiary"
+							className="group-data-[minimal=true]:hidden group-data-[transparent]:text-gray-100"
+						>
+							<Link href="/quote">
+								<Icon name="shopping_cart" size={24} />
+							</Link>
+						</Button>
 					</div>
 				</OrchestratedReveal>
 			</header>
 
-			{/* Mobile Menu */}
+			{/* Navigation Menu */}
 			<AnimatePresence>
 				{menuOpen && (
 					<Dialog.DialogPortal forceMount>
@@ -196,31 +186,46 @@ function Header({ minimal }: { minimal: boolean }) {
 								exit="hide"
 								className="fixed inset-0 z-50 flex flex-col bg-gray-900 text-white"
 							>
-								<div className="flex items-center justify-between px-8 py-4 md:px-24 md:py-8">
-									<Link href="/" onClick={() => setMenuOpen(false)}>
-										<div className="max-sm:hidden">
-											<Logo variant="text" />
-										</div>
-										<div className="sm:hidden">
-											<Logo />
-										</div>
-									</Link>
+								<div className="absolute inset-x-0">
+									<div className="flex h-16 items-center justify-between px-6 2xl:container lg:px-16">
+										<Dialog.Close asChild>
+											<Button
+												intent="tertiary"
+												backdrop="dark"
+												className={minimal ? 'order-3' : undefined}
+											>
+												<Icon name="close" />
+											</Button>
+										</Dialog.Close>
 
-									<Dialog.Close asChild>
+										<Link href="/" onClick={() => setMenuOpen(false)}>
+											<div className="max-sm:hidden">
+												<Logo variant="text" />
+											</div>
+											<div className="sm:hidden">
+												<Logo />
+											</div>
+										</Link>
+
 										<Button
+											asChild
 											intent="tertiary"
-											className="text-white active:bg-gray-800"
+											backdrop="dark"
+											onClick={() => setMenuOpen(false)}
+											className={minimal ? 'hidden' : undefined}
 										>
-											<Icon name="close" />
+											<Link href="/quote">
+												<Icon name="shopping_cart" size={24} />
+											</Link>
 										</Button>
-									</Dialog.Close>
+									</div>
 								</div>
 
 								<motion.ul
 									variants={variants.list}
 									initial="hide"
 									animate="show"
-									className="flex flex-1 flex-col items-start justify-center gap-8 px-16 text-3xl md:px-24"
+									className="flex flex-1 flex-col justify-center gap-8 px-6 font-display text-3xl xs:text-center md:px-24"
 								>
 									<MotionNavLink
 										variants={variants.item}

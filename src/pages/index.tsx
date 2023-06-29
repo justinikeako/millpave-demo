@@ -62,7 +62,7 @@ function Hero() {
 	};
 
 	return (
-		<section
+		<FullWidthSection
 			ref={heroRef}
 			className="flex h-[200lvh] flex-col items-center text-gray-100"
 			data-header-transparent
@@ -71,7 +71,7 @@ function Hero() {
 				style={
 					{ '--scroll-progress': scrollYProgress } as unknown as MotionStyle
 				}
-				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-[100lvw] bg-gray-700 [clip-path:inset(calc(24px*var(--scroll-progress)))] lg:[clip-path:inset(calc(64px*var(--scroll-progress)))] 2xl:[clip-path:inset(calc((50vw-768px+64px)*var(--scroll-progress)))]"
+				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-full bg-gray-700 [clip-path:inset(calc(24px*var(--scroll-progress)))] lg:[clip-path:inset(calc(64px*var(--scroll-progress)))] 2xl:w-[100lvw] 2xl:[clip-path:inset(calc((50vw-768px+64px)*var(--scroll-progress)))]"
 			/>
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">
@@ -131,7 +131,7 @@ function Hero() {
 				<span className="block text-sm font-semibold">Scroll</span>
 				<div className="h-2 w-[1px] bg-current" />
 			</motion.div>
-		</section>
+		</FullWidthSection>
 	);
 }
 

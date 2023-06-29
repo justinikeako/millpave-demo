@@ -146,7 +146,7 @@ function Header({ minimal }: { minimal: boolean }) {
 					</div>
 					<nav className="flex select-none items-center justify-between group-data-[minimal=true]:hidden">
 						{/* Desktop Links */}
-						<ul className="flex flex-row items-center gap-4 bg-transparent px-0 font-normal max-lg:hidden">
+						<ul className="flex flex-row items-center gap-4 bg-transparent px-0 max-lg:hidden">
 							<NavLink href="/products">Products</NavLink>
 							<NavLink href="/gallery">Inspiration</NavLink>
 							<NavLink href="/resources">Resources</NavLink>
@@ -177,7 +177,10 @@ function Header({ minimal }: { minimal: boolean }) {
 			<AnimatePresence>
 				{menuOpen && (
 					<Dialog.DialogPortal forceMount>
-						<Dialog.DialogContent forceMount asChild>
+						{/* This prevents scrolling outside of the menu */}
+						<Dialog.Overlay />
+
+						<Dialog.DialogContent forceMount asChild data-minimal={minimal}>
 							<motion.div
 								variants={variants.content}
 								initial="hide"
@@ -191,7 +194,7 @@ function Header({ minimal }: { minimal: boolean }) {
 											<Button
 												intent="tertiary"
 												backdrop="dark"
-												className={minimal ? 'order-3' : undefined}
+												className="data-[minimal=true]:order-3 lg:order-3"
 											>
 												<Icon name="close" size={24} />
 											</Button>
@@ -211,7 +214,7 @@ function Header({ minimal }: { minimal: boolean }) {
 											intent="tertiary"
 											backdrop="dark"
 											onClick={() => setMenuOpen(false)}
-											className={minimal ? 'hidden' : undefined}
+											className='lg:hidden data-[minimal=true]:hidden'
 										>
 											<Link href="/quote">
 												<Icon name="shopping_cart" size={24} />

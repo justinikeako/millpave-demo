@@ -125,7 +125,7 @@ function Header({ minimal }: { minimal: boolean }) {
 			<header
 				data-minimal={minimal}
 				data-transparent={isTransparent || undefined}
-				className="group sticky top-0 z-10 bg-gray-100 text-gray-900 transition-colors data-[transparent]:bg-transparent data-[transparent]:text-gray-100"
+				className="group sticky top-0 z-10 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0"
 				ref={headerRef}
 			>
 				<OrchestratedReveal className="flex h-16 items-center px-6 2xl:container lg:px-16">
@@ -173,7 +173,7 @@ function Header({ minimal }: { minimal: boolean }) {
 				</OrchestratedReveal>
 			</header>
 
-			{/* Navigation Menu */}
+			{/* Fullscreen Menu */}
 			<AnimatePresence>
 				{menuOpen && (
 					<Dialog.DialogPortal forceMount>
@@ -194,7 +194,7 @@ function Header({ minimal }: { minimal: boolean }) {
 												backdrop="dark"
 												className={minimal ? 'order-3' : undefined}
 											>
-												<Icon name="close" />
+												<Icon name="close" size={24} />
 											</Button>
 										</Dialog.Close>
 
@@ -225,7 +225,7 @@ function Header({ minimal }: { minimal: boolean }) {
 									variants={variants.list}
 									initial="hide"
 									animate="show"
-									className="flex flex-1 flex-col justify-center gap-8 px-6 font-display text-3xl xs:text-center md:px-24"
+									className="flex flex-1 flex-col justify-center gap-8 px-6 text-center font-display text-3xl md:px-16"
 								>
 									<MotionNavLink
 										variants={variants.item}
@@ -239,14 +239,21 @@ function Header({ minimal }: { minimal: boolean }) {
 										href="/gallery"
 										onClick={() => setMenuOpen(false)}
 									>
-										Get Inspired
+										Inspiration
 									</MotionNavLink>
 									<MotionNavLink
 										variants={variants.item}
-										href="/#where-to-buy"
+										href="/resources"
 										onClick={() => setMenuOpen(false)}
 									>
-										Where to Buy
+										Resources
+									</MotionNavLink>
+									<MotionNavLink
+										variants={variants.item}
+										href="/quote-builder"
+										onClick={() => setMenuOpen(false)}
+									>
+										Get a Quote
 									</MotionNavLink>
 									<MotionNavLink
 										variants={variants.item}
@@ -254,13 +261,6 @@ function Header({ minimal }: { minimal: boolean }) {
 										onClick={() => setMenuOpen(false)}
 									>
 										Contact Us
-									</MotionNavLink>
-									<MotionNavLink
-										variants={variants.item}
-										href="/quote-builder"
-										onClick={() => setMenuOpen(false)}
-									>
-										Get A Quote
 									</MotionNavLink>
 								</motion.ul>
 							</motion.div>

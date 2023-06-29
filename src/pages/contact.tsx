@@ -38,7 +38,7 @@ function Page() {
 					</h1>
 				</OrchestratedReveal>
 
-				<div className="flex flex-row gap-16 py-16">
+				<div className="flex flex-col gap-16 py-16 md:flex-row">
 					{/* Form */}
 					<OrchestratedReveal delay={0.2} className="top-8 flex-1 space-y-8">
 						<h2 className="font-display text-lg">Contact Form</h2>

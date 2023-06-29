@@ -31,6 +31,7 @@ import { InspirationSection } from '~/components/sections/inspiration';
 import { LearnSection } from '~/components/sections/learn';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
 import { Main } from '~/components/main';
+import { HorizontalScroller } from '~/components/horizontal-scroller';
 
 const ProductViewer3D = dynamic(
 	() => import('~/components/product-viewer-3d'),
@@ -48,8 +49,8 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 	const [selectedIndex, setSelectedIndex] = useState(0);
 
 	return (
-		<div className="sticky top-24 flex w-full items-center gap-2">
-			<div className="flex flex-col items-center justify-center gap-2">
+		<div className="sticky top-24 flex w-full flex-col-reverse items-center gap-2 lg:flex-row">
+			<div className="flex items-center justify-center gap-2 lg:flex-col">
 				{images.map((_, index) => {
 					const id = 'image-' + index;
 
@@ -66,7 +67,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 							<label
 								htmlFor={id}
-								className="flex aspect-square w-20 flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700"
+								className="flex aspect-square w-16 flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700 lg:w-20"
 							>
 								{showModelViewer && index === 3 && (
 									<Icon name="3d_rotation-opsz_40" size={40} />
@@ -143,7 +144,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
 			<Main>
 				{/* Main Content */}
-				<section className="flex gap-16 py-16">
+				<section className="flex flex-col gap-16 md:gap-8 lg:gap-16 py-8 md:flex-row lg:py-16">
 					{/* Gallery */}
 
 					<OrchestratedReveal delay={0.1} className="flex-1">
@@ -166,8 +167,8 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 								<h1 className="font-display text-4xl">{product.displayName}</h1>
 							</div>
 							<div className="flex flex-wrap justify-between gap-x-4 font-display text-lg">
-								<div className="flex items-center gap-4">
-									<p>
+								<div className="flex items-center gap-x-4 flex-wrap">
+									<p className="whitespace-nowrap">
 										{formatPrice(currentSku.price)} per&nbsp;
 										{currentSku.unit === 'sqft'
 											? unitDisplayNameDictionary['sqft'][0]
@@ -175,8 +176,8 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 									</p>
 									{currentSku.details.rawData?.pcs_per_sqft && (
 										<>
-											<div className="h-full w-[2px] bg-current" />
-											<p>
+											<div className="h-[1.15em] w-px bg-current" />
+											<p className="whitespace-nowrap">
 												{formatPrice(
 													currentSku.price /
 														currentSku.details.rawData.pcs_per_sqft
@@ -251,17 +252,17 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 					</h2>
 
 					<div className="flex flex-col space-y-8">
-						<ul className="flex gap-4">
+						<HorizontalScroller className="gap-4 py-1" snap>
 							{product.similar.map((similarProduct) => (
 								<ProductCard
 									key={similarProduct.id}
 									name={similarProduct.displayName}
 									startingSku={similarProduct.startingSku}
 									link={`/product/${similarProduct.id}`}
-									className="flex-1"
+									className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
 								/>
 							))}
-							<li className="flex-1">
+							<li className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1">
 								<Button
 									asChild
 									intent="secondary"
@@ -273,7 +274,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 									</Link>
 								</Button>
 							</li>
-						</ul>
+						</HorizontalScroller>
 					</div>
 				</ViewportReveal>
 

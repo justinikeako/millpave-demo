@@ -196,7 +196,7 @@ function Header({ minimal }: { minimal: boolean }) {
 												backdrop="dark"
 												className="data-[minimal=true]:order-3 lg:order-3"
 											>
-												<Icon name="close" size={24} />
+												<Icon name="close-wght_300" size={24} />
 											</Button>
 										</Dialog.Close>
 

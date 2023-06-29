@@ -36,7 +36,7 @@ function LearnSection() {
 					</Button>
 				</div>
 
-				<div className="group relative flex h-96 shrink-0 flex-col justify-end space-y-2 bg-gray-200 p-6 xs:items-start">
+				<div className="group relative flex h-96 shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6">
 					<div className="max-w-xs space-y-1">
 						<Link href="/resources" className="before:absolute before:inset-0">
 							<h3 className="font-display text-lg">Resources</h3>
@@ -53,7 +53,7 @@ function LearnSection() {
 					</Button>
 				</div>
 
-				<div className="group relative flex h-96 shrink-0 flex-col justify-end space-y-2 bg-gray-200 p-6 xs:items-start lg:justify-start">
+				<div className="group relative flex h-96 shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6 lg:justify-start">
 					<div className="max-w-xs space-y-1">
 						<Link
 							href="/blog/why-use-pavers"

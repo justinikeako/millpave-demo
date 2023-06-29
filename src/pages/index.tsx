@@ -35,7 +35,7 @@ function Hero() {
 
 	const { scrollY, scrollYProgress } = useScroll({
 		target: heroRef,
-		offset: ['center end', 'end start']
+		offset: ['end end', 'end start']
 	});
 	const line1Opacity = useTransform(scrollY, [50, 150], [1, 0]);
 	const line2Opacity = useTransform(scrollY, [50, 200], [1, 0]);
@@ -64,7 +64,7 @@ function Hero() {
 	return (
 		<FullWidthSection
 			ref={heroRef}
-			className="flex h-[200lvh] flex-col items-center text-gray-100"
+			className="flex h-[150lvh] flex-col items-center text-gray-100"
 			data-header-transparent
 		>
 			<motion.div

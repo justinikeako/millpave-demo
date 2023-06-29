@@ -16,7 +16,10 @@ module.exports = {
 		fontSize: {
 			sm: ['12px', { lineHeight: '18px' }],
 			base: ['13px', { lineHeight: '20px' }],
-			lg: ['clamp(16px, calc(1rem + ((1vw - 4.2px) * 0.4651)), 20px)', { lineHeight: '1.5', fontWeight: '500' }],
+			lg: [
+				'clamp(16px, calc(1rem + ((1vw - 4.2px) * 0.4651)), 20px)',
+				{ lineHeight: '1.5', fontWeight: '500' }
+			],
 			xl: [
 				'clamp(24px, calc(1.5rem + ((1vw - 4.2px) * 0.4651)), 28px)',
 				{ lineHeight: '1.15', fontWeight: '500', letterSpacing: '-0.01em' }
@@ -41,7 +44,7 @@ module.exports = {
 
 		extend: {
 			screens: {
-				xs: "480px",
+				xs: '480px',
 				md: '640px'
 			},
 

@@ -7,8 +7,8 @@ import { ViewportReveal } from '../reveal';
 function LearnSection() {
 	return (
 		<ViewportReveal asChild>
-			<section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 py-16">
-				<div className="group relative flex h-96 shrink-0 md:col-span-2 flex-col items-start gap-2 bg-gray-600 p-6 text-white md:justify-between">
+			<section className="grid grid-cols-1 gap-4 py-16 md:grid-cols-2 xl:grid-cols-4">
+				<div className="group relative flex h-96 shrink-0 flex-col items-start gap-2 bg-gray-600 p-6 text-white md:col-span-2 md:justify-between">
 					<div className="max-w-xs space-y-2">
 						<Link
 							href="/contractors"

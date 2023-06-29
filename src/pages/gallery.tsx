@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ProductCard } from '../components/product-card';
 import { Main } from '~/components/main';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
+import { FullWidthSection } from '~/components/sections/full-width';
 import { LearnSection } from '~/components/sections/learn';
 import { Balancer } from 'react-wrap-balancer';
 import { Icon } from '~/components/icon';
@@ -45,7 +46,7 @@ function GalleryFilter({ image, children, ...props }: GalleryFilterProps) {
 function GalleryImage() {
 	return (
 		<Dialog.Trigger asChild>
-			<li className="group aspect-square bg-gray-200 [&:nth-child(11n+4)]:col-span-2 [&:nth-child(11n+4)]:row-span-2">
+			<li className="group aspect-square bg-gray-200 lg:[&:nth-child(11n+2)]:col-span-2 lg:[&:nth-child(11n+2)]:row-span-2 max-md:[&:nth-child(12n+2)]:col-span-2 max-md:[&:nth-child(12n+2)]:row-span-2 max-md:[&:nth-child(12n+7)]:col-span-2 max-md:[&:nth-child(12n+7)]:row-span-2">
 				<p className="p-4 font-display text-lg opacity-0 transition-opacity group-hover:opacity-100">
 					Post Title
 				</p>
@@ -68,7 +69,7 @@ function Page() {
 
 	const [categoryId, setCategoryId] =
 		useState<(typeof categories)[number]['id']>('walkway');
-
+	const [number, setNumber] = useState(21);
 	return (
 		<>
 			<Head>
@@ -100,101 +101,107 @@ function Page() {
 					</OrchestratedReveal>
 				</section>
 
-				<ViewportReveal className="space-y-4 md:space-y-8">
-					<div className="grid grid-cols-4 gap-4">
-						<div className="mb-8 flex items-center">
-							<p className="mx-auto text-center font-display text-xl">
-								<Balancer>
-									See how our products can transform your outdoor space.
-								</Balancer>
-							</p>
+				<ViewportReveal asChild className="space-y-4 md:space-y-8">
+					<FullWidthSection className="px-1 md:px-2 lg:px-3 xl:px-4 2xl:px-6">
+						<div className="grid-cols-3 gap-4 lg:grid lg:grid-cols-4">
+							<Dialog.Root>
+								<div className="mb-8 flex items-center">
+									<p className="mx-auto max-w-md text-center font-display text-xl">
+										<Balancer>
+											See how our products can transform your outdoor space.
+										</Balancer>
+									</p>
+								</div>
+
+								<ul className="grid grid-cols-3 gap-1 md:gap-2 lg:contents lg:gap-3">
+									{[...Array(number).keys()].map((index) => (
+										<GalleryImage key={index} />
+									))}
+								</ul>
+								<Dialog.Portal>
+									<Dialog.Overlay className="fixed inset-0 z-50 bg-gray-900/75" />
+
+									<Dialog.Content>
+										<div className="pointer-events-none fixed inset-0 z-50 flex flex-col items-end justify-center md:items-center lg:flex-row">
+											<div className="flex aspect-square shrink-0 items-center md:sticky md:top-0 md:flex-1">
+												<div className="pointer-events-auto aspect-video w-full bg-gray-200" />
+											</div>
+
+											<aside className="pointer-events-auto relative flex h-full max-w-sm flex-col overflow-y-auto bg-white">
+												<div className="h-fit space-y-16 px-8 py-8">
+													<section>
+														<p className="font-semibold">
+															By&nbsp;
+															<Link
+																target="_blank"
+																href="https://www.instagram.com/najobriks"
+																className="underline"
+															>
+																Najo Briks Construction
+															</Link>
+														</p>
+														<h1 className="font-display text-xl">
+															Residential Driveway
+														</h1>
+														<br />
+														<p>
+															Lorem ipsum, dolor sit amet consectetur
+															adipisicing elit. Dolor, accusantium? Quasi
+															assumenda voluptate error nesciunt placeat!
+															Consequuntur incidunt, temporibus nesciunt
+															pariatur harum quisquam voluptatum dicta facilis
+															ut similique minus, soluta at consectetur ipsa
+															corporis eos doloribus atque tempora molestias
+															voluptatibus. Magni esse nihil debitis mollitia.
+															Culpa nulla quisquam veritatis! Velit?
+														</p>
+													</section>
+													<section>
+														<h2 className="font-display text-lg">
+															Products in this photo
+														</h2>
+
+														<ul className="mt-8 space-y-4">
+															<ProductCard
+																name="Colonial Classic"
+																startingSku={{ price: 203, unit: 'sqft' }}
+																link="/product/colonial_classic"
+															/>
+															<ProductCard
+																name="Banjo"
+																startingSku={{ price: 219, unit: 'sqft' }}
+																link="/product/banjo"
+															/>
+														</ul>
+													</section>
+												</div>
+											</aside>
+
+											<Dialog.Close asChild>
+												<Button
+													intent="tertiary"
+													backdrop="dark"
+													className="pointer-events-auto absolute left-8 top-8 bg-gray-900/90 hover:bg-gray-700/90 active:bg-gray-500/75"
+												>
+													<Icon name="close" />
+													Return To Gallery
+												</Button>
+											</Dialog.Close>
+										</div>
+									</Dialog.Content>
+								</Dialog.Portal>
+							</Dialog.Root>
 						</div>
 
-						<Dialog.Root>
-							<Dialog.Portal>
-								<Dialog.Overlay className="fixed inset-0 z-50 bg-gray-900/75" />
-
-								<Dialog.Content>
-									<div className="pointer-events-none fixed inset-0 z-50 flex items-end justify-center md:items-center">
-										<div className="flex aspect-square shrink-0 items-center md:sticky md:top-0 md:flex-1">
-											<div className=" pointer-events-auto aspect-video w-full bg-gray-200" />
-										</div>
-
-										<aside className="pointer-events-auto relative flex h-full max-w-sm flex-col overflow-y-auto bg-white">
-											<div className="h-fit space-y-16 px-8 py-8">
-												<section>
-													<p className="font-semibold">
-														By&nbsp;
-														<Link
-															target="_blank"
-															href="https://www.instagram.com/najobriks"
-															className="underline"
-														>
-															Najo Briks Construction
-														</Link>
-													</p>
-													<h1 className="font-display text-xl">
-														Residential Driveway
-													</h1>
-													<br />
-													<p>
-														Lorem ipsum, dolor sit amet consectetur adipisicing
-														elit. Dolor, accusantium? Quasi assumenda voluptate
-														error nesciunt placeat! Consequuntur incidunt,
-														temporibus nesciunt pariatur harum quisquam
-														voluptatum dicta facilis ut similique minus, soluta
-														at consectetur ipsa corporis eos doloribus atque
-														tempora molestias voluptatibus. Magni esse nihil
-														debitis mollitia. Culpa nulla quisquam veritatis!
-														Velit?
-													</p>
-												</section>
-												<section>
-													<h2 className="font-display text-lg">
-														Products in this photo
-													</h2>
-
-													<ul className="mt-8 space-y-4">
-														<ProductCard
-															name="Colonial Classic"
-															startingSku={{ price: 203, unit: 'sqft' }}
-															link="/product/colonial_classic"
-														/>
-														<ProductCard
-															name="Banjo"
-															startingSku={{ price: 219, unit: 'sqft' }}
-															link="/product/banjo"
-														/>
-													</ul>
-												</section>
-											</div>
-										</aside>
-
-										<Dialog.Close asChild>
-											<Button
-												intent="tertiary"
-												backdrop="dark"
-												className="pointer-events-auto absolute left-8 top-8 bg-gray-900/90 hover:bg-gray-700/90 active:bg-gray-500/75"
-											>
-												<Icon name="close" />
-												Return To Gallery
-											</Button>
-										</Dialog.Close>
-									</div>
-								</Dialog.Content>
-							</Dialog.Portal>
-
-							<ul className="contents">
-								{[...Array(21).keys()].map((index) => (
-									<GalleryImage key={index} />
-								))}
-							</ul>
-						</Dialog.Root>
-					</div>
-
-					<Button intent="secondary" className="mx-auto">
-						See More
-					</Button>
+						<Button
+							intent="secondary"
+							disabled={number >= 63}
+							className="mx-auto"
+							onClick={() => setNumber(number + 21)}
+						>
+							Load More
+						</Button>
+					</FullWidthSection>
 				</ViewportReveal>
 
 				{/* Process */}
@@ -202,7 +209,6 @@ function Page() {
 				<AugmentedRealityGallerySection />
 			</Main>
 
-			
 			<Footer />
 		</>
 	);

@@ -36,7 +36,7 @@ const content: Variants = {
 		opacity: 1,
 		transition: {
 			type: 'spring',
-			duration: 0.5,
+			duration: 0.3,
 			bounce: 0
 		}
 	}
@@ -47,7 +47,7 @@ const list: Variants = {
 	show: {
 		transition: {
 			delayChildren: 0.1,
-			staggerChildren: 0.1
+			staggerChildren: 0.05
 		}
 	}
 };
@@ -67,8 +67,8 @@ const item: Variants = {
 		x: 0,
 		transition: {
 			type: 'spring',
-			duration: 1,
-			bounce: 0.1
+			duration: 0.75,
+			bounce: 0.2
 		}
 	}
 };
@@ -125,7 +125,7 @@ function Header({ minimal }: { minimal: boolean }) {
 			<header
 				data-minimal={minimal}
 				data-transparent={isTransparent || undefined}
-				className="group sticky top-0 z-10 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0"
+				className="group sticky top-0 z-10 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0"
 				ref={headerRef}
 			>
 				<OrchestratedReveal className="flex h-16 items-center px-6 2xl:container lg:px-16">
@@ -177,7 +177,6 @@ function Header({ minimal }: { minimal: boolean }) {
 			<AnimatePresence>
 				{menuOpen && (
 					<Dialog.DialogPortal forceMount>
-						<Dialog.Overlay />
 						<Dialog.DialogContent forceMount asChild>
 							<motion.div
 								variants={variants.content}

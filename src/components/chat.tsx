@@ -128,7 +128,7 @@ function Chat({ hide }: { hide: boolean }) {
 	}, [messages, pending]);
 
 	return (
-		<div className="pointer-events-none fixed inset-x-8 bottom-8 flex justify-end">
+		<div className="pointer-events-none fixed inset-x-8 bottom-8 z-10 flex justify-end">
 			<div className="pointer-events-auto flex flex-col items-end justify-end space-y-2">
 				<AnimatePresence>
 					{open && (
@@ -236,7 +236,7 @@ function Chat({ hide }: { hide: boolean }) {
 					<OrchestratedReveal asChild delay={0.4}>
 						<button
 							onClick={toggleOpen}
-							className="relative flex select-none rounded-lg bg-gray-900 p-4 text-white shadow-button  hover:bg-gray-800 active:bg-gray-700"
+							className="relative flex select-none rounded-lg bg-gray-900 p-4 text-white  shadow-button hover:bg-gray-800 active:bg-gray-700"
 						>
 							<span className="sr-only">Chat</span>
 

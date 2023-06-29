@@ -6,7 +6,7 @@ import Link from 'next/link';
 export function AugmentedRealityGallerySection() {
 	return (
 		<SplitSection
-			slot={null}
+			slot={<div className="aspect-square bg-gray-300 md:aspect-auto" />}
 			tagline="AR Sample Gallery"
 			heading="See our pavers in your space."
 			body="Use your smartphone camera to visualize and virtually place paving stones in real-time, right in your own space."

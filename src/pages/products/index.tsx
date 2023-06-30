@@ -27,6 +27,10 @@ import {
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { LearnSection } from '~/components/sections/learn';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
+import { AnimatePresence, motion } from 'framer-motion';
+import * as Dialog from '@radix-ui/react-dialog';
+import { useMediaQuery } from '~/utils/use-media-query';
+import { useState } from 'react';
 
 type CheckboxProps = React.ComponentProps<'input'> & {
 	name: string;
@@ -68,7 +72,9 @@ function Filter({ name, value, children, slot, ...props }: FilterProps) {
 		<li className="flex justify-between gap-2">
 			<div className="flex gap-2">
 				<Checkbox {...props} name={name} value={value} />
-				<label htmlFor={name + ':' + value}>{children}</label>
+				<label htmlFor={name + ':' + value} className="select-none">
+					{children}
+				</label>
 			</div>
 
 			{slot}
@@ -110,20 +116,237 @@ function FilterGroup({
 			defaultOpen
 			disabled={collapsible === undefined}
 		>
-			<Collapsible.Trigger className="-mx-4 -my-2 flex w-[calc(100%+32px)] items-end justify-between rounded-md px-4 py-2 hover:bg-gray-900/10 active:bg-gray-900/20 disabled:!bg-transparent">
+			<Collapsible.Trigger className="sm:active:bg-gray pointer-events-none -mx-4 -my-2 flex w-[calc(100%+32px)] items-end justify-between rounded-md px-4 py-2 hover:bg-gray-300/50 active:bg-gray-500/25 disabled:!bg-transparent lg:pointer-events-auto">
 				<span className="font-semibold">{name}</span>
 
-				<Icon
-					name="chevron_down"
-					className="hidden group-data-[state=closed]:block group-data-[disabled]:!hidden"
-				/>
-				<Icon
-					name="chevron_up"
-					className="hidden group-data-[state=open]:block group-data-[disabled]:!hidden"
-				/>
+				<div className="hidden lg:block">
+					<Icon
+						name="chevron_down"
+						className="hidden group-data-[state=closed]:block group-data-[disabled]:!hidden"
+					/>
+					<Icon
+						name="chevron_up"
+						className="hidden group-data-[state=open]:block group-data-[disabled]:!hidden"
+					/>
+				</div>
 			</Collapsible.Trigger>
 			<Collapsible.Content>{children}</Collapsible.Content>
 		</Collapsible.Root>
+	);
+}
+
+function Filters() {
+	return (
+		<>
+			{/* Categories */}
+			<FilterGroup displayName="Categories" collapsible>
+				<ul className="space-y-2">
+					<Filter name="categories" value="all" defaultChecked>
+						All
+					</Filter>
+					<Filter name="categories" value="pavers" defaultChecked>
+						Paving Stones
+					</Filter>
+					<Filter name="categories" value="slabs" defaultChecked>
+						Slabs
+					</Filter>
+					<Filter name="categories" value="blocks" defaultChecked>
+						Blocks
+					</Filter>
+					<Filter name="categories" value="maintenance" defaultChecked>
+						Maintenance
+					</Filter>
+					<Filter name="categories" value="cleaning" defaultChecked>
+						Cleaning
+					</Filter>
+				</ul>
+			</FilterGroup>
+
+			{/* Price per ft² */}
+			<FilterGroup displayName="Price per ft²" collapsible>
+				<div className="flex gap-2">
+					<div className="flex flex-1 items-center gap-2">
+						<label htmlFor="min-price">Min:</label>
+						<label
+							htmlFor="min-price"
+							className=" flex gap-0.5 rounded-sm border border-gray-400 bg-gray-100 py-2 pl-3 pr-1 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-pink-700"
+						>
+							<span className="inline-block font-semibold">$</span>
+							<input
+								id="min-price"
+								type="number"
+								placeholder="0"
+								className="no-arrows w-full flex-1 bg-transparent outline-none"
+							/>
+						</label>
+					</div>
+					<div className="flex flex-1 items-center gap-2">
+						<label htmlFor="max-price">Max:</label>
+						<label
+							htmlFor="max-price"
+							className="flex gap-0.5 rounded-sm border border-gray-400 bg-gray-100 py-2 pl-3 pr-1 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-pink-700"
+						>
+							<span className="inline-block font-semibold">$</span>
+
+							<input
+								id="max-price"
+								type="number"
+								placeholder="Infinity"
+								className="no-arrows w-full flex-1 bg-transparent outline-none"
+							/>
+						</label>
+					</div>
+				</div>
+			</FilterGroup>
+
+			{/* Strength */}
+			<FilterGroup displayName="Rated Strength" collapsible>
+				<ul className="space-y-2">
+					<Filter name="weight_rating" value="any" defaultChecked>
+						Any
+					</Filter>
+					<Filter name="weight_rating" value="commercial" defaultChecked>
+						Commercial Grade
+					</Filter>
+					<Filter name="weight_rating" value="residential" defaultChecked>
+						Residential Grade
+					</Filter>
+					<Filter name="weight_rating" value="lightweight" defaultChecked>
+						Lightweight
+					</Filter>
+				</ul>
+			</FilterGroup>
+
+			{/* Colors 🌈 */}
+			<FilterGroup displayName="Colors" collapsible>
+				<ul className="space-y-2">
+					<Filter name="colors" value="all" defaultChecked>
+						All
+					</Filter>
+					<ColorFilter
+						name="colors"
+						value="grey"
+						swatch="#D9D9D9"
+						defaultChecked
+					>
+						Grey
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="ash"
+						swatch="#B1B1B1"
+						defaultChecked
+					>
+						Ash
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="charcoal"
+						swatch="#696969"
+						defaultChecked
+					>
+						Charcoal
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="spanish_brown"
+						swatch="#95816D"
+						defaultChecked
+					>
+						Spanish Brown
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="sunset_taupe"
+						swatch="#C9B098"
+						defaultChecked
+					>
+						Sunset Taupe
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="tan"
+						swatch="#DDCCBB"
+						defaultChecked
+					>
+						Tan
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="sunset_clay"
+						swatch="#E7A597"
+						defaultChecked
+					>
+						Sunset Clay
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="red"
+						swatch="#EF847A"
+						defaultChecked
+					>
+						Red
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="terracotta"
+						swatch="#EFA17A"
+						defaultChecked
+					>
+						Terracotta
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="orange"
+						swatch="#EBB075"
+						defaultChecked
+					>
+						Orange
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="sunset_tangerine"
+						swatch="#E7C769"
+						defaultChecked
+					>
+						Sunset Tangerine
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="yellow"
+						swatch="#E7DD69"
+						defaultChecked
+					>
+						Yellow
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="green"
+						swatch="#A9D786"
+						defaultChecked
+					>
+						Green
+					</ColorFilter>
+					<ColorFilter
+						name="colors"
+						value="custom_blend"
+						swatch="conic-gradient(from 180deg at 50% 50.00%, #EF847A 0deg, #E7DD69 72.0000010728836deg, #A9D786 144.0000021457672deg, #959ECB 216.00000858306885deg, #EF7AA4 288.0000042915344deg, #EF847A 360deg)"
+						defaultChecked
+					>
+						Custom Blend
+					</ColorFilter>
+				</ul>
+			</FilterGroup>
+
+			{/* Misc */}
+			<FilterGroup displayName="Misc">
+				<ul className="space-y-2">
+					<Filter name="has_models" value="true">
+						Has 3D Models
+					</Filter>
+				</ul>
+			</FilterGroup>
+		</>
 	);
 }
 
@@ -148,6 +371,9 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 		...(categoriesQuery.data || [])
 	];
 
+	const [filterMenuOpen, setFilterMenuOpen] = useState<boolean>(false);
+	const screenLg = useMediaQuery('(min-width: 1024px)');
+
 	if (!categories || !products) {
 		const productsNotFound = productsQuery.error?.data?.code === 'NOT_FOUND';
 
@@ -169,238 +395,93 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 					</h1>
 				</OrchestratedReveal>
 
-				<div className="flex items-start gap-12">
+				<div className="flex flex-col gap-12 lg:flex-row lg:items-start">
 					<OrchestratedReveal asChild delay={0.2}>
-						<section className="w-72 space-y-4 rounded-xl border border-gray-300 bg-gray-200 p-6">
-							<h2 className="font-display text-lg">Filters</h2>
+						{!filterMenuOpen && (
+							<aside className="hidden w-72 space-y-4 rounded-xl border border-gray-300 bg-gray-200 p-6 focus-within:border-gray-400 lg:block">
+								<h2 className="font-display text-lg">Filters</h2>
 
-							{/* Categories */}
-							<FilterGroup displayName="Categories" collapsible>
-								<ul className="space-y-2">
-									<Filter name="categories" value="all" defaultChecked>
-										All
-									</Filter>
-									<Filter name="categories" value="pavers" defaultChecked>
-										Paving Stones
-									</Filter>
-									<Filter name="categories" value="slabs" defaultChecked>
-										Slabs
-									</Filter>
-									<Filter name="categories" value="blocks" defaultChecked>
-										Blocks
-									</Filter>
-									<Filter name="categories" value="maintenance" defaultChecked>
-										Maintenance
-									</Filter>
-									<Filter name="categories" value="cleaning" defaultChecked>
-										Cleaning
-									</Filter>
-								</ul>
-							</FilterGroup>
-
-							{/* Price per ft² */}
-							<FilterGroup displayName="Price per ft²" collapsible>
-								<div className="flex gap-2">
-									<div className="flex flex-1 items-center gap-2">
-										<label htmlFor="min-price">Min:</label>
-										<label
-											htmlFor="min-price"
-											className=" flex gap-0.5 rounded-sm border border-gray-400 bg-gray-100 py-2 pl-3 pr-1 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-pink-700"
-										>
-											<span className="inline-block font-semibold">$</span>
-											<input
-												id="min-price"
-												type="number"
-												placeholder="0"
-												className="w-full flex-1 bg-transparent outline-none"
-											/>
-										</label>
-									</div>
-									<div className="flex flex-1 items-center gap-2">
-										<label htmlFor="max-price">Max:</label>
-										<label
-											htmlFor="max-price"
-											className="flex gap-0.5 rounded-sm border border-gray-400 bg-gray-100 py-2 pl-3 pr-1 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-pink-700"
-										>
-											<span className="inline-block font-semibold">$</span>
-
-											<input
-												id="max-price"
-												type="number"
-												placeholder="Infinity"
-												className="w-full flex-1 bg-transparent outline-none"
-											/>
-										</label>
-									</div>
-								</div>
-							</FilterGroup>
-
-							{/* Strength */}
-							<FilterGroup displayName="Rated Strength" collapsible>
-								<ul className="space-y-2">
-									<Filter name="weight_rating" value="any" defaultChecked>
-										Any
-									</Filter>
-									<Filter
-										name="weight_rating"
-										value="commercial"
-										defaultChecked
-									>
-										Commercial Grade
-									</Filter>
-									<Filter
-										name="weight_rating"
-										value="residential"
-										defaultChecked
-									>
-										Residential Grade
-									</Filter>
-									<Filter
-										name="weight_rating"
-										value="lightweight"
-										defaultChecked
-									>
-										Lightweight
-									</Filter>
-								</ul>
-							</FilterGroup>
-
-							{/* Colors 🌈 */}
-							<FilterGroup displayName="Colors" collapsible>
-								<ul className="space-y-2">
-									<Filter name="colors" value="all" defaultChecked>
-										All
-									</Filter>
-									<ColorFilter
-										name="colors"
-										value="grey"
-										swatch="#D9D9D9"
-										defaultChecked
-									>
-										Grey
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="ash"
-										swatch="#B1B1B1"
-										defaultChecked
-									>
-										Ash
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="charcoal"
-										swatch="#696969"
-										defaultChecked
-									>
-										Charcoal
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="spanish_brown"
-										swatch="#95816D"
-										defaultChecked
-									>
-										Spanish Brown
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="sunset_taupe"
-										swatch="#C9B098"
-										defaultChecked
-									>
-										Sunset Taupe
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="tan"
-										swatch="#DDCCBB"
-										defaultChecked
-									>
-										Tan
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="sunset_clay"
-										swatch="#E7A597"
-										defaultChecked
-									>
-										Sunset Clay
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="red"
-										swatch="#EF847A"
-										defaultChecked
-									>
-										Red
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="terracotta"
-										swatch="#EFA17A"
-										defaultChecked
-									>
-										Terracotta
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="orange"
-										swatch="#EBB075"
-										defaultChecked
-									>
-										Orange
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="sunset_tangerine"
-										swatch="#E7C769"
-										defaultChecked
-									>
-										Sunset Tangerine
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="yellow"
-										swatch="#E7DD69"
-										defaultChecked
-									>
-										Yellow
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="green"
-										swatch="#A9D786"
-										defaultChecked
-									>
-										Green
-									</ColorFilter>
-									<ColorFilter
-										name="colors"
-										value="custom_blend"
-										swatch="conic-gradient(from 180deg at 50% 50.00%, #EF847A 0deg, #E7DD69 72.0000010728836deg, #A9D786 144.0000021457672deg, #959ECB 216.00000858306885deg, #EF7AA4 288.0000042915344deg, #EF847A 360deg)"
-										defaultChecked
-									>
-										Custom Blend
-									</ColorFilter>
-								</ul>
-							</FilterGroup>
-
-							{/* Misc */}
-							<FilterGroup displayName="Misc">
-								<ul className="space-y-2">
-									<Filter name="has_models" value="true">
-										Has
-									</Filter>
-								</ul>
-							</FilterGroup>
-						</section>
+								<Filters />
+							</aside>
+						)}
 					</OrchestratedReveal>
+
 					{/* Products */}
-					<OrchestratedReveal asChild delay={0.3}>
-						<section className="flex-1 space-y-4">
+					<section className="flex-1 space-y-4">
+						<OrchestratedReveal asChild delay={0.3}>
 							<div className="flex items-center justify-between">
-								<h2 className="font-display text-lg">All Items</h2>
+								<h2 className="flex items-center gap-2 font-display text-lg">
+									<span>All Items</span>
+									<Dialog.Root
+										open={filterMenuOpen}
+										onOpenChange={setFilterMenuOpen}
+									>
+										<Dialog.Trigger asChild>
+											<Button intent="tertiary" className="lg:hidden">
+												<span className="sr-only">Filters</span>
+												<Icon name="tune" />
+											</Button>
+										</Dialog.Trigger>
+
+										<AnimatePresence>
+											{!screenLg && filterMenuOpen && (
+												<Dialog.Portal forceMount>
+													<Dialog.Overlay asChild forceMount>
+														<motion.div
+															className="fixed inset-0 z-50 bg-gray-900/90"
+															initial={{ opacity: 0 }}
+															animate={{ opacity: 1 }}
+															exit={{ opacity: 0 }}
+															transition={{ duration: 0.3 }}
+														/>
+													</Dialog.Overlay>
+
+													<Dialog.Content
+														forceMount
+														className="fixed top-full z-50 h-full w-full"
+													>
+														<motion.aside
+															initial={{ y: 0 }}
+															animate={{
+																y: '-100%',
+																transition: {
+																	type: 'spring',
+																	duration: 0.75,
+																	bounce: 0.1
+																}
+															}}
+															exit={{
+																y: 0,
+																transition: {
+																	type: 'spring',
+																	duration: 0.3,
+																	bounce: 0
+																}
+															}}
+															className="h-5/6 overflow-y-scroll rounded-t-lg bg-gray-100 xs:container"
+														>
+															<div className="sticky top-0 z-10 flex h-16 items-center bg-gray-100 px-6">
+																<Dialog.Title className="flex-1 font-display text-xl">
+																	Filters
+																</Dialog.Title>
+																<Dialog.Close asChild>
+																	<Button intent="tertiary">
+																		<span className="sr-only">Close</span>
+																		<Icon name="close" />
+																	</Button>
+																</Dialog.Close>
+															</div>
+
+															<div className="space-y-4 px-6 pb-6 pt-4">
+																<Filters />
+															</div>
+														</motion.aside>
+													</Dialog.Content>
+												</Dialog.Portal>
+											)}
+										</AnimatePresence>
+									</Dialog.Root>
+								</h2>
 								<div className="flex items-center gap-2">
 									<p>Sort</p>
 									<Select defaultValue="alphabetical">
@@ -421,8 +502,10 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 									</Select>
 								</div>
 							</div>
+						</OrchestratedReveal>
+						<OrchestratedReveal asChild delay={0.4}>
 							<div className="space-y-8">
-								<ul className="grid grid-cols-3 gap-4">
+								<ul className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 									{products.pages.map((page) =>
 										page.products.map((product) => (
 											<ProductCard
@@ -430,7 +513,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 												name={product.displayName}
 												startingSku={product.startingSku}
 												link={`/product/${product.id}`}
-												className="first:col-span-2 [&:nth-child(7n)]:col-span-2"
+												className="xl:[&:nth-child(6n+1)]:col-span-2"
 											/>
 										))
 									)}
@@ -447,8 +530,8 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 									</Button>
 								)}
 							</div>
-						</section>
-					</OrchestratedReveal>
+						</OrchestratedReveal>
+					</section>
 				</div>
 
 				<LearnSection />

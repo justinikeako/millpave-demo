@@ -21,6 +21,13 @@
 			</g>
 		</symbol>
 
+
+		<symbol id="arrow_left" viewBox="0 0 24 24">
+			<g>
+				<path d="M12 20L4 12L12 4L13.425 5.4L7.825 11H20V13H7.825L13.425 18.6L12 20Z" />
+			</g>
+		</symbol>
+
 		<symbol id="arrow_right_alt" viewBox="0 0 24 24">
 			<g>
 				<path d="M14 18L12.6 16.55L16.15 13H4V11H16.15L12.6 7.45L14 6L20 12L14 18Z" />

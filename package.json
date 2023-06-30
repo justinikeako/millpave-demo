@@ -8,6 +8,7 @@
 		"build": "next build",
 		"dev": "next dev",
 		"lint": "next lint",
+		"format": "prettier --ignore-path .prettierignore --write src",
 		"start": "next start",
 		"db-introspect": "drizzle-kit introspect:mysql",
 		"db-push": "drizzle-kit push:mysql",

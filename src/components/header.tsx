@@ -214,7 +214,7 @@ function Header({ minimal }: { minimal: boolean }) {
 											intent="tertiary"
 											backdrop="dark"
 											onClick={() => setMenuOpen(false)}
-											className='lg:hidden data-[minimal=true]:hidden'
+											className="data-[minimal=true]:hidden lg:hidden"
 										>
 											<Link href="/quote">
 												<Icon name="shopping_cart" size={24} />

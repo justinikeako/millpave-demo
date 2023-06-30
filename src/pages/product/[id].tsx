@@ -144,7 +144,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
 			<Main>
 				{/* Main Content */}
-				<section className="flex flex-col gap-16 md:gap-8 lg:gap-16 py-8 md:flex-row lg:py-16">
+				<section className="flex flex-col gap-16 py-8 md:flex-row md:gap-8 lg:gap-16 lg:py-16">
 					{/* Gallery */}
 
 					<OrchestratedReveal delay={0.1} className="flex-1">
@@ -167,7 +167,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 								<h1 className="font-display text-4xl">{product.displayName}</h1>
 							</div>
 							<div className="flex flex-wrap justify-between gap-x-4 font-display text-lg">
-								<div className="flex items-center gap-x-4 flex-wrap">
+								<div className="flex flex-wrap items-center gap-x-4">
 									<p className="whitespace-nowrap">
 										{formatPrice(currentSku.price)} per&nbsp;
 										{currentSku.unit === 'sqft'

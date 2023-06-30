@@ -70,13 +70,13 @@ const buttonVariants = cva(
 				intent: 'tertiary',
 				backdrop: 'light',
 				className:
-					'text-gray-900 hover:bg-gray-900/10 active:bg-gray-900/20 disabled:text-gray-600'
+					'text-gray-900 hover:bg-gray-300/75 active:bg-gray-500/50 disabled:text-gray-600'
 			},
 			{
 				intent: 'tertiary',
 				backdrop: 'dark',
 				className:
-					'text-gray-100 hover:bg-gray-100/10 active:bg-gray-100/20 disabled:text-gray-400'
+					'text-gray-100 hover:bg-gray-700/90 active:bg-gray-500/75 disabled:text-gray-400'
 			}
 		]
 	}

@@ -172,19 +172,11 @@ function Page() {
 															layoutScroll
 															layoutId={'img-' + selectedId}
 															dragMomentum
-															transition={
-																screenLg
-																	? {
-																			type: 'spring',
-																			duration: 0.75,
-																			bounce: 0.1
-																	  }
-																	: {
-																			type: 'spring',
-																			duration: 0.75,
-																			bounce: 0.3
-																	  }
-															}
+															transition={{
+																type: 'spring',
+																duration: 0.5,
+																bounce: 0.1
+															}}
 															drag
 															dragConstraints={{
 																top: 0,
@@ -255,7 +247,7 @@ function Page() {
 																					x: 0,
 																					transition: {
 																						type: 'spring',
-																						duration: 0.75,
+																						duration: 0.5,
 																						bounce: 0
 																					}
 																			  }
@@ -263,7 +255,7 @@ function Page() {
 																					y: showDetails ? '-100%' : '-6rem',
 																					transition: {
 																						type: 'spring',
-																						duration: 0.75,
+																						duration: 0.5,
 																						bounce: 0.1
 																					}
 																			  }

@@ -71,7 +71,7 @@ function Hero() {
 				style={
 					{ '--scroll-progress': scrollYProgress } as unknown as MotionStyle
 				}
-				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-full bg-gray-700 [clip-path:inset(calc(24px*var(--scroll-progress)))] lg:[clip-path:inset(calc(64px*var(--scroll-progress)))] 2xl:w-[100lvw] 2xl:[clip-path:inset(calc((50vw-768px+64px)*var(--scroll-progress)))]"
+				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-full bg-gray-700 [--gutter-x:--gutter] [--gutter-y:--gutter] [--gutter:24px] [clip-path:inset(calc(var(--gutter-y)*var(--scroll-progress))_calc(var(--gutter-x)*var(--scroll-progress))_round_calc(16px*var(--scroll-progress)))]  lg:[--gutter:64px] 2xl:w-[100lvw] 2xl:[--gutter-x:calc(50vw-768px+64px)]"
 			/>
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">

@@ -3,8 +3,13 @@ import { twMerge } from 'tailwind-merge';
 import { Sku, ExtendedPaverDetails } from '~/types/product';
 import { Measurements, QuoteItem, Shape, Unit } from '~/types/quote';
 
-export function roundFractionDigits(value: number, fractionDigits: number) {
-	return parseFloat(value.toFixed(fractionDigits));
+export function roundFractionDigits(
+	value: number | number,
+	fractionDigits: number
+) {
+	const valueAsNumber = typeof value === 'string' ? parseFloat(value) : value;
+
+	return parseFloat(valueAsNumber.toFixed(fractionDigits));
 }
 
 export function getQuoteDetails(
@@ -36,7 +41,7 @@ export function calculateRunningFoot(shape: Shape, measurements: Measurements) {
 				return measurements.length * 2 + measurements.width * 2;
 			case 'circle':
 				return 2 * Math.PI * measurements.radius;
-			case 'arbitrary':
+			case 'other':
 				return measurements.runningLength;
 		}
 	}

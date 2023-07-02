@@ -30,7 +30,7 @@ export function BorderStage() {
 
 	if (
 		infillStageIsSkipped === false &&
-		((!hasStones && isSkipped === undefined) || isSkipped === true)
+		((!hasStones && isSkipped === null) || isSkipped === true)
 	)
 		return (
 			<StageForm className="space-y-8 px-32">
@@ -67,8 +67,10 @@ export function BorderStage() {
 		);
 
 	return (
-		<StageForm className="space-y-16 px-32">
-			<h2 className="text-center font-display text-2xl">Design your border.</h2>
+		<StageForm className="space-y-12 px-32">
+			<h2 className="text-center font-display text-2xl">
+				Customize your border...
+			</h2>
 
 			<BorderOptions />
 

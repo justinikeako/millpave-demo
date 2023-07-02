@@ -15,9 +15,9 @@ export function InfillStage() {
 
 	const isSkipped = skippedStages[2];
 
-	if (isSkipped === undefined || isSkipped === true)
+	if (isSkipped === null || isSkipped === true)
 		return (
-			<StageForm className="space-y-8 px-32">
+			<StageForm className="space-y-8">
 				<h2 className="mx-auto max-w-xs text-center font-display text-2xl">
 					<Balancer>Would you like to add an infill?</Balancer>
 				</h2>
@@ -52,8 +52,10 @@ export function InfillStage() {
 		);
 
 	return (
-		<StageForm className="space-y-16 px-32">
-			<h2 className="text-center font-display text-2xl">Design your infill.</h2>
+		<StageForm className="space-y-12">
+			<h2 className="text-center font-display text-2xl">
+				Customize your infill...
+			</h2>
 
 			<StoneEditor name="infill" dimension="2D" stageIndex={2} />
 		</StageForm>

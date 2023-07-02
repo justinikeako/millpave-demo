@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const Shape = z.enum(['rect', 'circle', 'arbitrary']);
+const Shape = z.enum(['rect', 'circle', 'other']);
 export type Shape = z.infer<typeof Shape>;
 
 const Unit1D = z.enum(['ft', 'in', 'm', 'cm']);

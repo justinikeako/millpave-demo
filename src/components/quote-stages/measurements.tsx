@@ -14,12 +14,13 @@ import {
 	roundFractionDigits
 } from '~/lib/utils';
 import { useState } from 'react';
+import { Balancer } from 'react-wrap-balancer';
 
 function UnitSelect() {
 	const { control } = useFormContext<StoneProject>();
 
 	return (
-		<div className="max-w-xs flex-1 space-y-2">
+		<div className="min-w-[8rem] flex-1 space-y-2 lg:max-w-xs">
 			<label className="font-semibold" htmlFor="measurements.unit">
 				Unit
 			</label>
@@ -75,7 +76,7 @@ function MeasurementInput({
 	const { register, watch, setValue } = useFormContext<StoneProject>();
 
 	return (
-		<div className="max-w-xs flex-1 space-y-2">
+		<div className="min-w-[8rem] flex-1 space-y-2 lg:max-w-xs">
 			<label htmlFor={fieldName} className="font-semibold">
 				{label}
 			</label>
@@ -95,8 +96,9 @@ function MeasurementInput({
 					})}
 					id={fieldName}
 					type="number"
+					inputMode="decimal"
 					step="any"
-					className="no-arrows h-full w-full flex-1  bg-transparent p-4 outline-none"
+					className="no-arrows w-fill w-full flex-1  bg-transparent p-4 outline-none"
 					placeholder={placeholder}
 				/>
 
@@ -179,7 +181,7 @@ function CircleInputs() {
 
 				return (
 					<>
-						<div className="max-w-xs flex-1 space-y-2">
+						<div className="min-w-[8rem] flex-1 space-y-2 lg:max-w-xs">
 							<label htmlFor="diameter" className="font-semibold">
 								Diameter
 							</label>
@@ -190,6 +192,7 @@ function CircleInputs() {
 									onChange={(e) => handleDiameterChange(e.target.valueAsNumber)}
 									id="diameter"
 									type="number"
+									inputMode="decimal"
 									step="any"
 									className="no-arrows w-full flex-1 bg-transparent p-4 outline-none"
 									placeholder="Amount"
@@ -197,7 +200,7 @@ function CircleInputs() {
 								<UnitLabel dimension="1D" />
 							</div>
 						</div>
-						<div className="max-w-xs flex-1 space-y-2">
+						<div className="min-w-[8rem] flex-1 space-y-2 lg:max-w-xs">
 							<label htmlFor="circumference" className="font-semibold">
 								Circumference
 							</label>
@@ -210,6 +213,7 @@ function CircleInputs() {
 									}
 									id="circumference"
 									type="number"
+									inputMode="decimal"
 									step="any"
 									className="no-arrows w-full flex-1 bg-transparent p-4 outline-none"
 									placeholder="Amount"
@@ -230,11 +234,11 @@ export function MeasurementsStage() {
 	const shape = watch('shape');
 
 	return (
-		<StageForm className="flex items-center justify-center gap-12">
-			<h2 className="max-w-xs font-display text-2xl">
-				Enter the measurements of your project.
+		<StageForm className="flex flex-col items-center justify-center gap-12 lg:flex-row">
+			<h2 className="max-w-md text-center font-display text-2xl  lg:max-w-xs lg:text-left">
+				<Balancer>Enter the measurements of your project.</Balancer>
 			</h2>
-			<div className="flex justify-center gap-4">
+			<div className="flex flex-wrap gap-4">
 				{shape === 'rect' && (
 					<>
 						<MeasurementInput
@@ -252,7 +256,7 @@ export function MeasurementsStage() {
 					</>
 				)}
 				{shape === 'circle' && <CircleInputs />}
-				{shape === 'arbitrary' && (
+				{shape === 'other' && (
 					<>
 						<MeasurementInput
 							fieldName="measurements.area"

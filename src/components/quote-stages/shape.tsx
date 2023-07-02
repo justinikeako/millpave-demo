@@ -2,6 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { useStageContext } from './stage-context';
 import { StageForm } from './form';
 import { StoneProject } from '~/types/quote';
+import { Balancer } from 'react-wrap-balancer';
 
 type OptionProps = React.PropsWithChildren<{
 	value: string;
@@ -16,31 +17,29 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 	const { register, resetField } = formMethods;
 
 	return (
-		<li>
+		<li className="contents">
+			<input
+				{...register('shape', {
+					required: true,
+					onChange: () => {
+						resetField('measurements');
+						setStageValidity(1, false);
+					}
+				})}
+				id={id}
+				value={id}
+				type="radio"
+				className="peer sr-only"
+			/>
 			<label
 				htmlFor={id}
-				className="relative flex aspect-square w-full cursor-pointer flex-col rounded-md p-6 hover:bg-gray-100"
+				className="group relative flex aspect-square w-full cursor-pointer select-none flex-col rounded-md border border-gray-400 p-4 outline-2 -outline-offset-2 outline-pink-700 hover:bg-gray-900/5 active:bg-gray-900/10 peer-checked:bg-gray-100 peer-checked:bg-pink-400/10 peer-checked:outline"
 			>
-				<input
-					{...register('shape', {
-						required: true,
-						onChange: () => {
-							resetField('measurements');
-							setStageValidity(1, false);
-						}
-					})}
-					id={id}
-					value={id}
-					type="radio"
-					className="peer sr-only"
-				/>
-
-				<div className="pointer-events-none absolute inset-0 rounded-md ring-1 ring-inset ring-gray-200 peer-checked:bg-gray-100 peer-checked:ring-2 peer-checked:ring-black peer-focus:ring-black" />
-
+				<div className="absolute right-2 top-2 h-6 w-6 rounded-full border border-gray-400 bg-clip-content p-1 outline-2 -outline-offset-2 outline-pink-700 peer-checked:group-[]:bg-pink-700 peer-checked:group-[]:outline" />
 				<div className="flex-1" />
 				<div className="z-10">
-					<p className="font-semibold">{title}</p>
-					<p className="text-sm">{description}</p>
+					<p className="font-semibold peer-checked:group-[]:text-pink-700">{title}</p>
+					<p className="text-sm text-gray-500 peer-checked:group-[]:text-pink-700">{description}</p>
 				</div>
 			</label>
 		</li>
@@ -49,29 +48,27 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 
 export function ShapeStage() {
 	return (
-		<StageForm className="flex items-center gap-12">
-			<h2 className="max-w-xs shrink-0 font-display text-2xl">
-				What is the shape of your project?
+		<StageForm className="flex flex-col items-center gap-12 xl:flex-row xl:justify-center">
+			<h2 className="max-w-xs shrink-0 text-center font-display text-2xl xl:text-left">
+				<Balancer>What is the shape of your project?</Balancer>
 			</h2>
-			<div className="flex justify-center">
-				<ul className="grid grid-flow-col grid-cols-[repeat(3,224px)] gap-4">
-					<Option
-						value="rect"
-						title="Rectangle"
-						subtitle="Requires length and width."
-					/>
-					<Option
-						value="circle"
-						title="Circle"
-						subtitle="Requires diameter or circumference"
-					/>
-					<Option
-						value="arbitrary"
-						title="Arbitrary"
-						subtitle="Requires area and/or running length"
-					/>
-				</ul>
-			</div>
+			<ul className="flex flex-col gap-4 md:flex-row">
+				<Option
+					value="rect"
+					title="Rectangle"
+					subtitle="Requires length and width."
+				/>
+				<Option
+					value="circle"
+					title="Circle"
+					subtitle="Requires diameter or circumference"
+				/>
+				<Option
+					value="other"
+					title="Other"
+					subtitle="Requires area and/or running length"
+				/>
+			</ul>
 		</StageForm>
 	);
 }

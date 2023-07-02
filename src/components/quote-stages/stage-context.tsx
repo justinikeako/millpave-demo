@@ -60,7 +60,7 @@ function calculateProjectArea(shape: Shape, measurements: Measurements) {
 			return length * width;
 		case 'circle':
 			return Math.PI * Math.pow(radius, 2);
-		case 'arbitrary':
+		case 'other':
 			return area;
 	}
 }
@@ -392,7 +392,7 @@ function getQuote(project: StoneProject) {
 type StageContextValue = {
 	quote: Quote;
 	navDirection: number;
-	skippedStages: (boolean | undefined)[];
+	skippedStages: (boolean | null | undefined)[];
 	stagesValidity: boolean[];
 	currentStageIndex: number;
 	queuedStageIndex: number;
@@ -481,13 +481,9 @@ export function StageProvider(props: StageProviderProps) {
 		true
 	]);
 
-	const [skippedStages, setSkippedStages] = useState<(boolean | undefined)[]>([
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		undefined
-	]);
+	const [skippedStages, setSkippedStages] = useState<
+		(boolean | null | undefined)[]
+	>([undefined, undefined, null, null, undefined]);
 
 	function setStageSkipped(stageIndex: number, stageIsSkipped: boolean) {
 		setSkippedStages((currentSkippedStages) => {

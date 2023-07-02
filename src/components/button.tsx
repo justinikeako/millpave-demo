@@ -1,16 +1,7 @@
 import { forwardRef } from 'react';
 import { Slot } from '@radix-ui/react-slot';
-import { cva } from 'class-variance-authority';
+import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '~/lib/utils';
-
-type ButtonProps = {
-	intent: 'primary' | 'secondary' | 'tertiary';
-	backdrop?: 'dark' | 'light';
-	asChild?: boolean;
-} & React.DetailedHTMLProps<
-	React.ButtonHTMLAttributes<HTMLButtonElement>,
-	HTMLButtonElement
->;
 
 const buttonVariants = cva(
 	'relative flex items-center justify-center gap-1 font-semibold text-center select-none focus:outline-pink-700 focus:outline-offset-2 disabled:shadow-none disabled:opacity-50 disabled:cursor-not-allowed [&>span]:z-[1] [&>svg]:z-[1]',
@@ -18,11 +9,14 @@ const buttonVariants = cva(
 		variants: {
 			intent: {
 				primary:
-					'px-3 py-2 border rounded-sm overflow-hidden shadow-button before:gradient-mask-b-0 before:transition-opacity before:absolute before:block before:inset-0 before:rounded-[3px] after:absolute after:block after:inset-0 after:border after:rounded-[3px] after:transition-opacity active:before:transition-none active:after:transition-none',
+					'px-3 border rounded-sm overflow-hidden shadow-button before:gradient-mask-b-0 before:transition-opacity before:absolute before:block before:inset-0 before:rounded-[3px] after:absolute after:block after:inset-0 after:border after:rounded-[3px] after:transition-opacity active:before:transition-none active:after:transition-none',
 				secondary:
-					'rounded-sm px-3 py-2 border font-semibold transition-colors active:transition-none',
-				tertiary:
-					'-m-3 rounded-full p-3 transition-colors active:transition-none'
+					'rounded-sm px-3 border font-semibold transition-colors active:transition-none',
+				tertiary: 'rounded-full transition-colors active:transition-none'
+			},
+			size: {
+				regular: '',
+				small: ''
 			},
 			backdrop: {
 				light: '',
@@ -30,6 +24,30 @@ const buttonVariants = cva(
 			}
 		},
 		compoundVariants: [
+			{
+				intent: ['primary', 'secondary'],
+				backdrop: ['light', 'dark'],
+				size: 'regular',
+				className: 'h-10'
+			},
+			{
+				intent: ['primary', 'secondary'],
+				backdrop: ['light', 'dark'],
+				size: 'small',
+				className: 'h-8'
+			},
+			{
+				intent: 'tertiary',
+				backdrop: ['light', 'dark'],
+				size: 'regular',
+				className: '-m-3 p-3'
+			},
+			{
+				intent: 'tertiary',
+				backdrop: ['light', 'dark'],
+				size: 'small',
+				className: '-m-1 p-1'
+			},
 			{
 				intent: 'primary',
 				backdrop: 'light',
@@ -78,23 +96,34 @@ const buttonVariants = cva(
 				className:
 					'text-gray-100 hover:bg-gray-700/90 active:bg-gray-500/75 disabled:text-gray-400'
 			}
-		]
+		],
+		defaultVariants: {
+			backdrop: 'light',
+			size: 'regular'
+		}
 	}
 );
 
-const Button = forwardRef<
-	HTMLButtonElement,
-	React.PropsWithChildren<ButtonProps>
->(function Button({ intent, backdrop = 'light', asChild, ...props }, ref) {
-	const Comp = asChild ? Slot : 'button';
+type ButtonProps = {
+	asChild?: boolean;
+} & VariantProps<typeof buttonVariants> &
+	React.ComponentProps<'button'>;
 
-	return (
-		<Comp
-			{...props}
-			ref={ref}
-			className={cn(buttonVariants({ intent, backdrop }), props.className)}
-		/>
-	);
-});
+const Button = forwardRef<React.ElementRef<'button'>, ButtonProps>(
+	function Button({ intent, size, backdrop, asChild, ...props }, ref) {
+		const Comp = asChild ? Slot : 'button';
+
+		return (
+			<Comp
+				{...props}
+				ref={ref}
+				className={cn(
+					buttonVariants({ intent, size, backdrop }),
+					props.className
+				)}
+			/>
+		);
+	}
+);
 
 export { Button };

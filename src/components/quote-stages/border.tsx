@@ -5,6 +5,7 @@ import {
 	SelectItem,
 	SelectValue
 } from '~/components/ui/select';
+import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
@@ -13,6 +14,7 @@ import { calculateRunningFoot, unitDisplayNameDictionary } from '~/lib/utils';
 import { useStageContext } from './stage-context';
 import { Button } from '../button';
 import Balancer from 'react-wrap-balancer';
+import { Icon } from '../icon';
 
 export function BorderStage() {
 	const {
@@ -33,7 +35,7 @@ export function BorderStage() {
 		((!hasStones && isSkipped === null) || isSkipped === true)
 	)
 		return (
-			<StageForm className="space-y-8 px-32">
+			<StageForm className="space-y-8">
 				<h2 className="mx-auto text-center font-display text-2xl">
 					<Balancer>Would you like to add a border?</Balancer>
 				</h2>
@@ -67,7 +69,7 @@ export function BorderStage() {
 		);
 
 	return (
-		<StageForm className="space-y-12 px-32">
+		<StageForm className="space-y-12">
 			<h2 className="text-center font-display text-2xl">
 				Customize your border...
 			</h2>
@@ -87,9 +89,30 @@ function BorderOptions() {
 	return (
 		<div className="flex flex-wrap justify-center gap-4">
 			<div className="max-w-xs flex-1 space-y-2">
-				<label htmlFor="border.runningLength.value" className="font-semibold">
-					Running Length
-				</label>
+				<div className="flex gap-2">
+					<label htmlFor="border.runningLength.value" className="font-semibold">
+						Running Length
+					</label>
+
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button type="button" intent="tertiary" className="-m-1 p-1">
+								<span className="sr-only">Help</span>
+								<Icon name="help" />
+							</Button>
+						</PopoverTrigger>
+
+						<PopoverContent>
+							Running length is a fancy term for the length of your border. By
+							default your running length is calculated based on the
+							measurements you specified. If you would like to edit this value
+							manually, you can do so by&nbsp;
+							<label htmlFor="border.runningLength.unit" className="underline">
+								selecting another unit.
+							</label>
+						</PopoverContent>
+					</Popover>
+				</div>
 				<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 					<input
 						type="number"
@@ -121,7 +144,11 @@ function BorderOptions() {
 									runningLengthUnit.field.onChange(value);
 								}}
 							>
-								<SelectTrigger unstyled className="p-4 pl-0">
+								<SelectTrigger
+									unstyled
+									className="p-4 pl-0"
+									id="border.runningLength.unit"
+								>
 									<SelectValue />
 								</SelectTrigger>
 

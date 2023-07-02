@@ -16,8 +16,8 @@ const portalVariants = cva('fixed inset-0 z-50 flex', {
 		position: {
 			top: 'items-start',
 			bottom: 'items-end justify-center',
-			left: 'justify-start',
-			right: 'justify-end'
+			left: 'justify-start items-end',
+			right: 'justify-end items-end'
 		}
 	},
 	defaultVariants: { position: 'right' }
@@ -58,86 +58,24 @@ const sheetVariants = cva(
 	{
 		variants: {
 			position: {
-				top: 'w-full duration-300',
-				bottom:
-					'w-full md:max-w-md rounded-t-2xl md:rounded-2xl md:bottom-8 duration-300',
-				left: 'h-full duration-300',
-				right: 'h-full duration-300'
-			},
-			size: {
-				content: '',
-				default: '',
-				sm: '',
-				lg: '',
-				xl: '',
-				full: ''
+				top: 'w-full',
+				bottom: 'w-full md:max-w-md rounded-t-2xl md:rounded-2xl md:bottom-8',
+				left: '',
+				right: ''
 			}
 		},
 		compoundVariants: [
 			{
 				position: ['top', 'bottom'],
-				size: 'content',
-				class: 'max-h-screen'
-			},
-			{
-				position: ['top', 'bottom'],
-				size: 'default',
-				class: 'h-1/3'
-			},
-			{
-				position: ['top', 'bottom'],
-				size: 'sm',
-				class: 'h-1/4'
-			},
-			{
-				position: ['top', 'bottom'],
-				size: 'lg',
-				class: 'h-1/2'
-			},
-			{
-				position: ['top', 'bottom'],
-				size: 'xl',
 				class: 'h-5/6'
 			},
 			{
-				position: ['top', 'bottom'],
-				size: 'full',
-				class: 'h-screen'
-			},
-			{
 				position: ['right', 'left'],
-				size: 'content',
-				class: 'max-w-screen'
-			},
-			{
-				position: ['right', 'left'],
-				size: 'default',
-				class: 'w-1/3'
-			},
-			{
-				position: ['right', 'left'],
-				size: 'sm',
-				class: 'w-1/4'
-			},
-			{
-				position: ['right', 'left'],
-				size: 'lg',
-				class: 'w-1/2'
-			},
-			{
-				position: ['right', 'left'],
-				size: 'xl',
-				class: 'w-5/6'
-			},
-			{
-				position: ['right', 'left'],
-				size: 'full',
-				class: 'w-screen'
+				class: 'h-5/6 w-full rounded-t-lg xs:h-full xs:w-80 xs:rounded-none'
 			}
 		],
 		defaultVariants: {
-			position: 'right',
-			size: 'default'
+			position: 'right'
 		}
 	}
 );
@@ -149,12 +87,12 @@ export interface DialogContentProps
 const SheetContent = React.forwardRef<
 	React.ElementRef<typeof SheetPrimitive.Content>,
 	DialogContentProps
->(({ position, size, className, children, ...props }, ref) => (
+>(({ position, className, children, ...props }, ref) => (
 	<SheetPortal position={position}>
 		<SheetOverlay />
 		<SheetPrimitive.Content
 			ref={ref}
-			className={cn(sheetVariants({ position, size }), className)}
+			className={cn(sheetVariants({ position }), className)}
 			{...props}
 		>
 			{children}
@@ -167,13 +105,7 @@ const SheetHeader = ({
 	className,
 	...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-	<div
-		className={cn(
-			'flex items-center justify-between px-8 pb-2 pt-4 md:px-6',
-			className
-		)}
-		{...props}
-	/>
+	<div className={cn('flex h-12 items-center px-6', className)} {...props} />
 );
 SheetHeader.displayName = 'SheetHeader';
 
@@ -205,7 +137,7 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<SheetPrimitive.Title
 		ref={ref}
-		className={cn('text-foreground text-lg font-semibold', className)}
+		className={cn('font-display text-lg', className)}
 		{...props}
 	/>
 ));

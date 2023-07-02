@@ -92,115 +92,74 @@ export function StoneEditor(props: StoneEditorProps) {
 		setSheetOpen(false);
 	}
 
-	const smallActions = (
-		<>
-			<div className="flex flex-col items-center gap-4">
-				<div
-					data-sheet-open={undefined}
-					className="relative flex w-64 flex-1 overflow-hidden rounded-lg border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
-				>
-					<div className="aspect-[2/3] h-full bg-gray-200" />
-
-					<div className="flex flex-col justify-center gap-1 p-4">
-						<h3 className="font-semibold">
-							<button
-								type="button"
-								className="w-full text-left after:absolute after:inset-0"
-							>
-								Add a pattern
-							</button>
-						</h3>
-						<p className="text-sm text-gray-500">
-							<Balancer>Customize the colors of pre-made patterns.</Balancer>
-						</p>
-					</div>
-				</div>
-				<div
-					data-sheet-open={(sheetOpen && editIndex === -1) || undefined}
-					className="relative flex w-64 flex-1 overflow-hidden rounded-lg border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
-				>
-					<div className="aspect-[2/3] h-full bg-gray-200" />
-
-					<div className="flex flex-col justify-center gap-1 p-4">
-						<h3 className="font-semibold">
-							<SheetTrigger
-								className="w-full text-left after:absolute after:inset-0"
-								onClick={() => {
-									setEditIndex(-1);
-								}}
-							>
-								Add a stone
-							</SheetTrigger>
-						</h3>
-						<p className="text-sm text-gray-500">
-							<Balancer>Create custom patterns from scratch.</Balancer>
-						</p>
-					</div>
-				</div>
-			</div>
-		</>
-	);
-
-	const largeActions = (
-		<>
-			<div className="flex items-center gap-4">
-				<div
-					data-sheet-open={undefined}
-					className="relative flex h-64 w-64 flex-col items-center justify-center gap-2 rounded-lg border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
-				>
-					<div className="flex-1" />
-
-					<div className="space-y-1 px-8 pb-6 pt-4 text-center">
-						<h3 className="font-semibold">
-							<button
-								type="button"
-								className="w-full after:absolute after:inset-0"
-							>
-								Start with a pattern
-							</button>
-						</h3>
-						<p className="text-sm text-gray-500">
-							<Balancer>Customize the colors of pre-made patterns.</Balancer>
-						</p>
-					</div>
-				</div>
-				<span className="font-display text-lg">or</span>
-				<div
-					data-sheet-open={(sheetOpen && editIndex === -1) || undefined}
-					className="relative flex h-64 w-64 flex-col items-center justify-center gap-2 rounded-lg border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
-				>
-					<div className="flex-1" />
-
-					<div className="space-y-1 px-8 pb-6 pt-4 text-center">
-						<h3 className="font-semibold">
-							<SheetTrigger
-								className="w-full after:absolute after:inset-0"
-								onClick={() => {
-									setEditIndex(-1);
-								}}
-							>
-								Start with a stone
-							</SheetTrigger>
-						</h3>
-						<p className="text-sm text-gray-500">
-							<Balancer>Create custom patterns from scratch.</Balancer>
-						</p>
-					</div>
-				</div>
-			</div>
-		</>
-	);
 	return (
-		<div className="flex flex-wrap justify-center gap-4">
+		<div className="flex flex-col items-center justify-center gap-2 lg:flex-row lg:flex-wrap">
 			<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
 				{defaultSku ? (
-					fields.length > 0 ? (
-						smallActions
-					) : (
-						largeActions
-					)
+					<div
+						data-has-items={fields.length > 0}
+						className="group flex flex-col items-center gap-2 md:flex-row"
+					>
+						<div
+							data-sheet-open={undefined}
+							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline md:h-64 md:flex-col md:items-stretch"
+						>
+							<div className="aspect-square h-full shrink-0 md:aspect-auto md:h-auto md:flex-1" />
+
+							<div className="flex-1 space-y-0.5 p-4 text-left md:flex-none md:px-6 md:text-center">
+								<h3 className="font-semibold">
+									<button
+										type="button"
+										className="w-full [text-align:inherit] after:absolute after:inset-0"
+									>
+										<span className="group-data-[has-items=false]:hidden">
+											Add a pattern
+										</span>
+										<span className="group-data-[has-items=true]:hidden">
+											Start with a pattern
+										</span>
+									</button>
+								</h3>
+								<p className="text-sm text-gray-500">
+									<Balancer>
+										Customize the colors of pre-made patterns.
+									</Balancer>
+								</p>
+							</div>
+						</div>
+						<span className="font-display text-lg group-data-[has-items=true]:hidden">
+							or
+						</span>
+						<div
+							data-sheet-open={(sheetOpen && editIndex === -1) || undefined}
+							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline md:h-64 md:flex-col md:items-stretch"
+						>
+							<div className="aspect-square h-full shrink-0 md:aspect-auto md:flex-1" />
+
+							<div className="space-y-0.5 p-4 text-left md:px-6 md:text-center">
+								<h3 className="font-semibold">
+									<SheetTrigger
+										className="w-full [text-align:inherit] after:absolute after:inset-0"
+										onClick={() => {
+											setEditIndex(-1);
+										}}
+									>
+										<span className="group-data-[has-items=false]:hidden">
+											Add a stone
+										</span>
+										<span className="group-data-[has-items=true]:hidden">
+											Start with a stone
+										</span>
+									</SheetTrigger>
+								</h3>
+								<p className=" text-sm  text-gray-500 ">
+									<Balancer>Create custom patterns from scratch.</Balancer>
+								</p>
+							</div>
+						</div>
+					</div>
 				) : (
-					<div className="flex h-64 w-64 items-center justify-center gap-4 ">
+					<div className="flex h-64 w-64 items-center justify-center">
 						Loading...
 					</div>
 				)}
@@ -219,7 +178,7 @@ export function StoneEditor(props: StoneEditorProps) {
 					))}
 				</ul>
 
-				<SheetContent position="right" size="sm">
+				<SheetContent position="right">
 					{defaultSku && (
 						<StoneForm
 							initialValues={
@@ -265,7 +224,7 @@ function StoneListItem({
 	return (
 		<li
 			data-sheet-open={selected || undefined}
-			className="relative flex h-64 w-64 flex-col rounded-lg border border-gray-400 p-6 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
+			className="relative flex h-64 w-64 flex-col rounded-md border border-gray-400 p-6 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
 		>
 			<div className="flex-1" />
 			<div className="flex items-start gap-4">
@@ -356,18 +315,22 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 	return (
 		<form onSubmit={stopPropagate(handleSubmit(onSubmit))} className="contents">
 			<SheetHeader>
-				<Button
-					intent="tertiary"
-					type="submit"
-					disabled={currentSku === undefined}
-				>
-					<Icon name="check" />
-				</Button>
-				<SheetClose asChild>
-					<Button intent="tertiary" type="button">
-						<Icon name="close" />
+				<SheetTitle className="flex-1">Select a stone</SheetTitle>
+				<div className="flex items-center gap-2">
+					<SheetClose asChild>
+						<Button type="button" intent="secondary" size="small">
+							Close
+						</Button>
+					</SheetClose>
+					<Button
+						type="submit"
+						intent="primary"
+						size="small"
+						disabled={currentSku === undefined}
+					>
+						<span>Add</span>
 					</Button>
-				</SheetClose>
+				</div>
 			</SheetHeader>
 
 			<SheetBody className="space-y-4">
@@ -384,7 +347,7 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 				</div>
 				{currentSku && (
 					<section>
-						<SheetTitle>{currentSku.displayName}</SheetTitle>
+						<h3 className="font-display text-lg">{currentSku.displayName}</h3>
 						<div className="flex flex-wrap justify-between gap-x-4">
 							<div className="flex items-center gap-2">
 								<p>

@@ -13,10 +13,12 @@ import {
 import { AnimatePresence, Variants, motion } from 'framer-motion';
 import { OrchestratedReveal } from '~/components/reveal';
 import { api } from '~/utils/api';
-import { cn, pluralize } from '~/lib/utils';
+import { pluralize } from '~/lib/utils';
 import Link from 'next/link';
 import { Icon } from '~/components/icon';
 import { Balancer } from 'react-wrap-balancer';
+import { Main } from '~/components/main';
+import * as Dialog from '@radix-ui/react-dialog';
 
 /**
  * SPEC
@@ -42,28 +44,29 @@ function Page() {
 
 			<style jsx global>{`
 				body {
-					display: flex;
-					flex-direction: column;
-					min-height: 100%;
+					height: 100%;
 				}
 
 				header {
-					position: absolute !important;
+					position: fixed !important;
 					left: 0;
 					right: 0;
+					pointer-events: auto !important;
 				}
 			`}</style>
 
 			<StageProvider maximumStageIndex={maximumStageIndex}>
-				<OrchestratedReveal asChild delay={0.1}>
-					<main className="flex h-full flex-shrink-0 flex-grow flex-col justify-center gap-y-24 overflow-x-hidden px-16 py-24">
-						<SplashScreen
-							show={showSplashScreen}
-							onHide={() => setShowSplashScreen(false)}
-						/>
-						<CurrentStage />
-					</main>
-				</OrchestratedReveal>
+				<Main className="flex min-h-full flex-col justify-center gap-y-24 overflow-x-hidden py-32">
+					<SplashScreen
+						open={showSplashScreen}
+						onOpenChange={setShowSplashScreen}
+					/>
+					{!showSplashScreen && (
+						<OrchestratedReveal delay={0.1}>
+							<CurrentStage />
+						</OrchestratedReveal>
+					)}
+				</Main>
 
 				{!showSplashScreen && <StageFooter />}
 			</StageProvider>
@@ -71,38 +74,58 @@ function Page() {
 	);
 }
 
-function SplashScreen({ show, onHide }: { show: boolean; onHide(): void }) {
+function SplashScreen({
+	open,
+	onOpenChange
+}: {
+	open: boolean;
+	onOpenChange(open: boolean): void;
+}) {
 	return (
-		<div
-			className={cn(
-				'absolute inset-0 z-[2] flex flex-col items-center justify-center gap-6 bg-gray-100 transition-opacity',
-				!show && 'pointer-events-none opacity-0'
-			)}
-		>
-			<h1 className="max-w-xl text-center font-display text-2xl">
-				<Balancer>
-					Get a quote for your paving project in under 5 minutes.
-				</Balancer>
-			</h1>
-			<p className="max-w-xs text-center">
-				<Balancer>
-					Just enter your project&apos;s measurements, select your patterns, and
-					get your quote! Yes, it&apos;s that easy.
-				</Balancer>
-			</p>
-			<div className="flex gap-2">
-				<Button intent="primary" onClick={onHide}>
-					<span>Get Started</span>
-					<Icon
-						name="arrow_right_alt"
-						className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-1"
-					/>
-				</Button>
-				<Button asChild intent="secondary">
-					<Link href="/">Return to Home Page</Link>
-				</Button>
-			</div>
-		</div>
+		<Dialog.Root open={open} onOpenChange={onOpenChange}>
+			<AnimatePresence>
+				{open && (
+					<>
+						<Dialog.Overlay />
+						<Dialog.Content forceMount asChild>
+							<OrchestratedReveal
+								delay={0.1}
+								exit={{ opacity: 0, transition: { duration: 0.3 } }}
+								className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 bg-gray-100"
+							>
+								<Dialog.Title asChild>
+									<h1 className="max-w-xl text-center font-display text-2xl">
+										<Balancer>
+											Get a quote for your paving project in under 5 minutes.
+										</Balancer>
+									</h1>
+								</Dialog.Title>
+								<p className="max-w-xs text-center">
+									<Balancer>
+										Just enter your project&apos;s measurements, select your
+										patterns, and get your quote! Yes, it&apos;s that easy.
+									</Balancer>
+								</p>
+								<div className="flex flex-wrap justify-center gap-2">
+									<Dialog.Close asChild>
+										<Button intent="primary">
+											<span>Get Started</span>
+											<Icon
+												name="arrow_right_alt"
+												className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-1"
+											/>
+										</Button>
+									</Dialog.Close>
+									<Button asChild intent="secondary">
+										<Link href="/">Return to Home Page</Link>
+									</Button>
+								</div>
+							</OrchestratedReveal>
+						</Dialog.Content>
+					</>
+				)}
+			</AnimatePresence>
+		</Dialog.Root>
 	);
 }
 
@@ -121,17 +144,17 @@ const variants: Variants = {
 		transition: { type: 'spring', duration: 0.5, bounce: 0 }
 	}),
 	center: {
-		zIndex: 1,
 		x: 0,
 		opacity: 1,
+		zIndex: 1,
 		transition: { type: 'spring', duration: 0.5, bounce: 0 }
 	},
-	exit: {
-		zIndex: 0,
-		x: 0,
+	exit: (direction: number) => ({
+		x: direction > 0 ? -50 : 50,
 		opacity: 0,
-		transition: { type: 'spring', duration: 0.25, bounce: 0 }
-	}
+		zIndex: 0,
+		transition: { type: 'spring', duration: 0.5, bounce: 0 }
+	})
 };
 
 function CurrentStage() {
@@ -140,7 +163,7 @@ function CurrentStage() {
 	const CurrentStage = stages[currentStageIndex];
 
 	return (
-		<AnimatePresence initial={false} mode="wait">
+		<AnimatePresence initial={false} mode="wait" custom={navDirection}>
 			<motion.div
 				key={'stage-' + currentStageIndex}
 				custom={navDirection}
@@ -169,6 +192,7 @@ function StageFooter() {
 	const {
 		currentStageIndex,
 		stagesValidity,
+		skippedStages,
 		setStageIndex,
 		queueStageIndex,
 		quote,
@@ -182,9 +206,12 @@ function StageFooter() {
 	const reachedLastStage = currentStageIndex >= maximumStageIndex;
 
 	return (
-		<OrchestratedReveal asChild delay={0.2}>
-			<footer className="fixed inset-x-0 bottom-0 z-[1] flex h-16 items-center justify-between bg-gray-100 px-16">
-				<nav>
+		<footer className="fixed inset-x-0 bottom-0 z-10 -mt-px border-t  border-gray-500/5 bg-gray-100 bg-gray-100/90 before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm">
+			<OrchestratedReveal
+				delay={0.2}
+				className="flex h-16 items-center justify-between px-6 2xl:container lg:px-16"
+			>
+				<nav className="hidden md:block">
 					<ul className="flex select-none items-center justify-center gap-3">
 						{stageDisplayNames.map((displayName, index) => (
 							<React.Fragment key={'stage-selector-' + index}>
@@ -211,10 +238,11 @@ function StageFooter() {
 					</ul>
 				</nav>
 
-				<div className="flex gap-2">
+				<div className="flex flex-1 justify-end gap-2">
 					<Button
 						intent="secondary"
 						type="button"
+						className="flex-1 md:flex-none"
 						disabled={currentStageIndex <= 0}
 						onClick={() => setStageIndex(currentStageIndex - 1)}
 					>
@@ -225,6 +253,7 @@ function StageFooter() {
 							intent="primary"
 							type="submit"
 							form="stage-form"
+							className="flex-1 md:flex-none"
 							disabled={createQuote.isLoading}
 							onClick={async () => {
 								const { quoteId } = await createQuote.mutateAsync({
@@ -242,6 +271,7 @@ function StageFooter() {
 							intent="primary"
 							type="submit"
 							form="stage-form"
+							className="flex-1 md:flex-none"
 							disabled={createQuote.isLoading}
 							asChild
 						>
@@ -253,15 +283,19 @@ function StageFooter() {
 							intent="primary"
 							type="submit"
 							form="stage-form"
-							disabled={!currentStageIsValid}
+							className="flex-1 md:flex-none"
+							disabled={
+								!currentStageIsValid ||
+								skippedStages[currentStageIndex] === null
+							}
 							onClick={() => queueStageIndex(currentStageIndex + 1)}
 						>
 							Next
 						</Button>
 					)}
 				</div>
-			</footer>
-		</OrchestratedReveal>
+			</OrchestratedReveal>
+		</footer>
 	);
 }
 

@@ -2,7 +2,7 @@
 
 import { motion, useInView, Transition } from 'framer-motion';
 import { Slot, SlotProps } from '@radix-ui/react-slot';
-import { useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 
 const MotionSlot = motion(
 	Slot as React.ForwardRefExoticComponent<
@@ -50,16 +50,16 @@ type OrchestratedRevealProps = MotionSlotProps<{
 	delay?: number;
 }>;
 
-function OrchestratedReveal({
-	delay = 0,
-	asChild,
-	...props
-}: OrchestratedRevealProps) {
+const OrchestratedReveal = forwardRef<
+	React.ElementRef<'div'>,
+	OrchestratedRevealProps
+>(({ delay = 0, asChild, ...props }, ref) => {
 	const Comp = asChild ? MotionSlot : motion.div;
 
 	return (
 		<Comp
 			{...props}
+			ref={ref}
 			initial={{ y: 50, opacity: 0 }}
 			animate={{ y: 0, opacity: 1 }}
 			transition={{ ...transition, delay }}
@@ -67,6 +67,8 @@ function OrchestratedReveal({
 			{props.children}
 		</Comp>
 	);
-}
+});
+
+OrchestratedReveal.displayName = 'OrchestratedReveal';
 
 export { ViewportReveal, OrchestratedReveal };

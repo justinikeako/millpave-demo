@@ -16,7 +16,6 @@ import { Category } from '~/types/product';
 import { Main } from '~/components/main';
 import { OrchestratedReveal } from '~/components/reveal';
 import { Icon } from '~/components/icon';
-import { cn } from '~/lib/utils';
 import {
 	Select,
 	SelectContent,
@@ -27,41 +26,11 @@ import {
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { LearnSection } from '~/components/sections/learn';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
-import { AnimatePresence, motion } from 'framer-motion';
-import * as Dialog from '@radix-ui/react-dialog';
-import { useMediaQuery } from '~/utils/use-media-query';
 import { useState } from 'react';
-
-type CheckboxProps = React.ComponentProps<'input'> & {
-	name: string;
-	value: string;
-};
-
-function Checkbox({ name, value, className, ...props }: CheckboxProps) {
-	const inputId = name + ':' + value;
-
-	return (
-		<label htmlFor={inputId}>
-			<input
-				{...props}
-				type="checkbox"
-				name={name}
-				value={value}
-				id={inputId}
-				className="peer sr-only"
-			/>
-
-			<div
-				className={cn(
-					'group relative h-5 w-5 rounded-sm border border-gray-400 bg-gray-100 from-white/50 text-gray-100 outline-2 outline-gray-900 hover:border-gray-500 active:border-gray-600 peer-checked:!border-pink-700 peer-checked:bg-pink-600 peer-checked:bg-gradient-to-b peer-checked:hover:from-white/60 peer-checked:active:bg-gradient-to-t peer-checked:active:from-white/25 peer-focus-visible:outline',
-					className
-				)}
-			>
-				<Icon name="check_small" className="relative -left-px -top-px" />
-			</div>
-		</label>
-	);
-}
+import { AnimatePresence, motion } from 'framer-motion';
+import { useMediaQuery } from '~/utils/use-media-query';
+import { CheckboxProps, Checkbox } from '~/components/checkbox';
+import * as Dialog from '@radix-ui/react-dialog';
 
 type FilterProps = Omit<CheckboxProps, 'slot'> & {
 	slot?: React.ReactNode;

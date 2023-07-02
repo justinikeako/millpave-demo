@@ -125,7 +125,7 @@ function Header({ minimal }: { minimal: boolean }) {
 			<header
 				data-minimal={minimal}
 				data-transparent={isTransparent || undefined}
-				className="group sticky top-0 z-10 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0"
+				className="group sticky top-0 z-20 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0"
 				ref={headerRef}
 			>
 				<OrchestratedReveal className="flex h-16 items-center px-6 2xl:container lg:px-16">

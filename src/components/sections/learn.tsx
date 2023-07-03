@@ -25,7 +25,12 @@ function LearnSection() {
 							</Balancer>
 						</p>
 					</div>
-					<Button asChild intent="primary" backdrop="dark">
+					<Button
+						asChild
+						intent="primary"
+						backdrop="dark"
+						className="pointer-events-none"
+					>
 						<div>
 							<span>Discover Contractors</span>
 							<Icon
@@ -48,7 +53,12 @@ function LearnSection() {
 							</Balancer>
 						</p>
 					</div>
-					<Button asChild intent="secondary" backdrop="light">
+					<Button
+						asChild
+						intent="secondary"
+						backdrop="light"
+						className="pointer-events-none"
+					>
 						<div>Learn More</div>
 					</Button>
 				</div>
@@ -68,7 +78,12 @@ function LearnSection() {
 						</p>
 					</div>
 
-					<Button asChild intent="secondary" backdrop="light">
+					<Button
+						asChild
+						intent="secondary"
+						backdrop="light"
+						className="pointer-events-none"
+					>
 						<div>Read the Article</div>
 					</Button>
 				</div>

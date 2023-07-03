@@ -35,3 +35,5 @@ export const Checkbox = forwardRef<React.ElementRef<'input'>, CheckboxProps>(
 		);
 	}
 );
+
+Checkbox.displayName = 'Checkbox';

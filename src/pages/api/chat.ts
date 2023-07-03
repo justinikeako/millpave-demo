@@ -1,15 +1,13 @@
-import { NextRequest } from 'next/server';
+import { StreamingTextResponse, LangChainStream, Message } from 'ai';
+import { supabaseClient } from '~/utils/supabase-client';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
-import { supabaseClient } from '~/utils/supabase-client';
-import { OpenAIChat } from 'langchain/llms/openai';
-import { CallbackManager } from 'langchain/callbacks';
+import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { LLMChain } from 'langchain/chains';
 import { PromptTemplate } from 'langchain/prompts';
+import { AIChatMessage, HumanChatMessage } from 'langchain/schema';
 
-export const config = {
-	runtime: 'edge'
-};
+export const runtime = 'edge';
 
 const INQUIRY_TEMPLATE =
 	PromptTemplate.fromTemplate(`Given the following USER PROMPT and CONVERSATION LOG, formulate a question that would be the most relevant to provide the user with an answer from a knowledge base.
@@ -58,46 +56,34 @@ const QA_TEMPLATE = PromptTemplate.fromTemplate(
 	Final Answer:`
 );
 
-const llm = new OpenAIChat({
+const llm = new ChatOpenAI({
 	modelName: 'gpt-3.5-turbo',
 	openAIApiKey: process.env.OPENAI_API_KEY,
 	temperature: 0
 });
 
-export default async function handler(req: NextRequest) {
+export default async function POST(req: Request) {
 	console.log('Invoked');
 
-	const { userPrompt, conversationHistory } = await req.json();
-
-	// Only accept post requests
-	if (req.method !== 'POST') {
-		return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-			status: 405,
-			headers: {
-				'Content-Type': 'text/json'
-			}
-		});
-	}
-
-	if (!userPrompt) {
-		return new Response(
-			JSON.stringify({ error: 'No user prompt in the request' }),
-			{
-				status: 400,
-				headers: {
-					'Content-Type': 'text/json'
-				}
-			}
-		);
-	}
+	const messages = (await req.json()).messages as Message[];
+	const { stream, handlers } = LangChainStream();
 
 	// OpenAI recommends replacing newlines with spaces for best results
-	const sanitizedUserPrompt = userPrompt.trim().replaceAll('\n', ' ');
+
+	const mostRecentMessage = messages.at(-1);
+	if (!mostRecentMessage) return;
+	const sanitizedUserPrompt = mostRecentMessage.content
+		.trim()
+		.replaceAll('\n', ' ');
 
 	// Create vector store
 	const vectorStore = await SupabaseVectorStore.fromExistingIndex(
 		new OpenAIEmbeddings({ modelName: 'text-embedding-ada-002' }),
-		{ client: supabaseClient }
+		{
+			client: supabaseClient,
+			tableName: 'documents',
+			queryName: 'match_documents'
+		}
 	);
 
 	// Rephrase user prompt
@@ -108,9 +94,9 @@ export default async function handler(req: NextRequest) {
 
 	const rephrasedUserInput = await inquiryChain.call({
 		userPrompt: sanitizedUserPrompt,
-		conversationHistory: conversationHistory || []
+		conversationHistory: messages
 	});
-	// console.log('Rephrased user input:', rephrasedUserInput);
+	console.log('Rephrased user input:', rephrasedUserInput);
 
 	const embedder = new OpenAIEmbeddings({
 		modelName: 'text-embedding-ada-002'
@@ -124,56 +110,40 @@ export default async function handler(req: NextRequest) {
 	);
 	// console.log('Similarity search results:', results);
 
-	const encoder = new TextEncoder();
-	const customReadable = new ReadableStream({
-		async start(controller) {
-			const sendData = (data: string) => {
-				controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-			};
+	const chat = new ChatOpenAI({
+		modelName: 'gpt-3.5-turbo',
+		temperature: 0.5,
+		streaming: true
+	});
 
-			sendData(JSON.stringify({ data: '' }));
+	const chatChain = new LLMChain({
+		prompt: QA_TEMPLATE,
+		llm: chat
+	});
 
-			try {
-				console.log('Invoked Inner');
-				const chat = new OpenAIChat({
-					modelName: 'gpt-3.5-turbo',
-					temperature: 0.5,
-					streaming: true,
-					callbackManager: CallbackManager.fromHandlers({
-						handleLLMNewToken(token) {
-							sendData(JSON.stringify({ data: token }));
-						}
-					})
-				});
+	chatChain.call(
+		{
+			documents: JSON.stringify(results),
+			sources: results
+				.flatMap(([document]) => document.metadata.source)
+				.join('\n'),
 
-				const chain = new LLMChain({
-					prompt: QA_TEMPLATE,
-					llm: chat
-				});
-
-				await chain.call({
-					documents: JSON.stringify(results),
-					sources: results
-						.flatMap(([document]) => document.metadata.source)
-						.join('\n'),
-
-					question: rephrasedUserInput.text,
-					conversationHistory: conversationHistory.join('\n')
-				});
-
-				// console.log('response', response.text);
-			} catch (error) {
-				console.error(error);
-			} finally {
-				sendData('[DONE]');
-				controller.close();
+			question: rephrasedUserInput.text,
+			conversationHistory: messages.map((m) =>
+				m.role == 'user'
+					? new HumanChatMessage(m.content)
+					: new AIChatMessage(m.content)
+			)
+		},
+		[
+			handlers,
+			{
+				handleLLMEnd(output) {
+					console.log('Output:', output.generations.at(0)?.at(0)?.text);
+				}
 			}
-		}
-	});
+		]
+	);
 
-	return new Response(customReadable, {
-		headers: {
-			'Content-Type': 'text/event-stream'
-		}
-	});
+	return new StreamingTextResponse(stream);
 }

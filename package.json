@@ -36,7 +36,7 @@
 		"@trpc/next": "^10.32.0",
 		"@trpc/react-query": "^10.32.0",
 		"@trpc/server": "^10.32.0",
-		"ai": "^2.1.13",
+		"ai": "^2.1.14",
 		"cheerio": "1.0.0-rc.12",
 		"class-variance-authority": "^0.6.0",
 		"clsx": "^1.2.1",

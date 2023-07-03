@@ -42,10 +42,9 @@ const App: AppType = ({ Component, pageProps, router }) => {
 			</Head>
 
 			<Header minimal={router.pathname === '/quote-builder'} />
+			<Chat hide={router.pathname === '/quote-builder'} />
 
 			<Component {...pageProps} />
-
-			<Chat hide={router.pathname === '/quote-builder'} />
 		</>
 	);
 };

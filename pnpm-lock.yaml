@@ -63,8 +63,8 @@ dependencies:
     specifier: ^10.32.0
     version: 10.32.0
   ai:
-    specifier: ^2.1.13
-    version: 2.1.13(react@18.2.0)(svelte@3.59.2)(vue@3.3.4)
+    specifier: ^2.1.14
+    version: 2.1.14(react@18.2.0)(svelte@3.59.2)(vue@3.3.4)
   cheerio:
     specifier: 1.0.0-rc.12
     version: 1.0.0-rc.12
@@ -2308,8 +2308,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  /ai@2.1.13(react@18.2.0)(svelte@3.59.2)(vue@3.3.4):
-    resolution: {integrity: sha512-huPgaFymrTIQcF/S5t02ohTXCtUrMVbPrLcxEB2hc7oKYM8dajfd0y6iOIIuI1S+d+JFbs3CrkeUX30VRot4/Q==}
+  /ai@2.1.14(react@18.2.0)(svelte@3.59.2)(vue@3.3.4):
+    resolution: {integrity: sha512-P9jPlHqZZlXJ9Tva6FSqyJvWi0lVKenEpoxGvenkQH3QfT9qKpPj4sEF71mmrRgXrKQiMjhFcxpI22bvhskT/A==}
     engines: {node: '>=14.6'}
     peerDependencies:
       react: ^18.2.0

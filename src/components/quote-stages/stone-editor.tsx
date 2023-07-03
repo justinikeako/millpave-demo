@@ -410,6 +410,7 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 							{...register('coverage.value', { min: 0.01 })}
 							id="coverage.value"
 							type="number"
+							inputMode="decimal"
 							step="any"
 							className="no-arrows w-full flex-1 bg-transparent p-4 outline-none"
 							placeholder="Amount"

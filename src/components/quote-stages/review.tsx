@@ -75,7 +75,7 @@ export function ReviewStage() {
 						<Button
 							intent="tertiary"
 							size="small"
-							className="text-pink-500 underline"
+							className="hidden text-pink-500 underline"
 						>
 							Change Colors
 						</Button>

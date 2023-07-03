@@ -182,19 +182,20 @@ function Header({ minimal }: { minimal: boolean }) {
 
 						<Dialog.DialogContent forceMount asChild data-minimal={minimal}>
 							<motion.div
+								data-minimal={minimal}
 								variants={variants.content}
 								initial="hide"
 								animate="show"
 								exit="hide"
-								className="fixed inset-0 z-50 flex flex-col bg-gray-900 text-white"
+								className="group fixed inset-0 z-50 bg-gray-900 text-white"
 							>
-								<div className="absolute inset-x-0">
+								<div className="fixed inset-x-0 z-10 bg-gray-900	">
 									<div className="flex h-16 items-center justify-between px-6 2xl:container lg:px-16">
 										<Dialog.Close asChild>
 											<Button
 												intent="tertiary"
 												backdrop="dark"
-												className="data-[minimal=true]:order-3 lg:order-3"
+												className="group-data-[minimal=true]:order-3 lg:order-3"
 											>
 												<Icon name="close-wght_300" size={24} />
 											</Button>
@@ -214,7 +215,7 @@ function Header({ minimal }: { minimal: boolean }) {
 											intent="tertiary"
 											backdrop="dark"
 											onClick={() => setMenuOpen(false)}
-											className="data-[minimal=true]:hidden lg:hidden"
+											className="group-data-[minimal=true]:hidden lg:hidden"
 										>
 											<Link href="/quote">
 												<Icon name="shopping_cart" size={24} />
@@ -227,7 +228,7 @@ function Header({ minimal }: { minimal: boolean }) {
 									variants={variants.list}
 									initial="hide"
 									animate="show"
-									className="flex flex-1 flex-col justify-center gap-8 px-6 text-center font-display text-3xl md:px-16"
+									className="flex h-full flex-col justify-center gap-8 overflow-y-auto px-6 py-24 text-center font-display text-3xl md:px-16"
 								>
 									<MotionNavLink
 										variants={variants.item}

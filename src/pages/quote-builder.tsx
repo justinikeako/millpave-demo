@@ -254,7 +254,7 @@ function StageFooter() {
 							type="submit"
 							form="stage-form"
 							className="flex-1 md:flex-none"
-							disabled={createQuote.isLoading}
+							disabled
 							onClick={async () => {
 								const { quoteId } = await createQuote.mutateAsync({
 									items: quote.items
@@ -272,7 +272,7 @@ function StageFooter() {
 							type="submit"
 							form="stage-form"
 							className="flex-1 md:flex-none"
-							disabled={createQuote.isLoading}
+							disabled
 							asChild
 						>
 							<Link href={`/quote/${quote.id}`}>Go to Quote #{quote.id}</Link>

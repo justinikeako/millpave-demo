@@ -93,24 +93,24 @@ export function StoneEditor(props: StoneEditorProps) {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center gap-2 lg:flex-row lg:flex-wrap">
+		<div className="flex flex-col items-center justify-center gap-2 md:flex-row md:flex-wrap">
 			<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
 				{defaultSku ? (
 					<div
 						data-has-items={fields.length > 0}
-						className="group flex flex-col items-center gap-2 md:flex-row"
+						className="group flex flex-col items-center gap-2 data-[has-items=true]:flex-col md:flex-row md:data-[has-items=true]:h-64"
 					>
 						<div
 							data-sheet-open={undefined}
-							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline md:h-64 md:flex-col md:items-stretch"
+							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 bg-gray-200 text-gray-500 outline-2 -outline-offset-2 outline-gray-900 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline group-data-[has-items=true]:flex-1 group-data-[has-items=true]:flex-row md:h-64 md:flex-col md:items-stretch md:group-data-[has-items=true]:h-auto md:group-data-[has-items=true]:items-center"
 						>
-							<div className="aspect-square h-full shrink-0 md:aspect-auto md:h-auto md:flex-1" />
+							<div className="aspect-square h-full shrink-0 group-data-[has-items=true]:aspect-square group-data-[has-items=true]:h-24 group-data-[has-items=true]:flex-none md:aspect-auto md:h-auto md:flex-1" />
 
-							<div className="flex-1 space-y-0.5 p-4 text-left md:flex-none md:px-6 md:text-center">
+							<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items=true]:flex-1 group-data-[has-items=true]:p-4 group-data-[has-items=true]:text-left md:flex-none md:px-6 md:text-center">
 								<h3 className="font-semibold">
 									<button
 										type="button"
-										className="w-full [text-align:inherit] after:absolute after:inset-0"
+										className="w-full [text-align:inherit] after:absolute after:inset-0 after:cursor-not-allowed"
 									>
 										<span className="group-data-[has-items=false]:hidden">
 											Add a pattern
@@ -126,17 +126,20 @@ export function StoneEditor(props: StoneEditorProps) {
 									</Balancer>
 								</p>
 							</div>
+							<span className="pointer-events-none absolute -top-2 left-2 block rounded-sm border border-gray-400 bg-inherit px-1 text-sm">
+								Coming Soon
+							</span>
 						</div>
 						<span className="font-display text-lg group-data-[has-items=true]:hidden">
 							or
 						</span>
 						<div
 							data-sheet-open={(sheetOpen && editIndex === -1) || undefined}
-							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline md:h-64 md:flex-col md:items-stretch"
+							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline group-data-[has-items=true]:flex-1 group-data-[has-items=true]:flex-row md:h-64 md:flex-col md:items-stretch md:group-data-[has-items=true]:h-auto md:group-data-[has-items=true]:items-center"
 						>
-							<div className="aspect-square h-full shrink-0 md:aspect-auto md:flex-1" />
+							<div className="aspect-square h-full shrink-0 group-data-[has-items=true]:aspect-square group-data-[has-items=true]:h-24 group-data-[has-items=true]:flex-none md:aspect-auto md:h-auto md:flex-1" />
 
-							<div className="space-y-0.5 p-4 text-left md:px-6 md:text-center">
+							<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items=true]:flex-1 group-data-[has-items=true]:p-4 group-data-[has-items=true]:text-left md:flex-none md:px-6 md:text-center">
 								<h3 className="font-semibold">
 									<SheetTrigger
 										className="w-full [text-align:inherit] after:absolute after:inset-0"
@@ -153,7 +156,7 @@ export function StoneEditor(props: StoneEditorProps) {
 									</SheetTrigger>
 								</h3>
 								<p className=" text-sm  text-gray-500 ">
-									<Balancer>Create custom patterns from scratch.</Balancer>
+									<Balancer>Create complex custom patterns.</Balancer>
 								</p>
 							</div>
 						</div>
@@ -224,7 +227,7 @@ function StoneListItem({
 	return (
 		<li
 			data-sheet-open={selected || undefined}
-			className="relative flex h-64 w-64 flex-col rounded-md border border-gray-400 p-6 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
+			className="relative flex h-64 w-64 flex-col rounded-md border border-gray-400 p-4 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
 		>
 			<div className="flex-1" />
 			<div className="flex items-start gap-4">

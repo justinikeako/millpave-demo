@@ -144,7 +144,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
 			<Main>
 				{/* Main Content */}
-				<section className="flex flex-col gap-16 py-8 md:flex-row md:gap-8 lg:gap-16 lg:py-16">
+				<section className="flex flex-col gap-8 py-8 md:flex-row lg:gap-16 lg:py-16">
 					{/* Gallery */}
 
 					<OrchestratedReveal delay={0.1} className="flex-1">

@@ -17,9 +17,7 @@
 		"sembed": "tsx -r dotenv/config scripts/scrape-embed.ts"
 	},
 	"dependencies": {
-		"@microsoft/fetch-event-source": "^2.0.1",
 		"@next/bundle-analyzer": "^13.4.7",
-		"@pinecone-database/pinecone": "^0.1.6",
 		"@planetscale/database": "^1.7.0",
 		"@radix-ui/react-collapsible": "^1.0.3",
 		"@radix-ui/react-dialog": "^1.0.4",
@@ -38,6 +36,7 @@
 		"@trpc/next": "^10.32.0",
 		"@trpc/react-query": "^10.32.0",
 		"@trpc/server": "^10.32.0",
+		"ai": "^2.1.13",
 		"cheerio": "1.0.0-rc.12",
 		"class-variance-authority": "^0.6.0",
 		"clsx": "^1.2.1",
@@ -45,7 +44,7 @@
 		"dotenv": "^16.3.1",
 		"drizzle-orm": "0.27.0",
 		"framer-motion": "^10.12.17",
-		"langchain": "^0.0.96",
+		"langchain": "^0.0.102",
 		"lodash-es": "^4.17.21",
 		"mysql2": "^3.4.1",
 		"nanoid": "^4.0.2",

@@ -241,13 +241,17 @@ function mergeItems(inputItems: Item[]) {
 	return outputItems;
 }
 
-function getQuoteItems(item: Item) {
+function getQuoteItems(item: Item, reducePickups: boolean) {
 	const { sqft_per_pallet, pcs_per_sqft, pcs_per_pallet, lbs_per_unit } =
 		item.details;
 	const sqft_per_half_pallet = sqft_per_pallet / 2;
 
 	const palletArea = roundFractionDigits(
-		roundTo(item.sqftCoverage, sqft_per_half_pallet, 'down'),
+		roundTo(
+			item.sqftCoverage,
+			sqft_per_half_pallet,
+			reducePickups ? 'up' : 'down'
+		),
 		2
 	);
 	const palletCount = Math.floor(palletArea / sqft_per_half_pallet) / 2;
@@ -278,7 +282,7 @@ function getQuoteItems(item: Item) {
 			signatures: item.signatures
 		});
 
-	if (showroomCost > 0)
+	if (reducePickups === false && showroomCost > 0)
 		quoteItems.push({
 			pickupLocationId: 'KNG_SHOWROOM',
 			skuId: item.skuId,
@@ -332,7 +336,7 @@ function getSealant(area: number) {
 	return quoteItems;
 }
 
-function getPolymeric(area: number) {
+function getPolymericSand(area: number) {
 	const coverage = roundTo(area, 100, 'up');
 	const quantity = coverage / 100;
 
@@ -366,6 +370,9 @@ function getQuote(project: StoneProject) {
 	const addPolymeric = project.addons.some(
 		({ id, enabled }) => id === 'polymeric' && enabled
 	);
+	const reducePickups = project.addons.some(
+		({ id, enabled }) => id === 'reduce_pickups' && enabled
+	);
 
 	const quoteItems = mergedItems.flatMap((item) =>
 		getQuoteItems(
@@ -374,12 +381,13 @@ function getQuote(project: StoneProject) {
 						...item,
 						sqftCoverage: roundFractionDigits(item.sqftCoverage * 1.05, 2)
 				  }
-				: item
+				: item,
+			reducePickups
 		)
 	);
 
 	if (addSealant) quoteItems.push(...getSealant(projectArea));
-	if (addPolymeric) quoteItems.push(getPolymeric(projectArea));
+	if (addPolymeric) quoteItems.push(getPolymericSand(projectArea));
 
 	const quoteDetails = getQuoteDetails(quoteItems);
 
@@ -433,23 +441,30 @@ const defaultValues: StoneProject = {
 	addons: [
 		{
 			id: 'sealant',
-			displayName: 'Sealant',
+			displayName: 'Add Sealant',
 			description:
 				'Enhance the color of your stones. Protect them from the elements.',
 			enabled: false
 		},
 		{
 			id: 'polymeric',
-			displayName: 'Polymeric Sand',
+			displayName: 'Add Polymeric Sand',
 			description:
 				'Prevent your pavers from shifting. Reduce weed growth between them.',
 			enabled: false
 		},
 		{
 			id: 'area_overage',
-			displayName: '5% Area Overage',
+			displayName: '5% Overage',
 			description:
 				'For repairs and adjustments; Future batches may not match exactly.',
+			enabled: false
+		},
+		{
+			id: 'reduce_pickups',
+			displayName: 'Reduce Pickups',
+			description:
+				'Order items from a single location and reduce the amount of pickups required.',
 			enabled: false
 		}
 	]

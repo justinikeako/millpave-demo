@@ -1,5 +1,5 @@
 import { formatNumber, formatPrice, formatRestockDate } from '~/utils/format';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { FieldArrayPath, useFieldArray, useFormContext } from 'react-hook-form';
 import { StageForm } from './form';
 import { unitDisplayNameDictionary } from '~/lib/utils';
 import { useStageContext } from './stage-context';
@@ -7,9 +7,21 @@ import { StoneProject } from '~/types/quote';
 import { api } from '~/utils/api';
 import { addWeeks } from 'date-fns';
 import { Icon } from '../icon';
+import { Checkbox } from '../checkbox';
+import Link from 'next/link';
+import React from 'react';
+import { Balancer } from 'react-wrap-balancer';
+import { Button } from '../button';
 
 export function ReviewStage() {
-	const { quote } = useStageContext();
+	const { quote, setStageIndex } = useStageContext();
+
+	const { control, register } = useFormContext<StoneProject>();
+	const { fields: addons } = useFieldArray({
+		control,
+		keyName: 'key',
+		name: 'addons'
+	});
 
 	const itemsSkuIds = quote.items.map(({ skuId }) => skuId);
 
@@ -21,145 +33,207 @@ export function ReviewStage() {
 	const itemsFulfillment = itemsFulfillmentQuery.data;
 
 	return (
-		<StageForm className="space-y-16 px-32">
-			<h2 className="text-center text-2xl">Review your items.</h2>
+		<StageForm className="space-y-16">
+			<h2 className="text-center font-display text-2xl">Review your items.</h2>
+			<div className="flex flex-col gap-16 xl:flex-row">
+				<aside className="space-y-4 xl:order-2">
+					<div className="space-y-4">
+						<h3 className="font-display text-lg">Configure your quote</h3>
 
-			<div className="flex justify-center">
-				<Addons />
-			</div>
-
-			<ul>
-				{quote.items.map((item, index) => {
-					const unitDisplayName =
-						unitDisplayNameDictionary[item.unit][item.quantity === 1 ? 0 : 1];
-					const fulfillment = itemsFulfillment?.find(
-						({ id }) => id === item.skuId
-					);
-
-					const hasStock =
-						fulfillment?.stock.find(
-							({ locationId }) => locationId === item.pickupLocationId
-						)?.quantity || 0 > 0;
-					const restockDate =
-						fulfillment?.restocks[0]?.locationId === item.pickupLocationId
-							? formatRestockDate(fulfillment?.restocks[0]?.date)
-							: undefined;
-					return (
-						<li
-							key={index}
-							className="-mx-8 flex gap-8 rounded-lg border border-transparent p-8 focus-within:bg-gray-100"
-						>
-							<div className="h-32 w-32 bg-gray-300" />
-
-							<div className="flex-1 space-y-4">
-								<div className="flex gap-16">
-									<h3 className="flex-[2] text-lg">{item.displayName}</h3>
-									<p
-										className="flex-1 text-lg"
-										title={
-											item.area ? `${formatNumber(item.area)} sqft` : undefined
-										}
+						<ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap xl:flex-col">
+							{addons.map(({ key, ...addon }, index) => (
+								<li key={key} className="contents">
+									<label
+										htmlFor={`addons.${index}.enabled:${addon.id}`}
+										className="flex w-full items-center gap-2 rounded-md border border-gray-400 p-4 text-left hover:bg-black/5 active:bg-black/10 sm:w-72"
 									>
-										{item.quantity} {unitDisplayName}
-									</p>
-									<p className="flex-1 text-right text-lg">
-										{formatPrice(item.cost)}
-									</p>
-								</div>
-								{item.area && item.area > 2000 && (
-									<div className="flex justify-between">
-										<p>Using our 50/50 payment plan:</p>
-										<p>{formatPrice(item.cost / 2)} upfront</p>
-									</div>
-								)}
+										<span className="flex-1 space-y-0.5">
+											<p className="font-semibold">{addon.displayName}</p>
+											<p className="max-w-[16rem] text-sm text-gray-500">
+												<Balancer>{addon.description}</Balancer>
+											</p>
+										</span>
 
-								<div className="flex items-center justify-between">
-									<div>
-										<p className="mb-2 font-semibold">Availability</p>
-										{itemsFulfillmentQuery.isLoading ? (
-											<p>Loading stock info...</p>
-										) : (
-											<>
-												<p>Order Today. Pick up on-site:</p>
-												<p>
-													Available{' '}
-													{hasStock
-														? 'Today'
-														: restockDate
-														? restockDate
-														: formatRestockDate(addWeeks(new Date(), 4))}{' '}
-													at Our{' '}
-													{item.pickupLocationId === 'STT_FACTORY'
-														? 'St. Thomas Factory'
-														: 'Kingston Showroom'}
+										<Checkbox
+											{...register(
+												`addons.${index}.enabled` as FieldArrayPath<StoneProject>
+											)}
+											value={addon.id}
+										/>
+									</label>
+								</li>
+							))}
+						</ul>
+					</div>
+				</aside>
+
+				<div className="flex-1 space-y-4">
+					<div className="flex items-center justify-between">
+						<h3 className="font-display text-lg">
+							Items ({quote.items.length})
+						</h3>
+						<Button
+							intent="tertiary"
+							size="small"
+							className="text-pink-500 underline"
+						>
+							Change Colors
+						</Button>
+					</div>
+
+					<ul className=" space-y-8">
+						{quote.items.map((item, itemIndex) => {
+							const unitDisplayName =
+								unitDisplayNameDictionary[item.unit][
+									item.quantity === 1 ? 0 : 1
+								];
+							const fulfillment = itemsFulfillment?.find(
+								({ id }) => id === item.skuId
+							);
+
+							const hasStock =
+								fulfillment?.stock.find(
+									({ locationId }) => locationId === item.pickupLocationId
+								)?.quantity || 0 > 0;
+							const restockDate =
+								fulfillment?.restocks[0]?.locationId === item.pickupLocationId
+									? formatRestockDate(fulfillment?.restocks[0]?.date)
+									: undefined;
+
+							return (
+								<React.Fragment key={itemIndex}>
+									<li className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch">
+										<div className="h-32 w-32 bg-gray-300" />
+
+										<div className="w-full space-y-4 lg:w-auto lg:flex-1 ">
+											<div className="flex flex-wrap">
+												<h3 className="w-full font-display text-lg md:w-80">
+													<Link
+														target="_blank"
+														href={`/product/${item.skuId.split(':')[0]}`}
+													>
+														{item.displayName}
+													</Link>
+												</h3>
+												<p
+													className="flex-1 font-display text-lg"
+													title={
+														item.area
+															? `${formatNumber(item.area)} sqft`
+															: undefined
+													}
+												>
+													{item.quantity} {unitDisplayName}
 												</p>
-											</>
-										)}
-									</div>
+												<p className="font-display text-lg">
+													{formatPrice(item.cost)}
+												</p>
+											</div>
+											{item.area && item.area > 2000 && (
+												<div className="flex justify-between">
+													<p>Using our 50/50 payment plan:</p>
+													<p>{formatPrice(item.cost / 2)} upfront</p>
+												</div>
+											)}
 
-									<div className="flex flex-col items-end gap-2">
-										<button className="block">Remove</button>
-										<button className="block">Edit</button>
-									</div>
-								</div>
-							</div>
-						</li>
-					);
-				})}
-			</ul>
+											<div className="flex flex-wrap items-center gap-y-4">
+												<div className="w-full md:w-80">
+													<p className="mb-2 font-semibold">Availability</p>
+													{itemsFulfillmentQuery.isLoading ? (
+														<p>Loading stock info...</p>
+													) : (
+														<>
+															<p>Order Today. Pick up on-site:</p>
+															<p>
+																Available&nbsp;
+																{hasStock
+																	? 'Today'
+																	: restockDate
+																	? restockDate
+																	: formatRestockDate(addWeeks(new Date(), 4))}
+																&nbsp;at&nbsp;
+																<Link
+																	target="_blank"
+																	href="/contact"
+																	className="text-pink-500 hover:text-pink-400 active:text-pink-700"
+																>
+																	Our&nbsp;
+																	{item.pickupLocationId === 'STT_FACTORY'
+																		? 'St. Thomas Factory'
+																		: 'Kingston Showroom'}
+																</Link>
+															</p>
+														</>
+													)}
+												</div>
+												<div className="flex-1">
+													{item.signatures.length > 0 && (
+														<>
+															<p className="mb-2 font-semibold">Used In</p>
+															<ul className="flex gap-1">
+																{item.signatures.map((signature) => (
+																	<li
+																		key={itemIndex + signature}
+																		className="contents"
+																	>
+																		<button
+																			className="flex h-6 items-center rounded-sm border border-gray-400 px-1 text-sm capitalize hover:bg-gray-900/5 active:bg-gray-900/10"
+																			type="button"
+																			onClick={() =>
+																				setStageIndex(
+																					signature === 'infill' ? 2 : 3
+																				)
+																			}
+																		>
+																			<span>{signature}</span>
+																			<Icon
+																				name="arrow_right-opsz_20-wght-300"
+																				size={18}
+																			/>
+																		</button>
+																	</li>
+																))}
+															</ul>
+														</>
+													)}
+												</div>
+												<div className="flex flex-1 flex-col items-end gap-2 justify-self-end">
+													<button className="block">Remove</button>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li className="h-px w-full bg-gray-200" />
+								</React.Fragment>
+							);
+						})}
+					</ul>
 
-			<div className="space-y-4 pl-40">
-				<div className="flex justify-between">
-					<span>Area</span>
-					<span>{formatNumber(quote.details.totalArea)} sqft</span>
-				</div>
-				<div className="flex justify-between">
-					<span>Approximate Weight</span>
-					<span>{formatNumber(quote.details.totalWeight)} lbs</span>
-				</div>
-				<div className="flex justify-between">
-					<span>Subtotal</span>
-					<span>{formatPrice(quote.details.subtotal)}</span>
-				</div>
-				<div className="flex justify-between">
-					<span>Tax</span>
-					<span>{formatPrice(quote.details.tax)}</span>
-				</div>
-				<hr />
-				<div className="flex justify-between text-lg">
-					<span>Total</span>
-					<span>{formatPrice(quote.details.total)}</span>
+					<div className="space-y-4 lg:pl-40">
+						<div className="flex justify-between">
+							<span>Area</span>
+							<span>{formatNumber(quote.details.totalArea)} sqft</span>
+						</div>
+						<div className="flex justify-between">
+							<span>Approximate Weight</span>
+							<span>{formatNumber(quote.details.totalWeight)} lbs</span>
+						</div>
+						<div className="flex justify-between">
+							<span>Subtotal</span>
+							<span>{formatPrice(quote.details.subtotal)}</span>
+						</div>
+						<div className="flex justify-between">
+							<span>Tax</span>
+							<span>{formatPrice(quote.details.tax)}</span>
+						</div>
+						<hr />
+						<div className="flex justify-between font-display text-lg">
+							<span>Total</span>
+							<span>{formatPrice(quote.details.total)}</span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</StageForm>
-	);
-}
-
-function Addons() {
-	const { control } = useFormContext<StoneProject>();
-	const { fields, update } = useFieldArray({
-		control,
-		keyName: 'key',
-		name: 'addons'
-	});
-
-	return (
-		<ul className="grid grid-flow-col grid-cols-[repeat(3,256px)] gap-4">
-			{fields.map(({ key, ...addon }, index) => (
-				<li key={key}>
-					<button
-						className="flex h-full w-full items-center gap-2 rounded-lg border px-6 py-4 text-left hover:bg-gray-100 active:bg-gray-200"
-						onClick={() => update(index, { ...addon, enabled: !addon.enabled })}
-					>
-						<span className="flex-1 space-y-0.5">
-							<p className="font-medium">{addon.displayName}</p>
-							<p className="text-sm">{addon.description}</p>
-						</span>
-
-						<Icon name={addon.enabled ? 'minus' : 'plus'} />
-					</button>
-				</li>
-			))}
-		</ul>
 	);
 }

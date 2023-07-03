@@ -116,8 +116,15 @@ function Footer() {
 				<div className="flex flex-wrap items-center justify-between gap-1 text-gray-500">
 					<p>©2023 Millennium Paving Stones Ltd.</p>
 					<p>
-						<Link target="_blank" href="https://notprimitive.com">
-							Website by&nbsp;
+						<Link
+							target="_blank"
+							href="https://notprimitive.com"
+							className="flex items-center gap-1.5"
+						>
+							<span>
+								Website by <span className="sr-only">Not Primitive</span>
+							</span>
+
 							<svg
 								width="124"
 								height="14"

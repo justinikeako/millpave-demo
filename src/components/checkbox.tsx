@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { Icon } from '~/components/icon';
 import { cn } from '~/lib/utils';
 
-export type CheckboxProps = React.ComponentProps<'input'> & {
+export type CheckboxProps = React.ComponentPropsWithoutRef<'input'> & {
 	name: string;
 	value: string;
 };

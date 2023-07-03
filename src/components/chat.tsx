@@ -117,7 +117,7 @@ function Chat({ hide }: { hide: boolean }) {
 												</Dialog.Close>
 											</div>
 										</div>
-										<ul className="flex grow flex-col-reverse gap-1 overflow-y-auto p-2 lg:h-96">
+										<ul className="flex grow flex-col justify-end gap-1 overflow-y-auto p-2 lg:h-96">
 											{messages.map((message) => (
 												<li
 													key={message.id}
@@ -128,7 +128,12 @@ function Chat({ hide }: { hide: boolean }) {
 															'self-start bg-pink-600'
 													)}
 												>
-													{message.content}
+													<ReactMarkdown
+														linkTarget="_blank"
+														className="markdownanswer"
+													>
+														{message.content}
+													</ReactMarkdown>
 												</li>
 											))}
 										</ul>

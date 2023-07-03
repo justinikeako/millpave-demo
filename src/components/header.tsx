@@ -7,18 +7,22 @@ import { Logo } from './logo';
 import { OrchestratedReveal } from './reveal';
 import { Icon } from './icon';
 import { useRouter } from 'next/router';
+import { cn } from '~/lib/utils';
 
-type NavLinkProps = {
-	href: string;
-} & React.HTMLProps<HTMLLIElement>;
-
-const NavLink = forwardRef<HTMLLIElement, NavLinkProps>(function NavLink(
-	{ href, children, ...props },
-	ref
-) {
+const NavLink = forwardRef<
+	React.ComponentRef<typeof Link>,
+	React.ComponentPropsWithoutRef<typeof Link>
+>(function NavLink({ href, children, ...props }, ref) {
 	return (
-		<li ref={ref} {...props}>
-			<Link href={href}>{children}</Link>
+		<li className="contents">
+			<Link
+				{...props}
+				href={href}
+				ref={ref}
+				className={cn('block', props.className)}
+			>
+				{children}
+			</Link>
 		</li>
 	);
 });
@@ -224,48 +228,50 @@ function Header({ minimal }: { minimal: boolean }) {
 									</div>
 								</div>
 
-								<motion.ul
-									variants={variants.list}
-									initial="hide"
-									animate="show"
-									className="flex h-full flex-col justify-center gap-8 overflow-y-auto px-6 py-24 text-center font-display text-3xl md:px-16"
-								>
-									<MotionNavLink
-										variants={variants.item}
-										href="/products"
-										onClick={() => setMenuOpen(false)}
+								<div className="flex h-full flex-col overflow-y-auto px-6 py-24 md:px-16">
+									<motion.ul
+										variants={variants.list}
+										initial="hide"
+										animate="show"
+										className="my-auto flex flex-col gap-8 text-center font-display text-3xl"
 									>
-										Products
-									</MotionNavLink>
-									<MotionNavLink
-										variants={variants.item}
-										href="/gallery"
-										onClick={() => setMenuOpen(false)}
-									>
-										Inspiration
-									</MotionNavLink>
-									<MotionNavLink
-										variants={variants.item}
-										href="/resources"
-										onClick={() => setMenuOpen(false)}
-									>
-										Resources
-									</MotionNavLink>
-									<MotionNavLink
-										variants={variants.item}
-										href="/quote-builder"
-										onClick={() => setMenuOpen(false)}
-									>
-										Get a Quote
-									</MotionNavLink>
-									<MotionNavLink
-										variants={variants.item}
-										href="/contact"
-										onClick={() => setMenuOpen(false)}
-									>
-										Contact Us
-									</MotionNavLink>
-								</motion.ul>
+										<MotionNavLink
+											variants={variants.item}
+											href="/products"
+											onClick={() => setMenuOpen(false)}
+										>
+											Products
+										</MotionNavLink>
+										<MotionNavLink
+											variants={variants.item}
+											href="/gallery"
+											onClick={() => setMenuOpen(false)}
+										>
+											Inspiration
+										</MotionNavLink>
+										<MotionNavLink
+											variants={variants.item}
+											href="/resources"
+											onClick={() => setMenuOpen(false)}
+										>
+											Resources
+										</MotionNavLink>
+										<MotionNavLink
+											variants={variants.item}
+											href="/quote-builder"
+											onClick={() => setMenuOpen(false)}
+										>
+											Get a Quote
+										</MotionNavLink>
+										<MotionNavLink
+											variants={variants.item}
+											href="/contact"
+											onClick={() => setMenuOpen(false)}
+										>
+											Contact Us
+										</MotionNavLink>
+									</motion.ul>
+								</div>
 							</motion.div>
 						</Dialog.DialogContent>
 					</Dialog.DialogPortal>

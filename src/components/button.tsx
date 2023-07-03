@@ -9,7 +9,7 @@ const buttonVariants = cva(
 		variants: {
 			intent: {
 				primary:
-					'px-3 border font-semibold rounded-sm overflow-hidden shadow-button before:gradient-mask-b-0 before:transition-opacity before:absolute before:block before:inset-0 before:rounded-[3px] after:absolute after:block after:inset-0 after:border after:rounded-[3px] after:transition-opacity active:before:transition-none active:after:transition-none',
+					'px-3 border font-semibold rounded-sm shadow-button before:gradient-mask-b-0 before:transition-opacity before:absolute before:block before:inset-0 before:rounded-[3px] after:absolute after:block after:inset-0 after:border after:rounded-[3px] after:transition-opacity active:before:transition-none active:after:transition-none',
 				secondary:
 					'rounded-sm px-3 border font-semibold transition-colors active:transition-none',
 				tertiary: 'rounded-full transition-colors active:transition-none'

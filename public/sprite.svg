@@ -28,6 +28,13 @@
 			</g>
 		</symbol>
 
+		<symbol id="arrow_right-opsz_20-wght-300" viewBox="0 0 20 20">
+			<g>
+				<path
+					d="M10 15.6795L9.234 14.9055L13.5978 10.5417H4.32054V9.45837H13.5978L9.234 5.09458L10 4.32056L15.6795 10L10 15.6795Z" />
+			</g>
+		</symbol>
+
 		<symbol id="arrow_right_alt" viewBox="0 0 24 24">
 			<g>
 				<path d="M14 18L12.6 16.55L16.15 13H4V11H16.15L12.6 7.45L14 6L20 12L14 18Z" />

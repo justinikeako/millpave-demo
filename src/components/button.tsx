@@ -4,12 +4,12 @@ import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '~/lib/utils';
 
 const buttonVariants = cva(
-	'relative flex items-center justify-center gap-1 font-semibold text-center select-none focus:outline-pink-700 focus:outline-offset-2 disabled:shadow-none disabled:opacity-50 disabled:cursor-not-allowed [&>span]:z-[1] [&>svg]:z-[1]',
+	'relative flex items-center justify-center gap-1 text-center select-none focus:outline-pink-700 focus:outline-offset-2 disabled:shadow-none disabled:opacity-50 disabled:cursor-not-allowed [&>span]:z-[1] [&>svg]:z-[1]',
 	{
 		variants: {
 			intent: {
 				primary:
-					'px-3 border rounded-sm overflow-hidden shadow-button before:gradient-mask-b-0 before:transition-opacity before:absolute before:block before:inset-0 before:rounded-[3px] after:absolute after:block after:inset-0 after:border after:rounded-[3px] after:transition-opacity active:before:transition-none active:after:transition-none',
+					'px-3 border font-semibold rounded-sm overflow-hidden shadow-button before:gradient-mask-b-0 before:transition-opacity before:absolute before:block before:inset-0 before:rounded-[3px] after:absolute after:block after:inset-0 after:border after:rounded-[3px] after:transition-opacity active:before:transition-none active:after:transition-none',
 				secondary:
 					'rounded-sm px-3 border font-semibold transition-colors active:transition-none',
 				tertiary: 'rounded-full transition-colors active:transition-none'
@@ -46,7 +46,7 @@ const buttonVariants = cva(
 				intent: 'tertiary',
 				backdrop: ['light', 'dark'],
 				size: 'small',
-				className: '-m-1 p-1'
+				className: '-m-2 p-2'
 			},
 			{
 				intent: 'primary',

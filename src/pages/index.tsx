@@ -22,6 +22,7 @@ import { LearnSection } from '~/components/sections/learn';
 import { Main } from '~/components/main';
 import { FullWidthSection } from '~/components/sections/full-width';
 import { HorizontalScroller } from '~/components/horizontal-scroller';
+import Image from 'next/image';
 
 function Hero() {
 	const heroRef = useRef<HTMLDivElement>(null);
@@ -36,6 +37,10 @@ function Hero() {
 	const { scrollY, scrollYProgress } = useScroll({
 		target: heroRef,
 		offset: ['end end', 'end start']
+	});
+	const { scrollYProgress: scrollYProgressFromStart } = useScroll({
+		target: heroRef,
+		offset: ['start start', 'end start']
 	});
 	const line1Opacity = useTransform(scrollY, [50, 150], [1, 0]);
 	const line2Opacity = useTransform(scrollY, [50, 200], [1, 0]);
@@ -68,11 +73,25 @@ function Hero() {
 			data-header-transparent
 		>
 			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.25 }}
 				style={
-					{ '--scroll-progress': scrollYProgress } as unknown as MotionStyle
+					{
+						'--scroll-progress': scrollYProgress,
+						'--scroll-progress-from-start': scrollYProgressFromStart
+					} as unknown as MotionStyle
 				}
-				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-full bg-gray-700 [--gutter-x:--gutter] [--gutter-y:--gutter] [--gutter:24px] [clip-path:inset(calc(var(--gutter-y)*var(--scroll-progress))_calc(var(--gutter-x)*var(--scroll-progress))_round_calc(16px*var(--scroll-progress)))]  lg:[--gutter:64px] 2xl:w-[100lvw] 2xl:[--gutter-x:calc(50vw-768px+64px)]"
-			/>
+				className="sticky top-0 -z-10 -mt-16 h-[100lvh] w-full overflow-hidden [--gutter-x:--gutter] [--gutter-y:--gutter] [--gutter:24px] [clip-path:inset(calc(var(--gutter-y)*var(--scroll-progress))_calc(var(--gutter-x)*var(--scroll-progress))_round_calc(16px*var(--scroll-progress)))] after:absolute after:inset-0  after:bg-gray-950/75 after:opacity-[calc(1-var(--scroll-progress-from-start)*1)] lg:[--gutter:64px] 2xl:w-[100lvw] 2xl:[--gutter-x:calc(50vw-768px+64px)]"
+			>
+				<Image
+					src="/hero.jpg"
+					width={1000}
+					height={747}
+					alt="Picture of the author"
+					className="-z-50 h-full w-full scale-[calc(1+var(--scroll-progress-from-start)*0.25)] object-cover object-center"
+				/>
+			</motion.div>
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">
 				<motion.h1 className="text-center font-display text-5xl">

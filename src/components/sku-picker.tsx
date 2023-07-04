@@ -93,7 +93,7 @@ function ProductPicker({ products }: ProductPickerProps) {
 								}}
 							/>
 
-							<div className="flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-400 peer-checked:bg-gray-100 peer-checked:text-gray-950 peer-checked:ring-2 peer-checked:ring-gray-950 peer-focus:bg-blue-50 peer-focus:text-pink-700 peer-focus:ring-pink-700">
+							<div className="peer-checked:bg-gray-pink-400/10 flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md border border-gray-400 px-4 py-4 text-center outline-2 -outline-offset-2 outline-pink-700 peer-checked:bg-pink-400/10 peer-checked:text-pink-700 peer-checked:outline peer-focus:outline">
 								{displayName}
 							</div>
 						</label>
@@ -190,7 +190,7 @@ function VariantFragmentPicker({
 							aria-label={displayName}
 						/>
 
-						<div className="flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-4 py-4 text-center ring-1 ring-inset ring-gray-400 peer-checked:bg-gray-100 peer-checked:text-gray-700 peer-checked:ring-2 peer-checked:ring-gray-700 peer-focus:bg-blue-50 peer-focus:text-pink-700 peer-focus:ring-pink-700">
+						<div className="flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md border border-gray-400 px-4 py-4 text-center outline-2 -outline-offset-2 outline-pink-700 peer-checked:bg-pink-400/10 peer-checked:text-pink-700 peer-checked:outline peer-focus:outline">
 							{displayName}
 						</div>
 					</label>
@@ -231,7 +231,7 @@ function ColorFragmentPicker({
 							onChange={(e) => onChange(e.target.value)}
 						/>
 						<div
-							className="h-10 w-10 cursor-pointer rounded-full bg-clip-content p-[3px] ring-1 ring-inset ring-gray-400 peer-checked:p-1 peer-checked:ring-2 peer-checked:ring-pink-700 peer-focus:ring-pink-700"
+							className="h-10 w-10 cursor-pointer rounded-full border border-gray-400 bg-clip-content p-0.5 outline-2 -outline-offset-2 outline-pink-700 peer-checked:p-[3px] peer-checked:outline peer-focus:p-[3px] peer-focus:outline"
 							style={{ backgroundColor: css, backgroundImage: css }}
 						/>
 					</label>

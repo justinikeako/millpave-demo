@@ -36,7 +36,7 @@ export function BorderStage() {
 	)
 		return (
 			<StageForm className="space-y-8">
-				<h2 className="mx-auto text-center font-display text-2xl">
+				<h2 className="mx-auto max-w-xs text-center font-display text-2xl">
 					<Balancer>Would you like to add a border?</Balancer>
 				</h2>
 				<p className="mx-auto max-w-sm text-center">

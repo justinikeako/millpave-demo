@@ -7,7 +7,10 @@ export function LocationsSection() {
 		<SplitSection
 			slot={
 				<div className="flex items-center justify-end px-6 pb-16 md:pb-0 md:pr-0 lg:pl-16">
-					<div className="aspect-video w-full border border-gray-400 bg-gray-200 lg:w-3/4" />
+					<iframe
+						src="https://snazzymaps.com/embed/500656"
+						className="aspect-video w-full border border-gray-400 bg-gray-200 lg:w-3/4"
+					/>
 				</div>
 			}
 			tagline="Our Locations"
@@ -21,7 +24,12 @@ export function LocationsSection() {
 						</Link>
 					</Button>
 					<Button asChild intent="secondary">
-						<Link href="/contact">Get Directions</Link>
+						<Link
+							target="_blank"
+							href="https://www.google.com/maps/dir/?api=1&destination=QVB&destination_place_id=ChIJzfGZtUE-244RDig1pOMvezw"
+						>
+							Get Directions
+						</Link>
 					</Button>
 				</>
 			}

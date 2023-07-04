@@ -154,6 +154,7 @@ function Chat({ hide }: { hide: boolean }) {
 												<div className="h-5/6 w-px " />
 												<button
 													type="submit"
+													disabled={input.length === 0 && !isLoading}
 													className="aspect-square h-full hover:bg-gray-100/5 active:bg-gray-100/10 disabled:text-gray-500 "
 												>
 													{isLoading ? (

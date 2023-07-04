@@ -10,6 +10,7 @@ import {
 	SelectContent,
 	SelectItem
 } from './ui/select';
+import { Button } from './button';
 
 type PaverEstimatorProps = {
 	paverDetails: PaverDetails;
@@ -29,7 +30,7 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 
 	return (
 		<section data-ai-hidden className="bg-gray-200 text-gray-900">
-			<div className="align-center flex justify-between p-8">
+			<div className="align-center flex justify-between p-6 lg:p-8">
 				<h2 className="font-display text-lg">Cost Estimator</h2>
 
 				<Select
@@ -53,7 +54,7 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 					</SelectContent>
 				</Select>
 			</div>
-			<div className="space-y-4 px-8 pb-8">
+			<div className="space-y-4 px-6 pb-6 lg:px-8 lg:pb-8">
 				<div className="flex items-center space-x-4">
 					<Label unit={unit} />
 
@@ -88,9 +89,15 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 
 				<hr className="border-gray-300" />
 
-				<div className="space-y-1">
-					<p className="text-lg">{formatPrice(total)}</p>
-					<p className="text-sm">Incl. GCT</p>
+				<div className="flex items-end">
+					<div className="flex-1 space-y-1">
+						<p className="text-lg">{formatPrice(total)}</p>
+						<p className="text-sm">Incl. GCT</p>
+					</div>
+
+					<Button intent="primary" disabled>
+						Add To Quote
+					</Button>
 				</div>
 			</div>
 		</section>

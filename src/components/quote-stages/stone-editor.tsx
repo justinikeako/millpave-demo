@@ -337,10 +337,10 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 			</SheetHeader>
 
 			<SheetBody className="space-y-4">
-				<div className="relative aspect-[3/4] w-full">
+				<div className="relative aspect-video w-full">
 					{currentPaver && currentSku && currentPaver.hasModels ? (
 						<div className="grid h-full w-full place-items-center">
-							<p>Render Placeholder</p>
+							<p>Product gallery will go here.</p>
 						</div>
 					) : (
 						<div className="grid h-full w-full place-items-center">

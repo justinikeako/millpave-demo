@@ -83,7 +83,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 					<Suspense
 						fallback={
 							<div className="grid h-full w-full place-items-center">
-								<p>Loading 3D Model</p>
+								<p>Loading 3D Model...</p>
 							</div>
 						}
 					>

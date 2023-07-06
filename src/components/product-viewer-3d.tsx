@@ -1,4 +1,4 @@
-import { Group, Mesh, MeshStandardMaterial } from 'three';
+import { Box3, Group, Mesh, MeshStandardMaterial } from 'three';
 import { GLTF, USDZExporter } from 'three-stdlib';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
@@ -32,35 +32,64 @@ function ProductViewer3D({ skuId, displayName }: ProductViewer3DProps) {
 
 	const { isIos, isAndroid, isDesktop } = useMobileDetect();
 	const { nodes, materials, scene } = useGLTF(file) as unknown as GLTFResult;
+	const groupRef = useRef<Group>(null);
+	const planeRef = useRef<Mesh>(null);
+
+	useEffect(() => {
+		if (!groupRef.current || !planeRef.current) return;
+
+		const box = new Box3().setFromObject(groupRef.current);
+		const height = box.max.y - box.min.y;
+
+		planeRef.current.position.y = -height / 2 - 0.01;
+	}, [materials.concrete.uuid]);
 
 	return (
 		<>
 			<div className="absolute inset-0">
 				<Canvas
-					camera={{ position: [0, 0.45, 0], near: 0.01, far: 2, fov: 45 }}
+					camera={{ position: [0, 4.5, 0], near: 0.01, far: 2000, fov: 45 }}
+					shadows="soft"
 				>
 					<OrbitControls
 						enablePan={false}
-						minDistance={0.3}
-						maxDistance={0.6}
+						minDistance={1}
+						maxDistance={10}
 						minPolarAngle={0}
 						maxPolarAngle={Math.PI / 2}
 					/>
 
-					<ambientLight />
-					<pointLight position={[-2, -2, 2]} intensity={0.5} />
-					<pointLight position={[-2, 2, -2]} intensity={1} />
+					<ambientLight intensity={0.25} />
 
-					<group dispose={null}>
+					<directionalLight
+						castShadow
+						position={[-20, 15, -10]}
+						intensity={1}
+						shadow-mapSize={1024}
+					/>
+					<pointLight position={[5, 1, -5]} intensity={0.25} />
+
+					<group ref={groupRef} scale={[10, 10, 10]}>
 						{Object.entries(nodes).map(([, { id, geometry, position }]) => (
 							<mesh
 								key={id}
 								geometry={geometry}
 								material={materials.concrete}
 								position={position}
+								castShadow
 							/>
 						))}
 					</group>
+
+					<mesh
+						receiveShadow
+						position={[0, -0.32, 0]}
+						rotation={[-Math.PI / 2, 0, 0]}
+						ref={planeRef}
+					>
+						<planeBufferGeometry attach="geometry" args={[100, 100]} />
+						<meshStandardMaterial attach="material" color="#ffffff" />
+					</mesh>
 				</Canvas>
 			</div>
 

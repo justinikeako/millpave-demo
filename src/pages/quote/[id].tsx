@@ -50,7 +50,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 			<Main className="space-y-16 py-8 lg:py-16">
 				<h2 className="text-center font-display text-2xl">
-					Here's your final quote.
+					Here is your final quote.
 				</h2>
 				<div className="flex flex-col gap-16 xl:flex-row">
 					<div className="flex-1 space-y-4">

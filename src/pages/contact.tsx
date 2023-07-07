@@ -177,24 +177,24 @@ function Page() {
 							<div className="flex gap-4">
 								<div className="flex-1 space-y-2">
 									<label htmlFor="name" className="block font-semibold">
-										Your Name
+										What is your name?
 									</label>
 									<input
 										id="name"
 										type="text"
-										className="w-full rounded-sm border border-gray-400 bg-gray-200 p-4 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
-										placeholder="Jane Doe"
+										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+										placeholder="E.g. Jane Doe"
 									/>
 								</div>
 								<div className="flex-1 space-y-2">
 									<label htmlFor="email" className="block font-semibold">
-										Your Email
+										What is your email?
 									</label>
 									<input
 										id="email"
 										type="email"
-										className="w-full rounded-sm border border-gray-400 bg-gray-200 p-4 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
-										placeholder="janedoe@example.com"
+										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+										placeholder="E.g. janedoe@example.com"
 									/>
 								</div>
 							</div>
@@ -205,10 +205,9 @@ function Page() {
 								</label>
 								<textarea
 									id="inquiry"
-									cols={30}
-									rows={10}
+									rows={7}
 									placeholder="Describe your inquiry..."
-									className="w-full rounded-sm border border-gray-400 bg-gray-200 p-4 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+									className="w-full rounded-sm border border-gray-400 bg-gray-50 p-3 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
 								></textarea>
 							</div>
 							<Button intent="primary" type="submit" className="mx-auto">

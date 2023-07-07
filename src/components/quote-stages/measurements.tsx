@@ -80,7 +80,7 @@ function MeasurementInput({
 			<label htmlFor={fieldName} className="font-semibold">
 				{label}
 			</label>
-			<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
+			<div className="flex h-12 w-full rounded-sm border border-gray-400 bg-gray-50 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 				<input
 					{...register(fieldName, {
 						required,
@@ -98,7 +98,7 @@ function MeasurementInput({
 					type="number"
 					inputMode="decimal"
 					step="any"
-					className="no-arrows w-fill w-full flex-1  bg-transparent p-4 outline-none"
+					className="no-arrows w-fill h-full w-full  flex-1 bg-transparent pl-3 outline-none"
 					placeholder={placeholder}
 				/>
 
@@ -115,7 +115,10 @@ function UnitLabel({ dimension }: { dimension: '1D' | '2D' }) {
 	const unit2D = ('sq' + unit) as Unit2D;
 
 	return (
-		<label htmlFor="measurements.unit" className="p-4 pl-0 text-base">
+		<label
+			htmlFor="measurements.unit"
+			className="flex h-full items-center pr-3 text-base"
+		>
 			{unitDisplayNameDictionary[dimension === '1D' ? unit : unit2D][0]}
 		</label>
 	);
@@ -185,7 +188,7 @@ function CircleInputs() {
 							<label htmlFor="diameter" className="font-semibold">
 								Diameter
 							</label>
-							<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
+							<div className="flex h-12 w-full rounded-sm border border-gray-400 bg-gray-50 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 								<input
 									{...field}
 									value={diameter}
@@ -194,7 +197,7 @@ function CircleInputs() {
 									type="number"
 									inputMode="decimal"
 									step="any"
-									className="no-arrows w-full flex-1 bg-transparent p-4 outline-none"
+									className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none"
 									placeholder="Amount"
 								/>
 								<UnitLabel dimension="1D" />
@@ -204,7 +207,7 @@ function CircleInputs() {
 							<label htmlFor="circumference" className="font-semibold">
 								Circumference
 							</label>
-							<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
+							<div className="flex h-12 w-full rounded-sm border border-gray-400 bg-gray-50 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 								<input
 									{...field}
 									value={circumference}
@@ -215,7 +218,7 @@ function CircleInputs() {
 									type="number"
 									inputMode="decimal"
 									step="any"
-									className="no-arrows w-full flex-1 bg-transparent p-4 outline-none"
+									className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none"
 									placeholder="Amount"
 								/>
 								<UnitLabel dimension="1D" />

@@ -48,13 +48,13 @@ function ProductViewer3D({ skuId, displayName }: ProductViewer3DProps) {
 		<>
 			<div className="absolute inset-0">
 				<Canvas
-					camera={{ position: [0, 4.5, 0], near: 0.01, far: 2000, fov: 45 }}
+					camera={{ position: [0, 4.5, 0], near: 0.01, far: 20, fov: 45 }}
 					shadows="soft"
 				>
 					<OrbitControls
 						enablePan={false}
-						minDistance={1}
-						maxDistance={10}
+						minDistance={2}
+						maxDistance={7.5}
 						minPolarAngle={0}
 						maxPolarAngle={Math.PI / 2}
 					/>

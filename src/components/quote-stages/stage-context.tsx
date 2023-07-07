@@ -16,12 +16,14 @@ import {
 	Stone1D,
 	Stone2D,
 	StoneProject,
-	Unit
+	Unit,
+	Unit1D
 } from '~/types/quote';
 import { roundTo } from '~/utils/number';
 import { PaverDetails } from '~/types/product';
 import { isEqual } from 'lodash-es';
 import { getQuoteDetails, roundFractionDigits } from '~/lib/utils';
+import { maximumStageIndex, stages } from './stages';
 
 function toFt(
 	value: number,
@@ -132,12 +134,9 @@ function getInfill(area: number, infill: Infill) {
 	return { area: Math.max(0, area), items: stones };
 }
 
-function getBorder(border: Border) {
+function getBorder(border: Border, inheritedUnit: Unit1D) {
 	let borderArea = 0;
-	let runningFoot = toFt(
-		border.runningLength.value,
-		border.runningLength.unit === 'auto' ? 'ft' : border.runningLength.unit
-	);
+	let runningFoot = toFt(border.runningLength.value, inheritedUnit);
 	const orientation = border.orientation;
 
 	const stones: Item[] = [];
@@ -356,7 +355,7 @@ function getPolymericSand(area: number) {
 
 function getQuote(project: StoneProject) {
 	const projectArea = calculateProjectArea(project.shape, project.measurements);
-	const border = getBorder(project.border);
+	const border = getBorder(project.border, project.measurements.unit);
 	const infill = getInfill(projectArea - border.area, project.infill);
 
 	const mergedItems = mergeItems([...infill.items, ...border.items]);
@@ -399,28 +398,31 @@ function getQuote(project: StoneProject) {
 
 type StageContextValue = {
 	quote: Quote;
-	navDirection: number;
-	skippedStages: (boolean | null | undefined)[];
-	stagesValidity: boolean[];
+	stageStatus: {
+		id: string;
+		valid: boolean | undefined;
+		skipped: boolean | null | undefined;
+	}[];
 	currentStageIndex: number;
-	queuedStageIndex: number;
-	setQuoteId(quoteId: string): void;
-	setStageIndex(newStageIndex: number): void;
+	getStageStatus(stageId: string | number): {
+		valid: boolean;
+		skipped: boolean | null | undefined;
+	};
+	setStageIndex(stage: number): void;
 	queueStageIndex(newStageIndex: number): void;
-	setStageValidity(stageIndex: number, stageValidity: boolean): void;
-	setStageSkipped(stageIndex: number, stageIsSkipped: boolean): void;
-	commitQueuedIndex(): void;
+	setQuoteId(quoteId: string): void;
+	setValidity(stage: string | number, valid: boolean): void;
+	setSkipped(stage: string | number, skipped: boolean): void;
+	commitQueue(): void;
 };
 
 export const StageContext = createContext<StageContextValue>(
 	{} as StageContextValue
 );
 
-type StageProviderProps = React.PropsWithChildren<{
-	maximumStageIndex: number;
-}>;
-
 const defaultValues: StoneProject = {
+	email: '',
+
 	shape: '' as 'rect',
 
 	measurements: {
@@ -470,65 +472,82 @@ const defaultValues: StoneProject = {
 	]
 };
 
-export function StageProvider(props: StageProviderProps) {
+export function StageProvider(props: React.PropsWithChildren) {
 	const formMethods = useForm<StoneProject>({
 		defaultValues: defaultValues
 	});
 
-	const [[currentStageIndex, navDirection], _setCurrentStageIndex] = useState([
-		0, 0
-	]);
+	const [currentStageIndex, setStageIndex] = useState(0);
 
-	function setCurrentStageIndex(newStageIndex: number) {
-		_setCurrentStageIndex(([oldStageIndex]) => {
-			const newDirection = newStageIndex - oldStageIndex;
-
-			return [newStageIndex, newDirection];
-		});
-	}
+	const currentStage = stages[currentStageIndex]?.id;
 
 	const [queuedStageIndex, queueStageIndex] = useState(0);
-	const [stagesValidity, setStagesValidity] = useState<boolean[]>([
-		false,
-		false,
-		false,
-		false,
-		true
-	]);
 
-	const [skippedStages, setSkippedStages] = useState<
-		(boolean | null | undefined)[]
-	>([undefined, undefined, null, null, undefined]);
+	const [stageStatus, setStageStatus] = useState<
+		{
+			id: string;
+			valid: boolean;
+			skipped: boolean | null | undefined;
+		}[]
+	>(
+		stages.map(({ id, optional }) => ({
+			id,
+			skipped: optional,
+			valid: false
+		}))
+	);
 
-	function setStageSkipped(stageIndex: number, stageIsSkipped: boolean) {
-		setSkippedStages((currentSkippedStages) => {
-			const newSkippedStages = structuredClone(currentSkippedStages);
+	function setSkipped(selected: string | number, skipped: boolean) {
+		setStageStatus(
+			stageStatus.map((stageStatus, stageIndex) => {
+				const match =
+					typeof selected === 'string'
+						? selected === stageStatus.id
+						: selected === stageIndex;
 
-			newSkippedStages[stageIndex] = stageIsSkipped;
+				if (match) return { ...stageStatus, skipped };
 
-			return newSkippedStages;
-		});
+				return stageStatus;
+			})
+		);
 	}
 
-	function setStageValidity(stageIndex: number, stageValidity: boolean) {
-		setStagesValidity((currentStagesValidity) => {
-			const newStagesValidity = structuredClone(currentStagesValidity);
+	function setValidity(selected: string | number, valid: boolean) {
+		setStageStatus(
+			stageStatus.map((stageStatus, stageIndex) => {
+				const match =
+					typeof selected === 'string'
+						? selected === stageStatus.id
+						: selected === stageIndex;
+				if (match) return { ...stageStatus, valid };
 
-			newStagesValidity[stageIndex] = stageValidity;
+				return stageStatus;
+			})
+		);
+	}
 
-			return newStagesValidity;
-		});
+	function getStageStatus(selected: string | number) {
+		const index =
+			typeof selected === 'string'
+				? stages.findIndex((stage) => stage.id === selected)
+				: selected;
+
+		const status = stageStatus[index];
+
+		if (!status) throw new Error(`Stage '${selected}' not found.`);
+
+		return status;
 	}
 
 	// Handle form validity change
 	useEffect(() => {
-		setStageValidity(currentStageIndex, formMethods.formState.isValid);
+		setValidity(currentStageIndex, formMethods.formState.isValid);
 	}, [currentStageIndex, formMethods.formState.isValid]);
 
-	const commitQueuedIndex = useCallback(() => {
-		if (queuedStageIndex >= 0 && queuedStageIndex <= props.maximumStageIndex)
-			setCurrentStageIndex(queuedStageIndex);
-	}, [queuedStageIndex, props.maximumStageIndex]);
+	function commitQueue() {
+		if (queuedStageIndex >= 0 && queuedStageIndex <= maximumStageIndex)
+			setStageIndex(queuedStageIndex);
+	}
 
 	const [previousProject, setPreviousProject] = useState(defaultValues);
 	const [quote, setQuote] = useState<Quote>({
@@ -548,7 +567,7 @@ export function StageProvider(props: StageProviderProps) {
 	}
 
 	// Generate the quote when on the review stage. Regenerating if anything has changed.
-	if (currentStageIndex === 4) {
+	if (currentStage === 'review') {
 		const currentProject = formMethods.watch();
 
 		if (!isEqual(previousProject, currentProject)) {
@@ -565,17 +584,15 @@ export function StageProvider(props: StageProviderProps) {
 		<StageContext.Provider
 			value={{
 				quote,
-				navDirection,
-				skippedStages,
-				stagesValidity,
+				stageStatus,
 				currentStageIndex,
-				queuedStageIndex,
-				setQuoteId,
-				setStageIndex: setCurrentStageIndex,
+				getStageStatus,
+				setStageIndex,
 				queueStageIndex,
-				commitQueuedIndex,
-				setStageValidity,
-				setStageSkipped
+				setQuoteId,
+				commitQueue,
+				setValidity,
+				setSkipped
 			}}
 		>
 			<FormProvider {...formMethods}>{props.children}</FormProvider>

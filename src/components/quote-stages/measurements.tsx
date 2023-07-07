@@ -100,6 +100,7 @@ function MeasurementInput({
 					step="any"
 					className="no-arrows w-fill h-full w-full  flex-1 bg-transparent pl-3 outline-none"
 					placeholder={placeholder}
+					onClick={(e) => e.currentTarget.select()}
 				/>
 
 				<UnitLabel dimension={dimension} />
@@ -192,13 +193,14 @@ function CircleInputs() {
 								<input
 									{...field}
 									value={diameter}
-									onChange={(e) => handleDiameterChange(e.target.valueAsNumber)}
 									id="diameter"
 									type="number"
 									inputMode="decimal"
 									step="any"
 									className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none"
 									placeholder="Amount"
+									onClick={(e) => e.currentTarget.select()}
+									onChange={(e) => handleDiameterChange(e.target.valueAsNumber)}
 								/>
 								<UnitLabel dimension="1D" />
 							</div>
@@ -211,15 +213,16 @@ function CircleInputs() {
 								<input
 									{...field}
 									value={circumference}
-									onChange={(e) =>
-										handleCircumferenceChange(e.target.valueAsNumber)
-									}
 									id="circumference"
 									type="number"
 									inputMode="decimal"
 									step="any"
 									className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none"
 									placeholder="Amount"
+									onClick={(e) => e.currentTarget.select()}
+									onChange={(e) =>
+										handleCircumferenceChange(e.target.valueAsNumber)
+									}
 								/>
 								<UnitLabel dimension="1D" />
 							</div>

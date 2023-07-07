@@ -6,19 +6,19 @@ import Balancer from 'react-wrap-balancer';
 
 export function InfillStage() {
 	const {
-		skippedStages,
 		currentStageIndex,
+		getStageStatus,
 		setStageIndex,
-		setStageValidity,
-		setStageSkipped
+		setValidity,
+		setSkipped
 	} = useStageContext();
 
-	const isSkipped = skippedStages[2];
+	const isSkipped = getStageStatus('infill').skipped;
 
 	if (isSkipped === null || isSkipped === true)
 		return (
 			<StageForm className="space-y-8">
-				<h2 className="mx-auto max-w-xs text-center font-display text-2xl">
+				<h2 className="mx-auto max-w-sm text-center font-display text-2xl">
 					<Balancer>Would you like to add an infill?</Balancer>
 				</h2>
 				<p className="mx-auto max-w-sm text-center">
@@ -33,8 +33,8 @@ export function InfillStage() {
 						intent="secondary"
 						type="button"
 						onClick={() => {
-							setStageValidity(currentStageIndex, true);
-							setStageSkipped(currentStageIndex, true);
+							setValidity(currentStageIndex, true);
+							setSkipped(currentStageIndex, true);
 							setStageIndex(currentStageIndex + 1);
 						}}
 					>
@@ -43,7 +43,7 @@ export function InfillStage() {
 					<Button
 						intent="primary"
 						type="button"
-						onClick={() => setStageSkipped(currentStageIndex, false)}
+						onClick={() => setSkipped(currentStageIndex, false)}
 					>
 						Add Infill
 					</Button>
@@ -53,7 +53,7 @@ export function InfillStage() {
 
 	return (
 		<StageForm className="space-y-12">
-			<h2 className="text-center font-display text-2xl">
+			<h2 className="mx-auto max-w-sm text-center font-display text-2xl">
 				Customize your infill...
 			</h2>
 

@@ -18,17 +18,17 @@ import { Icon } from '../icon';
 
 export function BorderStage() {
 	const {
-		skippedStages,
+		getStageStatus,
 		currentStageIndex,
 		setStageIndex,
-		setStageValidity,
-		setStageSkipped
+		setValidity,
+		setSkipped
 	} = useStageContext();
 	const { watch } = useFormContext<StoneProject>();
 
 	const hasStones = watch('border.stones').length > 0;
-	const isSkipped = skippedStages[3];
-	const infillStageIsSkipped = skippedStages[2];
+	const isSkipped = getStageStatus('border').skipped;
+	const infillStageIsSkipped = getStageStatus('infill').skipped;
 
 	if (
 		infillStageIsSkipped === false &&
@@ -36,7 +36,7 @@ export function BorderStage() {
 	)
 		return (
 			<StageForm className="space-y-8">
-				<h2 className="mx-auto max-w-xs text-center font-display text-2xl">
+				<h2 className="mx-auto max-w-sm text-center font-display text-2xl">
 					<Balancer>Would you like to add a border?</Balancer>
 				</h2>
 				<p className="mx-auto max-w-sm text-center">
@@ -50,8 +50,8 @@ export function BorderStage() {
 						intent="secondary"
 						type="button"
 						onClick={() => {
-							setStageValidity(currentStageIndex, true);
-							setStageSkipped(currentStageIndex, true);
+							setValidity(currentStageIndex, true);
+							setSkipped(currentStageIndex, true);
 							setStageIndex(currentStageIndex + 1);
 						}}
 					>
@@ -60,7 +60,7 @@ export function BorderStage() {
 					<Button
 						intent="primary"
 						type="button"
-						onClick={() => setStageSkipped(currentStageIndex, false)}
+						onClick={() => setSkipped(currentStageIndex, false)}
 					>
 						Add Border
 					</Button>
@@ -70,7 +70,7 @@ export function BorderStage() {
 
 	return (
 		<StageForm className="space-y-12">
-			<h2 className="text-center font-display text-2xl">
+			<h2 className="mx-auto max-w-sm text-center font-display text-2xl">
 				Customize your border...
 			</h2>
 
@@ -85,10 +85,12 @@ function BorderOptions() {
 	const { register, watch, control, setValue } = useFormContext<StoneProject>();
 
 	const runningLengthUnit = watch('border.runningLength.unit');
-
+	const measurementsUnit = watch('measurements.unit');
+	const inheritedUnitDisplayName =
+		unitDisplayNameDictionary[measurementsUnit][0];
 	return (
 		<div className="flex flex-wrap justify-center gap-4">
-			<div className="max-w-xs flex-1 space-y-2">
+			<div className="min-w-full flex-1 space-y-2 xs:min-w-0 xs:max-w-sm">
 				<div className="flex gap-2">
 					<label htmlFor="border.runningLength.value" className="font-semibold">
 						Running Length
@@ -113,14 +115,14 @@ function BorderOptions() {
 						</PopoverContent>
 					</Popover>
 				</div>
-				<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
+				<div className="flex h-12 w-full rounded-sm border border-gray-400 bg-gray-50 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 					<input
 						type="number"
 						id="border.runningLength.value"
 						step="any"
 						{...register('border.runningLength.value', { min: 0.01 })}
 						readOnly={runningLengthUnit === 'auto'}
-						className="no-arrows w-full flex-1 bg-transparent p-4 outline-none read-only:text-gray-400"
+						className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none read-only:text-gray-400"
 						placeholder="Amount"
 					/>
 
@@ -130,7 +132,7 @@ function BorderOptions() {
 						render={(runningLengthUnit) => (
 							<Select
 								value={runningLengthUnit.field.value}
-								onValueChange={(value: Unit1D | 'auto') => {
+								onValueChange={(value: 'auto' | 'inherit') => {
 									if (value === 'auto') {
 										setValue(
 											'border.runningLength.value',
@@ -146,25 +148,18 @@ function BorderOptions() {
 							>
 								<SelectTrigger
 									unstyled
-									className="p-4 pl-0"
+									className="h-full pr-3"
 									id="border.runningLength.unit"
 								>
 									<SelectValue />
 								</SelectTrigger>
 
 								<SelectContent>
-									<SelectItem value="auto">auto (ft)</SelectItem>
-									<SelectItem value="ft">
-										{unitDisplayNameDictionary['ft'][0]}
+									<SelectItem value="auto">
+										auto ({inheritedUnitDisplayName})
 									</SelectItem>
-									<SelectItem value="in">
-										{unitDisplayNameDictionary['in'][0]}
-									</SelectItem>
-									<SelectItem value="m">
-										{unitDisplayNameDictionary['m'][0]}
-									</SelectItem>
-									<SelectItem value="cm">
-										{unitDisplayNameDictionary['cm'][0]}
+									<SelectItem value="inherit">
+										{inheritedUnitDisplayName}
 									</SelectItem>
 								</SelectContent>
 							</Select>
@@ -173,7 +168,7 @@ function BorderOptions() {
 				</div>
 			</div>
 
-			<div className="max-w-xs flex-1 space-y-2">
+			<div className="min-w-full flex-1 space-y-2 xs:min-w-0 xs:max-w-sm">
 				<label className="font-semibold">Stone Orientation</label>
 
 				<Controller

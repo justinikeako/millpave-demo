@@ -34,11 +34,13 @@ export function ReviewStage() {
 
 	return (
 		<StageForm className="space-y-16">
-			<h2 className="text-center font-display text-2xl">Review your items.</h2>
+			<h2 className="text-center font-display text-2xl">
+				Configure your quote.
+			</h2>
 			<div className="flex flex-col gap-16 xl:flex-row">
 				<aside className="space-y-4 xl:order-2">
 					<div className="space-y-4">
-						<h3 className="font-display text-lg">Configure your quote</h3>
+						<h3 className="font-display text-lg">Options</h3>
 
 						<ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap xl:flex-col">
 							{addons.map(({ key, ...addon }, index) => (
@@ -143,7 +145,10 @@ export function ReviewStage() {
 														<p>Loading stock info...</p>
 													) : (
 														<>
-															<p>Order Today. Pick up on-site:</p>
+															<p>
+																Order {hasStock ? 'Now' : 'Today'}. Pick up
+																on-site:
+															</p>
 															<p>
 																Available&nbsp;
 																{hasStock
@@ -198,7 +203,12 @@ export function ReviewStage() {
 													)}
 												</div>
 												<div className="flex flex-1 flex-col items-end gap-2 justify-self-end">
-													<button className="block">Remove</button>
+													<label
+														className="block text-gray-500"
+														htmlFor="finish"
+													>
+														Press "Finish" Edit
+													</label>
 												</div>
 											</div>
 										</div>

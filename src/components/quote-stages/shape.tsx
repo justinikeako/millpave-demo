@@ -11,7 +11,7 @@ type OptionProps = React.PropsWithChildren<{
 }>;
 
 function Option({ value: id, title, subtitle: description }: OptionProps) {
-	const { setStageValidity } = useStageContext();
+	const { setValidity } = useStageContext();
 	const formMethods = useFormContext<StoneProject>();
 
 	const { register, resetField } = formMethods;
@@ -23,7 +23,7 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 					required: true,
 					onChange: () => {
 						resetField('measurements');
-						setStageValidity(1, false);
+						setValidity(1, false);
 					}
 				})}
 				id={id}
@@ -38,8 +38,12 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 				<div className="absolute right-2 top-2 h-6 w-6 rounded-full border border-gray-400 bg-clip-content p-1 outline-2 -outline-offset-2 outline-pink-700 peer-checked:group-[]:bg-pink-700 peer-checked:group-[]:outline" />
 				<div className="flex-1" />
 				<div className="z-10">
-					<p className="font-semibold peer-checked:group-[]:text-pink-700">{title}</p>
-					<p className="text-sm text-gray-500 peer-checked:group-[]:text-pink-700">{description}</p>
+					<p className="font-semibold peer-checked:group-[]:text-pink-700">
+						{title}
+					</p>
+					<p className="text-sm text-gray-500 peer-checked:group-[]:text-pink-700">
+						{description}
+					</p>
 				</div>
 			</label>
 		</li>

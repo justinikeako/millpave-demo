@@ -53,7 +53,7 @@ type StoneEditorProps = {
 };
 
 export function StoneEditor(props: StoneEditorProps) {
-	const { setStageValidity } = useStageContext();
+	const { setValidity } = useStageContext();
 	const { control } = useFormContext<StoneProject>();
 
 	const { fields, append, update, remove } = useFieldArray({
@@ -63,16 +63,16 @@ export function StoneEditor(props: StoneEditorProps) {
 	});
 
 	const currentStageValidity = fields.length > 0;
-	const [currentStagePreviousValidity, setcurrentStagePreviousValidity] =
+	const [currentStagePreviousValidity, setCurrentStagePreviousValidity] =
 		useState(currentStageValidity);
 
 	if (currentStagePreviousValidity !== currentStageValidity) {
-		setStageValidity(props.stageIndex, fields.length > 0);
+		setValidity(props.stageIndex, fields.length > 0);
 
-		setcurrentStagePreviousValidity(currentStageValidity);
+		setCurrentStagePreviousValidity(currentStageValidity);
 	}
 
-	const [editIndex, setEditIndex] = useState(0);
+	const [editIndex, setEditIndex] = useState<number | null>(null);
 	const [sheetOpen, setSheetOpen] = useState(false);
 
 	const defaultSkuQuery = api.product.getSkuById.useQuery(
@@ -86,7 +86,7 @@ export function StoneEditor(props: StoneEditorProps) {
 	const editStone = (index: number, stone: Stone) => update(index, stone);
 
 	function handleSubmit(stone: Stone) {
-		if (editIndex === -1) addStone(stone);
+		if (editIndex === null) addStone(stone);
 		else editStone(editIndex, stone);
 
 		setSheetOpen(false);
@@ -134,7 +134,7 @@ export function StoneEditor(props: StoneEditorProps) {
 							or
 						</span>
 						<div
-							data-sheet-open={(sheetOpen && editIndex === -1) || undefined}
+							data-sheet-open={(sheetOpen && editIndex === null) || undefined}
 							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline group-data-[has-items=true]:flex-1 group-data-[has-items=true]:flex-row md:h-64 md:flex-col md:items-stretch md:group-data-[has-items=true]:h-auto md:group-data-[has-items=true]:items-center"
 						>
 							<div className="aspect-square h-full shrink-0 group-data-[has-items=true]:aspect-square group-data-[has-items=true]:h-24 group-data-[has-items=true]:flex-none md:aspect-auto md:h-auto md:flex-1" />
@@ -144,7 +144,7 @@ export function StoneEditor(props: StoneEditorProps) {
 									<SheetTrigger
 										className="w-full [text-align:inherit] after:absolute after:inset-0"
 										onClick={() => {
-											setEditIndex(-1);
+											setEditIndex(null);
 										}}
 									>
 										<span className="group-data-[has-items=false]:hidden">
@@ -185,7 +185,7 @@ export function StoneEditor(props: StoneEditorProps) {
 					{defaultSku && (
 						<StoneForm
 							initialValues={
-								fields[editIndex] || {
+								(editIndex && fields[editIndex]) || {
 									skuId: defaultSku.id,
 									metadata: {
 										displayName: defaultSku.displayName,
@@ -195,6 +195,7 @@ export function StoneEditor(props: StoneEditorProps) {
 									coverage: { value: 1, unit: 'fr' }
 								}
 							}
+							intent={editIndex === null ? 'add' : 'save'}
 							onSubmit={handleSubmit}
 							dimension={props.dimension}
 						/>
@@ -261,10 +262,16 @@ function StoneListItem({
 type StoneFormProps = {
 	dimension: '1D' | '2D';
 	initialValues: Stone;
+	intent: 'add' | 'save';
 	onSubmit(stone: Stone): void;
 };
 
-function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
+function StoneForm({
+	dimension,
+	initialValues,
+	intent,
+	onSubmit
+}: StoneFormProps) {
 	const formMethods = useForm<Stone>({
 		defaultValues: initialValues
 	});
@@ -331,7 +338,7 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 						size="small"
 						disabled={currentSku === undefined}
 					>
-						<span>Add</span>
+						<span className="capitalize">{intent}</span>
 					</Button>
 				</div>
 			</SheetHeader>
@@ -396,24 +403,28 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 
 								<PopoverContent>
 									Coverage refers to how much space this paver should take up.
-									You can measure it using fixed units like square feet (ft²) or
-									square meters (m²). If you have a specific ratio in mind, you
-									can use the &quot;part&quot; unit to specify the portion or
-									fraction of that ratio you want this paver to cover.
+									You can measure it using fixed units like&nbsp;
+									{dimension === '1D'
+										? 'feet (ft) or meters (m)'
+										: 'square feet (ft²) or square meters (m²)'}
+									. If you have a specific ratio in mind, you can use the
+									&quot;part&quot; unit to specify the portion or fraction of
+									that ratio you want this paver to cover.
 								</PopoverContent>
 							</Popover>
 						</>
 					}
 				>
-					<div className="flex w-full rounded-sm border border-gray-400 bg-gray-200 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
+					<div className="flex h-12 w-full rounded-sm border border-gray-400 bg-gray-50 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 						<input
 							{...register('coverage.value', { min: 0.01 })}
 							id="coverage.value"
 							type="number"
 							inputMode="decimal"
 							step="any"
-							className="no-arrows w-full flex-1 bg-transparent p-4 outline-none"
+							className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none"
 							placeholder="Amount"
+							onClick={(e) => e.currentTarget.select()}
 						/>
 
 						<Controller
@@ -426,7 +437,7 @@ function StoneForm({ dimension, initialValues, onSubmit }: StoneFormProps) {
 										coverageUnit.field.onChange(newUnit)
 									}
 								>
-									<SelectTrigger unstyled className="h-full py-4 pr-4">
+									<SelectTrigger unstyled className="h-full pr-2">
 										<SelectValue />
 									</SelectTrigger>
 

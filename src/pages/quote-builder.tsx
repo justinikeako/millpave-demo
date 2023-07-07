@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import { ShapeStage } from '~/components/quote-stages/shape';
-import { MeasurementsStage } from '~/components/quote-stages/measurements';
-import { InfillStage } from '~/components/quote-stages/infill';
-import { BorderStage } from '~/components/quote-stages/border';
-import { ReviewStage } from '~/components/quote-stages/review';
 import { Button } from '~/components/button';
 import {
 	useStageContext,
@@ -19,6 +14,8 @@ import { Icon } from '~/components/icon';
 import { Balancer } from 'react-wrap-balancer';
 import { Main } from '~/components/main';
 import * as Dialog from '@radix-ui/react-dialog';
+import { maximumStageIndex, stages } from '~/components/quote-stages/stages';
+import { useRouter } from 'next/router';
 
 /**
  * SPEC
@@ -55,7 +52,7 @@ function Page() {
 				}
 			`}</style>
 
-			<StageProvider maximumStageIndex={maximumStageIndex}>
+			<StageProvider>
 				<Main className="flex min-h-full flex-col justify-center gap-y-24 overflow-x-hidden py-32">
 					<SplashScreen
 						open={showSplashScreen}
@@ -129,14 +126,6 @@ function SplashScreen({
 	);
 }
 
-const stages = [
-	ShapeStage,
-	MeasurementsStage,
-	InfillStage,
-	BorderStage,
-	ReviewStage
-];
-
 const variants: Variants = {
 	enter: (direction: number) => ({
 		x: direction > 0 ? 50 : -50,
@@ -158,15 +147,24 @@ const variants: Variants = {
 };
 
 function CurrentStage() {
-	const { navDirection, currentStageIndex } = useStageContext();
+	const { currentStageIndex } = useStageContext();
+	const [tuple, setTuple] = useState<[number, number]>([0, currentStageIndex]);
 
-	const CurrentStage = stages[currentStageIndex];
+	if (tuple[1] !== currentStageIndex) {
+		setTuple([tuple[1], currentStageIndex]);
+	}
+
+	const previousStageIndex = tuple[0];
+
+	const direction = currentStageIndex > previousStageIndex ? 1 : -1;
+
+	const CurrentStage = stages[currentStageIndex]?.component;
 
 	return (
-		<AnimatePresence initial={false} mode="wait" custom={navDirection}>
+		<AnimatePresence initial={false} mode="wait" custom={direction}>
 			<motion.div
 				key={'stage-' + currentStageIndex}
-				custom={navDirection}
+				custom={direction}
 				variants={variants}
 				initial="enter"
 				animate="center"
@@ -178,29 +176,20 @@ function CurrentStage() {
 	);
 }
 
-const maximumStageIndex = stages.length - 1;
-
-const stageDisplayNames = [
-	'Shape',
-	'Dimensions',
-	'Infill',
-	'Border',
-	'Review Items'
-];
-
 function StageFooter() {
 	const {
 		currentStageIndex,
-		stagesValidity,
-		skippedStages,
+		stageStatus,
+		getStageStatus,
 		setStageIndex,
 		queueStageIndex,
-		quote,
-		setQuoteId
+		quote
 	} = useStageContext();
+	const router = useRouter();
 
-	const currentStageIsValid = stagesValidity[currentStageIndex];
-	const maxValidIndex = countConsecutiveTrueValues(stagesValidity);
+	const currentStageIsValid = getStageStatus(currentStageIndex).valid;
+	const currentStageSkipped = getStageStatus(currentStageIndex).skipped;
+	const maxValidIndex = getMaxValid(stageStatus);
 	const createQuote = api.quote.addItems.useMutation();
 
 	const reachedLastStage = currentStageIndex >= maximumStageIndex;
@@ -213,14 +202,16 @@ function StageFooter() {
 			>
 				<nav className="hidden md:block">
 					<ul className="flex select-none items-center justify-center gap-3">
-						{stageDisplayNames.map((displayName, index) => (
-							<React.Fragment key={'stage-selector-' + index}>
+						{stages.map(({ id, displayName }, index) => (
+							<React.Fragment key={'stage-select-' + id}>
 								<StageSelector
-									index={index}
+									stageIndex={index}
 									disabled={
-										index === 4
-											? maxValidIndex < 3
-											: index >
+										id === 'review'
+											? // Review stage is only enabled if the stages that preceed it are valid
+											  maxValidIndex < 3
+											: // For all other stages, only enable the following stage IF the current stage is valid
+											  index >
 											  (currentStageIsValid
 													? maxValidIndex + 1
 													: maxValidIndex)
@@ -228,7 +219,7 @@ function StageFooter() {
 								>
 									{displayName}
 								</StageSelector>
-								{index < stageDisplayNames.length - 1 && (
+								{index < maximumStageIndex && (
 									<li className="[li:has(:disabled)+&]:text-gray-400">
 										&middot;
 									</li>
@@ -248,34 +239,29 @@ function StageFooter() {
 					>
 						Back
 					</Button>
-					{reachedLastStage && !createQuote.isSuccess && (
+					{reachedLastStage && (
 						<Button
 							intent="primary"
 							type="submit"
 							form="stage-form"
+							id="finish"
+							disabled={createQuote.isLoading}
 							className="flex-1 md:flex-none"
-							disabled
 							onClick={async () => {
 								const { quoteId } = await createQuote.mutateAsync({
 									items: quote.items
 								});
 
-								setQuoteId(quoteId);
+								router.push(`/quote/${quoteId}`);
 							}}
 						>
-							Add {pluralize(quote.items.length, ['Item', 'Items'])} to Quote
-						</Button>
-					)}
-					{reachedLastStage && createQuote.isSuccess && (
-						<Button
-							intent="primary"
-							type="submit"
-							form="stage-form"
-							className="flex-1 md:flex-none"
-							disabled
-							asChild
-						>
-							<Link href={`/quote/${quote.id}`}>Go to Quote #{quote.id}</Link>
+							{createQuote.isLoading ? (
+								<>Redirecting</>
+							) : (
+								<>
+									Finish <Icon name="arrow_right_alt" />
+								</>
+							)}
 						</Button>
 					)}
 					{!reachedLastStage && (
@@ -284,10 +270,7 @@ function StageFooter() {
 							type="submit"
 							form="stage-form"
 							className="flex-1 md:flex-none"
-							disabled={
-								!currentStageIsValid ||
-								skippedStages[currentStageIndex] === null
-							}
+							disabled={!currentStageIsValid || currentStageSkipped === null}
 							onClick={() => queueStageIndex(currentStageIndex + 1)}
 						>
 							Next
@@ -300,18 +283,18 @@ function StageFooter() {
 }
 
 type StageSelectorProps = React.PropsWithChildren<{
-	index: number;
+	stageIndex: number;
 	disabled: boolean;
 }>;
 
-function StageSelector({ index, disabled, children }: StageSelectorProps) {
+function StageSelector({ stageIndex, disabled, children }: StageSelectorProps) {
 	const { currentStageIndex, setStageIndex, queueStageIndex } =
 		useStageContext();
 
-	const selected = currentStageIndex === index,
-		completed = currentStageIndex > index;
+	const selected = currentStageIndex === stageIndex,
+		completed = currentStageIndex > stageIndex;
 
-	const shouldSubmit = !disabled && index > currentStageIndex;
+	const shouldSubmit = !disabled && stageIndex > currentStageIndex;
 
 	return (
 		<li>
@@ -324,8 +307,8 @@ function StageSelector({ index, disabled, children }: StageSelectorProps) {
 				data-completed={completed || undefined}
 				className="flex items-center gap-2 disabled:cursor-not-allowed disabled:text-gray-400 data-[completed]:font-semibold data-[selected]:font-semibold data-[selected]:text-gray-900"
 				onClick={() => {
-					if (shouldSubmit) queueStageIndex(index);
-					else setStageIndex(index);
+					if (shouldSubmit) queueStageIndex(stageIndex);
+					else setStageIndex(stageIndex);
 				}}
 			>
 				{children}
@@ -334,11 +317,11 @@ function StageSelector({ index, disabled, children }: StageSelectorProps) {
 	);
 }
 
-function countConsecutiveTrueValues(arr: boolean[]): number {
+function getMaxValid(arr: { valid: boolean | undefined }[]): number {
 	let count = 0;
 
 	for (let i = 0; i < arr.length; i++) {
-		if (arr[i]) count++;
+		if (arr[i]?.valid !== false) count++;
 		else break; // Exit the loop if a false value is encountered
 	}
 

@@ -80,7 +80,7 @@ export type Infill = z.infer<typeof Infill>;
 
 const BorderLength = z.object({
 	value: z.number(),
-	unit: z.union([Unit1D, z.enum(['auto'])])
+	unit: z.enum(['auto', 'inherit'])
 });
 
 const BorderOrientation = z.enum(['SOLDIER_ROW', 'TIP_TO_TIP']);
@@ -94,6 +94,8 @@ export const Border = z.object({
 export type Border = z.infer<typeof Border>;
 
 export const StoneProject = z.object({
+	email: z.string(),
+
 	shape: Shape,
 
 	measurements: Measurements,

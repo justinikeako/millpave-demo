@@ -84,8 +84,13 @@ export const unitDisplayNameDictionary: {
 	sqcm: ['cm²', 'cm²']
 };
 
-export function pluralize(value: number, [singular, plural]: [string, string]) {
-	return value + ' ' + (value === 1 ? singular : plural);
+export function pluralize(
+	value: number | string,
+	[singular, plural]: [string, string]
+) {
+	const valueAsNumber = typeof value === 'string' ? parseFloat(value) : value;
+
+	return valueAsNumber + ' ' + (valueAsNumber === 1 ? singular : plural);
 }
 
 export function stopPropagate(

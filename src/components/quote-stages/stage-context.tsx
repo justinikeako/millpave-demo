@@ -536,7 +536,9 @@ export function StageProvider(props: React.PropsWithChildren) {
 	// Handle form validity change
 	useEffect(() => {
 		setValidity(currentStageIndex, formMethods.formState.isValid);
-	}, [currentStageIndex, setValidity, formMethods.formState.isValid]);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentStageIndex, formMethods.formState.isValid]);
 
 	function commitQueue() {
 		if (queuedStageIndex >= 0 && queuedStageIndex <= maximumStageIndex)

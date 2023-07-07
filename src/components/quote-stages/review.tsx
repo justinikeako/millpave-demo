@@ -207,7 +207,7 @@ export function ReviewStage() {
 														className="block text-gray-500"
 														htmlFor="finish"
 													>
-														Press "Finish" Edit
+														Press &quot;Finish&quot; Edit
 													</label>
 												</div>
 											</div>

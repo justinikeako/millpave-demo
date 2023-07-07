@@ -8,7 +8,6 @@ import { createInnerTRPCContext } from '~/server/api/trpc';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { appRouter } from '~/server/api/root';
 import { Main } from '~/components/main';
-import { useRouter } from 'next/router';
 import { Button } from '~/components/button';
 import { formatNumber, formatPrice, formatRestockDate } from '~/utils/format';
 import Link from 'next/link';
@@ -18,8 +17,6 @@ import { addWeeks } from 'date-fns';
 import { Balancer } from 'react-wrap-balancer';
 
 function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const router = useRouter();
-
 	const quoteId = props.id;
 
 	const quoteQuery = api.quote.getById.useQuery(
@@ -27,7 +24,6 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 		{ refetchOnWindowFocus: false }
 	);
 
-	const deleteQuote = api.quote.deleteById.useMutation();
 	const quote = quoteQuery.data;
 	const itemsSkuIds = quote?.items.map(({ skuId }) => skuId) || [];
 

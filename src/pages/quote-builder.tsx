@@ -8,7 +8,6 @@ import {
 import { AnimatePresence, Variants, motion } from 'framer-motion';
 import { OrchestratedReveal } from '~/components/reveal';
 import { api } from '~/utils/api';
-import { pluralize } from '~/lib/utils';
 import Link from 'next/link';
 import { Icon } from '~/components/icon';
 import { Balancer } from 'react-wrap-balancer';

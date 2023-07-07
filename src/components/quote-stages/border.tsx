@@ -9,7 +9,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
 import { StageForm } from './form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from './stone-editor';
-import { BorderOrientation, StoneProject, Unit1D } from '~/types/quote';
+import { BorderOrientation, StoneProject } from '~/types/quote';
 import { calculateRunningFoot, unitDisplayNameDictionary } from '~/lib/utils';
 import { useStageContext } from './stage-context';
 import { Button } from '../button';

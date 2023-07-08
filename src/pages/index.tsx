@@ -167,7 +167,7 @@ function Page() {
 
 				<ViewportReveal asChild>
 					<FullWidthSection className="space-y-8 p-6 lg:space-y-12 lg:p-16">
-						<div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
+						<div className="flex flex-col gap-4 md:flex-row md:justify-between">
 							<h2 className="font-display text-3xl">Products</h2>
 							<p className="w-80 self-end text-right font-display text-lg">
 								<Balancer>

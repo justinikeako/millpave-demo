@@ -11,14 +11,14 @@ export function GetAQuoteSection() {
 					<div className="flex w-full flex-col overflow-hidden rounded-md shadow-lg ring-1 ring-gray-900/10 lg:w-5/6">
 						<div className="flex h-8 items-center bg-gray-200 px-3 py-1.5">
 							<div className="flex flex-1 justify-start gap-1">
-								<div className="relative h-2.5 w-2.5 rounded-full bg-red-500 before:absolute before:inset-px before:rounded-full before:bg-gradient-to-b before:from-white/50" />
-								<div className="relative h-2.5 w-2.5 rounded-full bg-yellow-500 before:absolute before:inset-px before:rounded-full before:bg-gradient-to-b before:from-white/50" />
-								<div className="relative h-2.5 w-2.5 rounded-full bg-lime-500 before:absolute before:inset-px before:rounded-full before:bg-gradient-to-b before:from-white/50" />
+								<div className="relative h-2.5 w-2.5 rounded-full border border-red-500 bg-red-500 bg-gradient-to-b from-white/50" />
+								<div className="relative h-2.5 w-2.5 rounded-full border border-yellow-500 bg-yellow-500 bg-gradient-to-b from-white/50" />
+								<div className="relative h-2.5 w-2.5 rounded-full border border-lime-500 bg-lime-500 bg-gradient-to-b from-white/50" />
 							</div>
 
-							<div className="flex h-full flex-[2_2_0%] items-center justify-center rounded-sm bg-gray-300 text-[9px] text-gray-500">
-								<Icon name="check" size={12} />
-								<span>Quote Studio</span>
+							<div className="flex h-full flex-[2_2_0%] items-center justify-center gap-px rounded-sm bg-gray-300 text-[9px] text-gray-500">
+								<Icon name="lock" size={10} />
+								<span className="mt-px">Quote Studio</span>
 							</div>
 
 							<div className="flex flex-1 justify-end text-gray-400">

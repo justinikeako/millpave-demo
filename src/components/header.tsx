@@ -153,9 +153,9 @@ function Header({ minimal }: { minimal: boolean }) {
 						{/* Desktop Links */}
 						<ul className="flex flex-row items-center gap-4 bg-transparent px-0 max-lg:hidden">
 							<NavLink href="/products">Products</NavLink>
-							<NavLink href="/gallery">Inspiration</NavLink>
+							<NavLink href="/inspiration">Inspiration</NavLink>
 							<NavLink href="/resources">Resources</NavLink>
-							<NavLink href="/quote-builder">
+							<NavLink href="/quote-studio">
 								Get a Quote&nbsp;
 								<span className="relative inline-block rounded-sm bg-gradient-to-t from-black/10 px-1 text-sm font-semibold before:absolute  before:inset-0 before:rounded-sm before:border before:border-black/10 before:gradient-mask-t-0 group-data-[transparent]:border-white/25 group-data-[transparent]:bg-gradient-to-b group-data-[transparent]:from-white/25 group-data-[transparent]:before:border-white/25 group-data-[transparent]:before:gradient-mask-b-0 ">
 									New
@@ -255,7 +255,7 @@ function Header({ minimal }: { minimal: boolean }) {
 										</MotionNavLink>
 										<MotionNavLink
 											variants={variants.item}
-											href="/gallery"
+											href="/inspiration"
 											onClick={() => setMenuOpen(false)}
 										>
 											Inspiration
@@ -269,7 +269,7 @@ function Header({ minimal }: { minimal: boolean }) {
 										</MotionNavLink>
 										<MotionNavLink
 											variants={variants.item}
-											href="/quote-builder"
+											href="/quote-studio"
 											onClick={() => setMenuOpen(false)}
 										>
 											Get a Quote

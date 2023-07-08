@@ -26,7 +26,7 @@ function InspirationSection() {
 					<br />
 
 					<Button asChild intent="primary" className="group mx-auto w-fit">
-						<Link href="/gallery">
+						<Link href="/inspiration">
 							<span>Get Inspired</span>
 
 							<Icon

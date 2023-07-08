@@ -98,7 +98,7 @@ function Page() {
 	return (
 		<>
 			<Head>
-				<title>Inspiration Gallery — Millennium Paving Stones</title>
+				<title>Paving Inspiration — Millennium Paving Stones</title>
 			</Head>
 
 			<Main className="space-y-32 !pt-16 md:!pt-24">

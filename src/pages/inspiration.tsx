@@ -13,7 +13,6 @@ import { LearnSection } from '~/components/sections/learn';
 import { Balancer } from 'react-wrap-balancer';
 import { Icon } from '~/components/icon';
 import { AnimatePresence, motion } from 'framer-motion';
-import { cn } from '~/lib/utils';
 import { useMediaQuery } from '~/utils/use-media-query';
 
 type GalleryFilterProps = React.PropsWithChildren<
@@ -59,8 +58,6 @@ function GalleryImage({
 		<Dialog.Trigger asChild>
 			<motion.li
 				{...props}
-				layoutScroll
-				dragMomentum
 				layoutId={'img-' + id}
 				data-selected={selected || undefined}
 				className="group aspect-square bg-gray-200 lg:[&:nth-child(11n+2)]:col-span-2 lg:[&:nth-child(11n+2)]:row-span-2 max-md:[&:nth-child(12n+2)]:col-span-2 max-md:[&:nth-child(12n+2)]:row-span-2 max-md:[&:nth-child(12n+7)]:col-span-2 max-md:[&:nth-child(12n+7)]:row-span-2"
@@ -92,8 +89,7 @@ function Page() {
 	const [number, setNumber] = useState(21);
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 	const [isFullscreen, setFullscreen] = useState<boolean>(false);
-	const [showDetails, setShowDetails] = useState<boolean>(false);
-	const screenLg = useMediaQuery('(min-width: 1024px)');
+	const screenMd = useMediaQuery('(min-width: 640px)');
 
 	return (
 		<>
@@ -132,7 +128,7 @@ function Page() {
 							<div className="mb-8 flex items-center">
 								<p className="mx-auto max-w-md text-center font-display text-xl">
 									<Balancer>
-										See how our products can transform your outdoor.
+										See how our products can transform your outdoor space.
 									</Balancer>
 								</p>
 							</div>
@@ -154,205 +150,154 @@ function Page() {
 								<AnimatePresence>
 									{isFullscreen && (
 										<Dialog.Portal forceMount>
-											<Dialog.Overlay asChild forceMount>
-												<motion.div
-													className="fixed inset-0 z-50 bg-gray-900/90"
-													initial={{ opacity: 0 }}
-													animate={{ opacity: 1 }}
-													exit={{ opacity: 0 }}
-													transition={{ duration: 0.3 }}
-												/>
-											</Dialog.Overlay>
+											<Dialog.Overlay id="photo-overlay" />
+											<Dialog.Content
+												className="fixed inset-0 z-50 overflow-hidden overflow-y-auto md:flex md:overflow-hidden"
+												id="photo-container"
+												forceMount
+											>
+												<Dialog.Close tabIndex={-1} id="photo-overlay" asChild>
+													<motion.div
+														initial={{ opacity: 0 }}
+														animate={{ opacity: 1 }}
+														exit={{ opacity: 0 }}
+														className="fixed inset-0 bg-gray-900/90"
+													/>
+												</Dialog.Close>
 
-											<Dialog.Content className="contents">
-												<div className="pointer-events-none fixed inset-0 z-50 items-end justify-center overflow-hidden lg:pr-96">
-													{/* Image */}
-													<div className="flex h-[calc(100%-6rem)] items-center lg:h-full">
-														<motion.div
-															layoutScroll
-															layoutId={'img-' + selectedId}
-															dragMomentum
-															transition={{
-																type: 'spring',
-																duration: 0.5,
-																bounce: 0.1
-															}}
-															drag
-															dragConstraints={{
-																top: 0,
-																bottom: 0,
-																left: 0,
-																right: 0
-															}}
-															onDragEnd={(_, info) => {
-																if (Math.abs(info.offset.y) > 100)
-																	setFullscreen(false);
-															}}
-															onLayoutAnimationComplete={() =>
-																setSelectedId(null)
-															}
-															className="pointer-events-auto flex aspect-video max-h-full w-full items-center justify-center bg-gray-200"
-														/>
+												{/* Image */}
+												<div className="pointer-events-none relative flex h-[calc(100%-5rem)] flex-1 items-center md:h-full">
+													<motion.div
+														layoutId={'img-' + selectedId}
+														layoutScroll
+														transition={{
+															type: 'spring',
+															duration: 0.5,
+															bounce: 0.1
+														}}
+														onLayoutAnimationComplete={() => {
+															setSelectedId(null);
+														}}
+														className="pointer-events-auto flex aspect-video max-h-full w-full items-center justify-center bg-gray-200"
+													/>
+												</div>
+
+												<p className="absolute bottom-24 w-full text-center text-sm text-white md:hidden">
+													Scroll to see more details...
+												</p>
+
+												{/* Info panel */}
+
+												<motion.aside
+													initial={{
+														...(screenMd ? { x: '100%' } : { y: '6rem' })
+													}}
+													animate={
+														screenMd
+															? {
+																	x: 0,
+																	transition: {
+																		type: 'spring',
+																		duration: 0.5,
+																		bounce: 0
+																	}
+															  }
+															: {
+																	y: 0,
+																	transition: {
+																		type: 'spring',
+																		duration: 0.5,
+																		bounce: 0.1
+																	}
+															  }
+													}
+													exit={{
+														...(screenMd
+															? { x: '100%' }
+															: { y: '6rem', opacity: 0 }),
+														transition: {
+															type: 'spring',
+															duration: 0.3,
+															bounce: 0
+														}
+													}}
+													className="relative flex flex-col overflow-hidden rounded-t-lg bg-gray-100 xs:container md:mx-0 md:h-full md:w-96 md:rounded-none"
+												>
+													<div className="flex h-20 flex-col justify-center bg-gray-100 px-6">
+														<Dialog.Title className="font-display text-lg">
+															Residential Driveway
+														</Dialog.Title>
+														<p>
+															By&nbsp;
+															<Link
+																target="_blank"
+																href="https://www.instagram.com/najobriks"
+																className="text-pink-600"
+															>
+																Najo Briks Construction
+															</Link>
+														</p>
 													</div>
 
-													{/* Close Button */}
-													<Dialog.Close asChild>
-														<MotionButton
-															initial={{ opacity: 0 }}
-															animate={{ opacity: 1 }}
-															exit={{ opacity: 0 }}
-															transition={{ duration: 0.3 }}
-															intent="tertiary"
-															backdrop="dark"
-															className="pointer-events-auto fixed left-8 top-8 bg-gray-900/90"
-														>
-															<Icon name="arrow_left" />
-															Return To Gallery
-														</MotionButton>
-													</Dialog.Close>
+													<div className="flex-1 space-y-16 px-6 py-6 md:overflow-y-auto">
+														<section>
+															<p>
+																Lorem ipsum, dolor sit amet consectetur
+																adipisicing elit. Dolor, accusantium? Quasi
+																assumenda voluptate error nesciunt placeat!
+																Consequuntur incidunt, temporibus nesciunt
+																pariatur harum quisquam voluptatum dicta facilis
+																ut similique minus, soluta at consectetur ipsa
+																corporis eos doloribus atque tempora molestias
+																voluptatibus. Magni esse nihil debitis mollitia.
+																Culpa nulla quisquam veritatis! Velit?
+															</p>
+														</section>
 
-													{/* Info panel */}
-													<Dialog.Root
-														open={showDetails}
-														onOpenChange={(showDetails) =>
-															setShowDetails(showDetails)
-														}
+														<section>
+															<h2 className="font-display text-lg">
+																Products in this photo
+															</h2>
+
+															<ul className="mt-8 space-y-4">
+																<ProductCard
+																	name="Colonial Classic"
+																	startingSku={{
+																		price: 203,
+																		unit: 'sqft'
+																	}}
+																	link="/product/colonial_classic"
+																	className="h-96"
+																/>
+																<ProductCard
+																	name="Banjo"
+																	startingSku={{
+																		price: 219,
+																		unit: 'sqft'
+																	}}
+																	link="/product/banjo"
+																	className="h-96"
+																/>
+															</ul>
+														</section>
+													</div>
+												</motion.aside>
+
+												{/* Close Button */}
+												<Dialog.Close asChild>
+													<MotionButton
+														initial={{ opacity: 0 }}
+														animate={{ opacity: 1 }}
+														exit={{ opacity: 0 }}
+														transition={{ duration: 0.3 }}
+														intent="tertiary"
+														backdrop="dark"
+														className="pointer-events-auto fixed left-8 top-8 bg-gray-900/90 font-semibold"
 													>
-														<Dialog.Portal forceMount>
-															<AnimatePresence>
-																{showDetails && (
-																	<Dialog.Overlay asChild>
-																		<motion.div
-																			className="fixed inset-0 z-50 bg-gray-900/90"
-																			initial={{ opacity: 0 }}
-																			animate={{ opacity: 1 }}
-																			exit={{ opacity: 0 }}
-																			transition={{ duration: 0.3 }}
-																		/>
-																	</Dialog.Overlay>
-																)}
-															</AnimatePresence>
-
-															<Dialog.Content
-																forceMount
-																className="fixed top-full z-[51]  h-full w-full justify-end lg:top-0 lg:flex"
-															>
-																<motion.aside
-																	initial={{
-																		...(screenLg ? { x: '100%' } : { y: 0 })
-																	}}
-																	animate={
-																		screenLg
-																			? {
-																					x: 0,
-																					transition: {
-																						type: 'spring',
-																						duration: 0.5,
-																						bounce: 0
-																					}
-																			  }
-																			: {
-																					y: showDetails ? '-100%' : '-6rem',
-																					transition: {
-																						type: 'spring',
-																						duration: 0.5,
-																						bounce: 0.1
-																					}
-																			  }
-																	}
-																	exit={{
-																		...(screenLg ? { x: '100%' } : { y: 0 }),
-																		transition: {
-																			type: 'spring',
-																			duration: 0.3,
-																			bounce: 0
-																		}
-																	}}
-																	className={cn(
-																		'pointer-events-auto h-5/6 overflow-y-hidden rounded-t-lg bg-gray-100 xs:container lg:mx-0 lg:h-full lg:w-96 lg:overflow-y-auto lg:rounded-none',
-																		showDetails && 'overflow-y-auto'
-																	)}
-																>
-																	<div className="sticky top-0 z-10 flex h-24 items-center bg-gray-100 px-6">
-																		<div className="min-w-0 flex-1">
-																			<Dialog.Title className="w-[calc(100%-0.5rem)] truncate font-display text-xl">
-																				Residential Driveway
-																			</Dialog.Title>
-																			<p>
-																				By&nbsp;
-																				<Link
-																					target="_blank"
-																					href="https://www.instagram.com/najobriks"
-																					className="text-pink-600"
-																				>
-																					Najo Briks Construction
-																				</Link>
-																			</p>
-																		</div>
-
-																		<Dialog.Trigger asChild>
-																			<Button
-																				intent="secondary"
-																				className="lg:hidden"
-																			>
-																				<span className="whitespace-nowrap">
-																					{showDetails
-																						? 'Hide Details'
-																						: 'Show Details'}
-																				</span>
-																			</Button>
-																		</Dialog.Trigger>
-																	</div>
-
-																	<div className="space-y-16 px-6 py-6">
-																		<section>
-																			<p>
-																				Lorem ipsum, dolor sit amet consectetur
-																				adipisicing elit. Dolor, accusantium?
-																				Quasi assumenda voluptate error nesciunt
-																				placeat! Consequuntur incidunt,
-																				temporibus nesciunt pariatur harum
-																				quisquam voluptatum dicta facilis ut
-																				similique minus, soluta at consectetur
-																				ipsa corporis eos doloribus atque
-																				tempora molestias voluptatibus. Magni
-																				esse nihil debitis mollitia. Culpa nulla
-																				quisquam veritatis! Velit?
-																			</p>
-																		</section>
-
-																		<section>
-																			<h2 className="font-display text-lg">
-																				Products in this photo
-																			</h2>
-
-																			<ul className="mt-8 space-y-4">
-																				<ProductCard
-																					name="Colonial Classic"
-																					startingSku={{
-																						price: 203,
-																						unit: 'sqft'
-																					}}
-																					link="/product/colonial_classic"
-																					className="h-96"
-																				/>
-																				<ProductCard
-																					name="Banjo"
-																					startingSku={{
-																						price: 219,
-																						unit: 'sqft'
-																					}}
-																					link="/product/banjo"
-																					className="h-96"
-																				/>
-																			</ul>
-																		</section>
-																	</div>
-																</motion.aside>
-															</Dialog.Content>
-														</Dialog.Portal>
-													</Dialog.Root>
-												</div>
+														<Icon name="arrow_left" />
+														Return To Gallery
+													</MotionButton>
+												</Dialog.Close>
 											</Dialog.Content>
 										</Dialog.Portal>
 									)}

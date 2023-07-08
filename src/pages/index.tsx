@@ -23,6 +23,7 @@ import { Main } from '~/components/main';
 import { FullWidthSection } from '~/components/sections/full-width';
 import { HorizontalScroller } from '~/components/horizontal-scroller';
 import Image from 'next/image';
+import { GetAQuoteSection } from '~/components/sections/get-a-quote';
 
 function Hero() {
 	const heroRef = useRef<HTMLDivElement>(null);
@@ -213,6 +214,7 @@ function Page() {
 					</FullWidthSection>
 				</ViewportReveal>
 
+				<GetAQuoteSection />
 				<InspirationSection />
 
 				<LocationsSection />

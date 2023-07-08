@@ -27,7 +27,9 @@ export function SplitSection({
 						<h2 className="mt-2 font-display text-3xl">
 							<Balancer>{heading}</Balancer>
 						</h2>
-						<p className="mt-6">{body}</p>
+						<p className="mt-6">
+							<Balancer>{body}</Balancer>
+						</p>
 						<div className="mt-8 flex gap-2">{actions}</div>
 					</div>
 				</div>

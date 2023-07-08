@@ -21,14 +21,16 @@ export function GetAQuoteSection() {
 								<span>Quote Studio</span>
 							</div>
 
-							<div className="flex flex-1 justify-end"></div>
+							<div className="flex flex-1 justify-end text-gray-400">
+								<Icon name="plus" size={12} />
+							</div>
 						</div>
 						<div className="aspect-video"></div>
 					</div>
 					<p className="text-sm text-gray-500">Step 1: Shape & Measurements</p>
 				</div>
 			}
-			tagline="Quotations"
+			tagline="Project Cost"
 			heading="Get a quote in 3 simple steps."
 			body="All you need are the dimensions of your project, and an idea of the patterns you wish to use in your space."
 			actions={

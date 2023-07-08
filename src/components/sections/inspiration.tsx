@@ -7,7 +7,7 @@ import { FullWidthSection } from './full-width';
 import { Balancer } from 'react-wrap-balancer';
 
 function InspirationSection() {
-	const carouselRef = useRef<HTMLDivElement>(null);
+	const carouselRef = useRef<HTMLAnchorElement>(null);
 
 	return (
 		<ViewportReveal className="space-y-16 px-6 py-16 lg:px-16" asChild>
@@ -37,7 +37,10 @@ function InspirationSection() {
 					</Button>
 				</div>
 
-				<div
+				<Link
+					href="/inspiration"
+					// Purely visual duplicate link. Not designed to be accessible
+					tabIndex={-1}
 					className="relative -mx-6 flex overflow-hidden before:absolute before:left-0 before:z-[1] before:-mr-4 before:h-full before:w-6 before:shrink-0 before:bg-gradient-to-r before:from-gray-100 after:absolute after:right-0 after:z-[1] after:-ml-4 after:h-full after:w-6 after:shrink-0 after:bg-gradient-to-l after:from-gray-100 lg:-mx-16 lg:before:w-16 lg:after:w-16"
 					ref={carouselRef}
 				>
@@ -57,7 +60,7 @@ function InspirationSection() {
 						<ProjectImage />
 						<ProjectImage />
 					</div>
-				</div>
+				</Link>
 			</FullWidthSection>
 		</ViewportReveal>
 	);

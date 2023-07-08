@@ -182,7 +182,7 @@ function Page() {
 									<input
 										id="name"
 										type="text"
-										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
 										placeholder="E.g. Jane Doe"
 									/>
 								</div>
@@ -193,7 +193,7 @@ function Page() {
 									<input
 										id="email"
 										type="email"
-										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
 										placeholder="E.g. janedoe@example.com"
 									/>
 								</div>
@@ -207,8 +207,8 @@ function Page() {
 									id="inquiry"
 									rows={7}
 									placeholder="Describe your inquiry..."
-									className="w-full rounded-sm border border-gray-400 bg-gray-50 p-3 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
-								></textarea>
+									className="w-full rounded-sm border border-gray-400 bg-gray-50 p-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+								/>
 							</div>
 							<Button intent="primary" type="submit" className="mx-auto">
 								Submit

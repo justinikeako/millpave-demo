@@ -122,7 +122,7 @@ function BorderOptions() {
 						step="any"
 						{...register('border.runningLength.value', { min: 0.01 })}
 						readOnly={runningLengthUnit === 'auto'}
-						className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none read-only:text-gray-400"
+						className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none placeholder:text-gray-500 read-only:text-gray-400"
 						placeholder="Amount"
 					/>
 

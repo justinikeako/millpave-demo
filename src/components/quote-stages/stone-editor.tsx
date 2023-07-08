@@ -422,7 +422,7 @@ function StoneForm({
 							type="number"
 							inputMode="decimal"
 							step="any"
-							className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none"
+							className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none placeholder:text-gray-500"
 							placeholder="Amount"
 							onClick={(e) => e.currentTarget.select()}
 						/>

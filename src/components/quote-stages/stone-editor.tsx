@@ -185,7 +185,7 @@ export function StoneEditor(props: StoneEditorProps) {
 					{defaultSku && (
 						<StoneForm
 							initialValues={
-								(editIndex && fields[editIndex]) || {
+								fields[editIndex ?? -1] || {
 									skuId: defaultSku.id,
 									metadata: {
 										displayName: defaultSku.displayName,

@@ -96,7 +96,7 @@ function SplashScreen({
 								width={765}
 								height={517}
 								alt="A stone firepit surrounded by paving stones"
-								className="h-full w-full object-fill"
+								className="h-full w-full object-cover"
 							/>
 						</motion.div>
 

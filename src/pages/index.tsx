@@ -89,7 +89,7 @@ function Hero() {
 					src="/hero.jpg"
 					width={1000}
 					height={747}
-					alt="Picture of the author"
+					alt="A large driveway paved with neutral-tone concrete pavers."
 					className="-z-50 h-full w-full scale-[calc(1+var(--scroll-progress-from-start)*0.25)] object-cover object-center"
 				/>
 			</motion.div>

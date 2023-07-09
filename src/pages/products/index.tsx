@@ -532,7 +532,6 @@ export const getServerSideProps = async () => {
 
 	// prefetch `product.getByCategory`
 	await ssr.product.getByCategory.prefetchInfinite({ categoryId });
-	await ssr.category.getAll.prefetch();
 
 	return {
 		props: {

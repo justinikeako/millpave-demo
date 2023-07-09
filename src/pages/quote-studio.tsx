@@ -15,6 +15,7 @@ import { Main } from '~/components/main';
 import * as Dialog from '@radix-ui/react-dialog';
 import { maximumStageIndex, stages } from '~/components/quote-stages/stages';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 /**
  * SPEC
@@ -83,11 +84,28 @@ function SplashScreen({
 				{open && (
 					<>
 						<Dialog.Overlay />
+
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1, transition: { duration: 0.5 } }}
+							exit={{ opacity: 0, transition: { duration: 0.3 } }}
+							className="absolute inset-0 -z-10 after:absolute after:inset-0  after:bg-gray-950/75"
+						>
+							<Image
+								src="/firepit.png"
+								width={765}
+								height={517}
+								alt="A stone firepit surrounded by paving stones"
+								className="h-full w-full object-fill"
+							/>
+						</motion.div>
+
 						<Dialog.Content forceMount asChild>
 							<OrchestratedReveal
 								delay={0.1}
+								data-header-transparent
 								exit={{ opacity: 0, transition: { duration: 0.3 } }}
-								className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 bg-gray-100"
+								className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 text-gray-100"
 							>
 								<Dialog.Title asChild>
 									<h1 className="max-w-xl text-center font-display text-2xl">
@@ -104,7 +122,7 @@ function SplashScreen({
 								</p>
 								<div className="flex flex-wrap justify-center gap-2">
 									<Dialog.Close asChild>
-										<Button intent="primary">
+										<Button intent="primary" backdrop="dark" className="group">
 											<span>Get Started</span>
 											<Icon
 												name="arrow_right_alt"
@@ -112,7 +130,7 @@ function SplashScreen({
 											/>
 										</Button>
 									</Dialog.Close>
-									<Button asChild intent="secondary">
+									<Button asChild intent="secondary" backdrop="dark">
 										<Link href="/">Return to Home Page</Link>
 									</Button>
 								</div>

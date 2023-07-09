@@ -14,6 +14,7 @@ import { Balancer } from 'react-wrap-balancer';
 import { Icon } from '~/components/icon';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMediaQuery } from '~/utils/use-media-query';
+import { GetAQuoteSection } from '~/components/sections/get-a-quote';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{
@@ -182,10 +183,30 @@ function Page() {
 													/>
 												</div>
 
-												<p className="absolute bottom-24 w-full text-center text-sm text-white md:hidden">
+												<motion.p
+													initial={{
+														y: '6rem',
+														opacity: 0
+													}}
+													animate={{
+														y: 0,
+														opacity: 1,
+														transition: {
+															type: 'spring',
+															duration: 0.5,
+															bounce: 0,
+															delay: 0.1
+														}
+													}}
+													exit={{
+														y: '6rem',
+														opacity: 0,
+														transition: { duration: 0.3, delay: 0 }
+													}}
+													className="absolute bottom-24 w-full text-center text-sm text-white md:hidden"
+												>
 													Scroll to see more details...
-												</p>
-
+												</motion.p>
 												{/* Info panel */}
 
 												<motion.aside
@@ -207,7 +228,8 @@ function Page() {
 																	transition: {
 																		type: 'spring',
 																		duration: 0.5,
-																		bounce: 0.1
+																		bounce: 0,
+																		delay: 0.1
 																	}
 															  }
 													}
@@ -286,10 +308,21 @@ function Page() {
 												{/* Close Button */}
 												<Dialog.Close asChild>
 													<MotionButton
-														initial={{ opacity: 0 }}
-														animate={{ opacity: 1 }}
-														exit={{ opacity: 0 }}
-														transition={{ duration: 0.3 }}
+														initial={{
+															opacity: 0
+														}}
+														animate={{
+															opacity: 1,
+															transition: {
+																type: 'spring',
+																duration: 0.5,
+																bounce: 0
+															}
+														}}
+														exit={{
+															opacity: 0,
+															transition: { duration: 0.3, delay: 0 }
+														}}
 														intent="tertiary"
 														backdrop="dark"
 														className="pointer-events-auto fixed left-8 top-8 bg-gray-900/90 font-semibold"
@@ -316,7 +349,7 @@ function Page() {
 					</FullWidthSection>
 				</ViewportReveal>
 
-				{/* Process */}
+				<GetAQuoteSection />
 				<LearnSection />
 				<AugmentedRealityGallerySection />
 			</Main>

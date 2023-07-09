@@ -31,6 +31,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useMediaQuery } from '~/utils/use-media-query';
 import { CheckboxProps, Checkbox } from '~/components/checkbox';
 import * as Dialog from '@radix-ui/react-dialog';
+import { InspirationSection } from '~/components/sections/inspiration';
+import { GetAQuoteSection } from '~/components/sections/get-a-quote';
 
 type FilterProps = Omit<CheckboxProps, 'slot'> & {
 	slot?: React.ReactNode;
@@ -466,7 +468,9 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 												Alphabetical (A - Z)
 											</SelectItem>
 
-											<SelectItem value="quantity">Unit Quantity</SelectItem>
+											<SelectItem value="quantity">
+												Quantity In Stock
+											</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
@@ -503,6 +507,8 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 					</section>
 				</div>
 
+				<GetAQuoteSection />
+				<InspirationSection />
 				<LearnSection />
 				<AugmentedRealityGallerySection />
 			</Main>

@@ -32,6 +32,7 @@ import { LearnSection } from '~/components/sections/learn';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
 import { Main } from '~/components/main';
 import { HorizontalScroller } from '~/components/horizontal-scroller';
+import { GetAQuoteSection } from '~/components/sections/get-a-quote';
 
 const ProductViewer3D = dynamic(
 	() => import('~/components/product-viewer-3d'),
@@ -278,9 +279,11 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 					</div>
 				</ViewportReveal>
 
-				<LocationsSection />
+				<GetAQuoteSection />
 
 				<InspirationSection />
+
+				<LocationsSection />
 
 				<LearnSection />
 

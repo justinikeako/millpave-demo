@@ -15,12 +15,17 @@ import { createServerSideHelpers } from '@trpc/react-query/server';
 import superjson from 'superjson';
 import { formatPrice } from '~/utils/format';
 import { createInnerTRPCContext } from '~/server/api/trpc';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import {
+	GetStaticPaths,
+	GetStaticPropsContext,
+	InferGetStaticPropsType
+} from 'next';
 import { appRouter } from '~/server/api/root';
 import dynamic from 'next/dynamic';
 import { OrchestratedReveal, ViewportReveal } from '~/components/reveal';
 import { ProductStock } from '~/components/product-stock';
 import { findSku, unitDisplayNameDictionary } from '~/lib/utils';
+import { db } from '~/server/db';
 import { LocationsSection } from '~/components/sections/locations';
 import { InspirationSection } from '~/components/sections/inspiration';
 import { LearnSection } from '~/components/sections/learn';
@@ -108,7 +113,7 @@ function Section({
 	);
 }
 
-function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 	const productId = props.id;
 
 	const productQuery = api.product.getById.useQuery(
@@ -290,33 +295,45 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	);
 }
 
-export const getServerSideProps = async ({
-	res,
-	params
-}: GetServerSidePropsContext) => {
-	res.setHeader(
-		'Cache-Control',
-		`public, s-maxage=${60 * 60 * 24 * 31}, stale-while-revalidate=59`
-	);
+export const getStaticProps = async (
+	context: GetStaticPropsContext<{ id: string }>
+) => {
+	const ssgContext = await createInnerTRPCContext({});
 
-	const ssrContext = await createInnerTRPCContext({});
-
-	const ssr = await createServerSideHelpers({
+	const ssg = await createServerSideHelpers({
 		router: appRouter,
-		ctx: ssrContext,
+		ctx: ssgContext,
 		transformer: superjson
 	});
 
-	const productId = params?.id as string;
+	const productId = context.params?.id as string;
 
 	// prefetch `product.getById`
-	await ssr.product.getById.prefetch({ productId });
+	await ssg.product.getById.prefetch({ productId });
+
+	const ONE_MONTH_IN_SECONDS = 60 * 60 * 24 * 31;
 
 	return {
 		props: {
-			trpcState: ssr.dehydrate(),
+			trpcState: ssg.dehydrate(),
 			id: productId
-		}
+		},
+		revalidate: ONE_MONTH_IN_SECONDS
+	};
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	const products = await db.query.products.findMany({
+		columns: { id: true }
+	});
+
+	return {
+		paths: products.map((product) => ({
+			params: { id: product.id }
+		})),
+
+		// https://nextjs.org/docs/api-reference/data-fetching/get-static-paths#fallback-blocking
+		fallback: 'blocking'
 	};
 };
 

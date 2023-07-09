@@ -3,7 +3,7 @@ import { Button } from '~/components/button';
 import Link from 'next/link';
 import { Icon } from '../icon';
 import { AnimatePresence, motion, useCycle, useInView } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export function GetAQuoteSection() {
 	const [step, cycleStep] = useCycle(
@@ -12,19 +12,27 @@ export function GetAQuoteSection() {
 		{ index: 2, name: 'Border Pattern' }
 	);
 
+	const slotRef = useRef<HTMLDivElement>(null);
+	const slotInView = useInView(slotRef);
+
 	useEffect(() => {
-		// Set an interval to cycle through examples state variable after 5 seconds
+		if (!slotInView) return;
+
+		// Set an interval to cycle through the steps after 7.5 seconds
 		const intervalId = setInterval(() => {
 			cycleStep();
-		}, 10000);
+		}, 7500);
 
 		return () => clearInterval(intervalId);
-	}, [cycleStep]);
+	}, [slotInView, cycleStep]);
 
 	return (
 		<SplitSection
 			slot={
-				<div className="flex flex-col items-center justify-center gap-3 overflow-hidden px-6 pb-16 md:pb-0 md:pr-0 lg:pl-16">
+				<div
+					ref={slotRef}
+					className="flex flex-col items-center justify-center gap-3 overflow-hidden px-6 pb-16 md:pb-0 md:pr-0 lg:pl-16"
+				>
 					<Link
 						href="/quote-studio"
 						tabIndex={-1}

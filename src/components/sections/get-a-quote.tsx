@@ -2,7 +2,7 @@ import { SplitSection } from './split';
 import { Button } from '~/components/button';
 import Link from 'next/link';
 import { Icon } from '../icon';
-import { AnimatePresence, motion, useCycle } from 'framer-motion';
+import { AnimatePresence, motion, useCycle, useInView } from 'framer-motion';
 import { useEffect } from 'react';
 
 export function GetAQuoteSection() {
@@ -24,7 +24,7 @@ export function GetAQuoteSection() {
 	return (
 		<SplitSection
 			slot={
-				<div className="flex flex-col items-center justify-center gap-2 px-6 pb-16 md:pb-0 md:pr-0 lg:pl-16">
+				<div className="flex flex-col items-center justify-center gap-3 overflow-hidden px-6 pb-16 md:pb-0 md:pr-0 lg:pl-16">
 					<Link
 						href="/quote-studio"
 						tabIndex={-1}
@@ -46,15 +46,15 @@ export function GetAQuoteSection() {
 								<Icon name="plus" size={14} />
 							</div>
 						</div>
-						<div className="relative flex aspect-video w-full overflow-hidden text-2xl text-black/20">
+						<div className="relative flex aspect-video w-full text-2xl text-black/20">
 							<AnimatePresence initial={false} mode="popLayout">
 								<motion.div
-									key={'step-' + step.index}
-									className="flex aspect-video h-full shrink-0 items-center justify-center bg-gray-100"
+									key={'step-image-' + step.index}
 									initial={{ x: '100%' }}
-									animate={{ x: '0%' }}
+									animate={{ x: 0 }}
 									exit={{ x: '-100%' }}
 									transition={{ type: 'spring', duration: 1, bounce: 0 }}
+									className="flex h-full w-full shrink-0 items-center justify-center bg-gray-100 p-4 text-center"
 								>
 									{step.name}
 								</motion.div>
@@ -63,12 +63,12 @@ export function GetAQuoteSection() {
 					</Link>
 					<AnimatePresence initial={false} mode="popLayout">
 						<motion.p
+							key={'step-caption-' + step.index}
 							initial={{ x: '100%', opacity: 0 }}
 							animate={{ x: 0, opacity: 1 }}
 							exit={{ x: '-100%', opacity: 0 }}
 							transition={{ type: 'spring', duration: 1.25, bounce: 0 }}
-							className="whitespace-nowrap text-sm text-gray-500"
-							key={'step-caption-' + step.index}
+							className="block whitespace-nowrap text-center  text-sm text-gray-500"
 						>
 							Step {step.index + 1}: {step.name}
 						</motion.p>

@@ -61,7 +61,7 @@ export function GetAQuoteSection() {
 									initial={{ x: '100%' }}
 									animate={{ x: 0 }}
 									exit={{ x: '-100%' }}
-									transition={{ type: 'spring', duration: 1, bounce: 0 }}
+									transition={{ type: 'spring', duration: 1.5, bounce: 0 }}
 									className="flex h-full w-full shrink-0 items-center justify-center bg-gray-100 p-4 text-center"
 								>
 									{step.name}
@@ -69,14 +69,14 @@ export function GetAQuoteSection() {
 							</AnimatePresence>
 						</div>
 					</Link>
-					<AnimatePresence initial={false} mode="popLayout">
+					<AnimatePresence initial={false} mode="wait">
 						<motion.p
 							key={'step-caption-' + step.index}
-							initial={{ x: '100%', opacity: 0 }}
-							animate={{ x: 0, opacity: 1 }}
-							exit={{ x: '-100%', opacity: 0 }}
-							transition={{ type: 'spring', duration: 1.25, bounce: 0 }}
-							className="block whitespace-nowrap text-center  text-sm text-gray-500"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ type: 'spring', duration: 0.5, bounce: 0 }}
+							className="block whitespace-nowrap text-center text-sm text-gray-500"
 						>
 							Step {step.index + 1}: {step.name}
 						</motion.p>

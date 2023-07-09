@@ -13,6 +13,7 @@ import { Main } from '~/components/main';
 import { OrchestratedReveal } from '~/components/reveal';
 import { Icon } from '~/components/icon';
 import Link from 'next/link';
+import { GetAQuoteSection } from '~/components/sections/get-a-quote';
 
 type FormType = 'general' | 'quote' | 'sample';
 
@@ -40,6 +41,74 @@ function Page() {
 				</OrchestratedReveal>
 
 				<div className="flex flex-col gap-16 py-16 md:flex-row">
+					{/* Form */}
+					<OrchestratedReveal delay={0.2} className="top-8 flex-1 space-y-8">
+						<h2 className="font-display text-lg">Contact Form</h2>
+
+						<form className="space-y-8">
+							<div className="space-y-2">
+								<label className="block font-semibold" htmlFor="nature">
+									How can we help you?
+								</label>
+								<Select value={formType} onValueChange={handleFormTypeChange}>
+									<SelectTrigger id="nature" className="w-full">
+										<SelectValue placeholder="Select an option" />
+									</SelectTrigger>
+
+									<SelectContent>
+										<SelectItem value="general">General Inquiry</SelectItem>
+										<SelectItem value="quote">
+											I would like to a quote
+										</SelectItem>
+										<SelectItem value="samples">
+											I would like to request samples
+										</SelectItem>
+									</SelectContent>
+								</Select>
+							</div>
+
+							<div className="flex gap-4">
+								<div className="flex-1 space-y-2">
+									<label htmlFor="name" className="block font-semibold">
+										What is your name?
+									</label>
+									<input
+										id="name"
+										type="text"
+										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+										placeholder="E.g. Jane Doe"
+									/>
+								</div>
+								<div className="flex-1 space-y-2">
+									<label htmlFor="email" className="block font-semibold">
+										What is your email?
+									</label>
+									<input
+										id="email"
+										type="email"
+										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+										placeholder="E.g. janedoe@example.com"
+									/>
+								</div>
+							</div>
+
+							<div className="space-y-2">
+								<label className="block font-semibold" htmlFor="inquiry">
+									How can we help you?
+								</label>
+								<textarea
+									id="inquiry"
+									rows={7}
+									placeholder="Describe your inquiry..."
+									className="w-full rounded-sm border border-gray-400 bg-gray-50 p-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
+								/>
+							</div>
+							<Button intent="primary" type="submit" className="mx-auto">
+								Submit
+							</Button>
+						</form>
+					</OrchestratedReveal>
+
 					{/* Locations */}
 					<OrchestratedReveal
 						delay={0.3}
@@ -147,75 +216,9 @@ function Page() {
 							</li>
 						</ul>
 					</OrchestratedReveal>
-
-					{/* Form */}
-					<OrchestratedReveal delay={0.2} className="top-8 flex-1 space-y-8">
-						<h2 className="font-display text-lg">Contact Form</h2>
-
-						<form className="space-y-8">
-							<div className="space-y-2">
-								<label className="block font-semibold" htmlFor="nature">
-									How can we help you?
-								</label>
-								<Select value={formType} onValueChange={handleFormTypeChange}>
-									<SelectTrigger id="nature" className="w-full">
-										<SelectValue placeholder="Select an option" />
-									</SelectTrigger>
-
-									<SelectContent>
-										<SelectItem value="general">General Inquiry</SelectItem>
-										<SelectItem value="quote">
-											I would like to a quote
-										</SelectItem>
-										<SelectItem value="samples">
-											I would like to request samples
-										</SelectItem>
-									</SelectContent>
-								</Select>
-							</div>
-
-							<div className="flex gap-4">
-								<div className="flex-1 space-y-2">
-									<label htmlFor="name" className="block font-semibold">
-										What is your name?
-									</label>
-									<input
-										id="name"
-										type="text"
-										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
-										placeholder="E.g. Jane Doe"
-									/>
-								</div>
-								<div className="flex-1 space-y-2">
-									<label htmlFor="email" className="block font-semibold">
-										What is your email?
-									</label>
-									<input
-										id="email"
-										type="email"
-										className="h-12 w-full rounded-sm border border-gray-400 bg-gray-50 px-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
-										placeholder="E.g. janedoe@example.com"
-									/>
-								</div>
-							</div>
-
-							<div className="space-y-2">
-								<label className="block font-semibold" htmlFor="inquiry">
-									How can we help you?
-								</label>
-								<textarea
-									id="inquiry"
-									rows={7}
-									placeholder="Describe your inquiry..."
-									className="w-full rounded-sm border border-gray-400 bg-gray-50 p-3 placeholder:text-gray-500 hover:border-gray-500 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700"
-								/>
-							</div>
-							<Button intent="primary" type="submit" className="mx-auto">
-								Submit
-							</Button>
-						</form>
-					</OrchestratedReveal>
 				</div>
+
+				<GetAQuoteSection />
 			</Main>
 
 			<Footer />

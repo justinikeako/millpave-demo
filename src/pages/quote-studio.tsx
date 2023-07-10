@@ -108,7 +108,7 @@ function SplashScreen({
 								className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 text-gray-100"
 							>
 								<Dialog.Title asChild>
-									<h1 className="max-w-xl text-center font-display text-2xl">
+									<h1 className="max-w-xl text-center font-display text-2xl xs:text-3xl md:text-4xl lg:text-5xl">
 										<Balancer>
 											Get a quote for your paving project in under 5 minutes.
 										</Balancer>

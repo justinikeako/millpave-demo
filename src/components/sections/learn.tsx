@@ -7,14 +7,14 @@ import { ViewportReveal } from '../reveal';
 function LearnSection() {
 	return (
 		<ViewportReveal asChild>
-			<section className="grid grid-cols-1 gap-4 py-16 md:grid-cols-2 xl:grid-cols-4">
-				<div className="group relative flex h-96 shrink-0 flex-col items-start gap-2 bg-gray-600 p-6 text-white md:col-span-2 md:justify-between">
+			<section className="grid grid-cols-1 gap-4 py-16 sm:grid-cols-2 xl:grid-cols-4">
+				<div className="group relative flex h-96 shrink-0 flex-col items-start gap-2 bg-gray-600 p-6 text-white sm:col-span-2 sm:justify-between">
 					<div className="max-w-xs space-y-2">
 						<Link
 							href="/contractors"
 							className="before:absolute before:inset-0"
 						>
-							<h3 className="font-display text-xl">
+							<h3 className="font-display text-xl sm:text-2xl">
 								Connect with certified professionals.
 							</h3>
 						</Link>
@@ -63,7 +63,7 @@ function LearnSection() {
 					</Button>
 				</div>
 
-				<div className="group relative flex h-96 shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6 lg:justify-start">
+				<div className="group relative flex h-96 shrink-0 flex-col items-start justify-start space-y-2 bg-gray-200 p-6">
 					<div className="max-w-xs space-y-1">
 						<Link
 							href="/blog/why-use-pavers"

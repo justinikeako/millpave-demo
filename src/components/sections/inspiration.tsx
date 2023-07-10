@@ -13,11 +13,11 @@ function InspirationSection() {
 		<ViewportReveal className="space-y-16 px-6 py-16 lg:px-16" asChild>
 			<FullWidthSection>
 				<div className="space-y-4">
-					<p className="m-auto text-center font-display text-lg">
+					<p className="m-auto text-center font-display text-lg md:text-xl">
 						Inspiration Gallery
 					</p>
 
-					<h2 className=" mx-auto max-w-3xl text-center font-display text-3xl">
+					<h2 className="mx-auto max-w-3xl text-center font-display text-4xl md:text-5xl xl:text-6xl">
 						<Balancer>
 							Don&apos;t know where to start? Explore our best projects
 						</Balancer>

@@ -2,7 +2,7 @@ import { ShapeStage } from '~/components/quote-stages/shape';
 import { MeasurementsStage } from '~/components/quote-stages/measurements';
 import { InfillStage } from '~/components/quote-stages/infill';
 import { BorderStage } from '~/components/quote-stages/border';
-import { ReviewStage } from '~/components/quote-stages/review';
+import { ConfigureStage } from '~/components/quote-stages/configure';
 import { EmailStage } from './email';
 
 export const stages = [
@@ -34,7 +34,7 @@ export const stages = [
 	{
 		id: 'review',
 		displayName: 'Review',
-		component: ReviewStage,
+		component: ConfigureStage,
 		optional: false
 	}
 ];

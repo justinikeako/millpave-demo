@@ -107,7 +107,7 @@ function Section({
 }: React.PropsWithChildren<SectionProps>) {
 	return (
 		<section className={cn('space-y-4', props.className)}>
-			<h2 className="font-display text-lg">{heading}</h2>
+			<h2 className="font-display text-lg lg:text-xl">{heading}</h2>
 			{children}
 		</section>
 	);
@@ -145,7 +145,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
 			<Main>
 				{/* Main Content */}
-				<section className="flex flex-col gap-8 py-8 md:flex-row lg:gap-16 lg:py-16">
+				<section className="flex flex-col gap-8 py-8 sm:flex-row lg:gap-16 lg:py-16">
 					{/* Gallery */}
 
 					<OrchestratedReveal delay={0.1} className="flex-1">
@@ -160,14 +160,16 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 						{/* Basic Info */}
 						<section className="space-y-2">
 							<div>
-								<p className="font-display text-lg">
+								<p className="font-display text-lg lg:text-xl">
 									<Link href={`/products/${product.category.id}`}>
 										{product.category.displayName}
 									</Link>
 								</p>
-								<h1 className="font-display text-4xl">{product.displayName}</h1>
+								<h1 className="font-display text-5xl leading-tight md:text-6xl lg:text-7xl xl:text-8xl">
+									{product.displayName}
+								</h1>
 							</div>
-							<div className="flex flex-wrap justify-between gap-x-4 font-display text-lg">
+							<div className="flex flex-wrap justify-between gap-x-4 font-display text-lg lg:text-xl">
 								<div className="flex flex-wrap items-center gap-x-4">
 									<p className="whitespace-nowrap">
 										{formatPrice(currentSku.price)} per&nbsp;
@@ -248,7 +250,7 @@ function Page(props: InferGetStaticPropsType<typeof getStaticProps>) {
 
 				{/* Similar Products */}
 				<ViewportReveal className="flex flex-col space-y-16 py-16">
-					<h2 className="max-w-[28ch] self-center text-center font-display text-2xl">
+					<h2 className="max-w-[28ch] self-center text-center font-display text-3xl sm:text-4xl lg:text-5xl xl:text-6xl">
 						Similar to {product.displayName}
 					</h2>
 

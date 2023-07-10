@@ -53,7 +53,7 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 export function ShapeStage() {
 	return (
 		<StageForm className="flex flex-col items-center gap-12 xl:flex-row xl:justify-center">
-			<h2 className="max-w-xs shrink-0 text-center font-display text-2xl xl:text-left">
+			<h2 className="max-w-xs shrink-0 text-center font-display text-3xl md:text-4xl xl:text-left">
 				<Balancer>What is the shape of your project?</Balancer>
 			</h2>
 			<ul className="flex flex-col gap-4 md:flex-row">

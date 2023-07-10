@@ -241,7 +241,7 @@ export function MeasurementsStage() {
 
 	return (
 		<StageForm className="flex flex-col items-center justify-center gap-12 lg:flex-row">
-			<h2 className="max-w-md text-center font-display text-2xl  lg:max-w-xs lg:text-left">
+			<h2 className="max-w-md text-center font-display text-3xl md:text-4xl lg:max-w-xs lg:text-left">
 				<Balancer>Enter the measurements of your project.</Balancer>
 			</h2>
 			<div className="flex flex-wrap gap-4">

@@ -35,7 +35,7 @@ function Page() {
 
 			<Main>
 				<OrchestratedReveal delay={0.1}>
-					<h1 className="mt-16 text-center font-display text-4xl">
+					<h1 className="mt-16 text-center font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl">
 						Get in touch.
 					</h1>
 				</OrchestratedReveal>
@@ -43,7 +43,7 @@ function Page() {
 				<div className="flex flex-col gap-16 py-16 md:flex-row">
 					{/* Form */}
 					<OrchestratedReveal delay={0.2} className="top-8 flex-1 space-y-8">
-						<h2 className="font-display text-lg">Contact Form</h2>
+						<h2 className="font-display text-lg lg:text-xl">Contact Form</h2>
 
 						<form className="space-y-8">
 							<div className="space-y-2">
@@ -114,7 +114,9 @@ function Page() {
 						delay={0.3}
 						className="top-8 flex-1 space-y-8 self-start lg:sticky lg:block"
 					>
-						<h2 className="font-display text-lg">Millennium Locations</h2>
+						<h2 className="font-display text-lg lg:text-xl">
+							Millennium Locations
+						</h2>
 						<iframe
 							src="https://snazzymaps.com/embed/500656"
 							className="aspect-video w-full border border-gray-400 bg-gray-200"

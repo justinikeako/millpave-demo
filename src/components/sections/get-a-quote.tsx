@@ -31,7 +31,7 @@ export function GetAQuoteSection() {
 			slot={
 				<div
 					ref={slotRef}
-					className="flex flex-col items-center justify-center gap-3 overflow-hidden px-6 pb-16 md:pb-0 md:pr-0 lg:pl-16"
+					className="flex flex-col items-center justify-center gap-3 overflow-hidden px-6 sm:overflow-visible md:pr-0 lg:pl-16"
 				>
 					<Link
 						href="/quote-studio"

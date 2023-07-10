@@ -15,7 +15,7 @@ function ProductCard({ name, startingSku, link, className }: ProductCardProps) {
 		<li
 			className={cn('relative min-w-[16rem] space-y-4 @container', className)}
 		>
-			<div className="@lg:flex @lg:h-full @lg:items-end @lg:justify-start @lg:p-6">
+			<div className="min-h-[18rem] @lg:flex @lg:h-full @lg:items-end @lg:justify-start @lg:p-6">
 				<div className="w-fill z-[-1] aspect-[4/3] bg-gray-200 @lg:absolute @lg:inset-0 @lg:aspect-[unset]" />
 
 				<div className="group space-y-2 px-2 pb-2 pt-3 @lg:p-0">

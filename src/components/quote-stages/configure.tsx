@@ -13,7 +13,7 @@ import React from 'react';
 import { Balancer } from 'react-wrap-balancer';
 import { Button } from '../button';
 
-export function ReviewStage() {
+export function ConfigureStage() {
 	const { quote, setStageIndex } = useStageContext();
 
 	const { control, register } = useFormContext<StoneProject>();
@@ -34,13 +34,13 @@ export function ReviewStage() {
 
 	return (
 		<StageForm className="space-y-16">
-			<h2 className="text-center font-display text-2xl">
-				Configure your quote.
+			<h2 className="text-center font-display text-4xl md:text-5xl">
+				<Balancer>Configure your quote.</Balancer>
 			</h2>
 			<div className="flex flex-col gap-16 xl:flex-row">
 				<aside className="space-y-4 xl:order-2">
 					<div className="space-y-4">
-						<h3 className="font-display text-lg">Options</h3>
+						<h3 className="font-display text-xl">Options</h3>
 
 						<ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap xl:flex-col">
 							{addons.map(({ key, ...addon }, index) => (
@@ -71,7 +71,7 @@ export function ReviewStage() {
 
 				<div className="flex-1 space-y-4">
 					<div className="flex items-center justify-between">
-						<h3 className="font-display text-lg">
+						<h3 className="font-display text-xl">
 							Items ({quote.items.length})
 						</h3>
 						<Button
@@ -109,7 +109,7 @@ export function ReviewStage() {
 
 										<div className="w-full space-y-4 lg:w-auto lg:flex-1 ">
 											<div className="flex flex-wrap">
-												<h3 className="w-full font-display text-lg md:w-80">
+												<h3 className="w-full font-display text-lg sm:w-1/2 sm:text-xl">
 													<Link
 														target="_blank"
 														href={`/product/${item.skuId.split(':')[0]}`}
@@ -118,7 +118,7 @@ export function ReviewStage() {
 													</Link>
 												</h3>
 												<p
-													className="flex-1 font-display text-lg"
+													className="flex-1 font-display text-lg sm:text-xl"
 													title={
 														item.area
 															? `${formatNumber(item.area)} sqft`
@@ -127,19 +127,19 @@ export function ReviewStage() {
 												>
 													{item.quantity} {unitDisplayName}
 												</p>
-												<p className="font-display text-lg">
+												<p className="font-display text-lg sm:text-xl">
 													{formatPrice(item.cost)}
 												</p>
 											</div>
 											{item.area && item.area > 2000 && (
-												<div className="flex justify-between">
+												<div className="flex flex-wrap justify-between gap-1">
 													<p>Using our 50/50 payment plan:</p>
 													<p>{formatPrice(item.cost / 2)} upfront</p>
 												</div>
 											)}
 
 											<div className="flex flex-wrap items-center gap-y-4">
-												<div className="w-full md:w-80">
+												<div className="w-full sm:w-1/2">
 													<p className="mb-2 font-semibold">Availability</p>
 													{itemsFulfillmentQuery.isLoading ? (
 														<p>Loading stock info...</p>
@@ -203,12 +203,9 @@ export function ReviewStage() {
 													)}
 												</div>
 												<div className="flex flex-1 flex-col items-end gap-2 justify-self-end">
-													<label
-														className="block text-gray-500"
-														htmlFor="finish"
-													>
+													<p className="block text-gray-500">
 														Press &quot;Finish&quot; Edit
-													</label>
+													</p>
 												</div>
 											</div>
 										</div>
@@ -237,7 +234,7 @@ export function ReviewStage() {
 							<span>{formatPrice(quote.details.tax)}</span>
 						</div>
 						<hr />
-						<div className="flex justify-between font-display text-lg">
+						<div className="flex justify-between font-display text-lg sm:text-xl">
 							<span>Total</span>
 							<span>{formatPrice(quote.details.total)}</span>
 						</div>

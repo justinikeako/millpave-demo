@@ -244,7 +244,7 @@ function Header({ minimal }: { minimal: boolean }) {
 										variants={variants.list}
 										initial="hide"
 										animate="show"
-										className="my-auto flex flex-col gap-8 text-center font-display text-3xl"
+										className="my-auto flex flex-col gap-8 text-center font-display text-4xl md:text-5xl lg:text-6xl"
 									>
 										<MotionNavLink
 											variants={variants.item}

@@ -18,7 +18,7 @@ export function InfillStage() {
 	if (isSkipped === null || isSkipped === true)
 		return (
 			<StageForm className="space-y-8">
-				<h2 className="mx-auto max-w-sm text-center font-display text-2xl">
+				<h2 className="mx-auto max-w-sm text-center font-display text-3xl md:text-4xl lg:text-5xl">
 					<Balancer>Would you like to add an infill?</Balancer>
 				</h2>
 				<p className="mx-auto max-w-sm text-center">
@@ -53,7 +53,7 @@ export function InfillStage() {
 
 	return (
 		<StageForm className="space-y-12">
-			<h2 className="mx-auto max-w-sm text-center font-display text-2xl">
+			<h2 className="mx-auto max-w-sm text-center font-display text-3xl md:text-4xl lg:text-5xl">
 				Customize your infill...
 			</h2>
 

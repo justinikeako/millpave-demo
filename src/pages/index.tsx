@@ -87,6 +87,7 @@ function Hero() {
 			>
 				<Image
 					src="/hero.jpg"
+					fetchPriority="high"
 					width={1000}
 					height={747}
 					alt="A large driveway paved with neutral-tone concrete pavers."
@@ -95,7 +96,7 @@ function Hero() {
 			</motion.div>
 
 			<div className="mt-[-100lvh] flex h-[100lvh] items-center justify-center space-y-12">
-				<motion.h1 className="text-center font-display text-5xl">
+				<motion.h1 className="text-center font-display text-5xl xs:text-6xl md:text-7xl lg:text-8xl">
 					<motion.span
 						className="inline-block"
 						style={{ opacity: line1Opacity }}
@@ -167,8 +168,10 @@ function Page() {
 
 				<ViewportReveal asChild>
 					<FullWidthSection className="space-y-8 p-6 lg:space-y-12 lg:p-16">
-						<div className="flex flex-col gap-4 md:flex-row md:justify-between">
-							<h2 className="font-display text-3xl">Products</h2>
+						<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+							<h2 className="font-display text-4xl sm:text-6xl md:text-6xl">
+								Products
+							</h2>
 							<p className="w-80 self-end text-right font-display text-lg">
 								<Balancer>
 									Our concrete pavers can turn your outdoor walkway, deck,

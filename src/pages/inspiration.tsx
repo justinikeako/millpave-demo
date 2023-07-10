@@ -61,7 +61,7 @@ function GalleryImage({
 				{...props}
 				layoutId={'img-' + id}
 				data-selected={selected || undefined}
-				className="group aspect-square bg-gray-200 lg:[&:nth-child(11n+2)]:col-span-2 lg:[&:nth-child(11n+2)]:row-span-2 max-md:[&:nth-child(12n+2)]:col-span-2 max-md:[&:nth-child(12n+2)]:row-span-2 max-md:[&:nth-child(12n+7)]:col-span-2 max-md:[&:nth-child(12n+7)]:row-span-2"
+				className="group aspect-square bg-gray-200 lg:[&:nth-child(11n+2)]:col-span-2 lg:[&:nth-child(11n+2)]:row-span-2 max-sm:[&:nth-child(12n+2)]:col-span-2 max-sm:[&:nth-child(12n+2)]:row-span-2 max-sm:[&:nth-child(12n+7)]:col-span-2 max-sm:[&:nth-child(12n+7)]:row-span-2"
 			>
 				<p className="p-4 font-display text-lg opacity-0 transition-opacity group-hover:opacity-100 group-data-[selected]:opacity-0">
 					Post Title
@@ -86,11 +86,11 @@ function Page() {
 	] as const;
 
 	const [categoryId, setCategoryId] =
-		useState<(typeof categories)[number]['id']>('walkway');
+		useState<(typeof categories)[number]['id']>('all');
 	const [number, setNumber] = useState(21);
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 	const [isFullscreen, setFullscreen] = useState<boolean>(false);
-	const screenMd = useMediaQuery('(min-width: 640px)');
+	const screenLg = useMediaQuery('(min-width: 640px)');
 
 	return (
 		<>
@@ -98,10 +98,10 @@ function Page() {
 				<title>Paving Inspiration — Millennium Paving Stones</title>
 			</Head>
 
-			<Main className="space-y-32 !pt-16 md:!pt-24">
+			<Main className="space-y-32 !pt-16 sm:!pt-24">
 				<section className="space-y-24">
 					<OrchestratedReveal delay={0.1} asChild>
-						<h1 className="mx-auto max-w-[20ch] text-center font-display text-3xl">
+						<h1 className="mx-auto max-w-[21ch] text-center font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
 							Which types of projects would you like to see?
 						</h1>
 					</OrchestratedReveal>
@@ -123,11 +123,11 @@ function Page() {
 					</OrchestratedReveal>
 				</section>
 
-				<ViewportReveal asChild className="space-y-4 md:space-y-8">
-					<FullWidthSection className="px-1 md:px-2 lg:px-3 xl:px-4 2xl:px-6">
+				<ViewportReveal asChild className="space-y-4 sm:space-y-8">
+					<FullWidthSection className="px-1 sm:px-2 lg:px-3 xl:px-4 2xl:px-6">
 						<div className="grid-cols-3 gap-4 overflow-hidden lg:grid lg:grid-cols-4">
 							<div className="mb-8 flex items-center">
-								<p className="mx-auto max-w-md text-center font-display text-xl">
+								<p className="mx-auto max-w-md text-center font-display text-xl sm:text-3xl">
 									<Balancer>
 										See how our products can transform your outdoor space.
 									</Balancer>
@@ -138,7 +138,7 @@ function Page() {
 								open={isFullscreen}
 								onOpenChange={(isFullscreen) => setFullscreen(isFullscreen)}
 							>
-								<ul className="grid grid-cols-3 gap-1 md:gap-2 lg:contents lg:gap-3">
+								<ul className="grid grid-cols-3 gap-1 sm:gap-2 lg:contents lg:gap-3">
 									{[...Array(number).keys()].map((index) => (
 										<GalleryImage
 											key={index}
@@ -153,7 +153,7 @@ function Page() {
 										<Dialog.Portal forceMount>
 											<Dialog.Overlay id="photo-overlay" />
 											<Dialog.Content
-												className="fixed inset-0 z-50 overflow-hidden overflow-y-auto md:flex md:overflow-hidden"
+												className="fixed inset-0 z-50 overflow-hidden overflow-y-auto sm:flex sm:overflow-hidden"
 												id="photo-container"
 												forceMount
 											>
@@ -167,7 +167,7 @@ function Page() {
 												</Dialog.Close>
 
 												{/* Image */}
-												<div className="pointer-events-none relative flex h-[calc(100%-5rem)] flex-1 items-center md:h-full">
+												<div className="pointer-events-none relative flex h-[calc(100%-5rem)] flex-1 items-center sm:h-full">
 													<motion.div
 														layoutId={'img-' + selectedId}
 														layoutScroll
@@ -203,7 +203,7 @@ function Page() {
 														opacity: 0,
 														transition: { duration: 0.3, delay: 0 }
 													}}
-													className="absolute bottom-24 w-full text-center text-sm text-white md:hidden"
+													className="absolute bottom-24 w-full text-center text-sm text-white sm:!hidden"
 												>
 													Scroll to see more details...
 												</motion.p>
@@ -211,10 +211,10 @@ function Page() {
 
 												<motion.aside
 													initial={{
-														...(screenMd ? { x: '100%' } : { y: '6rem' })
+														...(screenLg ? { x: '100%' } : { y: '6rem' })
 													}}
 													animate={
-														screenMd
+														screenLg
 															? {
 																	x: 0,
 																	transition: {
@@ -234,7 +234,7 @@ function Page() {
 															  }
 													}
 													exit={{
-														...(screenMd
+														...(screenLg
 															? { x: '100%' }
 															: { y: '6rem', opacity: 0 }),
 														transition: {
@@ -243,10 +243,10 @@ function Page() {
 															bounce: 0
 														}
 													}}
-													className="relative flex flex-col overflow-hidden rounded-t-lg bg-gray-100 xs:container md:mx-0 md:h-full md:w-96 md:rounded-none"
+													className="relative flex flex-col overflow-hidden rounded-t-lg bg-gray-100 xs:container sm:mx-0 sm:h-full sm:w-96 sm:rounded-none"
 												>
 													<div className="flex h-20 flex-col justify-center bg-gray-100 px-6">
-														<Dialog.Title className="font-display text-lg">
+														<Dialog.Title className="font-display text-xl">
 															Residential Driveway
 														</Dialog.Title>
 														<p>
@@ -261,7 +261,7 @@ function Page() {
 														</p>
 													</div>
 
-													<div className="flex-1 space-y-16 px-6 py-6 md:overflow-y-auto">
+													<div className="flex-1 space-y-16 px-6 py-6 sm:overflow-y-auto">
 														<section>
 															<p>
 																Lorem ipsum, dolor sit amet consectetur

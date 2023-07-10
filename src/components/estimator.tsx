@@ -29,9 +29,12 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 	const total = calculateTotal(pallet.area, piece.area, sku);
 
 	return (
-		<section data-ai-hidden className="bg-gray-200 text-gray-900">
-			<div className="align-center flex justify-between p-6 lg:p-8">
-				<h2 className="font-display text-lg">Cost Estimator</h2>
+		<section
+			data-ai-hidden
+			className="space-y-4 bg-gray-200 p-6 text-gray-900 lg:px-8"
+		>
+			<div className="align-center flex justify-between">
+				<h2 className="font-display text-lg lg:text-xl">Cost Estimator</h2>
 
 				<Select
 					value={unit}
@@ -41,6 +44,7 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 						const newValue = convert(rawArea, paverDetails).fromSqftTo(newUnit);
 
 						setValue(String(newValue));
+						setRawArea(convert(newValue, paverDetails).toSqftFrom(newUnit));
 					}}
 				>
 					<SelectTrigger unstyled>
@@ -54,51 +58,49 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 					</SelectContent>
 				</Select>
 			</div>
-			<div className="space-y-4 px-6 pb-6 lg:px-8 lg:pb-8">
-				<div className="flex items-center space-x-4">
-					<Label unit={unit} />
+			<div className="flex items-center space-x-4">
+				<Label unit={unit} />
 
-					<input
-						inputMode="decimal"
-						id="paver-estimator"
-						type="number"
-						min={0}
-						placeholder="Amount"
-						className="w-24 rounded-sm border border-gray-400 bg-gray-100 p-4 font-semibold text-gray-900 placeholder:font-normal placeholder:text-gray-500 focus:outline-pink-700"
-						value={value}
-						onChange={(e) => {
-							setValue(e.target.value);
+				<input
+					inputMode="decimal"
+					id="paver-estimator"
+					type="number"
+					min={0}
+					placeholder="Amount"
+					className="w-24 rounded-sm border border-gray-400 bg-gray-100 p-4 font-semibold text-gray-900 placeholder:font-normal placeholder:text-gray-500 focus:outline-pink-700"
+					value={value}
+					onChange={(e) => {
+						setValue(e.target.value);
 
-							const parsedValue = parseFloat(e.target.value || '0');
-							const newRawArea = convert(parsedValue, paverDetails).toSqftFrom(
-								unit
-							);
+						const parsedValue = parseFloat(e.target.value || '0');
+						const newRawArea = convert(parsedValue, paverDetails).toSqftFrom(
+							unit
+						);
 
-							setRawArea(newRawArea);
-						}}
-					/>
+						setRawArea(newRawArea);
+					}}
+				/>
+			</div>
+
+			<p>
+				{pallet.count} pallets ({pallet.area} ft²) + {piece.count} pieces (
+				{piece.area} ft²) ≈&nbsp;
+				<b>
+					{totalArea}ft<sup>2</sup>
+				</b>
+			</p>
+
+			<hr className="border-gray-300" />
+
+			<div className="flex items-end">
+				<div className="flex-1 space-y-1">
+					<p className="font-display text-xl">{formatPrice(total)}</p>
+					<p className="text-sm">Incl. GCT</p>
 				</div>
 
-				<p>
-					{pallet.count} pallets ({pallet.area} ft²) & {piece.count} pieces (
-					{piece.area} ft²) ≈&nbsp;
-					<b>
-						{totalArea}ft<sup>2</sup>
-					</b>
-				</p>
-
-				<hr className="border-gray-300" />
-
-				<div className="flex items-end">
-					<div className="flex-1 space-y-1">
-						<p className="text-lg">{formatPrice(total)}</p>
-						<p className="text-sm">Incl. GCT</p>
-					</div>
-
-					<Button intent="primary" disabled>
-						Add To Quote
-					</Button>
-				</div>
+				<Button intent="primary" disabled>
+					Add To Quote
+				</Button>
 			</div>
 		</section>
 	);

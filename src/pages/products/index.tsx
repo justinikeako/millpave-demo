@@ -40,15 +40,15 @@ type FilterProps = Omit<CheckboxProps, 'slot'> & {
 
 function Filter({ name, value, children, slot, ...props }: FilterProps) {
 	return (
-		<li className="flex justify-between gap-2">
-			<div className="flex gap-2">
-				<Checkbox {...props} name={name} value={value} />
-				<label htmlFor={name + ':' + value} className="select-none">
-					{children}
-				</label>
-			</div>
-
-			{slot}
+		<li className="flex h-6 gap-2 md:h-5">
+			<Checkbox {...props} name={name} value={value} />
+			<label
+				htmlFor={name + ':' + value}
+				className="flex flex-1 select-none justify-between gap-2"
+			>
+				{children}
+				{slot}
+			</label>
 		</li>
 	);
 }
@@ -63,7 +63,8 @@ function ColorFilter({ swatch: color, ...props }: ColorFilterProps) {
 			{...props}
 			slot={
 				<div
-					className="h-4 w-4 rounded-full border border-gray-400"
+					aria-hidden
+					className="h-4 w-4 rounded-full shadow-sm shadow-gray-900/25 ring-1 ring-gray-900/20"
 					style={{ background: color }}
 				/>
 			}
@@ -135,19 +136,19 @@ function Filters() {
 
 			{/* Price per ft² */}
 			<FilterGroup displayName="Price per ft²" collapsible>
-				<div className="flex gap-2">
+				<div className="flex max-w-md gap-2">
 					<div className="flex flex-1 items-center gap-2">
 						<label htmlFor="min-price">Min:</label>
 						<label
 							htmlFor="min-price"
-							className=" flex gap-0.5 rounded-sm border border-gray-400 bg-gray-100 py-2 pl-3 pr-1 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-pink-700"
+							className="flex h-10 flex-1 items-center gap-0.5 rounded-sm border border-gray-400 bg-gray-100 px-2 pr-1 placeholder:text-gray-500 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-pink-700"
 						>
-							<span className="inline-block font-semibold">$</span>
+							<span className="inline-block text-gray-500">$</span>
 							<input
 								id="min-price"
 								type="number"
 								placeholder="0"
-								className="no-arrows w-full flex-1 bg-transparent outline-none"
+								className="no-arrows w-full flex-1 bg-transparent outline-none placeholder:text-gray-500"
 							/>
 						</label>
 					</div>
@@ -155,15 +156,15 @@ function Filters() {
 						<label htmlFor="max-price">Max:</label>
 						<label
 							htmlFor="max-price"
-							className="flex gap-0.5 rounded-sm border border-gray-400 bg-gray-100 py-2 pl-3 pr-1 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-pink-700"
+							className="flex h-10 flex-1 items-center gap-0.5 rounded-sm border border-gray-400 bg-gray-100 px-2 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-pink-700"
 						>
-							<span className="inline-block font-semibold">$</span>
+							<span className="inline-block text-gray-500">$</span>
 
 							<input
 								id="max-price"
 								type="number"
 								placeholder="Infinity"
-								className="no-arrows w-full flex-1 bg-transparent outline-none"
+								className="no-arrows w-full flex-1 bg-transparent outline-none placeholder:text-gray-500"
 							/>
 						</label>
 					</div>
@@ -361,7 +362,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 			<Main>
 				<OrchestratedReveal asChild delay={0.1}>
-					<h1 className="py-16 text-center font-display text-4xl">
+					<h1 className="py-16 text-center font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl">
 						Product Catalogue
 					</h1>
 				</OrchestratedReveal>
@@ -370,7 +371,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 					<OrchestratedReveal asChild delay={0.2}>
 						{!filterMenuOpen && (
 							<aside className="hidden w-72 space-y-4 rounded-xl border border-gray-300 bg-gray-200 p-6 focus-within:border-gray-400 lg:block">
-								<h2 className="font-display text-lg">Filters</h2>
+								<h2 className="font-display text-lg lg:text-xl">Filters</h2>
 
 								<Filters />
 							</aside>
@@ -380,8 +381,8 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 					{/* Products */}
 					<section className="flex-1 space-y-4">
 						<OrchestratedReveal asChild delay={0.3}>
-							<div className="flex items-center justify-between">
-								<h2 className="flex items-center gap-2 font-display text-lg">
+							<div className="flex flex-wrap items-center justify-between gap-2">
+								<h2 className="flex items-center gap-2 font-display text-lg lg:text-xl">
 									<span>All Items</span>
 									<Dialog.Root
 										open={filterMenuOpen}
@@ -429,10 +430,10 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 																	bounce: 0
 																}
 															}}
-															className="h-5/6 overflow-y-scroll rounded-t-lg bg-gray-100 xs:container"
+															className="mx-auto flex h-5/6 max-w-md flex-col rounded-t-lg bg-gray-100"
 														>
-															<div className="sticky top-0 z-10 flex h-16 items-center bg-gray-100 px-6">
-																<Dialog.Title className="flex-1 font-display text-xl">
+															<div className="flex h-12 items-center px-6">
+																<Dialog.Title className="flex-1 font-display text-lg">
 																	Filters
 																</Dialog.Title>
 																<Dialog.Close asChild>
@@ -443,7 +444,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 																</Dialog.Close>
 															</div>
 
-															<div className="space-y-4 px-6 pb-6 pt-4">
+															<div className="flex-1 space-y-4 overflow-y-auto px-6 pb-6 pt-2">
 																<Filters />
 															</div>
 														</motion.aside>
@@ -478,7 +479,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 						</OrchestratedReveal>
 						<OrchestratedReveal asChild delay={0.4}>
 							<div className="space-y-8">
-								<ul className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+								<ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 min-[880px]:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
 									{products.pages.map((page) =>
 										page.products.map((product) => (
 											<ProductCard
@@ -541,8 +542,6 @@ export const getServerSideProps = async () => {
 	};
 };
 
-export const config = {
-	runtime: 'experimental-edge'
-};
+// export const runtime = 'experimental-edge';
 
 export default Page;

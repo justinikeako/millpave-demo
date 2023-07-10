@@ -17,6 +17,29 @@ import { addWeeks } from 'date-fns';
 import { Balancer } from 'react-wrap-balancer';
 import { OrchestratedReveal } from '~/components/reveal';
 
+export const runtime = 'experimental-edge';
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const ssrContext = await createInnerTRPCContext({});
+
+	const ssr = await createServerSideHelpers({
+		router: appRouter,
+		ctx: ssrContext,
+		transformer: superjson
+	});
+
+	const quoteId = context.params?.id as string;
+	// prefetch `quote.getById`
+	await ssr.quote.getById.prefetch({ quoteId });
+
+	return {
+		props: {
+			trpcState: ssr.dehydrate(),
+			id: quoteId
+		}
+	};
+};
+
 function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	const quoteId = props.id;
 
@@ -247,26 +270,5 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 		</>
 	);
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-	const ssrContext = await createInnerTRPCContext({});
-
-	const ssr = await createServerSideHelpers({
-		router: appRouter,
-		ctx: ssrContext,
-		transformer: superjson
-	});
-
-	const quoteId = context.params?.id as string;
-	// prefetch `quote.getById`
-	await ssr.quote.getById.prefetch({ quoteId });
-
-	return {
-		props: {
-			trpcState: ssr.dehydrate(),
-			id: quoteId
-		}
-	};
-};
 
 export default Page;

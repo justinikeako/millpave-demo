@@ -34,6 +34,228 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { InspirationSection } from '~/components/sections/inspiration';
 import { GetAQuoteSection } from '~/components/sections/get-a-quote';
 
+export const runtime = 'experimental-edge';
+
+export const getServerSideProps = async () => {
+	const ssrContext = await createInnerTRPCContext({});
+
+	const ssr = await createServerSideHelpers({
+		router: appRouter,
+		ctx: ssrContext,
+		transformer: superjson // optional - adds superjson serialization
+	});
+
+	// const categoryId = context.query?.category as string;
+	const categoryId = 'all';
+
+	// prefetch `product.getByCategory`
+	await ssr.product.getByCategory.prefetchInfinite({ categoryId });
+
+	return {
+		props: {
+			trpcState: ssr.dehydrate(),
+			category: categoryId
+		}
+	};
+};
+
+function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	const categoryId = props.category;
+
+	const categoriesQuery = api.category.getAll.useQuery(undefined, {
+		refetchOnWindowFocus: false
+	});
+
+	const productsQuery = api.product.getByCategory.useInfiniteQuery(
+		{ categoryId },
+		{
+			refetchOnWindowFocus: false,
+			getNextPageParam: (lastPage) => lastPage.nextCursor
+		}
+	);
+
+	const products = productsQuery.data;
+	const categories: Category[] = [
+		{ id: 'all', displayName: 'All Categories' },
+		...(categoriesQuery.data || [])
+	];
+
+	const [filterMenuOpen, setFilterMenuOpen] = useState<boolean>(false);
+	const screenLg = useMediaQuery('(min-width: 1024px)');
+
+	if (!categories || !products) {
+		const productsNotFound = productsQuery.error?.data?.code === 'NOT_FOUND';
+
+		if (productsNotFound) return <NextError statusCode={404} />;
+
+		return <NextError statusCode={500} />;
+	}
+
+	return (
+		<>
+			<Head>
+				<title>Product Catalogue — Millennium Paving Stones</title>
+			</Head>
+
+			<Main>
+				<OrchestratedReveal asChild delay={0.1}>
+					<h1 className="py-16 text-center font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl">
+						Product Catalogue
+					</h1>
+				</OrchestratedReveal>
+
+				<div className="flex flex-col gap-12 lg:flex-row lg:items-start">
+					<OrchestratedReveal asChild delay={0.2}>
+						{!filterMenuOpen && (
+							<aside className="hidden w-72 space-y-4 rounded-xl border border-gray-300 bg-gray-200 p-6 focus-within:border-gray-400 lg:block">
+								<h2 className="font-display text-lg lg:text-xl">Filters</h2>
+
+								<Filters />
+							</aside>
+						)}
+					</OrchestratedReveal>
+
+					{/* Products */}
+					<section className="flex-1 space-y-4">
+						<OrchestratedReveal asChild delay={0.3}>
+							<div className="flex flex-wrap items-center justify-between gap-2">
+								<h2 className="flex items-center gap-2 font-display text-lg lg:text-xl">
+									<span>All Items</span>
+									<Dialog.Root
+										open={filterMenuOpen}
+										onOpenChange={setFilterMenuOpen}
+									>
+										<Dialog.Trigger asChild>
+											<Button intent="tertiary" className="lg:hidden">
+												<span className="sr-only">Filters</span>
+												<Icon name="tune" />
+											</Button>
+										</Dialog.Trigger>
+
+										<AnimatePresence>
+											{!screenLg && filterMenuOpen && (
+												<Dialog.Portal forceMount>
+													<Dialog.Overlay asChild forceMount>
+														<motion.div
+															className="fixed inset-0 z-50 bg-gray-900/90"
+															initial={{ opacity: 0 }}
+															animate={{ opacity: 1 }}
+															exit={{ opacity: 0 }}
+															transition={{ duration: 0.3 }}
+														/>
+													</Dialog.Overlay>
+
+													<Dialog.Content
+														forceMount
+														className="fixed top-full z-50 h-full w-full"
+													>
+														<motion.aside
+															initial={{ y: 0 }}
+															animate={{
+																y: '-100%',
+																transition: {
+																	type: 'spring',
+																	duration: 0.75,
+																	bounce: 0.1
+																}
+															}}
+															exit={{
+																y: 0,
+																transition: {
+																	type: 'spring',
+																	duration: 0.3,
+																	bounce: 0
+																}
+															}}
+															className="mx-auto flex h-5/6 max-w-md flex-col rounded-t-lg bg-gray-100"
+														>
+															<div className="flex h-12 items-center px-6">
+																<Dialog.Title className="flex-1 font-display text-lg">
+																	Filters
+																</Dialog.Title>
+																<Dialog.Close asChild>
+																	<Button intent="tertiary">
+																		<span className="sr-only">Close</span>
+																		<Icon name="close" />
+																	</Button>
+																</Dialog.Close>
+															</div>
+
+															<div className="flex-1 space-y-4 overflow-y-auto px-6 pb-6 pt-2">
+																<Filters />
+															</div>
+														</motion.aside>
+													</Dialog.Content>
+												</Dialog.Portal>
+											)}
+										</AnimatePresence>
+									</Dialog.Root>
+								</h2>
+								<div className="flex items-center gap-2">
+									<p>Sort</p>
+									<Select defaultValue="alphabetical">
+										<SelectTrigger className="px-3 py-2">
+											<SelectValue />
+										</SelectTrigger>
+
+										<SelectContent>
+											<SelectItem value="popular">
+												Most Popular First
+											</SelectItem>
+											<SelectItem value="alphabetical">
+												Alphabetical (A - Z)
+											</SelectItem>
+
+											<SelectItem value="quantity">
+												Quantity In Stock
+											</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+						</OrchestratedReveal>
+						<OrchestratedReveal asChild delay={0.4}>
+							<div className="space-y-8">
+								<ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 min-[880px]:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+									{products.pages.map((page) =>
+										page.products.map((product) => (
+											<ProductCard
+												key={product.id}
+												name={product.displayName}
+												startingSku={product.startingSku}
+												link={`/product/${product.id}`}
+												className="xl:[&:nth-child(6n+1)]:col-span-2"
+											/>
+										))
+									)}
+								</ul>
+
+								{productsQuery.hasNextPage && (
+									<Button
+										intent="secondary"
+										onClick={() => productsQuery.fetchNextPage()}
+										disabled={productsQuery.isFetchingNextPage}
+										className="mx-auto"
+									>
+										See More
+									</Button>
+								)}
+							</div>
+						</OrchestratedReveal>
+					</section>
+				</div>
+
+				<GetAQuoteSection />
+				<InspirationSection />
+				<LearnSection />
+				<AugmentedRealityGallerySection />
+			</Main>
+
+			<Footer />
+		</>
+	);
+}
+
 type FilterProps = Omit<CheckboxProps, 'slot'> & {
 	slot?: React.ReactNode;
 };
@@ -321,227 +543,5 @@ function Filters() {
 		</>
 	);
 }
-
-function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const categoryId = props.category;
-
-	const categoriesQuery = api.category.getAll.useQuery(undefined, {
-		refetchOnWindowFocus: false
-	});
-
-	const productsQuery = api.product.getByCategory.useInfiniteQuery(
-		{ categoryId },
-		{
-			refetchOnWindowFocus: false,
-			getNextPageParam: (lastPage) => lastPage.nextCursor
-		}
-	);
-
-	const products = productsQuery.data;
-	const categories: Category[] = [
-		{ id: 'all', displayName: 'All Categories' },
-		...(categoriesQuery.data || [])
-	];
-
-	const [filterMenuOpen, setFilterMenuOpen] = useState<boolean>(false);
-	const screenLg = useMediaQuery('(min-width: 1024px)');
-
-	if (!categories || !products) {
-		const productsNotFound = productsQuery.error?.data?.code === 'NOT_FOUND';
-
-		if (productsNotFound) return <NextError statusCode={404} />;
-
-		return <NextError statusCode={500} />;
-	}
-
-	return (
-		<>
-			<Head>
-				<title>Product Catalogue — Millennium Paving Stones</title>
-			</Head>
-
-			<Main>
-				<OrchestratedReveal asChild delay={0.1}>
-					<h1 className="py-16 text-center font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl">
-						Product Catalogue
-					</h1>
-				</OrchestratedReveal>
-
-				<div className="flex flex-col gap-12 lg:flex-row lg:items-start">
-					<OrchestratedReveal asChild delay={0.2}>
-						{!filterMenuOpen && (
-							<aside className="hidden w-72 space-y-4 rounded-xl border border-gray-300 bg-gray-200 p-6 focus-within:border-gray-400 lg:block">
-								<h2 className="font-display text-lg lg:text-xl">Filters</h2>
-
-								<Filters />
-							</aside>
-						)}
-					</OrchestratedReveal>
-
-					{/* Products */}
-					<section className="flex-1 space-y-4">
-						<OrchestratedReveal asChild delay={0.3}>
-							<div className="flex flex-wrap items-center justify-between gap-2">
-								<h2 className="flex items-center gap-2 font-display text-lg lg:text-xl">
-									<span>All Items</span>
-									<Dialog.Root
-										open={filterMenuOpen}
-										onOpenChange={setFilterMenuOpen}
-									>
-										<Dialog.Trigger asChild>
-											<Button intent="tertiary" className="lg:hidden">
-												<span className="sr-only">Filters</span>
-												<Icon name="tune" />
-											</Button>
-										</Dialog.Trigger>
-
-										<AnimatePresence>
-											{!screenLg && filterMenuOpen && (
-												<Dialog.Portal forceMount>
-													<Dialog.Overlay asChild forceMount>
-														<motion.div
-															className="fixed inset-0 z-50 bg-gray-900/90"
-															initial={{ opacity: 0 }}
-															animate={{ opacity: 1 }}
-															exit={{ opacity: 0 }}
-															transition={{ duration: 0.3 }}
-														/>
-													</Dialog.Overlay>
-
-													<Dialog.Content
-														forceMount
-														className="fixed top-full z-50 h-full w-full"
-													>
-														<motion.aside
-															initial={{ y: 0 }}
-															animate={{
-																y: '-100%',
-																transition: {
-																	type: 'spring',
-																	duration: 0.75,
-																	bounce: 0.1
-																}
-															}}
-															exit={{
-																y: 0,
-																transition: {
-																	type: 'spring',
-																	duration: 0.3,
-																	bounce: 0
-																}
-															}}
-															className="mx-auto flex h-5/6 max-w-md flex-col rounded-t-lg bg-gray-100"
-														>
-															<div className="flex h-12 items-center px-6">
-																<Dialog.Title className="flex-1 font-display text-lg">
-																	Filters
-																</Dialog.Title>
-																<Dialog.Close asChild>
-																	<Button intent="tertiary">
-																		<span className="sr-only">Close</span>
-																		<Icon name="close" />
-																	</Button>
-																</Dialog.Close>
-															</div>
-
-															<div className="flex-1 space-y-4 overflow-y-auto px-6 pb-6 pt-2">
-																<Filters />
-															</div>
-														</motion.aside>
-													</Dialog.Content>
-												</Dialog.Portal>
-											)}
-										</AnimatePresence>
-									</Dialog.Root>
-								</h2>
-								<div className="flex items-center gap-2">
-									<p>Sort</p>
-									<Select defaultValue="alphabetical">
-										<SelectTrigger className="px-3 py-2">
-											<SelectValue />
-										</SelectTrigger>
-
-										<SelectContent>
-											<SelectItem value="popular">
-												Most Popular First
-											</SelectItem>
-											<SelectItem value="alphabetical">
-												Alphabetical (A - Z)
-											</SelectItem>
-
-											<SelectItem value="quantity">
-												Quantity In Stock
-											</SelectItem>
-										</SelectContent>
-									</Select>
-								</div>
-							</div>
-						</OrchestratedReveal>
-						<OrchestratedReveal asChild delay={0.4}>
-							<div className="space-y-8">
-								<ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 min-[880px]:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
-									{products.pages.map((page) =>
-										page.products.map((product) => (
-											<ProductCard
-												key={product.id}
-												name={product.displayName}
-												startingSku={product.startingSku}
-												link={`/product/${product.id}`}
-												className="xl:[&:nth-child(6n+1)]:col-span-2"
-											/>
-										))
-									)}
-								</ul>
-
-								{productsQuery.hasNextPage && (
-									<Button
-										intent="secondary"
-										onClick={() => productsQuery.fetchNextPage()}
-										disabled={productsQuery.isFetchingNextPage}
-										className="mx-auto"
-									>
-										See More
-									</Button>
-								)}
-							</div>
-						</OrchestratedReveal>
-					</section>
-				</div>
-
-				<GetAQuoteSection />
-				<InspirationSection />
-				<LearnSection />
-				<AugmentedRealityGallerySection />
-			</Main>
-
-			<Footer />
-		</>
-	);
-}
-
-export const getServerSideProps = async () => {
-	const ssrContext = await createInnerTRPCContext({});
-
-	const ssr = await createServerSideHelpers({
-		router: appRouter,
-		ctx: ssrContext,
-		transformer: superjson // optional - adds superjson serialization
-	});
-
-	// const categoryId = context.query?.category as string;
-	const categoryId = 'all';
-
-	// prefetch `product.getByCategory`
-	await ssr.product.getByCategory.prefetchInfinite({ categoryId });
-
-	return {
-		props: {
-			trpcState: ssr.dehydrate(),
-			category: categoryId
-		}
-	};
-};
-
-// export const runtime = 'experimental-edge';
 
 export default Page;

@@ -46,18 +46,15 @@ function toFt(
 const toSqft = toFt;
 
 function calculateProjectArea(shape: Shape, measurements: Measurements) {
-	const length = toFt(measurements.length, measurements.unit);
-	const width = toFt(measurements.width, measurements.unit);
-	const radius = toFt(measurements.radius, measurements.unit);
-	const area = toFt(measurements.area, measurements.unit);
+	const { length, width, radius, area } = measurements;
 
 	switch (shape) {
 		case 'rect':
-			return length * width;
+			return toSqft(length * width, measurements.unit);
 		case 'circle':
-			return Math.PI * Math.pow(radius, 2);
+			return toSqft(Math.PI * Math.pow(radius, 2), measurements.unit);
 		case 'other':
-			return area;
+			return toSqft(area, measurements.unit);
 	}
 }
 
@@ -349,6 +346,7 @@ function getPolymericSand(area: number) {
 
 function getQuote(project: StoneProject) {
 	const projectArea = calculateProjectArea(project.shape, project.measurements);
+
 	const border = getBorder(project.border, project.measurements.unit);
 	const infill = getInfill(projectArea - border.area, project.infill);
 

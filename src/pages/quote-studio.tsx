@@ -93,6 +93,7 @@ function SplashScreen({
 						>
 							<Image
 								src="/firepit.png"
+								fetchPriority="high"
 								width={765}
 								height={517}
 								alt="A stone firepit surrounded by paving stones"

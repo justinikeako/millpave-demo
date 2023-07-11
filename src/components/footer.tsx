@@ -5,7 +5,7 @@ import { Icon } from './icon';
 function Footer() {
 	return (
 		<footer className="bg-gray-200 text-gray-900">
-			<div className="space-y-16 px-6 pb-8 pt-8 2xl:container md:px-12 md:pt-16 lg:px-16 lg:pt-16">
+			<div className="space-y-16 px-6 pb-8 pt-8 2xl:container md:pt-12 lg:px-16 lg:pt-16">
 				<div className="flex flex-col justify-between gap-16 md:flex-row">
 					<Link href="/">
 						<Logo variant="tagline" height="64" width="190" />

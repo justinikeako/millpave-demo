@@ -126,7 +126,7 @@ const SheetContent = React.forwardRef<
 											x: 0,
 											transition: {
 												type: 'spring',
-												duration: 0.75,
+												duration: 0.5,
 												bounce: 0
 											}
 									  }
@@ -134,7 +134,7 @@ const SheetContent = React.forwardRef<
 											y: 0,
 											transition: {
 												type: 'spring',
-												duration: 0.75,
+												duration: 0.5,
 												bounce: 0,
 												delay: 0.1
 											}
@@ -146,7 +146,7 @@ const SheetContent = React.forwardRef<
 									: { y: '100%' }),
 								transition: {
 									type: 'spring',
-									duration: 0.5,
+									duration: 0.35,
 									bounce: 0
 								}
 							}}

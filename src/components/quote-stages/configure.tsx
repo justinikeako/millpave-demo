@@ -203,9 +203,22 @@ export function ConfigureStage() {
 													)}
 												</div>
 												<div className="flex flex-1 flex-col items-end gap-2 justify-self-end">
-													<p className="block text-gray-500">
+													<label
+														htmlFor="finish"
+														className="block text-gray-500"
+														onClick={(e) => {
+															e.preventDefault();
+
+															const finishButton =
+																document.querySelector<HTMLButtonElement>(
+																	'#finish'
+																);
+
+															finishButton?.focus();
+														}}
+													>
 														Press &quot;Finish&quot; Edit
-													</p>
+													</label>
 												</div>
 											</div>
 										</div>

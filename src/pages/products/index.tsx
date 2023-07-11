@@ -8,10 +8,7 @@ import { createServerSideHelpers } from '@trpc/react-query/server';
 import { api } from '~/utils/api';
 import NextError from 'next/error';
 import { Button } from '~/components/button';
-import {
-	// GetServerSidePropsContext,
-	InferGetServerSidePropsType
-} from 'next';
+import { InferGetServerSidePropsType } from 'next';
 import { Category } from '~/types/product';
 import { Main } from '~/components/main';
 import { OrchestratedReveal } from '~/components/reveal';
@@ -40,7 +37,7 @@ import {
 	SheetTrigger
 } from '~/components/ui/sheet';
 
-// export const runtime = 'experimental-edge';
+export const runtime = 'experimental-edge';
 
 export const getServerSideProps = async () => {
 	const ssrContext = await createInnerTRPCContext({});

@@ -37,7 +37,7 @@ function Chat({ hide }: { hide: boolean }) {
 					delay={0.4}
 					className={cn(
 						'pointer-events-none fixed inset-0 z-20 flex items-end justify-end p-4',
-						hide && 'hidden'
+						hide && 'opacity-0'
 					)}
 				>
 					<AnimatePresence>
@@ -58,7 +58,8 @@ function Chat({ hide }: { hide: boolean }) {
 						className={cn(
 							RemoveScroll.classNames.zeroRight,
 							open && 'h-full w-full lg:h-auto lg:w-auto',
-							'pointer-events-auto relative text-gray-100'
+							'pointer-events-auto relative text-gray-100',
+							hide && 'pointer-events-none'
 						)}
 					>
 						<motion.div

@@ -8,7 +8,6 @@ import { OrchestratedReveal } from './reveal';
 import { Icon } from './icon';
 import { useRouter } from 'next/router';
 import { cn } from '~/lib/utils';
-import { RemoveScroll } from 'react-remove-scroll';
 
 const NavLink = forwardRef<
 	React.ComponentRef<typeof Link>,
@@ -194,12 +193,7 @@ function Header({ minimal }: { minimal: boolean }) {
 								exit="hide"
 								className="group fixed inset-0 z-50 bg-gray-900 text-white"
 							>
-								<div
-									className={cn(
-										RemoveScroll.classNames.zeroRight,
-										'fixed inset-x-0 z-10 bg-gray-900'
-									)}
-								>
+								<div className="fixed inset-x-0 z-10 bg-gray-900">
 									<div className="flex h-16 items-center justify-between px-6 2xl:container lg:px-16">
 										<Dialog.Close asChild>
 											<Button
@@ -234,12 +228,7 @@ function Header({ minimal }: { minimal: boolean }) {
 									</div>
 								</div>
 
-								<div
-									className={cn(
-										RemoveScroll.classNames.zeroRight,
-										'flex h-full flex-col overflow-y-auto px-6 py-24 md:px-16'
-									)}
-								>
+								<div className="flex h-full flex-col overflow-y-auto px-6 py-24 md:px-16">
 									<motion.ul
 										variants={variants.list}
 										initial="hide"

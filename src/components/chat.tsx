@@ -6,7 +6,6 @@ import { OrchestratedReveal } from './reveal';
 import { cn } from '~/lib/utils';
 import { Icon } from './icon';
 import * as Dialog from '@radix-ui/react-dialog';
-import { RemoveScroll } from 'react-remove-scroll';
 import { useChat, Message } from 'ai/react';
 
 const initialMessages: Message[] = [
@@ -53,7 +52,6 @@ function Chat({ hide }: { hide: boolean }) {
 
 					<div
 						className={cn(
-							RemoveScroll.classNames.zeroRight,
 							open && 'h-full w-full lg:h-auto lg:w-auto',
 							'pointer-events-auto relative text-gray-100',
 							hide && 'pointer-events-none opacity-0'

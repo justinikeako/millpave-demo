@@ -88,11 +88,13 @@ function SplashScreen({
 					<>
 						<Dialog.Overlay />
 
-						<motion.div className="absolute inset-0 z-10 bg-gray-900 after:absolute after:inset-0 after:bg-gray-950/75">
+						<motion.div
+							className="absolute inset-0 z-10 bg-gray-900 after:absolute after:inset-0 after:bg-gray-950/75"
+							exit={{ opacity: 0, transition: { duration: 0.3 } }}
+						>
 							<MotionImage
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1, transition: { duration: 0.5 } }}
-								exit={{ opacity: 0, transition: { duration: 0.3 } }}
 								src="/firepit.png"
 								fetchPriority="high"
 								width={765}

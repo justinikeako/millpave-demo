@@ -244,6 +244,19 @@ function ColorFragmentPicker({
 					</label>
 				</li>
 			))}
+			<li className="flex cursor-not-allowed items-center gap-1 rounded-full border border-gray-300 bg-gray-200 pr-3 font-semibold text-gray-500">
+				<div
+					className="h-10 w-10 rounded-full bg-clip-content p-0.5"
+					style={{
+						backgroundImage:
+							'conic-gradient(from 180deg at 50% 50.00%, #EF847A 0deg, #E7DD69 72.0000010728836deg, #A9D786 144.0000021457672deg, #959ECB 216.00000858306885deg, #EF7AA4 288.0000042915344deg, #EF847A 360deg)'
+					}}
+				/>
+				<span>Custom Blend</span>
+				<span className="inline-block rounded-sm bg-gray-300 px-1 text-sm">
+					Coming Soon
+				</span>
+			</li>
 		</ul>
 	);
 }

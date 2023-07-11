@@ -53,19 +53,20 @@ function Page() {
 			`}</style>
 
 			<StageProvider>
-				<Main className="flex min-h-full flex-col justify-center gap-y-24 overflow-x-hidden py-32">
-					<SplashScreen
-						open={showSplashScreen}
-						onOpenChange={setShowSplashScreen}
-					/>
-					{!showSplashScreen && (
-						<OrchestratedReveal delay={0.1}>
+				{!showSplashScreen && (
+					<OrchestratedReveal delay={0.1} asChild>
+						<Main className="flex min-h-full flex-col justify-center gap-y-24 overflow-x-hidden py-32">
 							<CurrentStage />
-						</OrchestratedReveal>
-					)}
-				</Main>
+						</Main>
+					</OrchestratedReveal>
+				)}
 
 				{!showSplashScreen && <StageFooter />}
+
+				<SplashScreen
+					open={showSplashScreen}
+					onOpenChange={setShowSplashScreen}
+				/>
 			</StageProvider>
 		</>
 	);
@@ -89,7 +90,7 @@ function SplashScreen({
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1, transition: { duration: 0.5 } }}
 							exit={{ opacity: 0, transition: { duration: 0.3 } }}
-							className="absolute inset-0 -z-10 after:absolute after:inset-0  after:bg-gray-950/75"
+							className="absolute inset-0 z-10 after:absolute after:inset-0 after:bg-gray-950/75"
 						>
 							<Image
 								src="/firepit.png"

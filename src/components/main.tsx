@@ -1,11 +1,20 @@
+import { forwardRef } from 'react';
 import { cn } from '~/lib/utils';
 
-function Main(props: React.PropsWithChildren<{ className?: string }>) {
+const Main = forwardRef<
+	React.ComponentRef<'main'>,
+	React.ComponentPropsWithoutRef<'main'>
+>((props, ref) => {
 	return (
-		<main className={cn('px-6 2xl:container lg:px-16', props.className)}>
+		<main
+			ref={ref}
+			className={cn('px-6 2xl:container lg:px-16', props.className)}
+		>
 			{props.children}
 		</main>
 	);
-}
+});
+
+Main.displayName = 'Main';
 
 export { Main };

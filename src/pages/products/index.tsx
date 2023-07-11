@@ -27,14 +27,20 @@ import * as Collapsible from '@radix-ui/react-collapsible';
 import { LearnSection } from '~/components/sections/learn';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useMediaQuery } from '~/utils/use-media-query';
 import { CheckboxProps, Checkbox } from '~/components/checkbox';
 import * as Dialog from '@radix-ui/react-dialog';
 import { InspirationSection } from '~/components/sections/inspiration';
 import { GetAQuoteSection } from '~/components/sections/get-a-quote';
+import {
+	Sheet,
+	SheetBody,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger
+} from '~/components/ui/sheet';
 
-export const runtime = 'experimental-edge';
+// export const runtime = 'experimental-edge';
 
 export const getServerSideProps = async () => {
 	const ssrContext = await createInnerTRPCContext({});
@@ -81,7 +87,6 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	];
 
 	const [filterMenuOpen, setFilterMenuOpen] = useState<boolean>(false);
-	const screenLg = useMediaQuery('(min-width: 1024px)');
 
 	if (!categories || !products) {
 		const productsNotFound = productsQuery.error?.data?.code === 'NOT_FOUND';
@@ -107,7 +112,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 				<div className="flex flex-col gap-12 lg:flex-row lg:items-start">
 					<OrchestratedReveal asChild delay={0.2}>
 						{!filterMenuOpen && (
-							<aside className="hidden w-72 space-y-4 rounded-xl border border-gray-300 bg-gray-200 p-6 focus-within:border-gray-400 lg:block">
+							<aside className="hidden w-72 space-y-4 rounded-xl border border-gray-300 bg-gray-200 p-6 lg:block">
 								<h2 className="font-display text-lg lg:text-xl">Filters</h2>
 
 								<Filters />
@@ -121,75 +126,32 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 							<div className="flex flex-wrap items-center justify-between gap-2">
 								<h2 className="flex items-center gap-2 font-display text-lg lg:text-xl">
 									<span>All Items</span>
-									<Dialog.Root
-										open={filterMenuOpen}
-										onOpenChange={setFilterMenuOpen}
-									>
-										<Dialog.Trigger asChild>
+
+									<Sheet open={filterMenuOpen} onOpenChange={setFilterMenuOpen}>
+										<SheetTrigger asChild>
 											<Button intent="tertiary" className="lg:hidden">
 												<span className="sr-only">Filters</span>
 												<Icon name="tune" />
 											</Button>
-										</Dialog.Trigger>
+										</SheetTrigger>
 
-										<AnimatePresence>
-											{!screenLg && filterMenuOpen && (
-												<Dialog.Portal forceMount>
-													<Dialog.Overlay asChild forceMount>
-														<motion.div
-															className="fixed inset-0 z-50 bg-gray-900/90"
-															initial={{ opacity: 0 }}
-															animate={{ opacity: 1 }}
-															exit={{ opacity: 0 }}
-															transition={{ duration: 0.3 }}
-														/>
-													</Dialog.Overlay>
+										<SheetContent position="left" open={filterMenuOpen}>
+											<SheetHeader>
+												<SheetTitle className="flex-1">Filters</SheetTitle>
 
-													<Dialog.Content
-														forceMount
-														className="fixed top-full z-50 h-full w-full"
-													>
-														<motion.aside
-															initial={{ y: 0 }}
-															animate={{
-																y: '-100%',
-																transition: {
-																	type: 'spring',
-																	duration: 0.75,
-																	bounce: 0.1
-																}
-															}}
-															exit={{
-																y: 0,
-																transition: {
-																	type: 'spring',
-																	duration: 0.3,
-																	bounce: 0
-																}
-															}}
-															className="mx-auto flex h-5/6 max-w-md flex-col rounded-t-lg bg-gray-100"
-														>
-															<div className="flex h-12 items-center px-6">
-																<Dialog.Title className="flex-1 font-display text-lg">
-																	Filters
-																</Dialog.Title>
-																<Dialog.Close asChild>
-																	<Button intent="tertiary">
-																		<span className="sr-only">Close</span>
-																		<Icon name="close" />
-																	</Button>
-																</Dialog.Close>
-															</div>
+												<Dialog.Close asChild>
+													<Button intent="tertiary" size="small">
+														<span className="sr-only">Dismiss</span>
+														<Icon name="close" />
+													</Button>
+												</Dialog.Close>
+											</SheetHeader>
 
-															<div className="flex-1 space-y-4 overflow-y-auto px-6 pb-6 pt-2">
-																<Filters />
-															</div>
-														</motion.aside>
-													</Dialog.Content>
-												</Dialog.Portal>
-											)}
-										</AnimatePresence>
-									</Dialog.Root>
+											<SheetBody className="space-y-4">
+												<Filters />
+											</SheetBody>
+										</SheetContent>
+									</Sheet>
 								</h2>
 								<div className="flex items-center gap-2">
 									<p>Sort</p>

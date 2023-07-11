@@ -45,6 +45,7 @@ import { isEqual } from 'lodash-es';
 import { useStageContext } from './stage-context';
 import Balancer from 'react-wrap-balancer';
 import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
+import { flushSync } from 'react-dom';
 
 type StoneEditorProps = {
 	name: 'infill' | 'border.stones';
@@ -89,7 +90,9 @@ export function StoneEditor(props: StoneEditorProps) {
 		if (editIndex === null) addStone(stone);
 		else editStone(editIndex, stone);
 
-		setSheetOpen(false);
+		flushSync(() => {
+			setSheetOpen(false);
+		});
 	}
 
 	return (
@@ -181,7 +184,7 @@ export function StoneEditor(props: StoneEditorProps) {
 					))}
 				</ul>
 
-				<SheetContent position="right">
+				<SheetContent position="right" open={sheetOpen}>
 					{defaultSku && (
 						<StoneForm
 							initialValues={

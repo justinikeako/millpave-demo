@@ -5,6 +5,8 @@ import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '~/lib/utils';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useMediaQuery } from '~/utils/use-media-query';
 
 const Sheet = SheetPrimitive.Root;
 
@@ -82,23 +84,81 @@ const sheetVariants = cva(
 
 export interface DialogContentProps
 	extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
-		VariantProps<typeof sheetVariants> {}
+		VariantProps<typeof sheetVariants> {
+	open: boolean;
+}
 
 const SheetContent = React.forwardRef<
 	React.ElementRef<typeof SheetPrimitive.Content>,
 	DialogContentProps
->(({ position, className, children, ...props }, ref) => (
-	<SheetPortal position={position}>
-		<SheetOverlay />
-		<SheetPrimitive.Content
-			ref={ref}
-			className={cn(sheetVariants({ position }), className)}
-			{...props}
-		>
-			{children}
-		</SheetPrimitive.Content>
-	</SheetPortal>
-));
+>(({ position, className, open, children, ...props }, ref) => {
+	const screenLg = useMediaQuery('(min-width: 480px)');
+
+	return (
+		<AnimatePresence>
+			{open && (
+				<SheetPortal position={position} forceMount>
+					<SheetOverlay forceMount asChild>
+						<motion.div
+							className="fixed inset-0 z-50 bg-gray-900/50"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							transition={{ duration: 0.3 }}
+						/>
+					</SheetOverlay>
+					<SheetPrimitive.Content
+						forceMount
+						asChild
+						ref={ref}
+						className={cn(sheetVariants({ position }), className)}
+						{...props}
+					>
+						<motion.div
+							initial={{
+								...(screenLg
+									? { x: position === 'left' ? '-100%' : '100%' }
+									: { y: '100%' })
+							}}
+							animate={
+								screenLg
+									? {
+											x: 0,
+											transition: {
+												type: 'spring',
+												duration: 0.75,
+												bounce: 0
+											}
+									  }
+									: {
+											y: 0,
+											transition: {
+												type: 'spring',
+												duration: 0.75,
+												bounce: 0,
+												delay: 0.1
+											}
+									  }
+							}
+							exit={{
+								...(screenLg
+									? { x: position === 'left' ? '-100%' : '100%' }
+									: { y: '100%' }),
+								transition: {
+									type: 'spring',
+									duration: 0.5,
+									bounce: 0
+								}
+							}}
+						>
+							{children}
+						</motion.div>
+					</SheetPrimitive.Content>
+				</SheetPortal>
+			)}
+		</AnimatePresence>
+	);
+});
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
 const SheetHeader = ({
@@ -114,7 +174,7 @@ const SheetBody = ({
 	...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
 	<div
-		className={cn('flex-1 overflow-y-auto px-8 pb-8 pt-2 md:px-6', className)}
+		className={cn('flex-1 overflow-y-auto px-6 pb-6 pt-2', className)}
 		{...props}
 	/>
 );

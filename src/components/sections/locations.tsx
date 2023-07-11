@@ -6,7 +6,7 @@ export function LocationsSection() {
 	return (
 		<SplitSection
 			slot={
-				<div className="flex items-center justify-center px-6 pb-16 md:pb-0 md:pr-0 lg:pl-16">
+				<div className="flex items-center justify-center px-6 md:pr-0 lg:pl-16">
 					<iframe
 						src="https://snazzymaps.com/embed/500656"
 						className="aspect-video w-full border border-gray-400 bg-gray-200 lg:w-5/6"

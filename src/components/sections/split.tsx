@@ -33,7 +33,7 @@ export function SplitSection({
 						<div className="mt-8 flex gap-2">{actions}</div>
 					</div>
 				</div>
-				<Slot className="sm:order-1 sm:flex-[6]">{slot}</Slot>
+				<Slot className="py-4 sm:order-1 sm:flex-[6] sm:py-0">{slot}</Slot>
 			</FullWidthSection>
 		</ViewportReveal>
 	);

@@ -35,10 +35,7 @@ function Chat({ hide }: { hide: boolean }) {
 			<AnimatePresence>
 				<OrchestratedReveal
 					delay={0.4}
-					className={cn(
-						'pointer-events-none fixed inset-0 z-20 flex items-end justify-end p-4',
-						hide && 'opacity-0'
-					)}
+					className="pointer-events-none fixed inset-0 z-20 flex items-end justify-end p-4"
 				>
 					<AnimatePresence>
 						{open && (
@@ -59,7 +56,7 @@ function Chat({ hide }: { hide: boolean }) {
 							RemoveScroll.classNames.zeroRight,
 							open && 'h-full w-full lg:h-auto lg:w-auto',
 							'pointer-events-auto relative text-gray-100',
-							hide && 'pointer-events-none'
+							hide && 'pointer-events-none opacity-0'
 						)}
 					>
 						<motion.div

@@ -79,7 +79,7 @@ function getInfill(area: number, infill: Infill) {
 
 	for (const stone of infill) {
 		if (stone.coverage.unit === 'fr') {
-			fractionalTotal += stone.coverage.value;
+			fractionalTotal += parseFloat(stone.coverage.value as unknown as string);
 			fractionalStones.push(stone);
 		} else fixedStones.push(stone);
 	}
@@ -138,7 +138,7 @@ function getBorder(border: Border, inheritedUnit: Unit1D) {
 
 	for (const stone of border.stones) {
 		if (stone.coverage.unit === 'fr') {
-			fractionalTotal += stone.coverage.value;
+			fractionalTotal += parseFloat(stone.coverage.value as unknown as string);
 			fractionalStones.push(stone);
 		} else fixedStones.push(stone);
 	}

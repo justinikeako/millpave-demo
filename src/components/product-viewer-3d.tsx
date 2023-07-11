@@ -29,7 +29,7 @@ function ProductViewer3D({ skuId, displayName }: ProductViewer3DProps) {
 	const variantId = variantIdFragments.join(':');
 	const link = `${
 		window.location.origin
-	}/product/${productId}?sku=${encodeURIComponent(variantId)}?image=3`;
+	}/product/${productId}?sku=${encodeURIComponent(variantId)}&image=3`;
 	const title = displayName;
 	const file = `https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/${slug}`;
 

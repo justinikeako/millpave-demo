@@ -25,8 +25,11 @@ type ProductViewer3DProps = {
 function ProductViewer3D({ skuId, displayName }: ProductViewer3DProps) {
 	const slug = skuId.replace(/:/g, '-') + '.gltf';
 
-	const [productId] = skuId.split(':');
-	const link = `${window.location.origin}/product/${productId}`;
+	const [productId, ...variantIdFragments] = skuId.split(':');
+	const variantId = variantIdFragments.join(':');
+	const link = `${
+		window.location.origin
+	}/product/${productId}?sku=${encodeURIComponent(variantId)}?image=3`;
 	const title = displayName;
 	const file = `https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/${slug}`;
 
@@ -35,21 +38,13 @@ function ProductViewer3D({ skuId, displayName }: ProductViewer3DProps) {
 	const groupRef = useRef<Group>(null);
 	const planeRef = useRef<Mesh>(null);
 
-	useEffect(() => {
-		if (!groupRef.current || !planeRef.current) return;
-
-		const box = new Box3().setFromObject(groupRef.current);
-		const height = box.max.y - box.min.y;
-
-		planeRef.current.position.y = -height / 2 - 0.01;
-	}, [materials.concrete.uuid]);
-
 	return (
 		<>
 			<div className="absolute inset-0">
 				<Canvas
 					camera={{ position: [0, 4.5, 0], near: 0.01, far: 20, fov: 45 }}
 					shadows="soft"
+					frameloop="demand"
 				>
 					<OrbitControls
 						enablePan={false}
@@ -77,6 +72,14 @@ function ProductViewer3D({ skuId, displayName }: ProductViewer3DProps) {
 								material={materials.concrete}
 								position={position}
 								castShadow
+								onAfterRender={() => {
+									if (!groupRef.current || !planeRef.current) return;
+
+									const box = new Box3().setFromObject(groupRef.current);
+									const height = box.max.y - box.min.y;
+
+									planeRef.current.position.y = -height / 2 - 0.01;
+								}}
 							/>
 						))}
 					</group>
@@ -87,7 +90,7 @@ function ProductViewer3D({ skuId, displayName }: ProductViewer3DProps) {
 						rotation={[-Math.PI / 2, 0, 0]}
 						ref={planeRef}
 					>
-						<planeBufferGeometry attach="geometry" args={[100, 100]} />
+						<planeGeometry attach="geometry" args={[100, 100]} />
 						<meshStandardMaterial attach="material" color="#ffffff" />
 					</mesh>
 				</Canvas>

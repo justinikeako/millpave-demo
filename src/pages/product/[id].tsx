@@ -6,17 +6,13 @@ import { Button } from '~/components/button';
 import Link from 'next/link';
 import NextError from 'next/error';
 import { Sku } from '~/types/product';
-import { api } from '~/utils/api';
 import { cn } from '~/lib/utils';
 import { PaverEstimator } from '~/components/estimator';
 import { Icon } from '~/components/icon';
-import { Suspense, useState } from 'react';
-import { createServerSideHelpers } from '@trpc/react-query/server';
-import superjson from 'superjson';
+import { Suspense } from 'react';
 import { formatPrice } from '~/utils/format';
 import { createInnerTRPCContext } from '~/server/api/trpc';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { appRouter } from '~/server/api/root';
 import dynamic from 'next/dynamic';
 import { OrchestratedReveal, ViewportReveal } from '~/components/reveal';
 import { ProductStock } from '~/components/product-stock';
@@ -28,62 +24,64 @@ import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery
 import { Main } from '~/components/main';
 import { HorizontalScroller } from '~/components/horizontal-scroller';
 import { GetAQuoteSection } from '~/components/sections/get-a-quote';
+import { useRouter } from 'next/router';
+import { productRouter } from '~/server/api/routers/product';
 
 export const runtime = 'experimental-edge';
 
 export const getServerSideProps = async ({
 	res,
-	params
+	params,
+	query
 }: GetServerSidePropsContext) => {
 	res.setHeader(
 		'Cache-Control',
 		`public, s-maxage=${60 * 60 * 24 * 31}, stale-while-revalidate=59`
 	);
 
-	const ssrContext = await createInnerTRPCContext({});
-
-	const ssr = await createServerSideHelpers({
-		router: appRouter,
-		ctx: ssrContext,
-		transformer: superjson
-	});
-
 	const productId = params?.id as string;
+	const variantId =
+		typeof query?.sku === 'string' ? decodeURIComponent(query.sku) : undefined;
+	const skuId = productId ? productId + ':' + variantId : undefined;
 
-	// prefetch `product.getById`
-	await ssr.product.getById.prefetch({ productId });
+	const callerContext = await createInnerTRPCContext({});
+	const productCaller = productRouter.createCaller(callerContext);
+
+	const product = await productCaller.getById({ productId });
+
+	const [, ...defaultVariantFragments] = product.defaultSkuId.split(':');
+	const defaultVariantId = defaultVariantFragments.join(':');
+
+	const skuExists = product.skus.some((currentSku) => currentSku.id === skuId);
+
+	if (!skuExists)
+		return {
+			redirect: {
+				destination: `/product/${product.id}?sku=${encodeURIComponent(
+					defaultVariantId
+				)}`,
+				permanent: true
+			}
+		};
 
 	return {
-		props: {
-			trpcState: ssr.dehydrate(),
-			id: productId
-		}
+		props: { product }
 	};
 };
 
-function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	const productId = props.id;
+function Page({
+	product
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	const router = useRouter();
+	const { pathname, query } = router;
 
-	const productQuery = api.product.getById.useQuery(
-		{ productId },
-		{ refetchOnWindowFocus: false }
-	);
+	const variantId =
+		typeof query.sku === 'string' ? decodeURIComponent(query.sku) : undefined;
+	const skuId = product?.id ? product?.id + ':' + variantId : undefined;
 
-	const product = productQuery.data;
-
-	const [skuId, setSkuId] = useState(product?.defaultSkuId);
 	const currentSku = findSku(skuId, product?.skus, product?.details);
 
-	if (!product || !currentSku || !skuId) {
-		const productNotFound = productQuery.error?.data?.code === 'NOT_FOUND';
-		const skuNotFound = currentSku === undefined;
-
-		if (!product) return null;
-		if (productNotFound) return <NextError statusCode={404} />;
-		if (skuNotFound && product.defaultSkuId) setSkuId(product.defaultSkuId);
-
-		return <NextError statusCode={500} />;
-	}
+	if (!product || !currentSku || !skuId) return <NextError statusCode={404} />;
 
 	return (
 		<>
@@ -113,7 +111,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 										{product.category.displayName}
 									</Link>
 								</p>
-								<h1 className="font-display text-5xl leading-tight md:text-6xl lg:text-7xl xl:text-8xl">
+								<h1 className="font-display text-4xl leading-tight md:text-5xl lg:text-6xl xl:text-7xl/tight">
 									{product.displayName}
 								</h1>
 							</div>
@@ -140,7 +138,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 								</div>
 
 								<ProductStock
-									productId={productId}
+									productId={product.id}
 									skuId={skuId}
 									outOfStockMessage={
 										['concrete_pavers', 'slabs_blocks'].includes(
@@ -161,9 +159,16 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 						{/* Sku Picker */}
 						<SkuPickerProvider
 							skuId={skuId}
-							onChange={(newSkuId) => {
-								setSkuId(newSkuId);
-							}}
+							onChange={({ newVariantId }) =>
+								router.replace(
+									{
+										pathname,
+										query: { ...query, sku: encodeURIComponent(newVariantId) }
+									},
+									undefined,
+									{ shallow: true }
+								)
+							}
 						>
 							<VariantPicker
 								variantIdTemplate={product.variantIdTemplate}
@@ -198,7 +203,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 				{/* Similar Products */}
 				<ViewportReveal className="flex flex-col space-y-16 py-16">
-					<h2 className="max-w-[28ch] self-center text-center font-display text-3xl sm:text-4xl lg:text-5xl xl:text-6xl">
+					<h2 className="max-w-[28ch] self-center text-center font-display text-3xl lg:text-4xl xl:text-5xl">
 						Similar to {product.displayName}
 					</h2>
 
@@ -213,7 +218,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 									className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
 								/>
 							))}
-							<li className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1">
+							<li className="min-w-[16rem] shrink-0 basis-80 snap-center lg:w-auto lg:flex-1">
 								<Button
 									asChild
 									intent="secondary"
@@ -247,7 +252,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 const ProductViewer3D = dynamic(
 	() => import('~/components/product-viewer-3d'),
-	{ suspense: true }
+	{ suspense: true, ssr: false }
 );
 
 type GalleryProps = {
@@ -258,10 +263,14 @@ type GalleryProps = {
 function Gallery({ sku, showModelViewer }: GalleryProps) {
 	const images = [0, 0, 0, 0];
 
-	const [selectedIndex, setSelectedIndex] = useState(0);
+	const router = useRouter();
+	const { pathname, query } = router;
+
+	const selectedIndex =
+		typeof query.image === 'string' ? parseInt(query.image) : 0;
 
 	return (
-		<div className="sticky top-24 flex w-full flex-col-reverse items-center gap-2 lg:flex-row">
+		<div className="sticky top-24 mx-auto flex w-full max-w-sm flex-col-reverse items-center gap-2 sm:max-w-none lg:flex-row">
 			<div className="flex items-center justify-center gap-2 lg:flex-col">
 				{images.map((_, index) => {
 					const id = 'image-' + index;
@@ -274,7 +283,13 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 								id={id}
 								className="peer hidden"
 								checked={index === selectedIndex}
-								onChange={() => setSelectedIndex(index)}
+								onChange={() =>
+									router.replace(
+										{ pathname, query: { ...query, image: index } },
+										undefined,
+										{ shallow: true }
+									)
+								}
 							/>
 
 							<label

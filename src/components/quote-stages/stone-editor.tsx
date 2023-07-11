@@ -498,9 +498,7 @@ function StoneForm({
 					render={(skuId) => (
 						<SkuPickerProvider
 							skuId={skuId.field.value}
-							onChange={(newSkuId) => {
-								skuId.field.onChange(newSkuId);
-							}}
+							onChange={({ newSkuId }) => skuId.field.onChange(newSkuId)}
 						>
 							<Section
 								heading={`Product — ${

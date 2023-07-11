@@ -11,23 +11,30 @@ const SkuPickerContext = createContext({} as SkuPickerContextValue);
 
 type SkuPickerProviderProps = React.PropsWithChildren<{
 	skuId: string;
-	onChange(newSkuId: string): void;
+	onChange(news: { newSkuId: string; newVariantId: string }): void;
 }>;
 
 function SkuPickerProvider(props: SkuPickerProviderProps) {
 	const skuIdFragments = props.skuId.split(':');
 
+	function changeSkuId(newSkuId: string) {
+		const [, ...newVariantIdFragments] = newSkuId.split(':');
+		const newVariantId = newVariantIdFragments.join(':');
+
+		props.onChange({ newSkuId, newVariantId });
+	}
+
 	function changeFragment(changeIndex: number, newFragment: string) {
 		const newSkuIdFragments = skuIdFragments.map((oldFragment, index) => {
 			// Replaces changed index with the new fragment
-			const indexDidChange = index === changeIndex;
+			const fragmentDidChange = index === changeIndex;
 
-			return indexDidChange ? newFragment : oldFragment;
+			return fragmentDidChange ? newFragment : oldFragment;
 		});
 
 		const newSkuId = newSkuIdFragments.join(':');
 
-		props.onChange(newSkuId);
+		changeSkuId(newSkuId);
 	}
 
 	return (
@@ -35,7 +42,7 @@ function SkuPickerProvider(props: SkuPickerProviderProps) {
 			value={{
 				skuIdFragments: props.skuId.split(':'),
 				changeFragment,
-				changeSkuId: props.onChange
+				changeSkuId
 			}}
 		>
 			{props.children}

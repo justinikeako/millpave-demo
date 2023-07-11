@@ -15,7 +15,12 @@ import { unitDisplayNameDictionary } from '~/lib/utils';
 import React from 'react';
 import { addWeeks } from 'date-fns';
 import { Balancer } from 'react-wrap-balancer';
-import { OrchestratedReveal } from '~/components/reveal';
+import { OrchestratedReveal, ViewportReveal } from '~/components/reveal';
+import { HorizontalScroller } from '~/components/horizontal-scroller';
+import { ProductCard } from '~/components/product-card';
+import { Icon } from '~/components/icon';
+import { LearnSection } from '~/components/sections/learn';
+import { LocationsSection } from '~/components/sections/locations';
 
 export const runtime = 'experimental-edge';
 
@@ -74,17 +79,17 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
 			<Main className="space-y-16 py-8 lg:py-16">
 				<OrchestratedReveal asChild delay={0.1}>
-					<h2 className="text-center font-display text-3xl sm:text-4xl md:text-5xl">
+					<h1 className="text-center font-display text-3xl sm:text-4xl md:text-5xl">
 						Here is your final quote.
-					</h2>
+					</h1>
 				</OrchestratedReveal>
 				<div className="flex flex-col gap-16 xl:flex-row">
 					<OrchestratedReveal asChild delay={0.2}>
 						<div className="flex-1 space-y-4">
 							<div className="flex items-center justify-between">
-								<h3 className="font-display text-xl">
+								<h2 className="font-display text-xl">
 									Items ({quote.items.length})
-								</h3>
+								</h2>
 								<Button
 									intent="tertiary"
 									size="small"
@@ -232,7 +237,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 					<OrchestratedReveal asChild delay={0.3}>
 						<aside className="space-y-4">
 							<div className="space-y-4">
-								<h3 className="font-display text-xl">Payment Options</h3>
+								<h2 className="font-display text-xl">Payment Options</h2>
 
 								<ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap xl:flex-col">
 									<li className="flex w-full flex-col items-center justify-center gap-4 rounded-md border border-gray-400 bg-gray-200 p-4 text-center sm:w-72">
@@ -264,6 +269,50 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 						</aside>
 					</OrchestratedReveal>
 				</div>
+
+				<ViewportReveal className="flex flex-col space-y-16 py-16">
+					<h2 className="max-w-[28ch] self-center text-center font-display text-3xl lg:text-4xl xl:text-5xl">
+						You may also like
+					</h2>
+
+					<div className="flex flex-col space-y-8">
+						<HorizontalScroller className="gap-4 py-1" snap>
+							<ProductCard
+								name="Colonial Classic"
+								startingSku={{ price: 203, unit: 'sqft' }}
+								link="/product/colonial_classic"
+								className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
+							/>
+							<ProductCard
+								name="Banjo"
+								startingSku={{ price: 219, unit: 'sqft' }}
+								link="/product/banjo"
+								className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
+							/>
+							<ProductCard
+								name="Heritage Series"
+								startingSku={{ price: 219, unit: 'sqft' }}
+								link="/product/heritage"
+								className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
+							/>
+							<li className="min-w-[16rem] shrink-0 basis-80 snap-center lg:w-auto lg:flex-1">
+								<Button
+									asChild
+									intent="secondary"
+									className="h-full flex-col !rounded-md font-display text-lg italic"
+								>
+									<Link href="/products">
+										<span className="block w-[15ch]">Explore All Products</span>
+										<Icon name="arrow_right_alt" size={24} />
+									</Link>
+								</Button>
+							</li>
+						</HorizontalScroller>
+					</div>
+				</ViewportReveal>
+
+				<LocationsSection />
+				<LearnSection />
 			</Main>
 
 			<Footer />

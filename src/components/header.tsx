@@ -89,7 +89,9 @@ function Header({ minimal }: { minimal: boolean }) {
 	const headerRef = useRef<HTMLDivElement>(null);
 	const router = useRouter();
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [isTransparent, setTransparent] = useState(router.pathname === '/');
+	const [isTransparent, setTransparent] = useState(
+		['/', '/quote-studio'].includes(router.pathname)
+	);
 
 	useEffect(() => {
 		const headerElement = headerRef.current;

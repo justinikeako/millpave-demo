@@ -90,6 +90,7 @@ function Hero() {
 				>
 					<Image
 						src="/hero.jpg"
+						priority
 						fetchPriority="high"
 						width={1000}
 						height={747}

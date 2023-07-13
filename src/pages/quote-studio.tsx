@@ -96,6 +96,7 @@ function SplashScreen({
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1, transition: { duration: 0.5 } }}
 								src="/firepit.png"
+								priority
 								fetchPriority="high"
 								width={765}
 								height={517}

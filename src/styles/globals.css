@@ -14,7 +14,6 @@
 body {
 	font-size: 13px;
 	overflow-y: scroll;
-	overflow-y: overlay;
 	overflow-x: hidden;
 }
 

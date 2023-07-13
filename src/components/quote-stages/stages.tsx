@@ -30,7 +30,12 @@ export const stages = [
 		component: BorderStage,
 		optional: true
 	},
-	{ id: 'email', displayName: 'Email', component: EmailStage, optional: false },
+	{
+		id: 'email',
+		displayName: 'Email',
+		component: EmailStage,
+		optional: false
+	},
 	{
 		id: 'review',
 		displayName: 'Review',

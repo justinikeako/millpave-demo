@@ -14,7 +14,7 @@ import { Balancer } from 'react-wrap-balancer';
 import { Button } from '../button';
 
 export function ConfigureStage() {
-	const { quote, setStageIndex } = useStageContext();
+	const { stoneMetadataArray, quote, setStageIndex } = useStageContext();
 
 	const { control, register } = useFormContext<StoneProject>();
 	const { fields: addons } = useFieldArray({
@@ -23,7 +23,7 @@ export function ConfigureStage() {
 		name: 'addons'
 	});
 
-	const itemsSkuIds = quote.items.map(({ skuId }) => skuId);
+	const itemsSkuIds = stoneMetadataArray.map(({ skuId }) => skuId);
 
 	const itemsFulfillmentQuery = api.quote.getFulfillment.useQuery(
 		{ skuIds: itemsSkuIds },
@@ -109,7 +109,7 @@ export function ConfigureStage() {
 
 										<div className="w-full space-y-4 lg:w-auto lg:flex-1 ">
 											<div className="flex flex-wrap">
-												<h3 className="w-full font-display text-lg sm:w-1/2 sm:text-xl">
+												<h3 className="w-full font-display text-lg hover:underline sm:w-1/2 sm:text-xl">
 													<Link
 														target="_blank"
 														href={`/product/${item.skuId.split(':')[0]}`}

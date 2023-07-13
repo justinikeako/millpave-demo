@@ -26,7 +26,7 @@ export function BorderStage() {
 	} = useStageContext();
 	const { watch } = useFormContext<StoneProject>();
 
-	const hasStones = watch('border.stones').length > 0;
+	const hasStones = watch('border.contents').length > 0;
 	const isSkipped = getStageStatus('border').skipped;
 	const infillStageIsSkipped = getStageStatus('infill').skipped;
 
@@ -76,7 +76,7 @@ export function BorderStage() {
 
 			<BorderOptions />
 
-			<StoneEditor name="border.stones" dimension="1D" stageIndex={3} />
+			<StoneEditor name="border.contents" dimension="1D" stageIndex={3} />
 		</StageForm>
 	);
 }

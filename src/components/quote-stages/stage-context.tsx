@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
-	Border,
+	BorderConfig,
 	Measurements,
-	Infill,
+	InfillConfig,
 	Quote,
 	QuoteItem,
 	Shape,
@@ -11,7 +11,8 @@ import {
 	Stone2D,
 	StoneProject,
 	Unit,
-	Unit1D
+	Unit1D,
+	StoneMetadata
 } from '~/types/quote';
 import { roundTo } from '~/utils/number';
 import { PaverDetails } from '~/types/product';
@@ -46,15 +47,19 @@ function toFt(
 const toSqft = toFt;
 
 function calculateProjectArea(shape: Shape, measurements: Measurements) {
-	const { length, width, radius, area } = measurements;
-
 	switch (shape) {
 		case 'rect':
-			return toSqft(length * width, measurements.unit);
+			return toSqft(
+				measurements.length * measurements.width,
+				measurements.unit
+			);
 		case 'circle':
-			return toSqft(Math.PI * Math.pow(radius, 2), measurements.unit);
+			return toSqft(
+				Math.PI * Math.pow(measurements.radius, 2),
+				measurements.unit
+			);
 		case 'other':
-			return toSqft(area, measurements.unit);
+			return toSqft(measurements.area, measurements.unit);
 	}
 }
 
@@ -67,17 +72,34 @@ type Item = {
 	signatures: string[];
 };
 
-function getInfill(area: number, infill: Infill) {
+function getStoneMetadata(
+	searchId: string,
+	stoneMetadataArray: StoneMetadata[]
+) {
+	const metadata = stoneMetadataArray.find(({ skuId }) => skuId === searchId);
+
+	if (!metadata)
+		throw new Error(
+			`Stone with the id '${searchId}' not found in metadata array.`
+		);
+	return metadata;
+}
+
+function getInfill(
+	area: number,
+	infill: InfillConfig,
+	stoneMetadataArray: StoneMetadata[]
+) {
 	let infillArea = Math.max(0, area);
 
-	const stones: Item[] = [];
+	const items: Item[] = [];
 
 	// Cut out fixed values first; divy up ratio values afterwards
 	const fractionalStones: Stone2D[] = [];
 	let fractionalTotal = 0;
 	const fixedStones: Stone2D[] = [];
 
-	for (const stone of infill) {
+	for (const stone of infill.contents) {
 		if (stone.coverage.unit === 'fr') {
 			fractionalTotal += parseFloat(stone.coverage.value as unknown as string);
 			fractionalStones.push(stone);
@@ -87,19 +109,21 @@ function getInfill(area: number, infill: Infill) {
 	for (const stone of fixedStones) {
 		const unit = stone.coverage.unit as Exclude<Unit, 'fr' | 'pal' | 'pcs'>;
 
+		const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+
 		const fixedSegmentArea =
 			unit === 'unit'
-				? stone.coverage.value / stone.metadata.details.pcs_per_sqft
+				? stone.coverage.value / stoneMetadata.details.pcs_per_sqft
 				: toSqft(stone.coverage.value, unit);
 
 		infillArea -= fixedSegmentArea;
 
-		stones.push({
+		items.push({
 			skuId: stone.skuId,
-			displayName: stone.metadata.displayName,
 			sqftCoverage: fixedSegmentArea,
-			sqftPrice: stone.metadata.price,
-			details: stone.metadata.details,
+			displayName: stoneMetadata.displayName,
+			sqftPrice: stoneMetadata.price,
+			details: stoneMetadata.details,
 			signatures: ['infill']
 		});
 	}
@@ -112,31 +136,37 @@ function getInfill(area: number, infill: Infill) {
 		const fractionalSegmentArea =
 			infillArea * (stone.coverage.value / fractionalTotal);
 
-		stones.push({
+		const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+
+		items.push({
 			skuId: stone.skuId,
-			displayName: stone.metadata.displayName,
+			displayName: stoneMetadata.displayName,
 			sqftCoverage: fractionalSegmentArea,
-			sqftPrice: stone.metadata.price,
-			details: stone.metadata.details,
+			sqftPrice: stoneMetadata.price,
+			details: stoneMetadata.details,
 			signatures: ['infill']
 		});
 	}
 
-	return { area: Math.max(0, area), items: stones };
+	return { area: Math.max(0, area), items: items };
 }
 
-function getBorder(border: Border, inheritedUnit: Unit1D) {
+function getBorder(
+	border: BorderConfig,
+	inheritedUnit: Unit1D,
+	stoneMetadataArray: StoneMetadata[]
+) {
 	let borderArea = 0;
 	let runningFoot = toFt(border.runningLength.value, inheritedUnit);
 	const orientation = border.orientation;
 
-	const stones: Item[] = [];
+	const items: Item[] = [];
 	// Cut out fixed values first; divy up ratio values afterwards
 	const fractionalStones: Stone1D[] = [];
 	let fractionalTotal = 0;
 	const fixedStones: Stone1D[] = [];
 
-	for (const stone of border.stones) {
+	for (const stone of border.contents) {
 		if (stone.coverage.unit === 'fr') {
 			fractionalTotal += parseFloat(stone.coverage.value as unknown as string);
 			fractionalStones.push(stone);
@@ -144,8 +174,9 @@ function getBorder(border: Border, inheritedUnit: Unit1D) {
 	}
 
 	for (const stone of fixedStones) {
-		const conversionFactorDictionary =
-			stone.metadata.details.conversion_factors;
+		const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+
+		const conversionFactorDictionary = stoneMetadata.details.conversion_factors;
 		if (!conversionFactorDictionary)
 			throw new Error(`Stone ${stone.skuId} can not be used as a border`);
 
@@ -168,12 +199,12 @@ function getBorder(border: Border, inheritedUnit: Unit1D) {
 
 		borderArea += fixedSegmentArea;
 
-		stones.push({
+		items.push({
 			skuId: stone.skuId,
-			displayName: stone.metadata.displayName,
 			sqftCoverage: fixedSegmentArea,
-			sqftPrice: stone.metadata.price,
-			details: stone.metadata.details,
+			displayName: stoneMetadata.displayName,
+			sqftPrice: stoneMetadata.price,
+			details: stoneMetadata.details,
 			signatures: ['border']
 		});
 	}
@@ -183,8 +214,9 @@ function getBorder(border: Border, inheritedUnit: Unit1D) {
 	for (const stone of fractionalStones) {
 		if (runningFoot <= 0) break;
 
-		const conversionFactorDictionary =
-			stone.metadata.details.conversion_factors;
+		const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+
+		const conversionFactorDictionary = stoneMetadata.details.conversion_factors;
 		if (!conversionFactorDictionary)
 			throw new Error(`Stone ${stone.skuId} can not be used as a border`);
 
@@ -194,19 +226,20 @@ function getBorder(border: Border, inheritedUnit: Unit1D) {
 			fractionalSegmentLength * conversionFactorDictionary[orientation];
 
 		borderArea += fractionalSegmentArea;
-		stones.push({
+
+		items.push({
 			skuId: stone.skuId,
-			displayName: stone.metadata.displayName,
 			sqftCoverage: fractionalSegmentArea,
-			sqftPrice: stone.metadata.price,
-			details: stone.metadata.details,
+			displayName: stoneMetadata.displayName,
+			sqftPrice: stoneMetadata.price,
+			details: stoneMetadata.details,
 			signatures: ['border']
 		});
 	}
 
 	return {
 		area: borderArea,
-		items: stones
+		items: items
 	};
 }
 
@@ -344,11 +377,19 @@ function getPolymericSand(area: number) {
 	};
 }
 
-function getQuote(project: StoneProject) {
+function getQuote(project: StoneProject, stoneMetadataArray: StoneMetadata[]) {
 	const projectArea = calculateProjectArea(project.shape, project.measurements);
 
-	const border = getBorder(project.border, project.measurements.unit);
-	const infill = getInfill(projectArea - border.area, project.infill);
+	const border = getBorder(
+		project.border,
+		project.measurements.unit,
+		stoneMetadataArray
+	);
+	const infill = getInfill(
+		projectArea - border.area,
+		project.infill,
+		stoneMetadataArray
+	);
 
 	const mergedItems = mergeItems([...infill.items, ...border.items]);
 
@@ -388,7 +429,13 @@ function getQuote(project: StoneProject) {
 	};
 }
 
+type StoneMetadataWithUserCount = StoneMetadata & { userCount: number };
+
 type StageContextValue = {
+	stoneMetadataArray: StoneMetadataWithUserCount[];
+	addStoneMetadata(newStoneMetadata: StoneMetadata): void;
+	removeStoneMetadata(skuId: string): void;
+	getStoneMetadata(skuId: string): StoneMetadata | undefined;
 	quote: Quote;
 	stageStatus: {
 		id: string;
@@ -425,11 +472,13 @@ const defaultValues: StoneProject = {
 		runningLength: 0,
 		radius: 0
 	},
-	infill: [],
+	infill: {
+		contents: []
+	},
 	border: {
 		runningLength: { value: 0, unit: 'auto' },
 		orientation: 'SOLDIER_ROW',
-		stones: []
+		contents: []
 	},
 
 	addons: [
@@ -544,6 +593,51 @@ export function StageProvider(props: React.PropsWithChildren) {
 	}
 
 	const [previousProject, setPreviousProject] = useState(defaultValues);
+	const [stoneMetadataArray, setStoneMetadataArray] = useState<
+		StoneMetadataWithUserCount[]
+	>([]);
+
+	function getStoneMetadata(skuId: string) {
+		const foundMetadata = stoneMetadataArray.find(
+			(metadata) => metadata.skuId === skuId
+		);
+
+		return foundMetadata;
+	}
+
+	function addStoneMetadata(newMetadata: StoneMetadata) {
+		const existingMetadata = getStoneMetadata(newMetadata.skuId);
+
+		setStoneMetadataArray((prevMetadataArr) => {
+			// Increment existing metadata object's userCount
+			if (existingMetadata) {
+				const updatedMetadataArray = prevMetadataArr.map((metadata) =>
+					metadata.skuId === existingMetadata.skuId
+						? { ...metadata, userCount: metadata.userCount + 1 }
+						: metadata
+				);
+				return updatedMetadataArray;
+			}
+
+			// For truly new metadata, add them to the array with one user
+			return [...prevMetadataArr, { ...newMetadata, userCount: 1 }];
+		});
+	}
+
+	function removeStoneMetadata(skuId: string) {
+		setStoneMetadataArray((prevMetadata) => {
+			// Decrement user count from the affected metadata object
+			const updatedMetadataArray = prevMetadata.map((metadata) =>
+				metadata.skuId === skuId
+					? { ...metadata, userCount: metadata.userCount - 1 }
+					: metadata
+			);
+
+			// Remove metadata objects with zero users
+			return updatedMetadataArray.filter((metadata) => metadata.userCount > 0);
+		});
+	}
+
 	const [quote, setQuote] = useState<Quote>({
 		id: undefined,
 		items: [],
@@ -565,7 +659,7 @@ export function StageProvider(props: React.PropsWithChildren) {
 		const currentProject = formMethods.watch();
 
 		if (!isEqual(previousProject, currentProject)) {
-			const newQuote = getQuote(currentProject);
+			const newQuote = getQuote(currentProject, stoneMetadataArray);
 
 			setQuote({ ...quote, ...newQuote });
 
@@ -580,11 +674,15 @@ export function StageProvider(props: React.PropsWithChildren) {
 				quote,
 				stageStatus,
 				currentStageIndex,
+				stoneMetadataArray,
 				getStageStatus,
 				setStageIndex,
 				queueStageIndex,
 				setQuoteId,
 				commitQueue,
+				getStoneMetadata,
+				addStoneMetadata,
+				removeStoneMetadata,
 				setValidity,
 				setSkipped
 			}}

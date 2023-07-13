@@ -57,7 +57,7 @@ export function InfillStage() {
 				Customize your infill...
 			</h2>
 
-			<StoneEditor name="infill" dimension="2D" stageIndex={2} />
+			<StoneEditor name="infill.contents" dimension="2D" stageIndex={2} />
 		</StageForm>
 	);
 }

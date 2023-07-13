@@ -27,6 +27,7 @@ const CoverageInput2D = z.object({
 type CoverageInput2D = z.infer<typeof CoverageInput1D>;
 
 const StoneMetadata = z.object({
+	skuId: z.string(),
 	displayName: z.string(),
 	price: z.number(),
 	details: z.object({
@@ -45,17 +46,14 @@ const StoneMetadata = z.object({
 });
 export type StoneMetadata = z.infer<typeof StoneMetadata>;
 
-function createStoneSchema<Coverage extends z.ZodTypeAny>(coverage: Coverage) {
-	return z.object({
-		skuId: z.string(),
-		metadata: StoneMetadata,
-
-		coverage
-	});
-}
-
-const Stone1D = createStoneSchema(CoverageInput1D);
-const Stone2D = createStoneSchema(CoverageInput2D);
+const Stone1D = z.object({
+	skuId: z.string(),
+	coverage: CoverageInput1D
+});
+const Stone2D = z.object({
+	skuId: z.string(),
+	coverage: CoverageInput2D
+});
 export type Stone1D = z.infer<typeof Stone1D>;
 export type Stone2D = z.infer<typeof Stone2D>;
 
@@ -75,8 +73,10 @@ const Measurements = z.object({
 });
 export type Measurements = z.infer<typeof Measurements>;
 
-export const Infill = Stone2D.array();
-export type Infill = z.infer<typeof Infill>;
+export const InfillConfig = z.object({
+	contents: Stone2D.array()
+});
+export type InfillConfig = z.infer<typeof InfillConfig>;
 
 const BorderLength = z.object({
 	value: z.number(),
@@ -86,12 +86,12 @@ const BorderLength = z.object({
 const BorderOrientation = z.enum(['SOLDIER_ROW', 'TIP_TO_TIP']);
 export type BorderOrientation = z.infer<typeof BorderOrientation>;
 
-export const Border = z.object({
+export const BorderConfig = z.object({
 	runningLength: BorderLength,
 	orientation: BorderOrientation,
-	stones: Stone1D.array()
+	contents: Stone1D.array()
 });
-export type Border = z.infer<typeof Border>;
+export type BorderConfig = z.infer<typeof BorderConfig>;
 
 export const StoneProject = z.object({
 	email: z.string(),
@@ -100,9 +100,9 @@ export const StoneProject = z.object({
 
 	measurements: Measurements,
 
-	infill: Infill,
+	infill: InfillConfig,
 
-	border: Border,
+	border: BorderConfig,
 
 	addons: z
 		.object({

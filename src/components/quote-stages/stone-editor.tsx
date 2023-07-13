@@ -27,13 +27,7 @@ import { api } from '~/utils/api';
 import { useState } from 'react';
 import { formatPrice } from '~/utils/format';
 import { ProductStock } from '../product-stock';
-import {
-	StoneProject,
-	Stone,
-	Coverage,
-	StoneMetadata,
-	Unit
-} from '~/types/quote';
+import { StoneProject, Stone, StoneMetadata, Unit } from '~/types/quote';
 import {
 	findSku,
 	pluralize,
@@ -41,211 +35,220 @@ import {
 	unitDisplayNameDictionary
 } from '~/lib/utils';
 import { PaverDetails } from '~/types/product';
-import { isEqual } from 'lodash-es';
 import { useStageContext } from './stage-context';
 import Balancer from 'react-wrap-balancer';
 import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
 import { flushSync } from 'react-dom';
 
 type StoneEditorProps = {
-	name: 'infill' | 'border.stones';
+	name: 'infill.contents' | 'border.contents';
 	dimension: '1D' | '2D';
 	stageIndex: number;
 };
 
 export function StoneEditor(props: StoneEditorProps) {
-	const { setValidity } = useStageContext();
+	const { setValidity, addStoneMetadata, removeStoneMetadata } =
+		useStageContext();
 	const { control } = useFormContext<StoneProject>();
 
-	const { fields, append, update, remove } = useFieldArray({
+	const {
+		fields: contents,
+		append,
+		update,
+		remove
+	} = useFieldArray({
 		control,
 		keyName: 'id',
 		name: props.name
 	});
 
-	const currentStageValidity = fields.length > 0;
+	const currentStageValidity = contents.length > 0;
 	const [currentStagePreviousValidity, setCurrentStagePreviousValidity] =
 		useState(currentStageValidity);
 
 	if (currentStagePreviousValidity !== currentStageValidity) {
-		setValidity(props.stageIndex, fields.length > 0);
+		setValidity(props.stageIndex, contents.length > 0);
 
 		setCurrentStagePreviousValidity(currentStageValidity);
 	}
 
-	const [editIndex, setEditIndex] = useState<number | null>(null);
-	const [sheetOpen, setSheetOpen] = useState(false);
+	const [stoneSheetOpen, setStoneSheetOpen] = useState(false);
+	const [patternSheetOpen, setPatternSheetOpen] = useState(false);
 
-	const defaultSkuQuery = api.product.getSkuById.useQuery(
-		{ skuId: 'colonial_classic:grey' },
-		{ refetchOnWindowFocus: false }
-	);
-
-	const defaultSku = defaultSkuQuery.data;
-
-	const addStone = (stone: Stone) => append(stone);
-	const editStone = (index: number, stone: Stone) => update(index, stone);
-
-	function handleSubmit(stone: Stone) {
-		if (editIndex === null) addStone(stone);
-		else editStone(editIndex, stone);
+	const addStone = (values: StoneFormValues) => {
+		append(values.stone);
+		addStoneMetadata(values.metadata);
 
 		flushSync(() => {
-			setSheetOpen(false);
+			setStoneSheetOpen(false);
 		});
-	}
+	};
+
+	const editStone = (
+		index: number,
+		oldSkuId: string,
+		values: StoneFormValues
+	) => {
+		update(index, values.stone);
+
+		removeStoneMetadata(oldSkuId);
+		addStoneMetadata(values.metadata);
+	};
+	const removeStone = (index: number, skuId: string) => {
+		remove(index);
+		removeStoneMetadata(skuId);
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-2 md:flex-row md:flex-wrap">
-			<Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-				{defaultSku ? (
-					<div
-						data-has-items={fields.length > 0}
-						className="group flex flex-col items-center gap-2 data-[has-items=true]:flex-col md:flex-row md:data-[has-items=true]:h-64"
-					>
-						<div
-							data-sheet-open={undefined}
-							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 bg-gray-200 text-gray-500 outline-2 -outline-offset-2 outline-gray-900 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline group-data-[has-items=true]:flex-1 group-data-[has-items=true]:flex-row md:h-64 md:flex-col md:items-stretch md:group-data-[has-items=true]:h-auto md:group-data-[has-items=true]:items-center"
-						>
-							<div className="aspect-square h-full shrink-0 group-data-[has-items=true]:aspect-square group-data-[has-items=true]:h-24 group-data-[has-items=true]:flex-none md:aspect-auto md:h-auto md:flex-1" />
+			<div
+				data-has-items={contents.length > 0}
+				className="group flex flex-col items-center gap-2 data-[has-items=true]:flex-col md:flex-row md:data-[has-items=true]:h-64"
+			>
+				<div
+					data-sheet-open={undefined}
+					className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline group-data-[has-items=true]:flex-1 group-data-[has-items=true]:flex-row md:h-64 md:flex-col md:items-stretch md:group-data-[has-items=true]:h-auto md:group-data-[has-items=true]:items-center"
+				>
+					<div className="aspect-square h-full shrink-0 group-data-[has-items=true]:aspect-square group-data-[has-items=true]:h-24 group-data-[has-items=true]:flex-none md:aspect-auto md:h-auto md:flex-1" />
 
-							<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items=true]:flex-1 group-data-[has-items=true]:p-4 group-data-[has-items=true]:text-left md:flex-none md:px-6 md:text-center">
-								<h3 className="font-semibold">
-									<button
-										type="button"
-										className="w-full [text-align:inherit] after:absolute after:inset-0 after:cursor-not-allowed"
-									>
-										<span className="group-data-[has-items=false]:hidden">
-											Add a pattern
-										</span>
-										<span className="group-data-[has-items=true]:hidden">
-											Start with a pattern
-										</span>
-									</button>
-								</h3>
-								<p className="text-sm text-gray-500">
-									<Balancer>
-										Customize the colors of pre-made patterns.
-									</Balancer>
-								</p>
-							</div>
-							<span className="pointer-events-none absolute -top-2 left-2 block rounded-sm border border-gray-400 bg-inherit px-1 text-sm">
-								Coming Soon
-							</span>
-						</div>
-						<span className="font-display text-lg group-data-[has-items=true]:hidden">
-							or
-						</span>
-						<div
-							data-sheet-open={(sheetOpen && editIndex === null) || undefined}
-							className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline group-data-[has-items=true]:flex-1 group-data-[has-items=true]:flex-row md:h-64 md:flex-col md:items-stretch md:group-data-[has-items=true]:h-auto md:group-data-[has-items=true]:items-center"
-						>
-							<div className="aspect-square h-full shrink-0 group-data-[has-items=true]:aspect-square group-data-[has-items=true]:h-24 group-data-[has-items=true]:flex-none md:aspect-auto md:h-auto md:flex-1" />
+					<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items=true]:flex-1 group-data-[has-items=true]:p-4 group-data-[has-items=true]:text-left md:flex-none md:px-6 md:text-center">
+						<h3 className="font-semibold">
+							<Sheet open={patternSheetOpen} onOpenChange={setPatternSheetOpen}>
+								<SheetTrigger className="w-full [text-align:inherit] after:absolute after:inset-0">
+									<span className="group-data-[has-items=false]:hidden">
+										Add a pattern
+									</span>
+									<span className="group-data-[has-items=true]:hidden">
+										Start with a pattern
+									</span>
+								</SheetTrigger>
 
-							<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items=true]:flex-1 group-data-[has-items=true]:p-4 group-data-[has-items=true]:text-left md:flex-none md:px-6 md:text-center">
-								<h3 className="font-semibold">
-									<SheetTrigger
-										className="w-full [text-align:inherit] after:absolute after:inset-0"
-										onClick={() => {
-											setEditIndex(null);
+								<SheetContent
+									position="right"
+									open={patternSheetOpen}
+								></SheetContent>
+							</Sheet>
+						</h3>
+						<p className="text-sm text-gray-500">
+							<Balancer>Customize the colors of pre-made patterns.</Balancer>
+						</p>
+					</div>
+					<span className="pointer-events-none absolute -top-2 left-2 block rounded-sm border border-gray-400 bg-gray-100 px-1 text-sm font-semibold">
+						New
+					</span>
+				</div>
+				<span className="font-display text-lg group-data-[has-items=true]:hidden">
+					or
+				</span>
+				<div
+					data-sheet-open={stoneSheetOpen || undefined}
+					className="relative flex h-24 w-64 items-center justify-center rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline group-data-[has-items=true]:flex-1 group-data-[has-items=true]:flex-row md:h-64 md:flex-col md:items-stretch md:group-data-[has-items=true]:h-auto md:group-data-[has-items=true]:items-center"
+				>
+					<div className="aspect-square h-full shrink-0 group-data-[has-items=true]:aspect-square group-data-[has-items=true]:h-24 group-data-[has-items=true]:flex-none md:aspect-auto md:h-auto md:flex-1" />
+
+					<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items=true]:flex-1 group-data-[has-items=true]:p-4 group-data-[has-items=true]:text-left md:flex-none md:px-6 md:text-center">
+						<h3 className="font-semibold">
+							<Sheet open={stoneSheetOpen} onOpenChange={setStoneSheetOpen}>
+								<SheetTrigger className="w-full [text-align:inherit] after:absolute after:inset-0">
+									<span className="group-data-[has-items=false]:hidden">
+										Add a stone
+									</span>
+									<span className="group-data-[has-items=true]:hidden">
+										Start with a stone
+									</span>
+								</SheetTrigger>
+
+								<SheetContent position="right" open={stoneSheetOpen}>
+									<StoneForm
+										initialValues={{
+											skuId: 'colonial_classic:grey',
+											coverage: { value: 1, unit: 'fr' }
 										}}
-									>
-										<span className="group-data-[has-items=false]:hidden">
-											Add a stone
-										</span>
-										<span className="group-data-[has-items=true]:hidden">
-											Start with a stone
-										</span>
-									</SheetTrigger>
-								</h3>
-								<p className=" text-sm  text-gray-500 ">
-									<Balancer>Create complex custom patterns.</Balancer>
-								</p>
-							</div>
-						</div>
+										intent="add"
+										onSubmit={addStone}
+										dimension={props.dimension}
+									/>
+								</SheetContent>
+							</Sheet>
+						</h3>
+						<p className=" text-sm  text-gray-500 ">
+							<Balancer>Create custom patterns from scratch.</Balancer>
+						</p>
 					</div>
-				) : (
-					<div className="flex h-64 w-64 items-center justify-center">
-						Loading...
-					</div>
-				)}
+				</div>
+			</div>
 
-				<ul className="contents">
-					{fields.map((stone, index) => (
-						<StoneListItem
-							key={stone.id}
-							index={index}
-							selected={sheetOpen && editIndex === index}
-							displayName={stone.metadata.displayName}
-							coverage={stone.coverage}
-							onSelect={() => setEditIndex(index)}
-							onDelete={() => remove(index)}
-						/>
-					))}
-				</ul>
-
-				<SheetContent position="right" open={sheetOpen}>
-					{defaultSku && (
-						<StoneForm
-							initialValues={
-								fields[editIndex ?? -1] || {
-									skuId: defaultSku.id,
-									metadata: {
-										displayName: defaultSku.displayName,
-										price: defaultSku.price,
-										details: defaultSku.details.rawData as PaverDetails
-									},
-									coverage: { value: 1, unit: 'fr' }
-								}
-							}
-							intent={editIndex === null ? 'add' : 'save'}
-							onSubmit={handleSubmit}
-							dimension={props.dimension}
-						/>
-					)}
-				</SheetContent>
-			</Sheet>
+			<ul className="contents">
+				{contents.map((stone, index) => (
+					<StoneListItem
+						key={index}
+						index={index}
+						stone={stone}
+						dimension={props.dimension}
+						onSave={(newStone) => editStone(index, stone.skuId, newStone)}
+						onDelete={() => removeStone(index, stone.skuId)}
+					/>
+				))}
+			</ul>
 		</div>
 	);
 }
 
 type StoneListItemProps = React.PropsWithChildren<{
 	index: number;
-	displayName: string;
-	coverage: Coverage;
-	selected: boolean;
-	onSelect(): void;
+	stone: Stone;
+	dimension: '1D' | '2D';
+	onSave(values: StoneFormValues): void;
 	onDelete(index: number): void;
 }>;
 
 function StoneListItem({
 	index,
-	displayName,
-	coverage,
-	selected,
-	onSelect,
+	stone,
+	dimension,
+	onSave,
 	onDelete
 }: StoneListItemProps) {
-	const coverageUnitDisplayName = unitDisplayNameDictionary[coverage.unit];
+	const coverageUnitDisplayName =
+		unitDisplayNameDictionary[stone.coverage.unit];
+
+	const [editSheetOpen, setEditSheetOpen] = useState(false);
+
+	function handleSave(values: StoneFormValues) {
+		onSave(values);
+
+		flushSync(() => {
+			setEditSheetOpen(false);
+		});
+	}
+
+	const { getStoneMetadata } = useStageContext();
+	const metadata = getStoneMetadata(stone.skuId);
 
 	return (
 		<li
-			data-sheet-open={selected || undefined}
+			data-sheet-open={editSheetOpen || undefined}
 			className="relative flex h-64 w-64 flex-col rounded-md border border-gray-400 p-4 outline-2 -outline-offset-2 outline-gray-900 hover:bg-black/5 active:bg-black/10 data-[sheet-open]:bg-black/10 data-[sheet-open]:outline"
 		>
 			<div className="flex-1" />
 			<div className="flex items-start gap-4">
 				<div className="flex-1">
-					<p className="font-semibold">
-						<SheetTrigger
-							className="w-full text-left after:absolute after:inset-0"
-							onClick={onSelect}
-						>
-							{displayName}
+					<Sheet open={editSheetOpen} onOpenChange={setEditSheetOpen}>
+						<SheetTrigger className="w-full text-left font-semibold after:absolute after:inset-0">
+							{metadata?.displayName}
 						</SheetTrigger>
-					</p>
+
+						<SheetContent position="right" open={editSheetOpen}>
+							<StoneForm
+								initialValues={stone}
+								intent="edit"
+								onSubmit={handleSave}
+								dimension={dimension}
+							/>
+						</SheetContent>
+					</Sheet>
 					<p className="text-sm">
-						{pluralize(coverage.value, coverageUnitDisplayName)}
+						{pluralize(stone.coverage.value, coverageUnitDisplayName)}
 					</p>
 				</div>
 
@@ -265,9 +268,11 @@ function StoneListItem({
 type StoneFormProps = {
 	dimension: '1D' | '2D';
 	initialValues: Stone;
-	intent: 'add' | 'save';
-	onSubmit(stone: Stone): void;
+	intent: 'add' | 'edit';
+	onSubmit(stone: { stone: Stone; metadata: StoneMetadata }): void;
 };
+
+type StoneFormValues = { stone: Stone; metadata: StoneMetadata };
 
 function StoneForm({
 	dimension,
@@ -275,12 +280,13 @@ function StoneForm({
 	intent,
 	onSubmit
 }: StoneFormProps) {
-	const formMethods = useForm<Stone>({
-		defaultValues: initialValues
+	const formMethods = useForm<StoneFormValues>({
+		defaultValues: { stone: initialValues, metadata: undefined }
 	});
+
 	const { register, setValue, watch, handleSubmit } = formMethods;
 
-	const currentSkuId = watch('skuId');
+	const currentSkuId = watch('stone.skuId');
 	const currentPaverId = currentSkuId.split(':')[0] as string;
 
 	const paversQuery = api.product.getPavers.useQuery(
@@ -300,22 +306,22 @@ function StoneForm({
 		currentPaver?.details
 	);
 
-	const currentMetadata: StoneMetadata = currentSku
-		? {
-				displayName: currentSku.displayName,
-				price: currentSku.price,
-				details: currentSku.details.rawData as PaverDetails
-		  }
-		: initialValues.metadata;
-
-	const [previousMetadata, setPreviousMetadata] = useState(
-		initialValues.metadata
+	const [previousSkuId, setPreviousSkuId] = useState<string | undefined>(
+		undefined
 	);
 
 	// Update metadata once it changes
-	if (currentMetadata && !isEqual(previousMetadata, currentMetadata)) {
-		setValue('metadata', currentMetadata);
-		setPreviousMetadata(currentMetadata);
+	if (previousSkuId !== currentSku?.id) {
+		if (currentSku) {
+			setValue('metadata', {
+				skuId: currentSku.id,
+				displayName: currentSku.displayName,
+				price: currentSku.price,
+				details: currentSku.details.rawData as PaverDetails
+			});
+
+			setPreviousSkuId(currentSku.id);
+		}
 	}
 
 	if (!pavers)
@@ -325,6 +331,9 @@ function StoneForm({
 			</div>
 		);
 
+	// function intercept(values: StoneFormValues) {
+	// 	console.log(values);
+	// }
 	return (
 		<form onSubmit={stopPropagate(handleSubmit(onSubmit))} className="contents">
 			<SheetHeader>
@@ -341,7 +350,8 @@ function StoneForm({
 						size="small"
 						disabled={currentSku === undefined}
 					>
-						<span className="capitalize">{intent}</span>
+						{intent === 'add' && 'Add'}
+						{intent === 'edit' && 'Save'}
 					</Button>
 				</div>
 			</SheetHeader>
@@ -420,7 +430,7 @@ function StoneForm({
 				>
 					<div className="flex h-12 w-full rounded-sm border border-gray-400 bg-gray-50 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
 						<input
-							{...register('coverage.value', { min: 0.01 })}
+							{...register('stone.coverage.value', { min: 0.01 })}
 							id="coverage.value"
 							type="number"
 							inputMode="decimal"
@@ -432,7 +442,7 @@ function StoneForm({
 
 						<Controller
 							control={formMethods.control}
-							name="coverage.unit"
+							name="stone.coverage.unit"
 							render={(coverageUnit) => (
 								<Select
 									value={coverageUnit.field.value}
@@ -497,7 +507,7 @@ function StoneForm({
 				</Section>
 				<Controller
 					control={formMethods.control}
-					name="skuId"
+					name="stone.skuId"
 					render={(skuId) => (
 						<SkuPickerProvider
 							skuId={skuId.field.value}

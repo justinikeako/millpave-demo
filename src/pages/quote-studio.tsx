@@ -268,7 +268,7 @@ function StageFooter() {
 							form="stage-form"
 							id="finish"
 							disabled={createQuote.isLoading}
-							className="flex-1 md:flex-none"
+							className="flex-1 focus:outline md:flex-none"
 							onClick={async () => {
 								const { quoteId } = await createQuote.mutateAsync({
 									items: quote.items

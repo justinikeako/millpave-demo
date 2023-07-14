@@ -47,19 +47,49 @@ const StoneMetadata = z.object({
 export type StoneMetadata = z.infer<typeof StoneMetadata>;
 
 const Stone1D = z.object({
+	type: z.literal('stone'),
 	skuId: z.string(),
 	coverage: CoverageInput1D
 });
 const Stone2D = z.object({
+	type: z.literal('stone'),
 	skuId: z.string(),
 	coverage: CoverageInput2D
 });
 export type Stone1D = z.infer<typeof Stone1D>;
 export type Stone2D = z.infer<typeof Stone2D>;
-
 const Stone = z.union([Stone1D, Stone2D]);
-
 export type Stone = z.infer<typeof Stone>;
+
+const Pattern1D = z.object({
+	type: z.literal('pattern'),
+	id: z.string(),
+	displayName: z.string(),
+	coverage: CoverageInput1D,
+	contents: z
+		.object({
+			skuId: z.string(),
+			quantity: z.number()
+		})
+		.array()
+});
+const Pattern2D = z.object({
+	type: z.literal('pattern'),
+	id: z.string(),
+	displayName: z.string(),
+	coverage: CoverageInput2D,
+	contents: z
+		.object({
+			skuId: z.string(),
+			quantity: z.number()
+		})
+		.array()
+});
+export type Pattern1D = z.infer<typeof Pattern1D>;
+export type Pattern2D = z.infer<typeof Pattern2D>;
+
+const Pattern = z.union([Pattern1D, Pattern2D]);
+export type Pattern = z.infer<typeof Pattern>;
 
 export type Coverage = { value: number; unit: Unit };
 
@@ -74,7 +104,7 @@ const Measurements = z.object({
 export type Measurements = z.infer<typeof Measurements>;
 
 export const InfillConfig = z.object({
-	contents: Stone2D.array()
+	contents: z.union([Pattern2D, Stone2D]).array()
 });
 export type InfillConfig = z.infer<typeof InfillConfig>;
 
@@ -89,7 +119,7 @@ export type BorderOrientation = z.infer<typeof BorderOrientation>;
 export const BorderConfig = z.object({
 	runningLength: BorderLength,
 	orientation: BorderOrientation,
-	contents: Stone1D.array()
+	contents: z.union([Pattern1D, Stone1D]).array()
 });
 export type BorderConfig = z.infer<typeof BorderConfig>;
 

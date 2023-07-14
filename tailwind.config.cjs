@@ -27,11 +27,16 @@ module.exports = {
 				marquee: {
 					'0%': { transform: 'translateX(0%)' },
 					'100%': { transform: 'translateX(-100%)' }
+				},
+				strokeFlash: {
+					'0%': { stroke: 'currentColor' },
+					'100%': { stroke: 'transparent' }
 				}
 			},
 
 			animation: {
-				marquee: 'marquee 60s linear infinite'
+				marquee: 'marquee 60s linear infinite',
+				'stroke-flash': 'strokeFlash 500ms ease-out'
 			},
 
 			lineHeight: {

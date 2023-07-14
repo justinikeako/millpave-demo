@@ -184,10 +184,7 @@ const SheetFooter = ({
 	className,
 	...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-	<div
-		className={cn('flex flex-col px-8 pb-2 pt-4 md:px-6', className)}
-		{...props}
-	/>
+	<div className={cn('flex h-16 items-center px-6', className)} {...props} />
 );
 SheetFooter.displayName = 'SheetFooter';
 

@@ -12,7 +12,10 @@ import {
 	StoneProject,
 	Unit,
 	Unit1D,
-	StoneMetadata
+	StoneMetadata,
+	Pattern2D,
+	Pattern1D,
+	BorderOrientation
 } from '~/types/quote';
 import { roundTo } from '~/utils/number';
 import { PaverDetails } from '~/types/product';
@@ -67,7 +70,7 @@ type Item = {
 	skuId: string;
 	displayName: string;
 	sqftCoverage: number;
-	sqftPrice: number;
+	price: number;
 	details: PaverDetails;
 	signatures: string[];
 };
@@ -95,60 +98,143 @@ function getInfill(
 	const items: Item[] = [];
 
 	// Cut out fixed values first; divy up ratio values afterwards
-	const fractionalStones: Stone2D[] = [];
+	const fractionalStones: (Pattern2D | Stone2D)[] = [];
 	let fractionalTotal = 0;
-	const fixedStones: Stone2D[] = [];
+	const fixedStones: (Pattern2D | Stone2D)[] = [];
 
-	for (const stone of infill.contents) {
-		if (stone.coverage.unit === 'fr') {
-			fractionalTotal += parseFloat(stone.coverage.value as unknown as string);
-			fractionalStones.push(stone);
-		} else fixedStones.push(stone);
+	for (const stoneOrPattern of infill.contents) {
+		if (stoneOrPattern.coverage.unit === 'fr') {
+			fractionalTotal += parseFloat(
+				stoneOrPattern.coverage.value as unknown as string
+			);
+			fractionalStones.push(stoneOrPattern);
+		} else fixedStones.push(stoneOrPattern);
 	}
 
-	for (const stone of fixedStones) {
-		const unit = stone.coverage.unit as Exclude<Unit, 'fr' | 'pal' | 'pcs'>;
+	for (const stoneOrPattern of fixedStones) {
+		const unit = stoneOrPattern.coverage.unit;
 
-		const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+		let fixedSegmentArea = 0;
 
-		const fixedSegmentArea =
-			unit === 'unit'
-				? stone.coverage.value / stoneMetadata.details.pcs_per_sqft
-				: toSqft(stone.coverage.value, unit);
+		if (unit !== 'fr' && unit !== 'pal' && unit !== 'pcs' && unit !== 'unit')
+			fixedSegmentArea = toSqft(stoneOrPattern.coverage.value, unit);
+
+		if (stoneOrPattern.type === 'stone') {
+			const stone = stoneOrPattern;
+			const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+
+			if (unit === 'unit')
+				fixedSegmentArea =
+					stone.coverage.value / stoneMetadata.details.pcs_per_sqft;
+
+			items.push({
+				...stoneMetadata,
+				sqftCoverage: fixedSegmentArea,
+				signatures: ['infill']
+			});
+		} else {
+			const pattern = stoneOrPattern;
+			// Determine the area that each of each stone in the pattern takes up within the pattern unit
+			let patternArea = 0;
+			const stones: { area: number; metadata: StoneMetadata }[] = [];
+			for (const stone of pattern.contents) {
+				const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+				const stoneArea = stone.quantity / stoneMetadata.details.pcs_per_sqft;
+
+				patternArea += stoneArea;
+				stones.push({ area: stoneArea, metadata: stoneMetadata });
+			}
+
+			if (unit === 'unit')
+				fixedSegmentArea = pattern.coverage.value * patternArea;
+
+			// Sum up the area and divide the total area by it to find the scale factor
+			const scaleFactor = fixedSegmentArea / patternArea;
+
+			// Determine the area taken up by each stone in the full area segment using the scale factor
+			items.push(
+				...stones.map(
+					({ area, metadata }): Item => ({
+						...metadata,
+						sqftCoverage: area * scaleFactor,
+						signatures: ['infill']
+					})
+				)
+			);
+		}
 
 		infillArea -= fixedSegmentArea;
-
-		items.push({
-			skuId: stone.skuId,
-			sqftCoverage: fixedSegmentArea,
-			displayName: stoneMetadata.displayName,
-			sqftPrice: stoneMetadata.price,
-			details: stoneMetadata.details,
-			signatures: ['infill']
-		});
 	}
 
+	// Fixed stones may exceed the available infill space
 	infillArea = Math.max(infillArea, 0);
 
-	for (const stone of fractionalStones) {
-		if (infillArea <= 0) break;
+	for (const stoneOrPattern of fractionalStones) {
+		// Break the loop since there's no space left to fill
+		if (infillArea === 0) break;
 
 		const fractionalSegmentArea =
-			infillArea * (stone.coverage.value / fractionalTotal);
+			infillArea * (stoneOrPattern.coverage.value / fractionalTotal);
 
-		const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+		if (stoneOrPattern.type === 'stone') {
+			const stoneMetadata = getStoneMetadata(
+				stoneOrPattern.skuId,
+				stoneMetadataArray
+			);
 
-		items.push({
-			skuId: stone.skuId,
-			displayName: stoneMetadata.displayName,
-			sqftCoverage: fractionalSegmentArea,
-			sqftPrice: stoneMetadata.price,
-			details: stoneMetadata.details,
-			signatures: ['infill']
-		});
+			items.push({
+				...stoneMetadata,
+				sqftCoverage: fractionalSegmentArea,
+				signatures: ['infill']
+			});
+		} else {
+			const pattern = stoneOrPattern;
+			// Determine the area that each of each stone in the pattern takes up within the pattern unit
+			let patternArea = 0;
+			const stones: { area: number; metadata: StoneMetadata }[] = [];
+			for (const stone of pattern.contents) {
+				const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+				const stoneArea = stone.quantity / stoneMetadata.details.pcs_per_sqft;
+
+				patternArea += stoneArea;
+				stones.push({ area: stoneArea, metadata: stoneMetadata });
+			}
+
+			// Sum up the area and divide the total area by it to find the scale factor
+			const scaleFactor = fractionalSegmentArea / patternArea;
+
+			// Determine the area taken up by each stone in the full area segment using the scale factor
+			items.push(
+				...stones.map(
+					({ area, metadata }): Item => ({
+						...metadata,
+						sqftCoverage: area * scaleFactor,
+						signatures: ['infill']
+					})
+				)
+			);
+		}
 	}
 
 	return { area: Math.max(0, area), items: items };
+}
+
+function getConversionFactors(
+	metadata: StoneMetadata,
+	orientation: BorderOrientation
+) {
+	const conversionFactorDictionary = metadata.details.conversion_factors;
+
+	if (!conversionFactorDictionary)
+		throw new Error(`Stone ${metadata.skuId} can not be used as a border`);
+
+	const inverseOrientation =
+		orientation === 'SOLDIER_ROW' ? 'TIP_TO_TIP' : 'SOLDIER_ROW';
+
+	return {
+		conversionFactor: conversionFactorDictionary[orientation],
+		inverseConversionFactor: conversionFactorDictionary[inverseOrientation]
+	};
 }
 
 function getBorder(
@@ -158,83 +244,162 @@ function getBorder(
 ) {
 	let borderArea = 0;
 	let runningFoot = toFt(border.runningLength.value, inheritedUnit);
-	const orientation = border.orientation;
 
 	const items: Item[] = [];
 	// Cut out fixed values first; divy up ratio values afterwards
-	const fractionalStones: Stone1D[] = [];
+	const fractionalStones: (Pattern1D | Stone1D)[] = [];
 	let fractionalTotal = 0;
-	const fixedStones: Stone1D[] = [];
+	const fixedStones: (Pattern1D | Stone1D)[] = [];
 
-	for (const stone of border.contents) {
-		if (stone.coverage.unit === 'fr') {
-			fractionalTotal += parseFloat(stone.coverage.value as unknown as string);
-			fractionalStones.push(stone);
-		} else fixedStones.push(stone);
+	for (const stoneOrPattern of border.contents) {
+		if (stoneOrPattern.coverage.unit === 'fr') {
+			fractionalTotal += parseFloat(
+				stoneOrPattern.coverage.value as unknown as string
+			);
+			fractionalStones.push(stoneOrPattern);
+		} else fixedStones.push(stoneOrPattern);
 	}
 
-	for (const stone of fixedStones) {
-		const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+	for (const stoneOrPattern of fixedStones) {
+		const unit = stoneOrPattern.coverage.unit;
+		let fixedSegmentLength = 0;
 
-		const conversionFactorDictionary = stoneMetadata.details.conversion_factors;
-		if (!conversionFactorDictionary)
-			throw new Error(`Stone ${stone.skuId} can not be used as a border`);
+		if (unit !== 'fr' && unit !== 'pal' && unit !== 'pcs' && unit !== 'unit')
+			toSqft(stoneOrPattern.coverage.value, unit);
 
-		const inverseConversionFactor =
-			conversionFactorDictionary[
-				orientation === 'SOLDIER_ROW' ? 'TIP_TO_TIP' : 'SOLDIER_ROW'
-			];
+		if (stoneOrPattern.type === 'stone') {
+			const stone = stoneOrPattern;
+			const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
 
-		const unit = stone.coverage.unit as Exclude<Unit, 'fr' | 'pal' | 'pcs'>;
+			const { conversionFactor, inverseConversionFactor } =
+				getConversionFactors(stoneMetadata, border.orientation);
 
-		const fixedSegmentLength =
-			unit === 'unit'
-				? stone.coverage.value * inverseConversionFactor
-				: toFt(stone.coverage.value, unit);
+			if (unit === 'unit')
+				fixedSegmentLength = stone.coverage.value * inverseConversionFactor;
 
-		runningFoot -= fixedSegmentLength;
+			runningFoot -= fixedSegmentLength;
 
-		const fixedSegmentArea =
-			fixedSegmentLength * conversionFactorDictionary[orientation];
+			const fixedSegmentArea = fixedSegmentLength * conversionFactor;
 
-		borderArea += fixedSegmentArea;
+			borderArea += fixedSegmentArea;
 
-		items.push({
-			skuId: stone.skuId,
-			sqftCoverage: fixedSegmentArea,
-			displayName: stoneMetadata.displayName,
-			sqftPrice: stoneMetadata.price,
-			details: stoneMetadata.details,
-			signatures: ['border']
-		});
+			items.push({
+				...stoneMetadata,
+				sqftCoverage: fixedSegmentArea,
+				signatures: ['border']
+			});
+		} else {
+			const pattern = stoneOrPattern;
+			// Determine the area that each of each stone in the pattern takes up within the pattern unit
+			let patternLength = 0;
+			const stones: { length: number; metadata: StoneMetadata }[] = [];
+			for (const stone of pattern.contents) {
+				const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+				const { inverseConversionFactor } = getConversionFactors(
+					stoneMetadata,
+					border.orientation
+				);
+				const stoneLength = stone.quantity * inverseConversionFactor;
+
+				patternLength += stoneLength;
+				stones.push({ length: stoneLength, metadata: stoneMetadata });
+			}
+
+			if (unit === 'unit')
+				fixedSegmentLength = pattern.coverage.value * patternLength;
+
+			// Sum up the length and divide the total length by it to find the scale factor
+			const scaleFactor = fixedSegmentLength / patternLength;
+
+			// Determine the length taken up by each stone in the full length segment using the scale factor
+			items.push(
+				...stones.map(({ length, metadata }): Item => {
+					const { conversionFactor } = getConversionFactors(
+						metadata,
+						border.orientation
+					);
+					const stoneArea = length * conversionFactor;
+
+					return {
+						...metadata,
+						sqftCoverage: stoneArea * scaleFactor,
+						signatures: ['border']
+					};
+				})
+			);
+		}
 	}
 
 	runningFoot = Math.max(runningFoot, 0);
 
-	for (const stone of fractionalStones) {
+	for (const stoneOrPattern of fractionalStones) {
 		if (runningFoot <= 0) break;
 
-		const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+		if (stoneOrPattern.type === 'stone') {
+			const stoneMetadata = getStoneMetadata(
+				stoneOrPattern.skuId,
+				stoneMetadataArray
+			);
 
-		const conversionFactorDictionary = stoneMetadata.details.conversion_factors;
-		if (!conversionFactorDictionary)
-			throw new Error(`Stone ${stone.skuId} can not be used as a border`);
+			const { conversionFactor } = getConversionFactors(
+				stoneMetadata,
+				border.orientation
+			);
 
-		const fractionalSegmentLength =
-			runningFoot * (stone.coverage.value / fractionalTotal);
-		const fractionalSegmentArea =
-			fractionalSegmentLength * conversionFactorDictionary[orientation];
+			const fractionalSegmentLength =
+				runningFoot * (stoneOrPattern.coverage.value / fractionalTotal);
+			const fractionalSegmentArea = fractionalSegmentLength * conversionFactor;
 
-		borderArea += fractionalSegmentArea;
+			borderArea += fractionalSegmentArea;
 
-		items.push({
-			skuId: stone.skuId,
-			sqftCoverage: fractionalSegmentArea,
-			displayName: stoneMetadata.displayName,
-			sqftPrice: stoneMetadata.price,
-			details: stoneMetadata.details,
-			signatures: ['border']
-		});
+			items.push({
+				...stoneMetadata,
+				sqftCoverage: fractionalSegmentArea,
+				signatures: ['border']
+			});
+		} else {
+			const pattern = stoneOrPattern;
+			// Determine the area that each of each stone in the pattern takes up within the pattern unit
+			let patternLength = 0;
+			const stones: { length: number; metadata: StoneMetadata }[] = [];
+			for (const stone of pattern.contents) {
+				const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+				const { inverseConversionFactor } = getConversionFactors(
+					stoneMetadata,
+					border.orientation
+				);
+				const stoneLength = stone.quantity / inverseConversionFactor;
+
+				patternLength += stoneLength;
+				stones.push({ length: stoneLength, metadata: stoneMetadata });
+			}
+
+			const fractionalSegmentLength =
+				runningFoot * (stoneOrPattern.coverage.value / fractionalTotal);
+
+			// Sum up the length and divide the total length by it to find the scale factor
+			const scaleFactor = fractionalSegmentLength / patternLength;
+
+			// Determine the length taken up by each stone in the full length segment using the scale factor
+			items.push(
+				...stones.map(({ length, metadata }): Item => {
+					const { conversionFactor } = getConversionFactors(
+						metadata,
+						border.orientation
+					);
+					const unscaledStoneArea = length * conversionFactor;
+					const stoneArea = unscaledStoneArea * scaleFactor;
+
+					borderArea += stoneArea;
+
+					return {
+						...metadata,
+						sqftCoverage: stoneArea,
+						signatures: ['border']
+					};
+				})
+			);
+		}
 	}
 
 	return {
@@ -284,11 +449,8 @@ function getQuoteItems(item: Item, reducePickups: boolean) {
 	);
 	const pieceCount = Math.round(pieceArea * pcs_per_sqft);
 
-	const factoryCost = roundFractionDigits(palletArea * item.sqftPrice, 2);
-	const showroomCost = roundFractionDigits(
-		pieceArea * (item.sqftPrice + 20),
-		2
-	);
+	const factoryCost = roundFractionDigits(palletArea * item.price, 2);
+	const showroomCost = roundFractionDigits(pieceArea * (item.price + 20), 2);
 
 	const quoteItems: QuoteItem[] = [];
 

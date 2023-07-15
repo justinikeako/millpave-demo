@@ -50,6 +50,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
 import { flushSync } from 'react-dom';
 import { compact, isEqual } from 'lodash-es';
 import { pattern1D, pattern2D } from './patterns';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type StoneEditorProps = {
 	name: 'infill.contents' | 'border.contents';
@@ -457,7 +458,7 @@ function PatternForm({
 			pattern: initialValues || {
 				type: 'pattern',
 				id: '',
-				displayName: 'Colonial Classic Herringbone',
+				displayName: patternData.displayName,
 				coverage: { value: 1, unit: 'fr' },
 				contents: patternData.contents.map(({ quantity }) => ({
 					quantity,
@@ -530,303 +531,360 @@ function PatternForm({
 	}
 
 	return (
-		<form
-			onSubmit={stopPropagate(
-				handleSubmit((values) => {
-					if (step === 0) setStep(1);
-					if (step === 1) onSubmit(values);
-				})
-			)}
-			className="contents"
-		>
-			<SheetHeader>
-				<SheetTitle className="flex-1">
-					{step === 0 && 'Select a Pattern'}
-					{step === 1 && 'Customize your Pattern'}
-				</SheetTitle>
-				<SheetClose asChild>
-					<Button type="button" intent="tertiary">
-						<span className="sr-only">Close</span>
-						<Icon name="close" />
-					</Button>
-				</SheetClose>
-			</SheetHeader>
-
-			{step === 0 && (
-				<SheetBody className="space-y-6">
-					<Section heading="Colonial Classic" className="space-y-3">
-						<div className="-mx-1 grid grid-cols-3 gap-1">
-							{[...Array(6).keys()].map((index) => (
-								<label
-									key={index}
-									className="outline-3 relative aspect-square bg-gray-200 after:absolute after:inset-0 after:z-10 after:outline-offset-2 after:outline-pink-700 [&:has(:checked)]:after:outline [&:nth-child(12n+2)]:col-span-2 [&:nth-child(12n+2)]:row-span-2"
-								>
-									<input
-										{...patternId.field}
-										type="radio"
-										value={`pattern:colonial_classic:${index}`}
-										className="sr-only"
-									/>
-									<span className="sr-only">
-										Colonial Classic Pattern {index + 1}
-									</span>
-								</label>
-							))}
-						</div>
-					</Section>
-
-					<Section heading="Banjo" className="space-y-3">
-						<div className="-mx-1 grid grid-cols-3 gap-1">
-							{[...Array(3).keys()].map((index) => (
-								<label
-									key={index}
-									className="outline-3 relative aspect-square bg-gray-200 after:absolute after:inset-0 after:z-10 after:outline-offset-2 after:outline-pink-700 [&:has(:checked)]:after:outline [&:nth-child(12n+2)]:col-span-2 [&:nth-child(12n+2)]:row-span-2"
-								>
-									<input
-										{...patternId.field}
-										type="radio"
-										value={`pattern:banjo:${index}`}
-										className="sr-only"
-									/>
-									<span className="sr-only">Banjo Pattern {index + 1}</span>
-								</label>
-							))}
-						</div>
-					</Section>
-				</SheetBody>
-			)}
-
-			{paver && step === 1 && (
-				<SheetBody className="flex flex-col gap-6 overflow-x-hidden">
-					<div className="-mx-6 aspect-video bg-gray-100">
-						<svg
-							viewBox="0 0 480 270"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-							className="group h-full w-full"
-							data-should-pulse={selectedFragmentIndex === null || undefined}
-						>
-							<g>
-								{patternData.contents.map(({ path }, index) => (
-									<path
-										key={index}
-										id={index.toString()}
-										data-selected={selectedFragmentIndex === index}
-										className="stroke-transparent stroke-2 text-pink-700 active:stroke-pink-400 data-[selected=true]:animate-stroke-flash data-[selected=true]:stroke-[4] data-[selected=false]:hover:stroke-pink-300 group-data-[should-pulse]:animate-pulse"
-										fill={
-											paver.variantIdTemplate[0]?.type === 'color'
-												? paver.variantIdTemplate[0]?.fragments.find(
-														({ id }) =>
-															id === contents.fields[index]?.skuId.split(':')[1]
-												  )?.css
-												: undefined
-										}
-										onClick={(e) =>
-											setSelectedFragmentIndex(parseInt(e.currentTarget.id))
-										}
-										fillRule="evenodd"
-										clipRule="evenodd"
-										d={path}
-									/>
-								))}
-							</g>
-
-							<path
-								className="stroke-gray-300"
-								fillRule="evenodd"
-								clipRule="evenodd"
-								d={patternData.outOfBounds}
-							/>
-						</svg>
-					</div>
-
-					<h3 className="font-display text-lg">Colonial Classic Herringbone</h3>
-
-					<Section
-						heading={
-							<>
-								<span>Pattern Coverage</span>
-
-								<Popover>
-									<PopoverTrigger asChild>
-										<Button
-											type="button"
-											intent="tertiary"
-											className="-m-1 p-1"
-										>
-											<span className="sr-only">Help</span>
-											<Icon name="help" />
-										</Button>
-									</PopoverTrigger>
-
-									<PopoverContent>
-										Coverage refers to how much space this pattern should take
-										up. You can measure it using fixed units like&nbsp;
-										{dimension === '1D'
-											? 'feet (ft) or meters (m)'
-											: 'square feet (ft²) or square meters (m²)'}
-										. If you have a specific ratio in mind, you can use the
-										&quot;part&quot; unit to specify the portion or fraction of
-										that ratio you want this pattern to cover.
-									</PopoverContent>
-								</Popover>
-							</>
-						}
-					>
-						<div className="flex h-12 w-full rounded-sm border border-gray-400 bg-gray-50 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
-							<input
-								{...register('pattern.coverage.value', { min: 0.01 })}
-								id="coverage.value"
-								type="number"
-								inputMode="decimal"
-								step="any"
-								className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none placeholder:text-gray-500"
-								placeholder="Amount"
-								onClick={(e) => e.currentTarget.select()}
-							/>
-
-							<Select
-								value={coverageUnit.field.value}
-								onValueChange={(newUnit: Unit) =>
-									coverageUnit.field.onChange(newUnit)
-								}
-							>
-								<SelectTrigger unstyled className="h-full pr-2">
-									<SelectValue />
-								</SelectTrigger>
-
-								<SelectContent>
-									{dimension === '2D' && (
-										<>
-											<SelectItem value="fr">
-												{unitDisplayNameDictionary['fr'][0]}
-											</SelectItem>
-											<SelectItem value="sqft">
-												{unitDisplayNameDictionary['sqft'][0]}
-											</SelectItem>
-											<SelectItem value="sqin">
-												{unitDisplayNameDictionary['sqin'][0]}
-											</SelectItem>
-											<SelectItem value="sqm">
-												{unitDisplayNameDictionary['sqm'][0]}
-											</SelectItem>
-											<SelectItem value="sqcm">
-												{unitDisplayNameDictionary['sqcm'][0]}
-											</SelectItem>
-											<SelectItem value="unit">
-												{unitDisplayNameDictionary['unit'][0]}
-											</SelectItem>
-										</>
-									)}
-									{dimension === '1D' && (
-										<>
-											<SelectItem value="fr">
-												{unitDisplayNameDictionary['fr'][0]}
-											</SelectItem>
-											<SelectItem value="ft">
-												{unitDisplayNameDictionary['ft'][0]}
-											</SelectItem>
-											<SelectItem value="in">
-												{unitDisplayNameDictionary['in'][0]}
-											</SelectItem>
-											<SelectItem value="m">
-												{unitDisplayNameDictionary['m'][0]}
-											</SelectItem>
-											<SelectItem value="cm">
-												{unitDisplayNameDictionary['cm'][0]}
-											</SelectItem>
-											<SelectItem value="unit">
-												{unitDisplayNameDictionary['unit'][0]}
-											</SelectItem>
-										</>
-									)}
-								</SelectContent>
-							</Select>
-						</div>
-					</Section>
-
-					{selectedFragmentIndex !== null && fragmentBeingEdited ? (
-						<>
-							<SkuPickerProvider
-								skuId={fragmentBeingEdited.skuId}
-								onChange={({ newSkuId }) =>
-									contents.update(selectedFragmentIndex, {
-										...fragmentBeingEdited,
-										skuId: newSkuId
-									})
-								}
-							>
-								<VariantPicker
-									section={Section}
-									variantIdTemplate={paver.variantIdTemplate.map(
-										(variantFragmentTemplate) => {
-											if (variantFragmentTemplate.type === 'color')
-												return {
-													...variantFragmentTemplate,
-													fragments: variantFragmentTemplate.fragments.filter(
-														({ css }) => !css.startsWith('linear-gradient')
-													)
-												};
-											return variantFragmentTemplate;
-										}
-									)}
-								/>
-							</SkuPickerProvider>
-
-							<Section heading="Products in your pattern">
-								<ul>
-									{skus.map((sku, index) =>
-										sku ? (
-											<li
-												key={index}
-												className="flex h-16 items-center gap-2 border-b border-gray-300 py-2 last:border-none"
-											>
-												<div className="aspect-square h-full bg-gray-200" />
-												<div className="">
-													<h4>{sku.displayName}</h4>
-													<p>
-														{formatPrice(sku.price)} per{' '}
-														{unitDisplayNameDictionary[sku.unit as Unit][0]}
-													</p>
-												</div>
-											</li>
-										) : null
-									)}
-								</ul>
-							</Section>
-						</>
-					) : (
-						<div className="flex flex-1 items-center justify-center">
-							<p>Select a stone to change its color.</p>
-						</div>
-					)}
-				</SheetBody>
-			)}
-			<SheetFooter>
+		<>
+			<AnimatePresence initial={false} mode="popLayout">
 				{step === 0 && (
-					<Button
-						type="submit"
-						intent="primary"
-						className="w-full"
-						disabled={!formState.isValid}
+					<motion.form
+						initial={{ x: '-25%' }}
+						animate={{ x: '0%' }}
+						exit={{ x: '-25%' }}
+						transition={{ type: 'spring', duration: 1, bounce: 0 }}
+						className="flex h-full w-full flex-col bg-gray-100"
+						onSubmit={stopPropagate(handleSubmit(() => setStep(1)))}
 					>
-						Customize Pattern
-					</Button>
+						<SheetHeader>
+							<SheetTitle className="flex-1">Select a Pattern</SheetTitle>
+							<SheetClose asChild>
+								<Button type="button" intent="tertiary">
+									<span className="sr-only">Close</span>
+									<Icon name="close" />
+								</Button>
+							</SheetClose>
+						</SheetHeader>
+
+						<SheetBody className="space-y-6">
+							<Section heading="Colonial Classic" className="space-y-3">
+								<div className="-mx-1 grid grid-cols-3 gap-1">
+									{[...Array(6).keys()].map((index) => (
+										<label
+											key={index}
+											className="outline-3 relative aspect-square bg-gray-200 after:absolute after:inset-0 after:z-10 after:outline-offset-2 after:outline-pink-700 [&:has(:checked)]:after:outline [&:nth-child(12n+2)]:col-span-2 [&:nth-child(12n+2)]:row-span-2"
+										>
+											<input
+												{...patternId.field}
+												type="radio"
+												value={`pattern:colonial_classic:${index}`}
+												className="sr-only"
+											/>
+											<span className="sr-only">
+												Colonial Classic Pattern {index + 1}
+											</span>
+										</label>
+									))}
+								</div>
+							</Section>
+
+							<Section heading="Banjo" className="space-y-3">
+								<div className="-mx-1 grid grid-cols-3 gap-1">
+									{[...Array(3).keys()].map((index) => (
+										<label
+											key={index}
+											className="outline-3 relative aspect-square bg-gray-200 after:absolute after:inset-0 after:z-10 after:outline-offset-2 after:outline-pink-700 [&:has(:checked)]:after:outline [&:nth-child(12n+2)]:col-span-2 [&:nth-child(12n+2)]:row-span-2"
+										>
+											<input
+												{...patternId.field}
+												type="radio"
+												value={`pattern:banjo:${index}`}
+												className="sr-only"
+											/>
+											<span className="sr-only">Banjo Pattern {index + 1}</span>
+										</label>
+									))}
+								</div>
+							</Section>
+						</SheetBody>
+
+						<SheetFooter>
+							<Button
+								type="submit"
+								intent="primary"
+								className="w-full"
+								disabled={!formState.isValid}
+							>
+								Customize Pattern
+							</Button>
+						</SheetFooter>
+					</motion.form>
 				)}
+			</AnimatePresence>
+
+			<AnimatePresence initial={false} mode="popLayout">
 				{step === 1 && (
-					<Button
-						type="submit"
-						intent="primary"
-						className="w-full"
-						disabled={!formState.isValid}
+					<motion.form
+						initial={{ x: '100%' }}
+						animate={{ x: '0%' }}
+						exit={{ x: '100%' }}
+						transition={{ type: 'spring', duration: 1, bounce: 0 }}
+						className="z-10 flex h-full w-full flex-col bg-gray-100"
+						onSubmit={stopPropagate(handleSubmit(onSubmit))}
 					>
-						{intent === 'add' &&
-							'Add Pattern to ' + (dimension === '1D' ? 'Border' : 'Infill')}
-						{intent === 'edit' && 'Save Changes'}
-					</Button>
+						<SheetHeader className="px-4">
+							<Button
+								type="button"
+								intent="tertiary"
+								size="small"
+								onClick={() => setStep(0)}
+							>
+								<Icon name="arrow_left" />
+							</Button>
+							<SheetTitle className="flex-1 text-center">
+								Customize your Pattern
+							</SheetTitle>
+							<SheetClose asChild>
+								<Button type="button" intent="tertiary" size="small">
+									<span className="sr-only">Close</span>
+									<Icon name="close" />
+								</Button>
+							</SheetClose>
+						</SheetHeader>
+						{paver && (
+							<SheetBody className="flex flex-col gap-6 overflow-x-hidden overflow-y-scroll">
+								<div className="-mx-6 aspect-video bg-gray-100">
+									<svg
+										viewBox="0 0 480 270"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+										className="group h-full w-full"
+										data-should-pulse={
+											selectedFragmentIndex === null || undefined
+										}
+									>
+										<g>
+											{patternData.contents.map(({ path }, index) => (
+												<path
+													key={index}
+													id={index.toString()}
+													data-selected={selectedFragmentIndex === index}
+													className="stroke-transparent stroke-2 text-pink-700 data-[selected=true]:animate-stroke-flash data-[selected=true]:stroke-[4] data-[selected=false]:hover:stroke-pink-300 group-data-[should-pulse]:animate-pulse"
+													fill={
+														paver.variantIdTemplate[0]?.type === 'color'
+															? paver.variantIdTemplate[0]?.fragments.find(
+																	({ id }) =>
+																		id ===
+																		contents.fields[index]?.skuId.split(':')[1]
+															  )?.css
+															: undefined
+													}
+													onClick={(e) =>
+														setSelectedFragmentIndex(
+															parseInt(e.currentTarget.id)
+														)
+													}
+													fillRule="evenodd"
+													clipRule="evenodd"
+													d={path}
+												/>
+											))}
+										</g>
+
+										<path
+											className="stroke-gray-300"
+											fillRule="evenodd"
+											clipRule="evenodd"
+											d={patternData.outOfBounds}
+										/>
+									</svg>
+								</div>
+
+								<h3 className="font-display text-lg">
+									Colonial Classic Herringbone
+								</h3>
+
+								<Section
+									heading={
+										<>
+											<span>Pattern Coverage</span>
+
+											<Popover>
+												<PopoverTrigger asChild>
+													<Button
+														type="button"
+														intent="tertiary"
+														className="-m-1 p-1"
+													>
+														<span className="sr-only">Help</span>
+														<Icon name="help" />
+													</Button>
+												</PopoverTrigger>
+
+												<PopoverContent>
+													Coverage refers to how much space this pattern should
+													take up. You can measure it using fixed units
+													like&nbsp;
+													{dimension === '1D'
+														? 'feet (ft) or meters (m)'
+														: 'square feet (ft²) or square meters (m²)'}
+													. If you have a specific ratio in mind, you can use
+													the &quot;part&quot; unit to specify the portion or
+													fraction of that ratio you want this pattern to cover.
+												</PopoverContent>
+											</Popover>
+										</>
+									}
+								>
+									<div className="flex h-12 w-full rounded-sm border border-gray-400 bg-gray-50 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline">
+										<input
+											{...register('pattern.coverage.value', { min: 0.01 })}
+											id="coverage.value"
+											type="number"
+											inputMode="decimal"
+											step="any"
+											className="no-arrows h-full w-full flex-1 bg-transparent pl-3 outline-none placeholder:text-gray-500"
+											placeholder="Amount"
+											onClick={(e) => e.currentTarget.select()}
+										/>
+
+										<Select
+											value={coverageUnit.field.value}
+											onValueChange={(newUnit: Unit) =>
+												coverageUnit.field.onChange(newUnit)
+											}
+										>
+											<SelectTrigger unstyled className="h-full pr-2">
+												<SelectValue />
+											</SelectTrigger>
+
+											<SelectContent>
+												{dimension === '2D' && (
+													<>
+														<SelectItem value="fr">
+															{unitDisplayNameDictionary['fr'][0]}
+														</SelectItem>
+														<SelectItem value="sqft">
+															{unitDisplayNameDictionary['sqft'][0]}
+														</SelectItem>
+														<SelectItem value="sqin">
+															{unitDisplayNameDictionary['sqin'][0]}
+														</SelectItem>
+														<SelectItem value="sqm">
+															{unitDisplayNameDictionary['sqm'][0]}
+														</SelectItem>
+														<SelectItem value="sqcm">
+															{unitDisplayNameDictionary['sqcm'][0]}
+														</SelectItem>
+														<SelectItem value="unit">
+															{unitDisplayNameDictionary['unit'][0]}
+														</SelectItem>
+													</>
+												)}
+												{dimension === '1D' && (
+													<>
+														<SelectItem value="fr">
+															{unitDisplayNameDictionary['fr'][0]}
+														</SelectItem>
+														<SelectItem value="ft">
+															{unitDisplayNameDictionary['ft'][0]}
+														</SelectItem>
+														<SelectItem value="in">
+															{unitDisplayNameDictionary['in'][0]}
+														</SelectItem>
+														<SelectItem value="m">
+															{unitDisplayNameDictionary['m'][0]}
+														</SelectItem>
+														<SelectItem value="cm">
+															{unitDisplayNameDictionary['cm'][0]}
+														</SelectItem>
+														<SelectItem value="unit">
+															{unitDisplayNameDictionary['unit'][0]}
+														</SelectItem>
+													</>
+												)}
+											</SelectContent>
+										</Select>
+									</div>
+								</Section>
+
+								{selectedFragmentIndex !== null && fragmentBeingEdited ? (
+									<>
+										<SkuPickerProvider
+											skuId={fragmentBeingEdited.skuId}
+											onChange={({ newSkuId }) =>
+												contents.update(selectedFragmentIndex, {
+													...fragmentBeingEdited,
+													skuId: newSkuId
+												})
+											}
+										>
+											<VariantPicker
+												section={Section}
+												variantIdTemplate={paver.variantIdTemplate.map(
+													(variantFragmentTemplate) => {
+														if (variantFragmentTemplate.type === 'color')
+															return {
+																...variantFragmentTemplate,
+																fragments:
+																	variantFragmentTemplate.fragments.filter(
+																		({ css }) =>
+																			!css.startsWith('linear-gradient')
+																	)
+															};
+														return variantFragmentTemplate;
+													}
+												)}
+											/>
+										</SkuPickerProvider>
+
+										<Section heading="Products in your pattern">
+											<ul>
+												{skus.map((sku, index) =>
+													sku ? (
+														<li
+															key={index}
+															className="flex h-16 items-center gap-2 border-b border-gray-300 py-2 last:border-none"
+														>
+															<div className="aspect-square h-full bg-gray-200" />
+															<div className="grow">
+																<div className="flex">
+																	<h4 className="grow">
+																		{sku.displayName} (
+																		{patternData.contents[index]?.quantity})
+																	</h4>
+																</div>
+																<p>
+																	{formatPrice(sku.price)} per&nbsp;
+																	{
+																		unitDisplayNameDictionary[
+																			sku.unit as Unit
+																		][0]
+																	}
+																</p>
+															</div>
+														</li>
+													) : null
+												)}
+											</ul>
+										</Section>
+									</>
+								) : (
+									<div className="flex flex-1 items-center justify-center">
+										<p>Select a part of the pattern to change its color.</p>
+									</div>
+								)}
+							</SheetBody>
+						)}
+
+						{paverQuery.isLoading && (
+							<SheetBody className="items-cener flex justify-center">
+								Loading...
+							</SheetBody>
+						)}
+						<SheetFooter>
+							<Button
+								type="submit"
+								intent="primary"
+								className="w-full"
+								disabled={!formState.isValid}
+							>
+								{intent === 'add' &&
+									'Add Pattern to ' +
+										(dimension === '1D' ? 'Border' : 'Infill')}
+								{intent === 'edit' && 'Save Changes'}
+							</Button>
+						</SheetFooter>
+					</motion.form>
 				)}
-			</SheetFooter>
-		</form>
+			</AnimatePresence>
+		</>
 	);
 }
 

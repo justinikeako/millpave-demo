@@ -34,6 +34,16 @@ export default defineNextConfig({
 		return config;
 	},
 
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'raw.githubusercontent.com',
+				pathname: '/justinikeako/cornerstone-models/main/renders/**'
+			}
+		]
+	},
+
 	headers: async () => [
 		{
 			source: '/:all*(woff2|png|bin|gltf)',

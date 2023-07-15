@@ -56,7 +56,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-	'fixed z-50 bg-gray-100 flex flex-col border overflow-hidden',
+	'fixed z-50 bg-gray-100 flex flex-col overflow-hidden',
 	{
 		variants: {
 			position: {
@@ -165,7 +165,10 @@ const SheetHeader = ({
 	className,
 	...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-	<div className={cn('flex h-12 items-center px-6', className)} {...props} />
+	<div
+		className={cn('flex h-12 items-center gap-3 px-6', className)}
+		{...props}
+	/>
 );
 SheetHeader.displayName = 'SheetHeader';
 

@@ -41,9 +41,12 @@
 		"class-variance-authority": "^0.6.1",
 		"clsx": "^1.2.1",
 		"date-fns": "^2.30.0",
+		"dom-to-image": "^2.6.0",
 		"dotenv": "^16.3.1",
 		"drizzle-orm": "0.27.2",
+		"file-saver": "^2.0.5",
 		"framer-motion": "^10.12.21",
+		"jszip": "^3.10.1",
 		"langchain": "^0.0.109",
 		"lodash-es": "^4.17.21",
 		"mysql2": "^3.5.1",
@@ -66,6 +69,8 @@
 		"zod": "^3.21.4"
 	},
 	"devDependencies": {
+		"@types/dom-to-image": "^2.6.4",
+		"@types/file-saver": "^2.0.5",
 		"@types/lodash-es": "^4.17.8",
 		"@types/node": "20.4.2",
 		"@types/react": "18.2.15",

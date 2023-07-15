@@ -36,7 +36,7 @@ module.exports = {
 
 			animation: {
 				marquee: 'marquee 60s linear infinite',
-				'stroke-flash': 'strokeFlash 500ms ease-out'
+				'stroke-flash': 'strokeFlash 750ms ease-out'
 			},
 
 			lineHeight: {

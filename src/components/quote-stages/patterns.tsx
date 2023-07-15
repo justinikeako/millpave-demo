@@ -1,4 +1,5 @@
 export const pattern1D = {
+	displayName: 'Colonial Classic Track',
 	contents: [
 		{
 			quantity: 1,
@@ -14,6 +15,7 @@ export const pattern1D = {
 };
 
 export const pattern2D = {
+	displayName: 'Colonial Classic Herringbone',
 	contents: [
 		{
 			quantity: 3,

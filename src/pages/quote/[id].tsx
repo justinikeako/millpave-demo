@@ -130,7 +130,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 														':',
 														'-'
 													)}.png`}
-													alt={item.displayName}
+													alt={item.sku.displayName}
 													className="h-32 w-32"
 												/>
 

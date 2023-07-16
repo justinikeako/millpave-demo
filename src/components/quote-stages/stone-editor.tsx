@@ -176,9 +176,15 @@ export function StoneEditor(props: StoneEditorProps) {
 				data-empty={contents.length === 0 || undefined}
 				className="group flex flex-col items-center gap-2 data-[has-items]:flex-col md:flex-row md:data-[has-items]:h-64"
 			>
-				<div className="relative h-24 w-64 md:h-64 md:group-data-[has-items]:h-auto md:group-data-[has-items]:flex-1">
-					<div className="flex h-full w-full items-center justify-center overflow-hidden rounded-md border border-gray-400 after:absolute after:inset-0 after:rounded-md after:outline-2 after:outline-pink-700 focus-within:after:outline hover:bg-black/5 active:bg-black/10 group-data-[has-items]:flex-row md:flex-col md:items-stretch md:group-data-[has-items]:items-center">
-						<div className="aspect-square h-full shrink-0 bg-gray-200 gradient-mask-r-80 group-data-[has-items]:aspect-square group-data-[has-items]:flex-none md:flex-1 md:group-data-[empty]:gradient-mask-b-80" />
+				<div className="relative h-24 w-64 md:group-data-[empty]:h-64 md:group-data-[has-items]:flex-1">
+					<div className="flex h-full w-full items-center justify-center overflow-hidden rounded-md border border-gray-400 after:absolute after:inset-0 after:rounded-md after:outline-2 after:outline-pink-700 hover:bg-black/5 active:bg-black/10 md:group-data-[empty]:flex-col [&:has(:focus-visible)]:after:outline">
+						<Image
+							width={256}
+							height={256}
+							src="/pattern-2d.svg"
+							alt="Paving Stone Pattern"
+							className="aspect-square h-full min-h-0 max-w-fit shrink object-cover gradient-mask-r-90 md:group-data-[empty]:aspect-auto md:group-data-[empty]:h-auto md:group-data-[empty]:w-full md:group-data-[empty]:max-w-full md:group-data-[empty]:flex-1 md:group-data-[empty]:gradient-mask-b-90"
+						/>
 
 						<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items]:flex-1 group-data-[has-items]:pl-0 group-data-[has-items]:pt-4 group-data-[has-items]:text-left md:flex-none md:pt-0 md:text-center md:group-data-[empty]:px-6">
 							<h3 className="font-semibold">
@@ -217,17 +223,16 @@ export function StoneEditor(props: StoneEditorProps) {
 				<span className="font-display text-lg group-data-[has-items]:hidden">
 					or
 				</span>
-				<div className="relative h-24 w-64 md:h-64 md:group-data-[has-items]:h-auto md:group-data-[has-items]:flex-1">
-					<div className="flex h-full w-full items-center justify-center overflow-hidden rounded-md border border-gray-400 after:absolute after:inset-0 after:rounded-md after:outline-2 after:outline-pink-700 focus-within:after:outline hover:bg-black/5 active:bg-black/10 group-data-[has-items]:flex-row md:flex-col md:items-stretch md:group-data-[has-items]:items-center">
+				<div className="relative h-24 w-64 md:group-data-[empty]:h-64 md:group-data-[has-items]:flex-1">
+					<div className="flex h-full w-full items-center justify-center overflow-hidden rounded-md border border-gray-400 after:absolute after:inset-0 after:rounded-md after:outline-2 after:outline-pink-700 hover:bg-black/5 active:bg-black/10 md:group-data-[empty]:flex-col [&:has(:focus-visible)]:after:outline">
 						<Image
 							width={256}
 							height={256}
 							src="https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/renders/colonial_classic-grey.png"
 							alt="Paving Stone"
-							className="aspect-square h-full min-h-0 min-w-0 object-contain group-data-[has-items]:aspect-square group-data-[has-items]:shrink md:flex-1"
+							className="aspect-square h-full min-h-0 max-w-fit shrink object-contain md:group-data-[empty]:aspect-auto md:group-data-[empty]:h-auto md:group-data-[empty]:w-full md:group-data-[empty]:max-w-full md:group-data-[empty]:flex-1"
 						/>
-
-						<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items]:flex-1 group-data-[has-items]:pl-0 group-data-[has-items]:pt-4 group-data-[has-items]:text-left md:flex-none md:pt-0 md:text-center md:group-data-[empty]:px-6">
+						<div className="grow space-y-0.5 py-4 pr-4 text-left group-data-[has-items]:flex-1 group-data-[has-items]:text-left md:flex-none md:pt-0 md:text-center md:group-data-[empty]:px-6 md:group-data-[has-items]:pt-4">
 							<h3 className="font-semibold">
 								<Sheet open={stoneSheetOpen} onOpenChange={setStoneSheetOpen}>
 									<SheetTrigger className="w-full outline-none [text-align:inherit] after:absolute after:inset-0 after:z-10">
@@ -256,7 +261,7 @@ export function StoneEditor(props: StoneEditorProps) {
 									</SheetContent>
 								</Sheet>
 							</h3>
-							<p className=" text-sm  text-gray-500 ">
+							<p className="text-sm text-gray-500">
 								<Balancer>Create custom patterns from scratch.</Balancer>
 							</p>
 						</div>
@@ -334,7 +339,7 @@ function StoneCard({
 	return (
 		<li
 			data-sheet-open={editSheetOpen || undefined}
-			className="relative flex h-64 w-64 flex-col rounded-md border border-gray-400 p-4 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline hover:bg-black/5 active:bg-black/10"
+			className="relative flex h-64 w-64 flex-col rounded-md border border-gray-400  outline-2 -outline-offset-2 outline-pink-700 hover:bg-black/5 active:bg-black/10 [&:has([data-main-button]:focus-visible)]:outline"
 		>
 			<Image
 				width={256}
@@ -346,10 +351,13 @@ function StoneCard({
 				alt={metadata?.displayName as string}
 				className="min-h-0 min-w-0 flex-1 object-contain"
 			/>
-			<div className="flex items-start gap-4">
+			<div className="flex items-start gap-4 px-4 pb-4">
 				<div className="flex-1">
 					<Sheet open={editSheetOpen} onOpenChange={setEditSheetOpen}>
-						<SheetTrigger className="w-full text-left font-semibold outline-none after:absolute after:inset-0">
+						<SheetTrigger
+							data-main-button
+							className="w-full text-left font-semibold outline-none after:absolute after:inset-0"
+						>
 							{metadata?.displayName}
 						</SheetTrigger>
 
@@ -370,7 +378,8 @@ function StoneCard({
 				<Button
 					intent="tertiary"
 					type="button"
-					className="pointer-events-auto z-10"
+					size="small"
+					className="z-10"
 					onClick={() => onDelete(index)}
 				>
 					<Icon name="trash" />
@@ -411,13 +420,22 @@ function PatternCard({
 	return (
 		<li
 			data-sheet-open={editSheetOpen || undefined}
-			className="relative flex h-64 w-64 flex-col rounded-md border border-gray-400 p-4 outline-2 -outline-offset-2 outline-pink-700 focus-within:outline hover:bg-black/5 active:bg-black/10"
+			className="relative flex h-64 w-64 flex-col rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-pink-700 hover:bg-black/5 active:bg-black/10 [&:has([data-main-button]:focus-visible)]:outline"
 		>
-			<div className="flex-1" />
-			<div className="flex items-start gap-4">
+			<Image
+				width={256}
+				height={256}
+				src="/pattern-2d.svg"
+				alt="Colonial Classic Herringbone"
+				className="min-h-0 min-w-0 flex-1 object-cover gradient-mask-b-90"
+			/>
+			<div className="flex items-start gap-4 px-4 pb-4">
 				<div className="flex-1">
 					<Sheet open={editSheetOpen} onOpenChange={setEditSheetOpen}>
-						<SheetTrigger className="w-full text-left font-semibold outline-none after:absolute after:inset-0">
+						<SheetTrigger
+							data-main-button
+							className="w-full text-left font-semibold outline-none after:absolute after:inset-0"
+						>
 							{pattern.displayName}
 						</SheetTrigger>
 
@@ -440,7 +458,8 @@ function PatternCard({
 				<Button
 					intent="tertiary"
 					type="button"
-					className="pointer-events-auto z-10"
+					size="small"
+					className="z-10"
 					onClick={() => onDelete(index)}
 				>
 					<Icon name="trash" />
@@ -706,6 +725,73 @@ function PatternForm({
 									Colonial Classic Herringbone
 								</h3>
 
+								{selectedFragmentIndex !== null && fragmentBeingEdited ? (
+									<>
+										<SkuPickerProvider
+											skuId={fragmentBeingEdited.skuId}
+											onChange={({ newSkuId }) =>
+												contents.update(selectedFragmentIndex, {
+													...fragmentBeingEdited,
+													skuId: newSkuId
+												})
+											}
+										>
+											<VariantPicker
+												section={Section}
+												variantIdTemplate={paver.variantIdTemplate.map(
+													(variantFragmentTemplate) => {
+														if (variantFragmentTemplate.type === 'color')
+															return {
+																...variantFragmentTemplate,
+																fragments:
+																	variantFragmentTemplate.fragments.filter(
+																		({ css }) =>
+																			!css.startsWith('linear-gradient')
+																	)
+															};
+														return variantFragmentTemplate;
+													}
+												)}
+											/>
+										</SkuPickerProvider>
+
+										<Section heading="Products in your pattern">
+											<ul>
+												{skus.map((sku, index) =>
+													sku ? (
+														<li
+															key={index}
+															className="flex h-16 items-center gap-2 border-b border-gray-300 py-2 last:border-none"
+														>
+															<div className="aspect-square h-full bg-gray-200" />
+															<div className="grow">
+																<div className="flex">
+																	<h4 className="grow">
+																		{sku.displayName} (
+																		{patternData.contents[index]?.quantity})
+																	</h4>
+																</div>
+																<p>
+																	{formatPrice(sku.price)} per&nbsp;
+																	{
+																		unitDisplayNameDictionary[
+																			sku.unit as Unit
+																		][0]
+																	}
+																</p>
+															</div>
+														</li>
+													) : null
+												)}
+											</ul>
+										</Section>
+									</>
+								) : (
+									<div className="flex flex-1 items-center justify-center">
+										<p>Select a part of the pattern to change its color.</p>
+									</div>
+								)}
+
 								<Section
 									heading={
 										<>
@@ -809,73 +895,6 @@ function PatternForm({
 										</Select>
 									</div>
 								</Section>
-
-								{selectedFragmentIndex !== null && fragmentBeingEdited ? (
-									<>
-										<SkuPickerProvider
-											skuId={fragmentBeingEdited.skuId}
-											onChange={({ newSkuId }) =>
-												contents.update(selectedFragmentIndex, {
-													...fragmentBeingEdited,
-													skuId: newSkuId
-												})
-											}
-										>
-											<VariantPicker
-												section={Section}
-												variantIdTemplate={paver.variantIdTemplate.map(
-													(variantFragmentTemplate) => {
-														if (variantFragmentTemplate.type === 'color')
-															return {
-																...variantFragmentTemplate,
-																fragments:
-																	variantFragmentTemplate.fragments.filter(
-																		({ css }) =>
-																			!css.startsWith('linear-gradient')
-																	)
-															};
-														return variantFragmentTemplate;
-													}
-												)}
-											/>
-										</SkuPickerProvider>
-
-										<Section heading="Products in your pattern">
-											<ul>
-												{skus.map((sku, index) =>
-													sku ? (
-														<li
-															key={index}
-															className="flex h-16 items-center gap-2 border-b border-gray-300 py-2 last:border-none"
-														>
-															<div className="aspect-square h-full bg-gray-200" />
-															<div className="grow">
-																<div className="flex">
-																	<h4 className="grow">
-																		{sku.displayName} (
-																		{patternData.contents[index]?.quantity})
-																	</h4>
-																</div>
-																<p>
-																	{formatPrice(sku.price)} per&nbsp;
-																	{
-																		unitDisplayNameDictionary[
-																			sku.unit as Unit
-																		][0]
-																	}
-																</p>
-															</div>
-														</li>
-													) : null
-												)}
-											</ul>
-										</Section>
-									</>
-								) : (
-									<div className="flex flex-1 items-center justify-center">
-										<p>Select a part of the pattern to change its color.</p>
-									</div>
-								)}
 							</SheetBody>
 						)}
 
@@ -976,7 +995,7 @@ function StoneForm({
 				<SheetTitle className="flex-1">Select a stone</SheetTitle>
 				<div className="flex items-center gap-2">
 					<SheetClose asChild>
-						<Button type="button" intent="tertiary">
+						<Button type="button" intent="tertiary" size="small">
 							<span className="sr-only">Close</span>
 							<Icon name="close" />
 						</Button>
@@ -1035,6 +1054,32 @@ function StoneForm({
 						</div>
 					</section>
 				)}
+
+				<Controller
+					control={formMethods.control}
+					name="stone.skuId"
+					render={(skuId) => (
+						<SkuPickerProvider
+							skuId={skuId.field.value}
+							onChange={({ newSkuId }) => skuId.field.onChange(newSkuId)}
+						>
+							<Section
+								heading={`Product — ${
+									currentPaver?.displayName || 'Loading...'
+								}`}
+							>
+								<ProductPicker products={pavers} />
+							</Section>
+
+							{currentPaver && (
+								<VariantPicker
+									section={Section}
+									variantIdTemplate={currentPaver.variantIdTemplate}
+								/>
+							)}
+						</SkuPickerProvider>
+					)}
+				/>
 
 				<Section
 					heading={
@@ -1140,31 +1185,6 @@ function StoneForm({
 						/>
 					</div>
 				</Section>
-				<Controller
-					control={formMethods.control}
-					name="stone.skuId"
-					render={(skuId) => (
-						<SkuPickerProvider
-							skuId={skuId.field.value}
-							onChange={({ newSkuId }) => skuId.field.onChange(newSkuId)}
-						>
-							<Section
-								heading={`Product — ${
-									currentPaver?.displayName || 'Loading...'
-								}`}
-							>
-								<ProductPicker products={pavers} />
-							</Section>
-
-							{currentPaver && (
-								<VariantPicker
-									section={Section}
-									variantIdTemplate={currentPaver.variantIdTemplate}
-								/>
-							)}
-						</SkuPickerProvider>
-					)}
-				/>
 			</SheetBody>
 
 			<SheetFooter>

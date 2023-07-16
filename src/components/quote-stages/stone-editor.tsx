@@ -722,7 +722,7 @@ function PatternForm({
 								</div>
 
 								<h3 className="font-display text-lg">
-									Colonial Classic Herringbone
+									{patternData.displayName}
 								</h3>
 
 								{selectedFragmentIndex !== null && fragmentBeingEdited ? (

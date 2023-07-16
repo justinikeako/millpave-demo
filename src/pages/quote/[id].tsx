@@ -21,6 +21,7 @@ import { ProductCard } from '~/components/product-card';
 import { Icon } from '~/components/icon';
 import { LearnSection } from '~/components/sections/learn';
 import { LocationsSection } from '~/components/sections/locations';
+import Image from 'next/image';
 
 export const runtime = 'experimental-edge';
 
@@ -122,7 +123,16 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 									return (
 										<React.Fragment key={itemIndex}>
 											<li className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch">
-												<div className="h-32 w-32 bg-gray-300" />
+												<Image
+													width={128}
+													height={128}
+													src={`https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/renders/${item.skuId.replaceAll(
+														':',
+														'-'
+													)}.png`}
+													alt={item.displayName}
+													className="h-32 w-32"
+												/>
 
 												<div className="w-full space-y-4 lg:w-auto lg:flex-1">
 													<div className="flex flex-wrap">

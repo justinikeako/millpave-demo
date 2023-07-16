@@ -12,6 +12,7 @@ import Link from 'next/link';
 import React from 'react';
 import { Balancer } from 'react-wrap-balancer';
 import { Button } from '../button';
+import Image from 'next/image';
 
 export function ConfigureStage() {
 	const { stoneMetadataArray, quote, setStageIndex } = useStageContext();
@@ -105,7 +106,16 @@ export function ConfigureStage() {
 							return (
 								<React.Fragment key={itemIndex}>
 									<li className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch">
-										<div className="h-32 w-32 bg-gray-300" />
+										<Image
+											width={128}
+											height={128}
+											src={`https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/renders/${item.skuId.replaceAll(
+												':',
+												'-'
+											)}.png`}
+											alt={item.displayName}
+											className="h-32 w-32"
+										/>
 
 										<div className="w-full space-y-4 lg:w-auto lg:flex-1 ">
 											<div className="flex flex-wrap">

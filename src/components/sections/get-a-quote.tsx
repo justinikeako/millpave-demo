@@ -16,12 +16,14 @@ export function GetAQuoteSection() {
 	const slotInView = useInView(slotRef);
 
 	useEffect(() => {
-		if (!slotInView) return;
+		let intervalId: NodeJS.Timer;
 
 		// Set an interval to cycle through the steps after 7.5 seconds
-		const intervalId = setInterval(() => {
-			cycleStep();
-		}, 7500);
+		if (slotInView) {
+			intervalId = setInterval(() => {
+				cycleStep();
+			}, 7500);
+		}
 
 		return () => clearInterval(intervalId);
 	}, [slotInView, cycleStep]);

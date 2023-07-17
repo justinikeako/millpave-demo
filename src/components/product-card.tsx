@@ -27,7 +27,7 @@ function ProductCard({
 						fill
 						src={`/products/${productId}.png`}
 						alt={name}
-						objectFit="cover"
+						className="object-contain"
 					/>
 				</div>
 

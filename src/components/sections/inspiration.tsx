@@ -50,24 +50,24 @@ function InspirationSection() {
 							<Image
 								fill
 								src="/inspo-0.png"
-								objectFit="cover"
 								alt="Paving stones Patio"
+								className="object-cover"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
 							<Image
 								fill
 								src="/inspo-1.png"
-								objectFit="cover"
 								alt="Paving stones Patio"
+								className="object-cover"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
 							<Image
 								fill
 								src="/inspo-2.png"
-								objectFit="cover"
 								alt="Paving stones Patio"
+								className="object-cover"
 							/>
 						</div>
 					</div>
@@ -76,24 +76,24 @@ function InspirationSection() {
 							<Image
 								fill
 								src="/inspo-0.png"
-								objectFit="cover"
 								alt="Paving stones Patio"
+								className="object-cover"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
 							<Image
 								fill
 								src="/inspo-1.png"
-								objectFit="cover"
 								alt="Paving stones Patio"
+								className="object-cover"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
 							<Image
 								fill
 								src="/inspo-2.png"
-								objectFit="cover"
 								alt="Paving stones Patio"
+								className="object-cover"
 							/>
 						</div>
 					</div>

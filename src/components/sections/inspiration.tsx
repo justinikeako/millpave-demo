@@ -52,7 +52,7 @@ function InspirationSection() {
 								src="/inspo-0.png"
 								alt="Paving stones Patio"
 								className="object-cover"
-								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 60vw, (max-width: 1536px) 33vw"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">

@@ -5,6 +5,7 @@ import { Icon } from '../icon';
 import { ViewportReveal } from '../reveal';
 import { FullWidthSection } from './full-width';
 import { Balancer } from 'react-wrap-balancer';
+import Image from 'next/image';
 
 function InspirationSection() {
 	const carouselRef = useRef<HTMLAnchorElement>(null);
@@ -45,30 +46,60 @@ function InspirationSection() {
 					ref={carouselRef}
 				>
 					<div className="flex flex-none animate-marquee justify-start gap-4 pr-4 md:gap-6 md:pr-6 lg:gap-8 lg:pr-8">
-						<ProjectImage />
-						<ProjectImage />
-						<ProjectImage />
-						<ProjectImage />
-						<ProjectImage />
-						<ProjectImage />
+						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
+							<Image
+								fill
+								src="/inspo-0.png"
+								objectFit="cover"
+								alt="Paving stones Patio"
+							/>
+						</div>
+						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
+							<Image
+								fill
+								src="/inspo-1.png"
+								objectFit="cover"
+								alt="Paving stones Patio"
+							/>
+						</div>
+						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
+							<Image
+								fill
+								src="/inspo-2.png"
+								objectFit="cover"
+								alt="Paving stones Patio"
+							/>
+						</div>
 					</div>
 					<div className="flex flex-none animate-marquee justify-start gap-4 pr-4 md:gap-6 md:pr-6 lg:gap-8 lg:pr-8">
-						<ProjectImage />
-						<ProjectImage />
-						<ProjectImage />
-						<ProjectImage />
-						<ProjectImage />
-						<ProjectImage />
+						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
+							<Image
+								fill
+								src="/inspo-0.png"
+								objectFit="cover"
+								alt="Paving stones Patio"
+							/>
+						</div>
+						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
+							<Image
+								fill
+								src="/inspo-1.png"
+								objectFit="cover"
+								alt="Paving stones Patio"
+							/>
+						</div>
+						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
+							<Image
+								fill
+								src="/inspo-2.png"
+								objectFit="cover"
+								alt="Paving stones Patio"
+							/>
+						</div>
 					</div>
 				</Link>
 			</FullWidthSection>
 		</ViewportReveal>
-	);
-}
-
-function ProjectImage() {
-	return (
-		<div className="aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96" />
 	);
 }
 

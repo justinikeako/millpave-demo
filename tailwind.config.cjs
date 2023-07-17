@@ -35,7 +35,7 @@ module.exports = {
 			},
 
 			animation: {
-				marquee: 'marquee 60s linear infinite',
+				marquee: 'marquee 120s linear infinite',
 				'stroke-flash': 'strokeFlash 750ms ease-out'
 			},
 

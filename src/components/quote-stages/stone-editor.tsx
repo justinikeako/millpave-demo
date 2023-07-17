@@ -181,7 +181,7 @@ export function StoneEditor(props: StoneEditorProps) {
 						<Image
 							width={256}
 							height={256}
-							src="/pattern-2d.svg"
+							src={`/pattern-${props.dimension}.svg`}
 							alt="Paving Stone Pattern"
 							className="aspect-square h-full min-h-0 max-w-fit shrink object-cover gradient-mask-r-90 md:group-data-[empty]:aspect-auto md:group-data-[empty]:h-auto md:group-data-[empty]:w-full md:group-data-[empty]:max-w-full md:group-data-[empty]:flex-1 md:group-data-[empty]:gradient-mask-b-90"
 						/>
@@ -425,7 +425,7 @@ function PatternCard({
 			<Image
 				width={256}
 				height={256}
-				src="/pattern-2d.svg"
+				src={`/pattern-${dimension}.svg`}
 				alt="Colonial Classic Herringbone"
 				className="min-h-0 min-w-0 flex-1 object-cover gradient-mask-b-90"
 			/>

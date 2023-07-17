@@ -26,6 +26,7 @@ import { HorizontalScroller } from '~/components/horizontal-scroller';
 import { GetAQuoteSection } from '~/components/sections/get-a-quote';
 import { useRouter } from 'next/router';
 import { productRouter } from '~/server/api/routers/product';
+import Image from 'next/image';
 
 export const runtime = 'experimental-edge';
 
@@ -294,10 +295,22 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 							<label
 								htmlFor={id}
-								className="flex aspect-square w-16 flex-1 shrink-0 items-center justify-center bg-gray-200 bg-clip-content p-1 text-lg text-gray-400 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700 lg:w-20"
+								className="relative aspect-square w-16 flex-1 shrink-0 bg-gray-200 bg-clip-content p-1 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700 lg:w-20"
 							>
-								{showModelViewer && index === 3 && (
-									<Icon name="3d_rotation-opsz_40" size={40} />
+								{index === 3 ? (
+									showModelViewer && (
+										<div className="absolute inset-0 flex items-center justify-center text-gray-500">
+											<Icon name="3d_rotation-opsz_40" size={40} />
+										</div>
+									)
+								) : (
+									<Image
+										src={`/gallery/${index}.png`}
+										alt={sku.displayName}
+										width={80}
+										height={80}
+										className="h-full w-full min-w-0 object-cover"
+									/>
 								)}
 							</label>
 						</div>
@@ -306,16 +319,26 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 			</div>
 
 			<div className="relative aspect-square w-full bg-gray-200">
-				{showModelViewer && selectedIndex === 3 && (
-					<Suspense
-						fallback={
-							<div className="grid h-full w-full place-items-center">
-								<p>Loading 3D Model...</p>
-							</div>
-						}
-					>
-						<ProductViewer3D skuId={sku.id} displayName={sku.displayName} />
-					</Suspense>
+				{selectedIndex === 3 ? (
+					showModelViewer && (
+						<Suspense
+							fallback={
+								<div className="grid h-full w-full place-items-center">
+									<p>Loading 3D Model...</p>
+								</div>
+							}
+						>
+							<ProductViewer3D skuId={sku.id} displayName={sku.displayName} />
+						</Suspense>
+					)
+				) : (
+					<Image
+						fill
+						src={`/gallery/${selectedIndex}.png`}
+						alt={sku.displayName}
+						className="object-cover"
+						sizes="(min-width: 480px) 95vw, (min-width: 768px) 60vw, (min-width: 1536px) 33vw"
+					/>
 				)}
 			</div>
 		</div>

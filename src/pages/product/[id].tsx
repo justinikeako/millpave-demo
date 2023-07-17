@@ -89,7 +89,11 @@ function Page({
 			<Head>
 				<title>{`${product.displayName} — Millennium Paving Stones`}</title>
 
-				<meta name="description" content={product.description} />
+				<meta
+					key="description"
+					name="description"
+					content={product.description}
+				/>
 				<meta
 					property="og:title"
 					key="og:title"

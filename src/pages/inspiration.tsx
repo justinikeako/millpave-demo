@@ -99,16 +99,17 @@ function Page() {
 
 				<meta
 					name="description"
+					key="description"
 					content="See how our products can transform your outdoor space."
 				/>
 				<meta
-					property="og:title"
 					key="og:title"
+					property="og:title"
 					content="Inspiration for Your Paving Project"
 				/>
 				<meta
-					property="og:description"
 					key="og:description"
+					property="og:description"
 					content="See how our products can transform your outdoor space."
 				/>
 			</Head>

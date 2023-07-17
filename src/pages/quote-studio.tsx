@@ -39,13 +39,14 @@ function Page() {
 				<title>Get a Quote — Millennium Paving Stones</title>
 
 				<meta
+					key="description"
 					name="description"
 					content="Get a quote for your paving project in under 5 minutes with just the dimensions of your project, and an idea of the patterns you wish to use."
 				/>
 				<meta
 					property="og:title"
 					key="og:title"
-					content="Get a paving quote under 5 minutes"
+					content="Get a Paving Quote Under 5 Minutes"
 				/>
 				<meta
 					property="og:description"
@@ -55,7 +56,7 @@ function Page() {
 				<meta
 					property="og:image"
 					key="og:image"
-					content="https://millpave.notprimitive.com/firepit.jpg"
+					content="https://millpave.notprimitive.com/firepit.png"
 				/>
 			</Head>
 

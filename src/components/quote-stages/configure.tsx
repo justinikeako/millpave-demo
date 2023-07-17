@@ -227,7 +227,7 @@ export function ConfigureStage() {
 															finishButton?.focus();
 														}}
 													>
-														Press &quot;Finish&quot; Edit
+														Press &quot;Finish&quot; to edit
 													</label>
 												</div>
 											</div>

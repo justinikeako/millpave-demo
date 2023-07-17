@@ -217,7 +217,7 @@ export function StoneEditor(props: StoneEditorProps) {
 					</div>
 
 					<span className="pointer-events-none absolute -top-2 left-2 block rounded-sm border border-pink-600 bg-pink-600 bg-gradient-to-b from-white/50 px-1 text-sm font-semibold text-white">
-						New
+						Beta
 					</span>
 				</div>
 				<span className="font-display text-lg group-data-[has-items]:hidden">

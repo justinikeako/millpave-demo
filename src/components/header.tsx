@@ -171,7 +171,7 @@ function Header({ minimal }: { minimal: boolean }) {
 							intent="tertiary"
 							className="group-data-[minimal=true]:hidden group-data-[transparent]:text-gray-100"
 						>
-							<Link href="/quote">
+							<Link href="/quote/17">
 								<Icon name="shopping_cart" size={24} />
 							</Link>
 						</Button>
@@ -223,7 +223,7 @@ function Header({ minimal }: { minimal: boolean }) {
 											onClick={() => setMenuOpen(false)}
 											className="group-data-[minimal=true]:hidden lg:hidden"
 										>
-											<Link href="/quote">
+											<Link href="/quote/17">
 												<Icon name="shopping_cart" size={24} />
 											</Link>
 										</Button>

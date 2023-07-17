@@ -25,9 +25,10 @@ function ProductCard({
 				<div className="w-fill relative z-[-1] aspect-[4/3] bg-gray-200 @lg:absolute @lg:inset-0 @lg:aspect-[unset]">
 					<Image
 						fill
+						sizes="(max-width: 480px) 95vw, (max-width: 768px) 33vw, (max-width: 1280px) 25vw (max-width: 1536px) 15vw"
 						src={`/products/${productId}.png`}
 						alt={name}
-						className="object-contain"
+						className="object-cover"
 					/>
 				</div>
 

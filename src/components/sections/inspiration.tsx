@@ -45,13 +45,14 @@ function InspirationSection() {
 					className="relative -mx-6 flex overflow-hidden before:absolute before:left-0 before:z-[1] before:-mr-4 before:h-full before:w-6 before:shrink-0 before:bg-gradient-to-r before:from-gray-100 after:absolute after:right-0 after:z-[1] after:-ml-4 after:h-full after:w-6 after:shrink-0 after:bg-gradient-to-l after:from-gray-100 lg:-mx-16 lg:before:w-16 lg:after:w-16"
 					ref={carouselRef}
 				>
-					<div className="flex flex-none animate-marquee justify-start gap-4 pr-4 md:gap-6 md:pr-6 lg:gap-8 lg:pr-8">
+					<div className="flex flex-none animate-marquee justify-start gap-4 pr-4 md:gap-6 md:pr-6 lg:pr-8 2xl:gap-8">
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
 							<Image
 								fill
 								src="/inspo-0.png"
 								alt="Paving stones Patio"
 								className="object-cover"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
@@ -60,6 +61,7 @@ function InspirationSection() {
 								src="/inspo-1.png"
 								alt="Paving stones Patio"
 								className="object-cover"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
@@ -68,6 +70,7 @@ function InspirationSection() {
 								src="/inspo-2.png"
 								alt="Paving stones Patio"
 								className="object-cover"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
 							/>
 						</div>
 					</div>
@@ -78,6 +81,7 @@ function InspirationSection() {
 								src="/inspo-0.png"
 								alt="Paving stones Patio"
 								className="object-cover"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
@@ -86,6 +90,7 @@ function InspirationSection() {
 								src="/inspo-1.png"
 								alt="Paving stones Patio"
 								className="object-cover"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
 							/>
 						</div>
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
@@ -94,6 +99,7 @@ function InspirationSection() {
 								src="/inspo-2.png"
 								alt="Paving stones Patio"
 								className="object-cover"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
 							/>
 						</div>
 					</div>

@@ -56,7 +56,11 @@ const App: AppType = ({ Component, pageProps, router }) => {
 					content="The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck,
 					patio, or plaza into a functional work of art."
 				/>
-				<meta property="og:image" key="og:image" content="/driveway.jpg" />
+				<meta
+					property="og:image"
+					key="og:image"
+					content="https://millpave.notprimitive.com/driveway.jpg"
+				/>
 			</Head>
 
 			<Header minimal={router.pathname === '/quote-studio'} />

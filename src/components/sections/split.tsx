@@ -23,7 +23,7 @@ export function SplitSection({
 			<FullWidthSection className="flex flex-col gap-4 sm:flex-row sm:gap-2 md:gap-4 lg:gap-16">
 				<div className="flex flex-col justify-center px-6 pt-16 sm:order-2 sm:flex-[5] sm:py-32 lg:pl-0 lg:pr-16">
 					<div className="max-w-sm xl:max-w-md">
-						<p className="font-display text-lg">{tagline}</p>
+						<p className="font-display text-lg md:text-xl">{tagline}</p>
 						<h2 className="mt-2 font-display text-4xl md:text-5xl xl:text-6xl">
 							<Balancer>{heading}</Balancer>
 						</h2>

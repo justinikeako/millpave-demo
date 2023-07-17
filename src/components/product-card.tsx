@@ -34,7 +34,7 @@ function ProductCard({
 
 				<div className="group space-y-2 px-2 pb-2 pt-3 @lg:p-0">
 					<Link
-						href={`/products/${productId}`}
+						href={`/product/${productId}`}
 						className="before:absolute before:inset-0"
 					>
 						<h3 className="font-display text-lg">{name}</h3>

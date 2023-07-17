@@ -39,6 +39,19 @@ const App: AppType = ({ Component, pageProps, router }) => {
 					name="viewport"
 					content="width=device-width, initial-scale=1, maximum-scale=1"
 				/>
+
+				<meta
+					name="description"
+					content="The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck,
+					patio, or plaza into a functional work of art."
+				/>
+				<meta property="og:title" content="Social Title for Cool Page" />
+				<meta
+					property="og:description"
+					content="The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck,
+					patio, or plaza into a functional work of art."
+				/>
+				<meta property="og:image" content="/driveway.jpg" />
 			</Head>
 
 			<Header minimal={router.pathname === '/quote-studio'} />

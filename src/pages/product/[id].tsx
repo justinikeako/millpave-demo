@@ -88,6 +88,19 @@ function Page({
 		<>
 			<Head>
 				<title>{`${product.displayName} — Millennium Paving Stones`}</title>
+
+				<meta name="description" content={product.description} />
+				<meta property="og:title" content={product.displayName} />
+				<meta property="og:description" content={product.description} />
+				{product.hasModels && (
+					<meta
+						property="og:image"
+						content={`https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/renders/${currentSku.id.replaceAll(
+							':',
+							'-'
+						)}.png`}
+					/>
+				)}
 			</Head>
 
 			<Main>

@@ -2,15 +2,32 @@ import { SplitSection } from './split';
 import { Button } from '~/components/button';
 import Link from 'next/link';
 import { Icon } from '../icon';
-import { AnimatePresence, motion, useCycle, useInView } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { AnimatePresence, motion, useInView } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+
+function useCycle<T>(array: T[]) {
+	const [currentIndex, setCurrentIndex] = useState(0);
+
+	const currentElement = array[currentIndex] as T;
+	const nextIndex = currentIndex === array.length - 1 ? 0 : currentIndex + 1;
+	const nextElement = array[nextIndex] as T;
+
+	const cycle = () => {
+		setCurrentIndex(nextIndex);
+	};
+
+	return [currentElement, nextElement, cycle] as const;
+}
+
+const MotionImage = motion(Image);
 
 export function GetAQuoteSection() {
-	const [step, cycleStep] = useCycle(
-		{ index: 0, name: 'Shape & Measurements' },
-		{ index: 1, name: 'Infill Pattern' },
-		{ index: 2, name: 'Border Pattern' }
-	);
+	const [current, next, cycleStep] = useCycle([
+		{ index: 0, id: 'shape', name: 'Shape & Measurements' },
+		{ index: 1, id: 'infill', name: 'Infill Pattern' },
+		{ index: 2, id: 'border', name: 'Border Pattern' }
+	]);
 
 	const slotRef = useRef<HTMLDivElement>(null);
 	const slotInView = useInView(slotRef);
@@ -57,30 +74,39 @@ export function GetAQuoteSection() {
 							</div>
 						</div>
 						<div className="relative flex aspect-video w-full text-2xl text-black/20">
+							<Image
+								key={next.id}
+								fill
+								src={`/quote-studio-stages/${next.id}.jpg`}
+								alt="A large driveway paved with neutral-tone concrete pavers."
+								className="absolute left-0 top-0 h-full w-full object-cover object-center opacity-0"
+							/>
 							<AnimatePresence initial={false} mode="popLayout">
-								<motion.div
-									key={'step-image-' + step.index}
+								<MotionImage
+									fill
+									key={current.id}
+									alt={current.name}
+									src={`/quote-studio-stages/${current.id}.jpg`}
+									sizes="(max-width: 480px) 90vw, (max-width: 768px) 45vw, (max-width: 1536px) 33vw"
 									initial={{ x: '100%' }}
 									animate={{ x: 0 }}
 									exit={{ x: '-100%' }}
 									transition={{ type: 'spring', duration: 1.5, bounce: 0 }}
-									className="flex h-full w-full shrink-0 items-center justify-center bg-gray-100 p-4 text-center"
-								>
-									{step.name}
-								</motion.div>
+									className="flex h-full w-full shrink-0 items-center justify-center bg-gray-100 object-contain p-4 text-center"
+								/>
 							</AnimatePresence>
 						</div>
 					</Link>
 					<AnimatePresence initial={false} mode="wait">
 						<motion.p
-							key={'step-caption-' + step.index}
+							key={current.id}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
 							transition={{ type: 'spring', duration: 0.5, bounce: 0 }}
 							className="block whitespace-nowrap text-center text-sm text-gray-500"
 						>
-							Step {step.index + 1}: {step.name}
+							Step {current.index + 1}: {current.name}
 						</motion.p>
 					</AnimatePresence>
 				</div>

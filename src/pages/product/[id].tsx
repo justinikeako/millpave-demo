@@ -214,7 +214,7 @@ function Page({
 									key={similarProduct.id}
 									name={similarProduct.displayName}
 									startingSku={similarProduct.startingSku}
-									link={`/product/${similarProduct.id}`}
+									productId={similarProduct.id}
 									className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
 								/>
 							))}

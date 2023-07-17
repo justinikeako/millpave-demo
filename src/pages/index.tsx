@@ -237,31 +237,31 @@ function Page() {
 							<ProductCard
 								name="Colonial Classic"
 								startingSku={{ price: 203, unit: 'sqft' }}
-								link="/product/colonial_classic"
+								productId="colonial_classic"
 								className="w-80 shrink-0 grow snap-center"
 							/>
 							<ProductCard
 								name="Banjo"
 								startingSku={{ price: 219, unit: 'sqft' }}
-								link="/product/banjo"
+								productId="banjo"
 								className="w-80 shrink-0 grow snap-center"
 							/>
 							<ProductCard
 								name="Heritage Series"
 								startingSku={{ price: 219, unit: 'sqft' }}
-								link="/product/heritage"
+								productId="heritage"
 								className="w-80 shrink-0 grow snap-center"
 							/>
 							<ProductCard
 								name="Cobble Mix"
 								startingSku={{ price: 219, unit: 'sqft' }}
-								link="/product/cobble_mix"
+								productId="cobble_mix"
 								className="w-80 shrink-0 grow snap-center"
 							/>
 							<ProductCard
 								name="Old World Cobble"
 								startingSku={{ price: 203, unit: 'sqft' }}
-								link="/product/owc"
+								productId="owc"
 								className="w-80 shrink-0 grow snap-center"
 							/>
 						</HorizontalScroller>

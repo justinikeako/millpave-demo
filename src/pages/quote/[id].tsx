@@ -290,19 +290,19 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 							<ProductCard
 								name="Colonial Classic"
 								startingSku={{ price: 203, unit: 'sqft' }}
-								link="/product/colonial_classic"
+								productId="colonial_classic"
 								className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
 							/>
 							<ProductCard
 								name="Banjo"
 								startingSku={{ price: 219, unit: 'sqft' }}
-								link="/product/banjo"
+								productId="banjo"
 								className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
 							/>
 							<ProductCard
 								name="Heritage Series"
 								startingSku={{ price: 219, unit: 'sqft' }}
-								link="/product/heritage"
+								productId="heritage"
 								className="shrink-0 basis-80 snap-center lg:w-auto lg:flex-1"
 							/>
 							<li className="min-w-[16rem] shrink-0 basis-80 snap-center lg:w-auto lg:flex-1">

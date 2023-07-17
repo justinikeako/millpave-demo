@@ -62,7 +62,9 @@ export const getServerSideProps = async () => {
 	};
 };
 
-function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Page(
+	props: InferGetServerSidePropsType<typeof getServerSideProps>
+) {
 	const categoryId = props.category;
 
 	const categoriesQuery = api.category.getAll.useQuery(undefined, {
@@ -182,7 +184,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 												key={product.id}
 												name={product.displayName}
 												startingSku={product.startingSku}
-												link={`/product/${product.id}`}
+												productId={product.id}
 												className="xl:[&:nth-child(6n+1)]:col-span-2"
 											/>
 										))
@@ -502,5 +504,3 @@ function Filters() {
 		</>
 	);
 }
-
-export default Page;

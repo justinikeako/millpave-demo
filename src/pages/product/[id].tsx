@@ -90,11 +90,20 @@ function Page({
 				<title>{`${product.displayName} — Millennium Paving Stones`}</title>
 
 				<meta name="description" content={product.description} />
-				<meta property="og:title" content={product.displayName} />
-				<meta property="og:description" content={product.description} />
+				<meta
+					property="og:title"
+					key="og:title"
+					content={product.displayName}
+				/>
+				<meta
+					property="og:description"
+					key="og:description"
+					content={product.description}
+				/>
 				{product.hasModels && (
 					<meta
 						property="og:image"
+						key="og:image"
 						content={`https://raw.githubusercontent.com/justinikeako/cornerstone-models/main/renders/${currentSku.id.replaceAll(
 							':',
 							'-'

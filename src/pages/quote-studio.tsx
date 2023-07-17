@@ -44,13 +44,15 @@ function Page() {
 				/>
 				<meta
 					property="og:title"
+					key="og:title"
 					content="Get a paving quote under 5 minutes"
 				/>
 				<meta
 					property="og:description"
+					key="og:description"
 					content="All you'll need are the dimensions of your project, and an idea of the patterns you wish to use."
 				/>
-				<meta property="og:image" content="/firepit.jpg" />
+				<meta property="og:image" key="og:image" content="/firepit.jpg" />
 			</Head>
 
 			<style jsx global>{`

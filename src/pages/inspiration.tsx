@@ -96,6 +96,21 @@ function Page() {
 		<>
 			<Head>
 				<title>Paving Inspiration — Millennium Paving Stones</title>
+
+				<meta
+					name="description"
+					content="See how our products can transform your outdoor space."
+				/>
+				<meta
+					property="og:title"
+					key="og:title"
+					content="Inspiration for Your Paving Project"
+				/>
+				<meta
+					property="og:description"
+					key="og:description"
+					content="See how our products can transform your outdoor space."
+				/>
 			</Head>
 
 			<Main className="space-y-32 !pt-16 sm:!pt-24">

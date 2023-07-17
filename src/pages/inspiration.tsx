@@ -288,7 +288,7 @@ function Page() {
 																		price: 203,
 																		unit: 'sqft'
 																	}}
-																	link="/product/colonial_classic"
+																	productId="colonial_classic"
 																	className="h-96"
 																/>
 																<ProductCard
@@ -297,7 +297,7 @@ function Page() {
 																		price: 219,
 																		unit: 'sqft'
 																	}}
-																	link="/product/banjo"
+																	productId="banjo"
 																	className="h-96"
 																/>
 															</ul>

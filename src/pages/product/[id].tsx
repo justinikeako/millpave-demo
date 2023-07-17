@@ -295,7 +295,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 							<label
 								htmlFor={id}
-								className="relative aspect-square w-16 flex-1 shrink-0 bg-gray-200 bg-clip-content p-1 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700 lg:w-20"
+								className="relative h-16 w-16 flex-1 shrink-0 bg-gray-200 bg-clip-content p-1 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700 lg:h-20 lg:w-20"
 							>
 								{index === 3 ? (
 									showModelViewer && (
@@ -308,8 +308,10 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 										src={`/gallery/${index}.png`}
 										alt={sku.displayName}
 										width={80}
+										priority
+										fetchPriority="high"
 										height={80}
-										className="h-full w-full min-w-0 object-cover"
+										className="h-full min-h-0 w-full min-w-0 object-cover"
 									/>
 								)}
 							</label>

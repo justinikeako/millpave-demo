@@ -9,8 +9,8 @@ function LearnSection() {
 	return (
 		<ViewportReveal asChild>
 			<section className="grid grid-cols-1 gap-4 py-16 sm:grid-cols-2 xl:grid-cols-4">
-				<div className="group relative flex h-[28rem] shrink-0 flex-col items-start gap-2 bg-gray-600 p-6 text-white sm:col-span-2 sm:justify-between">
-					<div className="absolute bottom-0 right-0 h-full w-3/5 md:w-1/2">
+				<div className="group relative flex h-[32rem] shrink-0 flex-col items-start gap-2 bg-gray-600 p-6 text-white sm:col-span-2 sm:h-[28rem] sm:justify-between">
+					<div className="absolute bottom-0 right-0 h-3/5 w-full xs:h-full xs:w-3/5 md:w-1/2">
 						<Image
 							src="/contractor.png"
 							alt="Paving stones around a firepit"
@@ -44,7 +44,7 @@ function LearnSection() {
 							<span>Discover Contractors</span>
 							<Icon
 								name="arrow_right_alt"
-								className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-1"
+								className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-0.5"
 							/>
 						</div>
 					</Button>

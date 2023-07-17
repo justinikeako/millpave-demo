@@ -152,11 +152,6 @@ function Page({
 							</div>
 						</section>
 
-						{/* Description */}
-						<Section heading="Description">
-							<p>{product.description}</p>
-						</Section>
-
 						{/* Sku Picker */}
 						<SkuPickerProvider
 							skuId={skuId}
@@ -184,6 +179,11 @@ function Page({
 								sku={currentSku}
 							/>
 						)}
+
+						{/* Description */}
+						<Section heading="Description">
+							<p>{product.description}</p>
+						</Section>
 
 						{/* Specifications */}
 						<Section heading="Specifications">

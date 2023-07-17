@@ -48,7 +48,7 @@ function Hero() {
 		{ text: 'Garden', imageSrc: '/garden.jpg' },
 		{ text: 'Pool Deck', imageSrc: '/pool-deck.jpg' }
 	];
-	const cycleDuration = 7.5; // seconds
+	const cycleDuration = 5; // seconds
 
 	const [imageLoadPriority, setImageLoadPriority] = useState(true);
 	const heroRef = useRef<HTMLDivElement>(null);

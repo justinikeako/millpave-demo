@@ -183,7 +183,7 @@ export function StoneEditor(props: StoneEditorProps) {
 							height={256}
 							src={`/pattern-${props.dimension}.svg`}
 							alt="Paving Stone Pattern"
-							className="aspect-square h-full min-h-0 max-w-fit shrink object-cover gradient-mask-r-90 md:group-data-[empty]:aspect-auto md:group-data-[empty]:h-auto md:group-data-[empty]:w-full md:group-data-[empty]:max-w-full md:group-data-[empty]:flex-1 md:group-data-[empty]:gradient-mask-b-90"
+							className="aspect-square h-full min-h-0 max-w-fit shrink object-cover gradient-mask-r-70 md:group-data-[empty]:aspect-auto md:group-data-[empty]:h-auto md:group-data-[empty]:w-full md:group-data-[empty]:max-w-full md:group-data-[empty]:flex-1 md:group-data-[empty]:gradient-mask-b-90"
 						/>
 
 						<div className="flex-1 space-y-0.5 p-4 text-left group-data-[has-items]:flex-1 group-data-[has-items]:pl-0 group-data-[has-items]:pt-4 group-data-[has-items]:text-left md:flex-none md:pt-0 md:text-center md:group-data-[empty]:px-6">

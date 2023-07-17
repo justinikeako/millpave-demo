@@ -120,7 +120,7 @@ export function GetAQuoteSection() {
 						<span>Get Your Quote</span>
 						<Icon
 							name="arrow_right_alt"
-							className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-1"
+							className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-0.5"
 						/>
 					</Link>
 				</Button>

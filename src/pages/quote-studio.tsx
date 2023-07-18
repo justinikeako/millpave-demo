@@ -15,6 +15,8 @@ import { Main } from '~/components/main';
 import { maximumStageIndex, stages } from '~/components/quote-stages/stages';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { RemoveScroll } from 'react-remove-scroll';
+import { cn } from '~/lib/utils';
 
 /**
  * SPEC
@@ -233,7 +235,12 @@ function StageFooter() {
 	const reachedLastStage = currentStageIndex >= maximumStageIndex;
 
 	return (
-		<footer className="fixed inset-x-0 bottom-0 z-10 -mt-px border-t  border-gray-500/5 bg-gray-100 bg-gray-100/90 before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm">
+		<footer
+			className={cn(
+				RemoveScroll.classNames.fullWidth,
+				'fixed inset-x-0 bottom-0 z-10 -mt-px border-t  border-gray-500/5 bg-gray-100 bg-gray-100/90 before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm'
+			)}
+		>
 			<OrchestratedReveal
 				delay={0.2}
 				className="flex h-16 items-center justify-between px-6 2xl:container lg:px-16"

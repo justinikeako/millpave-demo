@@ -8,6 +8,7 @@ import { OrchestratedReveal } from './reveal';
 import { Icon } from './icon';
 import { useRouter } from 'next/router';
 import { cn } from '~/lib/utils';
+import { RemoveScroll } from 'react-remove-scroll';
 
 const NavLink = forwardRef<
 	React.ComponentRef<typeof Link>,
@@ -131,7 +132,10 @@ function Header({ minimal }: { minimal: boolean }) {
 			<header
 				data-minimal={minimal}
 				data-transparent={isTransparent || undefined}
-				className="group sticky top-0 z-20 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0"
+				className={cn(
+					RemoveScroll.classNames.fullWidth,
+					'group sticky top-0 z-20 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0'
+				)}
 				ref={headerRef}
 			>
 				<OrchestratedReveal className="flex h-16 items-center px-6 2xl:container lg:px-16">
@@ -195,7 +199,12 @@ function Header({ minimal }: { minimal: boolean }) {
 								exit="hide"
 								className="group fixed inset-0 z-50 bg-gray-900 text-white"
 							>
-								<div className="fixed inset-x-0 z-10 bg-gray-900">
+								<div
+									className={cn(
+										RemoveScroll.classNames.fullWidth,
+										'fixed inset-x-0 z-10 bg-gray-900'
+									)}
+								>
 									<div className="flex h-16 items-center justify-between px-6 2xl:container lg:px-16">
 										<Dialog.Close asChild>
 											<Button
@@ -230,7 +239,12 @@ function Header({ minimal }: { minimal: boolean }) {
 									</div>
 								</div>
 
-								<div className="flex h-full flex-col overflow-y-auto px-6 py-24 md:px-16">
+								<div
+									className={cn(
+										RemoveScroll.classNames.fullWidth,
+										'flex h-full flex-col overflow-y-auto px-6 py-24 md:px-16'
+									)}
+								>
 									<motion.ul
 										variants={variants.list}
 										initial="hide"

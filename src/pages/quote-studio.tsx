@@ -54,11 +54,6 @@ function Page() {
 					key="og:description"
 					content="All you'll need are the dimensions of your project, and an idea of the patterns you wish to use."
 				/>
-				<meta
-					property="og:image"
-					key="og:image"
-					content="https://millpave.notprimitive.com/firepit.png"
-				/>
 			</Head>
 
 			<style jsx global>{`

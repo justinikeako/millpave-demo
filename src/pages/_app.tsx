@@ -60,7 +60,7 @@ const App: AppType = ({ Component, pageProps, router }) => {
 				<meta
 					key="og:image"
 					property="og:image"
-					content="https://millpave.notprimitive.com/driveway.jpg"
+					content="https://blackdiamondlandscape.com/wp-content/uploads/2021/09/Top-2-e1686601104855.jpg"
 				/>
 			</Head>
 

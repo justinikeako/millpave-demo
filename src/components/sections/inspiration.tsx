@@ -73,6 +73,15 @@ function InspirationSection() {
 								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
 							/>
 						</div>
+						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
+							<Image
+								fill
+								src="/inspo-3.png"
+								alt="Paving stones Patio"
+								className="object-cover"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
+							/>
+						</div>
 					</div>
 					<div className="flex flex-none animate-marquee justify-start gap-4 pr-4 md:gap-6 md:pr-6 lg:gap-8 lg:pr-8">
 						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
@@ -97,6 +106,15 @@ function InspirationSection() {
 							<Image
 								fill
 								src="/inspo-2.png"
+								alt="Paving stones Patio"
+								className="object-cover"
+								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"
+							/>
+						</div>
+						<div className="relative aspect-video h-48 flex-none bg-gray-200 md:h-64 lg:h-96">
+							<Image
+								fill
+								src="/inspo-3.png"
 								alt="Paving stones Patio"
 								className="object-cover"
 								sizes="(max-width: 480px) 90vw, (max-width: 768px) 50vw, (max-width: 1536px) 33vw"

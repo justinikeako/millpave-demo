@@ -15,6 +15,7 @@ import { Icon } from '~/components/icon';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMediaQuery } from '~/utils/use-media-query';
 import { GetAQuoteSection } from '~/components/sections/get-a-quote';
+import Image from 'next/image';
 
 type GalleryFilterProps = React.PropsWithChildren<
 	{
@@ -57,16 +58,22 @@ function GalleryImage({
 }) {
 	return (
 		<Dialog.Trigger asChild>
-			<motion.li
+			<li
 				{...props}
-				layoutId={'img-' + id}
 				data-selected={selected || undefined}
-				className="group aspect-square bg-gray-200 lg:[&:nth-child(11n+2)]:col-span-2 lg:[&:nth-child(11n+2)]:row-span-2 max-sm:[&:nth-child(12n+2)]:col-span-2 max-sm:[&:nth-child(12n+2)]:row-span-2 max-sm:[&:nth-child(12n+7)]:col-span-2 max-sm:[&:nth-child(12n+7)]:row-span-2"
+				className="group relative aspect-square overflow-hidden bg-gray-200 lg:[&:nth-child(11n+2)]:col-span-2 lg:[&:nth-child(11n+2)]:row-span-2 max-sm:[&:nth-child(12n+2)]:col-span-2 max-sm:[&:nth-child(12n+2)]:row-span-2 max-sm:[&:nth-child(12n+7)]:col-span-2 max-sm:[&:nth-child(12n+7)]:row-span-2"
 			>
-				<p className="p-4 font-display text-lg opacity-0 transition-opacity group-hover:opacity-100 group-data-[selected]:opacity-0">
+				<Image
+					fill
+					src={`/inspo-${id}.png`}
+					sizes="(max-width: 768px) 33vw, (max-width: 1280px) 25vw (max-width: 1536px) 15vw"
+					alt={'Post Title ' + id}
+					className="object-cover"
+				/>
+				<p className="relative bg-gradient-to-b from-gray-900/50 p-4 font-display text-lg text-white opacity-0 transition-opacity group-hover:opacity-100">
 					Post Title
 				</p>
-			</motion.li>
+			</li>
 		</Dialog.Trigger>
 	);
 }
@@ -87,7 +94,8 @@ function Page() {
 
 	const [categoryId, setCategoryId] =
 		useState<(typeof categories)[number]['id']>('all');
-	const [number, setNumber] = useState(21);
+	const maxImageCount = 4;
+	const [imageCount, setImageCount] = useState(maxImageCount);
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 	const [isFullscreen, setFullscreen] = useState<boolean>(false);
 	const screenLg = useMediaQuery('(min-width: 640px)');
@@ -155,7 +163,7 @@ function Page() {
 								onOpenChange={(isFullscreen) => setFullscreen(isFullscreen)}
 							>
 								<ul className="grid grid-cols-3 gap-1 sm:gap-2 lg:contents lg:gap-3">
-									{[...Array(number).keys()].map((index) => (
+									{[...Array(imageCount).keys()].map((index) => (
 										<GalleryImage
 											key={index}
 											id={index}
@@ -185,18 +193,24 @@ function Page() {
 												{/* Image */}
 												<div className="pointer-events-none relative flex h-[calc(100%-5rem)] flex-1 items-center sm:h-full">
 													<motion.div
-														layoutId={'img-' + selectedId}
-														layoutScroll
+														initial={{ opacity: 0, scale: 0.9 }}
+														animate={{ opacity: 1, scale: 1 }}
+														exit={{ opacity: 0, scale: 0.9 }}
 														transition={{
 															type: 'spring',
 															duration: 0.5,
 															bounce: 0.1
 														}}
-														onLayoutAnimationComplete={() => {
-															setSelectedId(null);
-														}}
-														className="pointer-events-auto flex aspect-video max-h-full w-full items-center justify-center bg-gray-200"
-													/>
+														className="pointer-events-auto relative flex aspect-video max-h-full w-full items-center justify-center overflow-hidden bg-gray-200"
+													>
+														<Image
+															fill
+															src={`/inspo-${selectedId}.png`}
+															sizes="(max-width: 640px) 100vw, (max-width: 1280px) 75vw (max-width: 1536px) 85vw"
+															alt={'Post Title ' + selectedId}
+															className="object-cover"
+														/>
+													</motion.div>
 												</div>
 
 												<motion.p
@@ -356,11 +370,11 @@ function Page() {
 
 						<Button
 							intent="secondary"
-							disabled={number >= 63}
+							disabled={imageCount >= maxImageCount}
 							className="mx-auto"
-							onClick={() => setNumber(number + 21)}
+							onClick={() => setImageCount(imageCount + 21)}
 						>
-							Load More
+							{imageCount < maxImageCount ? 'Load More' : 'No More images'}
 						</Button>
 					</FullWidthSection>
 				</ViewportReveal>

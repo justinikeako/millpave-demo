@@ -57,6 +57,14 @@ b {
 	font-weight: semibold;
 }
 
+@layer components {
+	.banjo-grid {
+		background-image: url('/banjo-grid.svg');
+		background-size: cover;
+		background-repeat: no-repeat;
+	}
+}
+
 @layer utilities {
 	.no-scrollbar::-webkit-scrollbar {
 		display: none;

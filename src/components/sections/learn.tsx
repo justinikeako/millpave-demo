@@ -8,12 +8,12 @@ import Image from 'next/image';
 function LearnSection() {
 	return (
 		<ViewportReveal asChild>
-			<section className="grid grid-cols-1 gap-4 py-16 sm:grid-cols-2 xl:grid-cols-4">
-				<div className="group relative flex h-[32rem] shrink-0 flex-col items-start gap-2 bg-gray-600 p-6 text-white sm:col-span-2 sm:h-[28rem] sm:justify-between">
-					<div className="absolute bottom-0 right-0 h-3/5 w-full xs:h-full xs:w-3/5 md:w-1/2">
+			<section className="grid grid-cols-1 gap-4 py-16 sm:grid-cols-2 sm:grid-rows-2 md:grid-cols-3 xl:grid-cols-4 xl:grid-rows-none">
+				<div className="banjo-grid group relative flex h-[32rem] shrink-0 flex-col items-start gap-3 bg-gray-600 p-6 text-white sm:col-span-2 sm:h-[28rem] sm:justify-between md:col-span-2 md:row-span-2 md:h-auto md:justify-start xl:row-span-full xl:h-[28rem] xl:justify-between">
+					<div className="absolute bottom-0 right-0 h-3/5 w-full xs:h-full xs:w-3/5 md:w-3/4 xl:w-1/2">
 						<Image
 							src="/contractor.png"
-							alt="Paving stones around a firepit"
+							alt="A construction worker smiling into the distance wearing a high visibility vest and an orange hard hat."
 							fill
 							className="pointer-events-none object-contain object-bottom"
 						/>
@@ -50,7 +50,7 @@ function LearnSection() {
 					</Button>
 				</div>
 
-				<div className="group relative flex h-[28rem] shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6">
+				<div className="group relative flex h-[28rem] shrink-0 flex-col items-start justify-end space-y-2 bg-gray-200 p-6 md:h-96 xl:h-[28rem]">
 					<Image
 						src="/resources.png"
 						alt="Paving stones around a firepit"
@@ -78,7 +78,7 @@ function LearnSection() {
 					</Button>
 				</div>
 
-				<div className="group relative flex h-[28rem] shrink-0 flex-col items-start justify-start space-y-2 bg-gray-200 p-6">
+				<div className="group relative flex h-[28rem] shrink-0 flex-col items-start justify-start space-y-2 bg-gray-200 p-6 md:h-96 xl:h-[28rem]">
 					<Image
 						src="/blog.png"
 						alt="Paving stones around a firepit"

@@ -12,7 +12,6 @@ import Link from 'next/link';
 import { Icon } from '~/components/icon';
 import { Balancer } from 'react-wrap-balancer';
 import { Main } from '~/components/main';
-import * as Dialog from '@radix-ui/react-dialog';
 import { maximumStageIndex, stages } from '~/components/quote-stages/stages';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -103,69 +102,65 @@ function SplashScreen({
 	onOpenChange(open: boolean): void;
 }) {
 	return (
-		<Dialog.Root open={open} onOpenChange={onOpenChange}>
-			<AnimatePresence>
-				{open && (
-					<>
-						<Dialog.Overlay />
+		<AnimatePresence>
+			{open && (
+				<>
+					<motion.div
+						className="absolute inset-0 z-10 bg-gray-900 after:absolute after:inset-0 after:bg-gray-950/75"
+						exit={{ opacity: 0, transition: { duration: 0.3 } }}
+					>
+						<MotionImage
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1, transition: { duration: 0.5 } }}
+							src="/firepit.png"
+							priority
+							fetchPriority="high"
+							width={765}
+							height={517}
+							alt="A stone firepit surrounded by paving stones"
+							className="h-full w-full  object-cover"
+						/>
+					</motion.div>
 
-						<motion.div
-							className="absolute inset-0 z-10 bg-gray-900 after:absolute after:inset-0 after:bg-gray-950/75"
-							exit={{ opacity: 0, transition: { duration: 0.3 } }}
-						>
-							<MotionImage
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1, transition: { duration: 0.5 } }}
-								src="/firepit.png"
-								priority
-								fetchPriority="high"
-								width={765}
-								height={517}
-								alt="A stone firepit surrounded by paving stones"
-								className="h-full w-full  object-cover"
-							/>
-						</motion.div>
-
-						<Dialog.Content forceMount asChild>
-							<OrchestratedReveal
-								delay={0.1}
-								data-header-transparent
-								exit={{ opacity: 0, transition: { duration: 0.3 } }}
-								className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 text-gray-100"
+					<OrchestratedReveal
+						delay={0.1}
+						data-header-transparent
+						exit={{ opacity: 0, transition: { duration: 0.3 } }}
+						className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 text-gray-100"
+					>
+						<h1 className="max-w-xl text-center font-display text-2xl xs:text-3xl md:text-4xl lg:text-5xl">
+							<Balancer>
+								Get a quote for your paving project in under 5 minutes.
+							</Balancer>
+						</h1>
+						<p className="max-w-xs text-center">
+							<Balancer>
+								Just enter your project&apos;s measurements, select your
+								patterns, and get your quote! Yes, it&apos;s that easy.
+							</Balancer>
+						</p>
+						<div className="flex flex-wrap justify-center gap-2">
+							<Button
+								autoFocus
+								intent="primary"
+								backdrop="dark"
+								className="group"
+								onClick={() => onOpenChange(false)}
 							>
-								<Dialog.Title asChild>
-									<h1 className="max-w-xl text-center font-display text-2xl xs:text-3xl md:text-4xl lg:text-5xl">
-										<Balancer>
-											Get a quote for your paving project in under 5 minutes.
-										</Balancer>
-									</h1>
-								</Dialog.Title>
-								<p className="max-w-xs text-center">
-									<Balancer>
-										Just enter your project&apos;s measurements, select your
-										patterns, and get your quote! Yes, it&apos;s that easy.
-									</Balancer>
-								</p>
-								<div className="flex flex-wrap justify-center gap-2">
-									<Dialog.Close asChild>
-										<Button intent="primary" backdrop="dark" className="group">
-											<span>Get Started</span>
-											<Icon
-												name="arrow_right_alt"
-												className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-0.5"
-											/>
-										</Button>
-									</Dialog.Close>
-									<Button asChild intent="secondary" backdrop="dark">
-										<Link href="/">Return to Home Page</Link>
-									</Button>
-								</div>
-							</OrchestratedReveal>
-						</Dialog.Content>
-					</>
-				)}
-			</AnimatePresence>
-		</Dialog.Root>
+								<span>Get Started</span>
+								<Icon
+									name="arrow_right_alt"
+									className="transition-transform group-focus-within:translate-x-1 group-hover:translate-x-0.5"
+								/>
+							</Button>
+							<Button asChild intent="secondary" backdrop="dark">
+								<Link href="/">Return to Home Page</Link>
+							</Button>
+						</div>
+					</OrchestratedReveal>
+				</>
+			)}
+		</AnimatePresence>
 	);
 }
 

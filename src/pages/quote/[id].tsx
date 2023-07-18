@@ -255,7 +255,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 											Pay in Full <br /> {formatPrice(quote.total)}
 										</p>
 
-										<Button intent="primary" className="w-full">
+										<Button intent="primary" className="w-full" asChild>
 											<Link href="/how-to-pay">How to Pay</Link>
 										</Button>
 									</li>

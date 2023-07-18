@@ -256,7 +256,7 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 										</p>
 
 										<Button intent="primary" className="w-full">
-											How to Pay
+											<Link href="/how-to-pay">How to Pay</Link>
 										</Button>
 									</li>
 									<li className="flex w-full flex-col items-center justify-center gap-4 rounded-md border border-gray-400 bg-gray-200 p-4 text-center sm:w-72">
@@ -264,8 +264,10 @@ function Page(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
 											<Balancer>Pay half up front with a payment plan</Balancer>
 										</p>
 
-										<Button intent="primary" className="w-full">
-											How to pay with Payment Plan
+										<Button intent="primary" className="w-full" asChild>
+											<Link href="/how-to-pay">
+												How to pay with Payment Plan
+											</Link>
 										</Button>
 										<p className="text-sm">
 											<Balancer>

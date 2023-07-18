@@ -127,7 +127,7 @@ function Hero() {
 						fill
 						src={next.imageSrc}
 						alt="A large driveway paved with neutral-tone concrete pavers."
-						className="absolute left-0 top-0 h-full w-full bg-gray-900 object-cover object-center opacity-0"
+						className="invisible absolute left-0 top-0 h-full w-full bg-gray-900 object-cover object-center"
 					/>
 					<AnimatePresence>
 						<MotionImage

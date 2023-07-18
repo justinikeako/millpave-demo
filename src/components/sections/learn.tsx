@@ -86,10 +86,7 @@ function LearnSection() {
 						className="pointer-events-none object-contain object-bottom"
 					/>
 					<div className="max-w-xs space-y-1">
-						<Link
-							href="/blog/why-use-pavers"
-							className="before:absolute before:inset-0"
-						>
+						<Link href="/blog" className="before:absolute before:inset-0">
 							<h3 className="font-display text-lg">Why use paving stones?</h3>
 						</Link>
 						<p>

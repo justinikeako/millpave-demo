@@ -43,7 +43,7 @@ const MotionImage = motion(Image);
 function Hero() {
 	const useCases: { imageSrc: string; text: string }[] = [
 		{ text: 'Driveway', imageSrc: '/driveway.jpg' },
-		{ text: 'Patio', imageSrc: '/patio.jpg' },
+		{ text: 'Patio', imageSrc: '/patio.webp' },
 		{ text: 'Plaza', imageSrc: '/plaza.jpg' },
 		{ text: 'Garden', imageSrc: '/garden.jpg' },
 		{ text: 'Pool Deck', imageSrc: '/pool-deck.jpg' }
@@ -136,7 +136,7 @@ function Hero() {
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0, zIndex: 1 }}
-							transition={{ duration: 1 }}
+							transition={{ duration: 1, delay: 0.25 }}
 							src={current.imageSrc}
 							priority={imageLoadPriority}
 							fetchPriority={imageLoadPriority ? 'high' : 'auto'}
@@ -169,8 +169,13 @@ function Hero() {
 								<AnimatePresence initial={false} mode="wait">
 									<motion.span
 										key={current.text}
+										initial={{ opacity: 1, y: 0 }}
+										exit={{
+											opacity: 0,
+											y: '-10%',
+											transition: fastTransition
+										}}
 										className="inline-block"
-										exit={{ y: -10, opacity: 0, transition: fastTransition }}
 									>
 										{(current.text + '.').split('').map((char, index) => {
 											if (char === ' ')
@@ -178,13 +183,21 @@ function Hero() {
 
 											return (
 												<motion.span
-													key={char + index}
-													initial={{ y: 25, opacity: 0 }}
-													transition={{
-														delay: index / 10,
-														...slowTransition
+													key={index}
+													initial={{ y: '25%', opacity: 0 }}
+													animate={{
+														y: 0,
+														opacity: 1,
+														transition: {
+															delay: index / 10,
+															...slowTransition
+														}
 													}}
-													animate={{ y: 0, opacity: 1 }}
+													exit={{
+														y: '-5%',
+														opacity: 0,
+														transition: fastTransition
+													}}
 													className="inline-block"
 												>
 													{char}

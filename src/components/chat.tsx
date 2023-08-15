@@ -193,7 +193,7 @@ function Chat({ hide }: { hide: boolean }) {
 										{!touched && (
 											<>
 												<span className="absolute -right-1 -top-1 z-10 h-4 w-4 animate-ping rounded-full bg-pink-600" />
-												<span className="border-1 absolute -right-1 -top-1 z-10 h-4 w-4 rounded-full border-pink-900 bg-pink-600 bg-gradient-to-b from-white/25" />
+												<span className="border-1 absolute -right-1 -top-1 z-10 h-4 w-4 rounded-full border border-pink-900 bg-pink-600 bg-gradient-to-b from-white/25" />
 											</>
 										)}
 									</motion.button>

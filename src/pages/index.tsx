@@ -76,7 +76,7 @@ function Hero() {
 	}, [imageLoadPriority, cycleDuration]);
 
 	useEffect(() => {
-		let intervalId: NodeJS.Timer;
+		let intervalId: NodeJS.Timeout;
 
 		// Set an interval to cycle through the steps after 7.5 seconds
 		if (line1InView) {

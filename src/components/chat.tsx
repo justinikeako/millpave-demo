@@ -191,7 +191,10 @@ function Chat({ hide }: { hide: boolean }) {
 										<Icon name="chat_bubble" size={40} />
 
 										{!touched && (
-											<span className="absolute -right-1 -top-1 z-10 h-4 w-4 rounded-full bg-pink-600 bg-gradient-to-b from-white/25 ring-1 ring-pink-900 before:-z-10 before:h-4 before:w-4 before:animate-ping before:rounded-full before:bg-pink-600" />
+											<>
+												<span className="absolute -right-1 -top-1 z-10 h-4 w-4 animate-ping rounded-full bg-pink-600" />
+												<span className="border-1 absolute -right-1 -top-1 z-10 h-4 w-4 rounded-full border-pink-900 bg-pink-600 bg-gradient-to-b from-white/25" />
+											</>
 										)}
 									</motion.button>
 								</Dialog.Trigger>

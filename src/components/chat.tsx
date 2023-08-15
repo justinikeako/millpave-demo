@@ -28,6 +28,7 @@ function Chat({ hide }: { hide: boolean }) {
 	});
 
 	const [open, setOpen] = useState(false);
+	const [touched, setTouched] = useState(false);
 	const closed = !open;
 
 	return (
@@ -173,7 +174,7 @@ function Chat({ hide }: { hide: boolean }) {
 								</Dialog.Content>
 							)}
 							{closed && (
-								<Dialog.Trigger asChild>
+								<Dialog.Trigger asChild onClick={() => setTouched(true)}>
 									<motion.button
 										initial={{ opacity: 0, scale: 2 }}
 										animate={{ opacity: 1, scale: 1 }}
@@ -189,7 +190,9 @@ function Chat({ hide }: { hide: boolean }) {
 										<span className="sr-only">Chat</span>
 										<Icon name="chat_bubble" size={40} />
 
-										<span className="absolute -right-1 -top-1 z-10 h-4 w-4 rounded-full border border-pink-900 bg-pink-600 bg-gradient-to-b from-white/25" />
+										{!touched && (
+											<span className="absolute -right-1 -top-1 z-10 h-4 w-4 rounded-full bg-pink-600 bg-gradient-to-b from-white/25 ring-1 ring-pink-900 before:-z-10 before:h-4 before:w-4 before:animate-ping before:rounded-full before:bg-pink-600" />
+										)}
 									</motion.button>
 								</Dialog.Trigger>
 							)}

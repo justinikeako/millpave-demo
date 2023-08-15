@@ -128,7 +128,7 @@ function Page({
 					{/* Supporting Details */}
 					<OrchestratedReveal
 						delay={0.2}
-						className="flex-1 space-y-8 lg:space-y-12"
+						className="flex flex-1 flex-col space-y-8 lg:space-y-12"
 					>
 						{/* Basic Info */}
 						<section className="space-y-2">
@@ -178,6 +178,11 @@ function Page({
 							</div>
 						</section>
 
+						{/* Description (desktop) */}
+						<Section heading="Description" className="max-lg:hidden">
+							<p>{product.description}</p>
+						</Section>
+
 						{/* Sku Picker */}
 						<SkuPickerProvider
 							skuId={skuId}
@@ -206,8 +211,8 @@ function Page({
 							/>
 						)}
 
-						{/* Description */}
-						<Section heading="Description">
+						{/* Description (Mobile) */}
+						<Section heading="Description" className="lg:hidden">
 							<p>{product.description}</p>
 						</Section>
 
@@ -321,7 +326,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 
 							<label
 								htmlFor={id}
-								className="relative h-16 w-16 flex-1 shrink-0 bg-gray-200 bg-clip-content p-1 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700 lg:h-20 lg:w-20"
+								className="relative h-16 w-16 shrink-0 bg-gray-200 bg-clip-content p-1 ring-1 ring-inset ring-gray-400 peer-checked:ring-2 peer-checked:ring-pink-700 lg:h-20 lg:w-20"
 							>
 								{index === 3 ? (
 									showModelViewer && (
@@ -346,7 +351,7 @@ function Gallery({ sku, showModelViewer }: GalleryProps) {
 				})}
 			</div>
 
-			<div className="relative aspect-square w-full bg-gray-200">
+			<div className="relative aspect-square w-full bg-gray-200 ring-1 ring-gray-900/10">
 				{selectedIndex === 3 ? (
 					showModelViewer && (
 						<Suspense

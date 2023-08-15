@@ -31,7 +31,7 @@ function PaverEstimator({ paverDetails, sku }: PaverEstimatorProps) {
 	return (
 		<section
 			data-ai-hidden
-			className="space-y-4 bg-gray-200 p-6 text-gray-900 lg:px-8"
+			className="space-y-4 bg-gray-200 p-6 text-gray-900 lg:px-8 border border-gray-300 rounded-sm"
 		>
 			<div className="align-center flex justify-between">
 				<h2 className="font-display text-lg lg:text-xl">Cost Estimator</h2>

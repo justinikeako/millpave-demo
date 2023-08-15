@@ -59,11 +59,11 @@ function ProductViewer3D({ skuId, displayName }: ProductViewer3DProps) {
 					<directionalLight
 						castShadow
 						position={[-15, 20, -15]}
-						intensity={1}
+						intensity={3}
 						shadow-mapSize={1024}
 						shadow-bias={-0.0001}
 					/>
-					<pointLight position={[5, 0.1, 5]} intensity={0.3} />
+					<directionalLight position={[5, 0.1, 5]} intensity={1}  />
 
 					<group ref={groupRef} scale={[10, 10, 10]}>
 						{Object.entries(nodes).map(([, { id, geometry, position }]) => (

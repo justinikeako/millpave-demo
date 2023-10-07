@@ -9,6 +9,13 @@
 	height: 100%;
 
 	-webkit-tap-highlight-color: transparent;
+
+	--tw-bg-radial-gradient-shape: ;
+	--tw-bg-radial-gradient-size: farthest-corner;
+	--tw-bg-radial-gradient-position: center;
+
+	--tw-bg-radial-gradient-shape-and-size: var(--tw-bg-radial-gradient-shape)
+		var(--tw-bg-radial-gradient-size) at var(--tw-bg-radial-gradient-position);
 }
 
 body {

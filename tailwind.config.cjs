@@ -1,4 +1,5 @@
 const colors = require('tailwindcss/colors');
+const plugin = require('tailwindcss/plugin');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -68,6 +69,45 @@ module.exports = {
 
 	plugins: [
 		require('@tailwindcss/container-queries'),
-		require('tailwind-gradient-mask-image')
+		require('tailwind-gradient-mask-image'),
+		plugin(function ({ addUtilities }) {
+			addUtilities({
+				'.bg-radial-gradient': {
+					'--tw-bg-radial-gradient-size-and-position':
+						'var(--tw-bg-radial-gradient-size) at var(--tw-bg-radial-gradient-position)',
+					'background-image':
+						'radial-gradient(var(--tw-bg-radial-gradient-size-and-position), var(--tw-gradient-stops))'
+				},
+				'.bg-circular-gradient': {
+					'--tw-bg-radial-gradient-size-and-position':
+						'circle var(--tw-bg-radial-gradient-size) at var(--tw-bg-radial-gradient-position)',
+					'background-image':
+						'radial-gradient(var(--tw-bg-radial-gradient-size-and-position), var(--tw-gradient-stops))'
+				},
+
+				'.radial-closest-side': {
+					'--tw-bg-radial-gradient-size': 'closest-side'
+				},
+				'.radial-farthest-side': {
+					'--tw-bg-radial-gradient-size': 'farthest-side'
+				},
+				'.radial-closest-corner': {
+					'--tw-bg-radial-gradient-size': 'closest-corner'
+				},
+				'.radial-farthest-corner': {
+					'--tw-bg-radial-gradient-size': 'farthest-corner'
+				},
+
+				'.radial-bottom': {
+					'--tw-bg-radial-gradient-position': 'center bottom'
+				},
+				'.radial-bottom-left': {
+					'--tw-bg-radial-gradient-position': 'left bottom'
+				},
+				'.radial-top': {
+					'--tw-bg-radial-gradient-position': 'center top'
+				}
+			});
+		})
 	]
 };

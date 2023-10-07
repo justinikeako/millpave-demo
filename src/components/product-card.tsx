@@ -30,9 +30,9 @@ function ProductCard({
 						alt={name}
 						className="object-cover"
 					/>
+					<div className="radial-bottom-left radial-farthest-side bg-radial-gradient absolute bottom-0 left-0 hidden h-full w-full from-black/50 @lg:block" />
 				</div>
-
-				<div className="group space-y-2 px-2 pb-2 pt-3 @lg:p-0">
+				<div className="group space-y-2 px-2 pb-2 pt-3 @lg:p-0 @lg:!text-gray-100">
 					<Link
 						href={`/product/${productId}`}
 						className="before:absolute before:inset-0"

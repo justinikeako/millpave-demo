@@ -185,7 +185,7 @@ export default function Page(
 												name={product.displayName}
 												startingSku={product.startingSku}
 												productId={product.id}
-												className="xl:[&:nth-child(6n+1)]:col-span-2"
+												className="xl:[&:nth-child(10n+1)]:col-span-2 xl:[&:nth-child(10n+7)]:col-span-2"
 											/>
 										))
 									)}

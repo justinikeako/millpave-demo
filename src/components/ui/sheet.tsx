@@ -31,13 +31,8 @@ interface SheetPortalProps
 	position?: 'top' | 'bottom' | 'left' | 'right' | null;
 }
 
-const SheetPortal = ({
-	position,
-	className,
-	children,
-	...props
-}: SheetPortalProps) => (
-	<SheetPrimitive.Portal className={cn(className)} {...props}>
+const SheetPortal = ({ position, children, ...props }: SheetPortalProps) => (
+	<SheetPrimitive.Portal {...props}>
 		<div className={portalVariants({ position })}>{children}</div>
 	</SheetPrimitive.Portal>
 );

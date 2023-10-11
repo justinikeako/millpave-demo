@@ -43,7 +43,8 @@ const App: AppType = ({ Component, pageProps, router }) => {
 				<meta
 					key="description"
 					name="description"
-					content="The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck, patio, or plaza into a functional work of art."
+					content="The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck,
+					patio, or plaza into a functional work of art."
 				/>
 				<meta
 					key="og:title"
@@ -53,7 +54,13 @@ const App: AppType = ({ Component, pageProps, router }) => {
 				<meta
 					key="og:description"
 					property="og:description"
-					content="The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck, patio, or plaza into a functional work of art."
+					content="The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck,
+					patio, or plaza into a functional work of art."
+				/>
+				<meta
+					key="og:image"
+					property="og:image"
+					content="https://millpave.notprimitive.com/og-image.jpg"
 				/>
 			</Head>
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, useInView, Transition } from 'framer-motion';
-import { Slot, SlotProps } from '@radix-ui/react-slot';
+import { motion, useInView, type Transition } from 'framer-motion';
+import { Slot, type SlotProps } from '@radix-ui/react-slot';
 import { forwardRef, useRef } from 'react';
 
 const MotionSlot = motion(

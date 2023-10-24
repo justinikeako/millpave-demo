@@ -1,14 +1,16 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from './button';
-import { AnimatePresence, motion, Variants } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Logo } from './logo';
 import { OrchestratedReveal } from './reveal';
 import { Icon } from './icon';
-import { useRouter } from 'next/router';
 import { cn } from '~/lib/utils';
 import { RemoveScroll } from 'react-remove-scroll';
+import { usePathname } from 'next/navigation';
 
 const NavLink = forwardRef<
 	React.ComponentRef<typeof Link>,
@@ -86,12 +88,13 @@ const variants = {
 
 const MotionNavLink = motion(NavLink);
 
-function Header({ minimal }: { minimal: boolean }) {
+function Header() {
+	const pathname = usePathname();
+	const minimal = pathname === '/quote-studio';
 	const headerRef = useRef<HTMLDivElement>(null);
-	const router = useRouter();
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [isTransparent, setTransparent] = useState(
-		['/', '/quote-studio'].includes(router.pathname)
+		['/', '/quote-studio'].includes(pathname)
 	);
 
 	useEffect(() => {
@@ -125,7 +128,7 @@ function Header({ minimal }: { minimal: boolean }) {
 				observer.unobserve(targetElement);
 			});
 		};
-	}, [router.asPath]);
+	}, [pathname]);
 
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>

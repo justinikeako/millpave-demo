@@ -6,6 +6,12 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
+import { initTRPC } from '@trpc/server';
+import { type NextRequest } from 'next/server';
+import superjson from 'superjson';
+import { ZodError } from 'zod';
+
+import { db } from '~/server/db';
 
 /**
  * 1. CONTEXT
@@ -14,11 +20,10 @@
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
-import { type FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 
-import { db } from '~/server/db';
-
-type CreateContextOptions = Record<string, never>;
+interface CreateContextOptions {
+	headers: Headers;
+}
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -26,13 +31,13 @@ type CreateContextOptions = Record<string, never>;
  *
  * Examples of things you may need it for:
  * - testing, so we don't have to mock Next.js' req/res
- * - tRPC's `createServerSideHelpers`, where we don't have req/res
+ * - tRPC's `createSSGHelpers`, where we don't have req/res
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 	return {
+		headers: opts.headers,
 		db
 	};
 };
@@ -43,9 +48,12 @@ export const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const createTRPCContext = (_opts: FetchCreateContextFnOptions) => {
-	return createInnerTRPCContext({});
+export const createTRPCContext = (opts: { req: NextRequest }) => {
+	// Fetch stuff that depends on the request
+
+	return createInnerTRPCContext({
+		headers: opts.req.headers
+	});
 };
 
 /**
@@ -55,9 +63,6 @@ export const createTRPCContext = (_opts: FetchCreateContextFnOptions) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-import { initTRPC } from '@trpc/server';
-import superjson from 'superjson';
-import { ZodError } from 'zod';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
 	transformer: superjson,

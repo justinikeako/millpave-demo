@@ -1,5 +1,4 @@
 import { addBusinessDays, addHours } from 'date-fns';
-import { InferModel } from 'drizzle-orm';
 import {
 	categories,
 	productRecommendations,
@@ -9,40 +8,26 @@ import {
 	pickupLocations,
 	skuStock,
 	skus
-} from '~/drizzle/schema';
-
-// import { drizzle } from 'drizzle-orm/mysql2';
-// import mysql from 'mysql2/promise';
-
-// const connection = await mysql.createConnection({
-// 	database: process.env.LOCAL_DB_NAME,
-// 	host: process.env.LOCAL_DB_HOST,
-// 	user: process.env.LOCAL_DB_USER,
-// 	password: process.env.LOCAL_DB_PASS
-// });
+} from '~/server/db/schema';
 
 import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { connect } from '@planetscale/database';
+import { Client } from '@planetscale/database';
 
-const connection = connect({
-	host: process.env['PROD_DATABASE_HOST'],
-	username: process.env['PROD_DATABASE_USERNAME'],
-	password: process.env['PROD_DATABASE_PASSWORD']
-});
+const db = drizzle(
+	new Client({
+		url: process.env.DATABASE_URL
+	}).connection()
+);
 
-const db = drizzle(connection);
+type NewCategory = typeof categories.$inferInsert;
+type NewProduct = typeof products.$inferInsert;
+type NewProductRecommendations = typeof productRecommendations.$inferInsert;
+type ProductDetails = typeof skuDetails.$inferSelect;
+type Sku = typeof skus.$inferInsert;
+type Stock = typeof skuStock.$inferInsert;
 
-type NewCategory = InferModel<typeof categories, 'insert'>;
-type NewProduct = InferModel<typeof products, 'insert'>;
-type NewProductRecommendations = InferModel<
-	typeof productRecommendations,
-	'insert'
->;
-type ProductDetails = InferModel<typeof skuDetails>;
-type Sku = InferModel<typeof skus, 'insert'>;
-type Stock = InferModel<typeof skuStock, 'insert'>;
-type Restock = InferModel<typeof skuRestocks, 'insert'>;
-type NewPickupLocation = InferModel<typeof pickupLocations, 'insert'>;
+type Restock = typeof skuRestocks.$inferInsert;
+type NewPickupLocation = typeof pickupLocations.$inferInsert;
 
 const PICKUP_LOCATIONS: NewPickupLocation[] = [
 	{ id: 'KNG_SHOWROOM', displayName: 'Kingston Showroom' },

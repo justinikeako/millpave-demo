@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Button } from './button';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -7,13 +9,17 @@ import { cn } from '~/lib/utils';
 import { Icon } from './icon';
 import { RemoveScroll } from 'react-remove-scroll';
 import * as Dialog from '@radix-ui/react-dialog';
-import { useChat, Message } from 'ai/react';
+import { useChat, type Message } from 'ai/react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 const initialMessages: Message[] = [
-	{ id: 'first', content: 'Hi, how can I help?', role: 'assistant' }
+	{ id: 'init', content: 'Hi, how can I help?', role: 'assistant' }
 ];
 
-function Chat({ hide }: { hide: boolean }) {
+function Chat() {
+	const hide = usePathname() === '/quote-studio';
+
 	const {
 		messages,
 		input,
@@ -128,7 +134,13 @@ function Chat({ hide }: { hide: boolean }) {
 													)}
 												>
 													<ReactMarkdown
-														linkTarget="_blank"
+														components={{
+															a: ({ href, children }) => (
+																<Link href={href!} target="_blank">
+																	{children}
+																</Link>
+															)
+														}}
 														className="markdownanswer"
 													>
 														{message.content}

@@ -25,7 +25,8 @@ const inter = Inter({
 export const metadata = {
 	title: 'Millennium Paving Stones LTD.',
 	description:
-		'The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck, patio, or plaza into a functional work of art.'
+		'The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck, patio, or plaza into a functional work of art.',
+	metadataBase: new URL('https://millpave.notprimitive.com')
 };
 
 export default function RootLayout({

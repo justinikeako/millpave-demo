@@ -1,3 +1,5 @@
+'use client';
+
 import {
 	Select,
 	SelectContent,
@@ -5,8 +7,8 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '~/components/ui/select';
-import { useFormContext, Controller, Path } from 'react-hook-form';
-import { StoneProject, Unit1D, Unit2D } from '~/types/quote';
+import { useFormContext, Controller, type Path } from 'react-hook-form';
+import { type StoneProject, type Unit1D, type Unit2D } from '~/types/quote';
 import { StageForm } from '../_components/form';
 import {
 	calculateRunningFoot,
@@ -15,6 +17,56 @@ import {
 } from '~/lib/utils';
 import { useState } from 'react';
 import { Balancer } from 'react-wrap-balancer';
+
+export default function MeasurementsStage() {
+	const { watch } = useFormContext<StoneProject>();
+
+	const shape = watch('shape');
+
+	return (
+		<StageForm className="flex flex-col items-center justify-center gap-12 lg:flex-row">
+			<h2 className="max-w-md text-center font-display text-3xl md:text-4xl lg:max-w-xs lg:text-left">
+				<Balancer>Enter the measurements of your project.</Balancer>
+			</h2>
+			<div className="flex flex-wrap gap-4">
+				{shape === 'rect' && (
+					<>
+						<MeasurementInput
+							fieldName="measurements.width"
+							label="Width"
+							placeholder="Amount"
+							required
+						/>
+						<MeasurementInput
+							fieldName="measurements.length"
+							label="Length"
+							placeholder="Amount"
+							required
+						/>
+					</>
+				)}
+				{shape === 'circle' && <CircleInputs />}
+				{shape === 'other' && (
+					<>
+						<MeasurementInput
+							fieldName="measurements.area"
+							label="Area"
+							placeholder="Amount"
+							dimension="2D"
+						/>
+						<MeasurementInput
+							fieldName="measurements.runningLength"
+							label="Running Length"
+							placeholder="Amount"
+						/>
+					</>
+				)}
+
+				<UnitSelect />
+			</div>
+		</StageForm>
+	);
+}
 
 function UnitSelect() {
 	const { control } = useFormContext<StoneProject>();
@@ -39,16 +91,16 @@ function UnitSelect() {
 
 						<SelectContent>
 							<SelectItem value="ft">
-								{unitDisplayNameDictionary['ft'][0]}
+								{unitDisplayNameDictionary.ft[0]}
 							</SelectItem>
 							<SelectItem value="in">
-								{unitDisplayNameDictionary['in'][0]}
+								{unitDisplayNameDictionary.in[0]}
 							</SelectItem>
 							<SelectItem value="m">
-								{unitDisplayNameDictionary['m'][0]}
+								{unitDisplayNameDictionary.m[0]}
 							</SelectItem>
 							<SelectItem value="cm">
-								{unitDisplayNameDictionary['cm'][0]}
+								{unitDisplayNameDictionary.cm[0]}
 							</SelectItem>
 						</SelectContent>
 					</Select>
@@ -126,7 +178,7 @@ function UnitLabel({ dimension }: { dimension: '1D' | '2D' }) {
 }
 
 function CircleInputs() {
-	const { watch, setValue, control } = useFormContext();
+	const { watch, setValue, control } = useFormContext<StoneProject>();
 	const radius = structuredClone(watch('measurements.radius'));
 
 	const [{ diameter, circumference }, setCircleMeasurements] = useState<{
@@ -231,55 +283,5 @@ function CircleInputs() {
 				);
 			}}
 		/>
-	);
-}
-
-export function MeasurementsStage() {
-	const { watch } = useFormContext<StoneProject>();
-
-	const shape = watch('shape');
-
-	return (
-		<StageForm className="flex flex-col items-center justify-center gap-12 lg:flex-row">
-			<h2 className="max-w-md text-center font-display text-3xl md:text-4xl lg:max-w-xs lg:text-left">
-				<Balancer>Enter the measurements of your project.</Balancer>
-			</h2>
-			<div className="flex flex-wrap gap-4">
-				{shape === 'rect' && (
-					<>
-						<MeasurementInput
-							fieldName="measurements.width"
-							label="Width"
-							placeholder="Amount"
-							required
-						/>
-						<MeasurementInput
-							fieldName="measurements.length"
-							label="Length"
-							placeholder="Amount"
-							required
-						/>
-					</>
-				)}
-				{shape === 'circle' && <CircleInputs />}
-				{shape === 'other' && (
-					<>
-						<MeasurementInput
-							fieldName="measurements.area"
-							label="Area"
-							placeholder="Amount"
-							dimension="2D"
-						/>
-						<MeasurementInput
-							fieldName="measurements.runningLength"
-							label="Running Length"
-							placeholder="Amount"
-						/>
-					</>
-				)}
-
-				<UnitSelect />
-			</div>
-		</StageForm>
 	);
 }

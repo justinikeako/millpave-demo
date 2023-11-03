@@ -1,19 +1,18 @@
+'use client';
+
 import { StageForm } from '../_components/form';
 import { StoneEditor } from '../_components/stone-editor';
 import { Button } from '../../../components/button';
 import { useStageContext } from '../_components/stage-context';
 import Balancer from 'react-wrap-balancer';
+import { useRouter } from 'next/navigation';
 
-export function InfillStage() {
-	const {
-		currentStageIndex,
-		getStageStatus,
-		setStageIndex,
-		setValidity,
-		setSkipped
-	} = useStageContext();
+export default function Page() {
+	const { currentStageIndex, getStageStatus, setValidity, setSkipped } =
+		useStageContext();
+	const router = useRouter();
 
-	const isSkipped = getStageStatus('infill').skipped;
+	const isSkipped = getStageStatus('/quote-studio/infill').skipped;
 
 	if (isSkipped === null || isSkipped === true)
 		return (
@@ -35,7 +34,7 @@ export function InfillStage() {
 						onClick={() => {
 							setValidity(currentStageIndex, true);
 							setSkipped(currentStageIndex, true);
-							setStageIndex(currentStageIndex + 1);
+							router.push('/quote-studio/border');
 						}}
 					>
 						Skip

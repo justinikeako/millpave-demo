@@ -1,20 +1,26 @@
+'use client';
+
 import { formatNumber, formatPrice, formatRestockDate } from '~/utils/format';
-import { FieldArrayPath, useFieldArray, useFormContext } from 'react-hook-form';
+import {
+	type FieldArrayPath,
+	useFieldArray,
+	useFormContext
+} from 'react-hook-form';
 import { StageForm } from '../_components/form';
 import { unitDisplayNameDictionary } from '~/lib/utils';
 import { useStageContext } from '../_components/stage-context';
-import { StoneProject } from '~/types/quote';
-import { api } from '~/utils/api';
+import { type StoneProject } from '~/types/quote';
+import { api } from '~/trpc/react';
 import { addWeeks } from 'date-fns';
-import { Icon } from '../../../components/icon';
-import { Checkbox } from '../../../components/checkbox';
+import { Icon } from '~/components/icon';
+import { Checkbox } from '~/components/checkbox';
 import Link from 'next/link';
 import React from 'react';
 import { Balancer } from 'react-wrap-balancer';
-import { Button } from '../../../components/button';
+import { Button } from '~/components/button';
 import Image from 'next/image';
 
-export function ConfigureStage() {
+export default function Page() {
 	const { stoneMetadataArray, quote, setStageIndex } = useStageContext();
 
 	const { control, register } = useFormContext<StoneProject>();
@@ -97,7 +103,7 @@ export function ConfigureStage() {
 							const hasStock =
 								fulfillment?.stock.find(
 									({ locationId }) => locationId === item.pickupLocationId
-								)?.quantity || 0 > 0;
+								)?.quantity ?? 0 > 0;
 							const restockDate =
 								fulfillment?.restocks[0]?.locationId === item.pickupLocationId
 									? formatRestockDate(fulfillment?.restocks[0]?.date)

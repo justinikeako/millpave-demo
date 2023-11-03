@@ -90,7 +90,7 @@ const MotionNavLink = motion(NavLink);
 
 function Header() {
 	const pathname = usePathname();
-	const minimal = pathname === '/quote-studio';
+	const minimal = pathname.startsWith('/quote-studio');
 	const headerRef = useRef<HTMLDivElement>(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [isTransparent, setTransparent] = useState(
@@ -137,7 +137,8 @@ function Header() {
 				data-transparent={isTransparent || undefined}
 				className={cn(
 					RemoveScroll.classNames.fullWidth,
-					'group sticky top-0 z-20 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0'
+					'group top-0 z-20 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0',
+					minimal ? 'absolute inset-x-0' : 'sticky'
 				)}
 				ref={headerRef}
 			>

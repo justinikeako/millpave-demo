@@ -1,6 +1,8 @@
+'use client';
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import {
+import type {
 	BorderConfig,
 	Measurements,
 	InfillConfig,
@@ -18,10 +20,11 @@ import {
 	BorderOrientation
 } from '~/types/quote';
 import { roundTo } from '~/utils/number';
-import { PaverDetails } from '~/types/product';
+import { type PaverDetails } from '~/types/product';
 import { isEqual } from 'lodash-es';
 import { getQuoteDetails, roundFractionDigits } from '~/lib/utils';
-import { maximumStageIndex, stages } from './stages';
+import { stages } from './stages';
+import { usePathname } from 'next/navigation';
 
 function toFt(
 	value: number,
@@ -57,10 +60,7 @@ function calculateProjectArea(shape: Shape, measurements: Measurements) {
 				measurements.unit
 			);
 		case 'circle':
-			return toSqft(
-				Math.PI * Math.pow(measurements.radius, 2),
-				measurements.unit
-			);
+			return toSqft(Math.PI * measurements.radius ** 2, measurements.unit);
 		case 'other':
 			return toSqft(measurements.area, measurements.unit);
 	}
@@ -416,7 +416,7 @@ function mergeItems(inputItems: Item[]) {
 		if (existingItem) {
 			existingItem.sqftCoverage += item.sqftCoverage;
 
-			const itemSignature = item.signatures[0] as string;
+			const itemSignature = item.signatures[0]!;
 			const containsItemSignature =
 				existingItem.signatures.includes(itemSignature);
 
@@ -600,7 +600,7 @@ type StageContextValue = {
 	getStoneMetadata(skuId: string): StoneMetadata | undefined;
 	quote: Quote;
 	stageStatus: {
-		id: string;
+		pathname: string;
 		valid: boolean | undefined;
 		skipped: boolean | null | undefined;
 	}[];
@@ -609,12 +609,9 @@ type StageContextValue = {
 		valid: boolean;
 		skipped: boolean | null | undefined;
 	};
-	setStageIndex(stage: number): void;
-	queueStageIndex(newStageIndex: number): void;
 	setQuoteId(quoteId: string): void;
 	setValidity(stage: string | number, valid: boolean): void;
 	setSkipped(stage: string | number, skipped: boolean): void;
-	commitQueue(): void;
 };
 
 export const StageContext = createContext<StageContextValue>(
@@ -680,23 +677,24 @@ export function StageProvider(props: React.PropsWithChildren) {
 		defaultValues: defaultValues
 	});
 
-	const [currentStageIndex, setStageIndex] = useState(0);
+	const pathname = usePathname();
+	const currentStageIndex = stages.findIndex(
+		(stage) => pathname === stage.pathname
+	);
 
-	const currentStage = stages[currentStageIndex]?.id;
-
-	const [queuedStageIndex, queueStageIndex] = useState(0);
+	const currentStage = stages[currentStageIndex]?.pathname;
 
 	const [stageStatus, setStageStatus] = useState<
 		{
-			id: string;
+			pathname: string;
 			valid: boolean;
 			skipped: boolean | null | undefined;
 		}[]
 	>(
-		stages.map(({ id, optional }) => ({
-			id,
-			skipped: optional,
-			valid: false
+		stages.map(({ pathname, optional }, index) => ({
+			pathname,
+			skipped: optional ?? false,
+			valid: index === 0
 		}))
 	);
 
@@ -705,7 +703,7 @@ export function StageProvider(props: React.PropsWithChildren) {
 			stageStatus.map((stageStatus, stageIndex) => {
 				const match =
 					typeof selected === 'string'
-						? selected === stageStatus.id
+						? selected === stageStatus.pathname
 						: selected === stageIndex;
 
 				if (match) return { ...stageStatus, skipped };
@@ -720,7 +718,7 @@ export function StageProvider(props: React.PropsWithChildren) {
 			stageStatus.map((stageStatus, stageIndex) => {
 				const match =
 					typeof selected === 'string'
-						? selected === stageStatus.id
+						? selected === stageStatus.pathname
 						: selected === stageIndex;
 				if (match) return { ...stageStatus, valid };
 
@@ -732,7 +730,7 @@ export function StageProvider(props: React.PropsWithChildren) {
 	function getStageStatus(selected: string | number) {
 		const index =
 			typeof selected === 'string'
-				? stages.findIndex((stage) => stage.id === selected)
+				? stages.findIndex((stage) => stage.pathname === selected)
 				: selected;
 
 		const status = stageStatus[index];
@@ -748,11 +746,6 @@ export function StageProvider(props: React.PropsWithChildren) {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentStageIndex, formMethods.formState.isValid]);
-
-	function commitQueue() {
-		if (queuedStageIndex >= 0 && queuedStageIndex <= maximumStageIndex)
-			setStageIndex(queuedStageIndex);
-	}
 
 	const [previousProject, setPreviousProject] = useState(defaultValues);
 	const [stoneMetadataArray, setStoneMetadataArray] = useState<
@@ -817,7 +810,7 @@ export function StageProvider(props: React.PropsWithChildren) {
 	}
 
 	// Generate the quote when on the review stage. Regenerating if anything has changed.
-	if (currentStage === 'review') {
+	if (currentStage === '/quote-studio/configure') {
 		const currentProject = formMethods.watch();
 
 		if (!isEqual(previousProject, currentProject)) {
@@ -838,10 +831,7 @@ export function StageProvider(props: React.PropsWithChildren) {
 				currentStageIndex,
 				stoneMetadataArray,
 				getStageStatus,
-				setStageIndex,
-				queueStageIndex,
 				setQuoteId,
-				commitQueue,
 				getStoneMetadata,
 				addStoneMetadata,
 				removeStoneMetadata,

@@ -1,3 +1,5 @@
+'use client';
+
 import {
 	Select,
 	SelectTrigger,
@@ -9,30 +11,27 @@ import {
 	Popover,
 	PopoverTrigger,
 	PopoverContent
-} from '../../../components/ui/popover';
+} from '~/components/ui/popover';
 import { StageForm } from '../_components/form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StoneEditor } from '../_components/stone-editor';
-import { BorderOrientation, StoneProject } from '~/types/quote';
+import type { BorderOrientation, StoneProject } from '~/types/quote';
 import { calculateRunningFoot, unitDisplayNameDictionary } from '~/lib/utils';
 import { useStageContext } from '../_components/stage-context';
-import { Button } from '../../../components/button';
+import { Button } from '~/components/button';
 import Balancer from 'react-wrap-balancer';
-import { Icon } from '../../../components/icon';
+import { Icon } from '~/components/icon';
+import { useRouter } from 'next/navigation';
 
-export function BorderStage() {
-	const {
-		getStageStatus,
-		currentStageIndex,
-		setStageIndex,
-		setValidity,
-		setSkipped
-	} = useStageContext();
+export default function Page() {
+	const { getStageStatus, currentStageIndex, setValidity, setSkipped } =
+		useStageContext();
 	const { watch } = useFormContext<StoneProject>();
+	const router = useRouter();
 
 	const hasStones = watch('border.contents').length > 0;
-	const isSkipped = getStageStatus('border').skipped;
-	const infillStageIsSkipped = getStageStatus('infill').skipped;
+	const isSkipped = getStageStatus('/quote-studio/border').skipped;
+	const infillStageIsSkipped = getStageStatus('/quote-studio/infill').skipped;
 
 	if (
 		infillStageIsSkipped === false &&
@@ -56,7 +55,7 @@ export function BorderStage() {
 						onClick={() => {
 							setValidity(currentStageIndex, true);
 							setSkipped(currentStageIndex, true);
-							setStageIndex(currentStageIndex + 1);
+							router.push('/quote-studio/contact-info');
 						}}
 					>
 						Skip

@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '~/components/button';
 import {
 	Select,
@@ -28,12 +30,12 @@ import {
 	SkuPickerProvider,
 	ProductPicker,
 	VariantPicker
-} from '../../../components/sku-picker';
-import { api } from '~/utils/api';
+} from '~/components/sku-picker';
+import { api } from '~/trpc/react';
 import { useState } from 'react';
 import { formatPrice } from '~/utils/format';
-import { ProductStock } from '../../../components/product-stock';
-import {
+import { ProductStock } from '~/components/product-stock';
+import type {
 	StoneProject,
 	Stone,
 	StoneMetadata,
@@ -47,14 +49,13 @@ import {
 	stopPropagate,
 	unitDisplayNameDictionary
 } from '~/lib/utils';
-import { PaverDetails } from '~/types/product';
 import { useStageContext } from './stage-context';
 import Balancer from 'react-wrap-balancer';
 import {
 	Popover,
 	PopoverTrigger,
 	PopoverContent
-} from '../../../components/ui/popover';
+} from '~/components/ui/popover';
 import { flushSync } from 'react-dom';
 import { compact, isEqual } from 'lodash-es';
 import { pattern1D, pattern2D } from './patterns';
@@ -356,7 +357,7 @@ function StoneCard({
 					':',
 					'-'
 				)}.png`}
-				alt={metadata?.displayName as string}
+				alt={metadata!.displayName}
 				className="min-h-0 min-w-0 flex-1 object-contain"
 			/>
 			<div className="flex items-start gap-4 px-4 pb-4">
@@ -498,7 +499,7 @@ function PatternForm({
 	const patternData = dimension === '1D' ? pattern1D : pattern2D;
 	const formMethods = useForm<PatternFormValues>({
 		defaultValues: {
-			pattern: initialValues || {
+			pattern: initialValues ?? {
 				type: 'pattern',
 				id: '',
 				displayName: patternData.displayName,
@@ -563,7 +564,7 @@ function PatternForm({
 						skuId: sku.id,
 						displayName: sku.displayName,
 						price: sku.price,
-						details: sku.details.rawData as PaverDetails
+						details: sku.details.rawData!
 				  }
 				: undefined
 		);
@@ -858,44 +859,44 @@ function PatternForm({
 												{dimension === '2D' && (
 													<>
 														<SelectItem value="fr">
-															{unitDisplayNameDictionary['fr'][0]}
+															{unitDisplayNameDictionary.fr[0]}
 														</SelectItem>
 														<SelectItem value="sqft">
-															{unitDisplayNameDictionary['sqft'][0]}
+															{unitDisplayNameDictionary.sqft[0]}
 														</SelectItem>
 														<SelectItem value="sqin">
-															{unitDisplayNameDictionary['sqin'][0]}
+															{unitDisplayNameDictionary.sqin[0]}
 														</SelectItem>
 														<SelectItem value="sqm">
-															{unitDisplayNameDictionary['sqm'][0]}
+															{unitDisplayNameDictionary.sqm[0]}
 														</SelectItem>
 														<SelectItem value="sqcm">
-															{unitDisplayNameDictionary['sqcm'][0]}
+															{unitDisplayNameDictionary.sqcm[0]}
 														</SelectItem>
 														<SelectItem value="unit">
-															{unitDisplayNameDictionary['unit'][0]}
+															{unitDisplayNameDictionary.unit[0]}
 														</SelectItem>
 													</>
 												)}
 												{dimension === '1D' && (
 													<>
 														<SelectItem value="fr">
-															{unitDisplayNameDictionary['fr'][0]}
+															{unitDisplayNameDictionary.fr[0]}
 														</SelectItem>
 														<SelectItem value="ft">
-															{unitDisplayNameDictionary['ft'][0]}
+															{unitDisplayNameDictionary.ft[0]}
 														</SelectItem>
 														<SelectItem value="in">
-															{unitDisplayNameDictionary['in'][0]}
+															{unitDisplayNameDictionary.in[0]}
 														</SelectItem>
 														<SelectItem value="m">
-															{unitDisplayNameDictionary['m'][0]}
+															{unitDisplayNameDictionary.m[0]}
 														</SelectItem>
 														<SelectItem value="cm">
-															{unitDisplayNameDictionary['cm'][0]}
+															{unitDisplayNameDictionary.cm[0]}
 														</SelectItem>
 														<SelectItem value="unit">
-															{unitDisplayNameDictionary['unit'][0]}
+															{unitDisplayNameDictionary.unit[0]}
 														</SelectItem>
 													</>
 												)}
@@ -953,7 +954,7 @@ function StoneForm({
 	const { register, setValue, watch, handleSubmit } = formMethods;
 
 	const currentSkuId = watch('stone.skuId');
-	const currentPaverId = currentSkuId.split(':')[0] as string;
+	const currentPaverId = currentSkuId.split(':')[0]!;
 
 	const paversQuery = api.product.getPavers.useQuery(
 		{ dimension },
@@ -983,7 +984,7 @@ function StoneForm({
 				skuId: currentSku.id,
 				displayName: currentSku.displayName,
 				price: currentSku.price,
-				details: currentSku.details.rawData as PaverDetails
+				details: currentSku.details.rawData!
 			});
 
 			setPreviousSkuId(currentSku.id);
@@ -1038,7 +1039,7 @@ function StoneForm({
 								<p>
 									{formatPrice(currentSku.price)} per&nbsp;
 									{currentSku.unit === 'sqft'
-										? unitDisplayNameDictionary['sqft'][0]
+										? unitDisplayNameDictionary.sqft[0]
 										: currentSku.unit}
 									{currentSku.details.rawData?.pcs_per_sqft && (
 										<>
@@ -1073,7 +1074,7 @@ function StoneForm({
 						>
 							<Section
 								heading={`Product — ${
-									currentPaver?.displayName || 'Loading...'
+									currentPaver?.displayName ?? 'Loading...'
 								}`}
 							>
 								<ProductPicker products={pavers} />
@@ -1146,44 +1147,44 @@ function StoneForm({
 										{dimension === '2D' && (
 											<>
 												<SelectItem value="fr">
-													{unitDisplayNameDictionary['fr'][0]}
+													{unitDisplayNameDictionary.fr[0]}
 												</SelectItem>
 												<SelectItem value="sqft">
-													{unitDisplayNameDictionary['sqft'][0]}
+													{unitDisplayNameDictionary.sqft[0]}
 												</SelectItem>
 												<SelectItem value="sqin">
-													{unitDisplayNameDictionary['sqin'][0]}
+													{unitDisplayNameDictionary.sqin[0]}
 												</SelectItem>
 												<SelectItem value="sqm">
-													{unitDisplayNameDictionary['sqm'][0]}
+													{unitDisplayNameDictionary.sqm[0]}
 												</SelectItem>
 												<SelectItem value="sqcm">
-													{unitDisplayNameDictionary['sqcm'][0]}
+													{unitDisplayNameDictionary.sqcm[0]}
 												</SelectItem>
 												<SelectItem value="unit">
-													{unitDisplayNameDictionary['unit'][0]}
+													{unitDisplayNameDictionary.unit[0]}
 												</SelectItem>
 											</>
 										)}
 										{dimension === '1D' && (
 											<>
 												<SelectItem value="fr">
-													{unitDisplayNameDictionary['fr'][0]}
+													{unitDisplayNameDictionary.fr[0]}
 												</SelectItem>
 												<SelectItem value="ft">
-													{unitDisplayNameDictionary['ft'][0]}
+													{unitDisplayNameDictionary.ft[0]}
 												</SelectItem>
 												<SelectItem value="in">
-													{unitDisplayNameDictionary['in'][0]}
+													{unitDisplayNameDictionary.in[0]}
 												</SelectItem>
 												<SelectItem value="m">
-													{unitDisplayNameDictionary['m'][0]}
+													{unitDisplayNameDictionary.m[0]}
 												</SelectItem>
 												<SelectItem value="cm">
-													{unitDisplayNameDictionary['cm'][0]}
+													{unitDisplayNameDictionary.cm[0]}
 												</SelectItem>
 												<SelectItem value="unit">
-													{unitDisplayNameDictionary['unit'][0]}
+													{unitDisplayNameDictionary.unit[0]}
 												</SelectItem>
 											</>
 										)}

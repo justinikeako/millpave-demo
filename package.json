@@ -6,7 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "next build",
-		"dev": "next dev",
+		"dev": "next dev --turbo",
 		"lint": "next lint",
 		"format": "prettier --ignore-path .prettierignore --write src",
 		"start": "next start",
@@ -52,7 +52,7 @@
 		"lodash-es": "^4.17.21",
 		"mysql2": "^3.6.2",
 		"nanoid": "^5.0.2",
-		"next": "13.5.6",
+		"next": "14.0.0",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"react-error-boundary": "^4.0.11",
@@ -87,9 +87,13 @@
 		"postcss": "^8.4.31",
 		"prettier": "^3.0.3",
 		"prettier-plugin-tailwindcss": "^0.5.6",
-		"tailwindcss": "^3.3.3",
+		"tailwindcss": "^3.3.5",
 		"ts-node": "^10.9.1",
 		"tsx": "^3.14.0",
 		"typescript": "5.2.2"
-	}
+	},
+	"ct3aMetadata": {
+		"initVersion": "7.22.0"
+	},
+	"packageManager": "pnpm@8.6.12"
 }

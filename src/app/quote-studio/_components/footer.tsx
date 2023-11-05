@@ -1,18 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useStageContext } from './stage-context';
 import { api } from '~/trpc/react';
 import { Button } from '~/components/button';
 import { Icon } from '~/components/icon';
 import React from 'react';
-import Link from 'next/link';
 import { maximumStageIndex, stages } from './stages';
 
 export function StageFooter() {
 	const { currentStageIndex, stageStatus, getStageStatus, quote } =
 		useStageContext();
 	const router = useRouter();
+	const pathname = usePathname();
 
 	const nextStage = stages.at(currentStageIndex + 1);
 
@@ -21,6 +21,8 @@ export function StageFooter() {
 	const currentStageIsValid = getStageStatus(currentStageIndex).valid;
 	const currentStageSkipped = getStageStatus(currentStageIndex).skipped;
 	const createQuote = api.quote.addItems.useMutation();
+
+	if (pathname === '/quote-studio') return null;
 
 	return (
 		<footer className="fixed inset-x-0 bottom-0 z-10 -mt-px border-t  border-gray-500/5 bg-gray-100 bg-gray-100/90 before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm">
@@ -77,8 +79,7 @@ export function StageFooter() {
 					{!nextStage && (
 						<Button
 							intent="primary"
-							type="submit"
-							form="stage-form"
+							type="button"
 							id="finish"
 							disabled={createQuote.isLoading}
 							className="flex-1 focus:outline md:flex-none"
@@ -102,13 +103,12 @@ export function StageFooter() {
 					{nextStage && (
 						<Button
 							intent="primary"
-							type="submit"
-							form="stage-form"
+							type="button"
 							className="flex-1 md:flex-none"
 							disabled={!currentStageIsValid || currentStageSkipped === null}
-							asChild
+							onClick={() => router.push(nextStage.pathname)}
 						>
-							<Link href={nextStage.pathname}>Next</Link>
+							Next
 						</Button>
 					)}
 				</div>
@@ -131,17 +131,19 @@ function StageSelector({
 	disabled,
 	children
 }: StageSelectorProps) {
+	const router = useRouter();
+
 	return (
 		<li>
-			<Link
-				href={pathname}
+			<Button
+				onClick={() => router.push(pathname)}
 				data-selected={selected || undefined}
 				data-completed={completed || undefined}
-				data-disabled={disabled || undefined}
-				className="flex items-center gap-2 data-[disabled]:cursor-not-allowed data-[completed]:font-semibold data-[selected]:font-semibold data-[disabled]:text-gray-400 data-[selected]:text-gray-900"
+				disabled={disabled || undefined}
+				className="flex items-center gap-2 disabled:cursor-not-allowed disabled:text-gray-400 data-[completed]:font-semibold data-[selected]:font-semibold data-[selected]:text-gray-900"
 			>
 				{children}
-			</Link>
+			</Button>
 		</li>
 	);
 }

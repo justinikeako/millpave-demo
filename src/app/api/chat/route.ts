@@ -38,7 +38,7 @@ const QA_TEMPLATE = PromptTemplate.fromTemplate(
 	Final Answer:`
 );
 
-export default async function POST(req: Request) {
+export async function POST(req: Request) {
 	console.log('Invoked');
 
 	const { messages } = (await req.json()) as { messages: Message[] };

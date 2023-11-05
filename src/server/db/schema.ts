@@ -12,7 +12,7 @@ import {
 	bigint
 } from 'drizzle-orm/mysql-core';
 import { relations, sql } from 'drizzle-orm';
-import {
+import type {
 	FormattedProductDetails,
 	PaverDetails,
 	VariantIdTemplate

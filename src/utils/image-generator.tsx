@@ -1,7 +1,8 @@
 // Drag this into pages when you need to make renders for models
 
-import { Box3, Group, Mesh, MeshStandardMaterial } from 'three';
-import { GLTF } from 'three-stdlib';
+import type { Group, Mesh, MeshStandardMaterial } from 'three';
+import type { GLTF } from 'three-stdlib';
+import { Box3 } from 'three';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useRef, useState } from 'react';
@@ -51,7 +52,7 @@ function Scene({
 	const gltf = useGLTF(
 		files.map(({ file }) => file)
 	) as unknown as GLTFResult[];
-	const { nodes, materials } = gltf[currentModelIndex] as GLTFResult;
+	const { nodes, materials } = gltf[currentModelIndex]!;
 
 	const groupRef = useRef<Group>(null);
 	const planeRef = useRef<Mesh>(null);
@@ -59,23 +60,24 @@ function Scene({
 	const three = useThree();
 
 	useEffect(() => {
-		const captureImages = async () => {
+		const captureImages = () => {
 			if (capturing && currentModelIndex < files.length) {
 				// Set the desired file name for the image
-				const fileName = `${files[currentModelIndex]?.slug}.png`;
+				const fileName = `${files[currentModelIndex]!.slug}.png`;
 
 				// Capture the model on the canvas after a delay to prevent unintended duplicates
-				setTimeout(async () => {
+				setTimeout(() => {
 					// Render the model on the canvas
 					const { gl } = three;
 
 					// Generate and save the image
-					const image = await generateImage(gl.domElement);
-
-					addCapture({ image, fileName });
-
-					// Move to the next model
-					nextModel();
+					generateImage(gl.domElement)
+						.then((image) => {
+							addCapture({ image, fileName });
+							// Move to the next model
+							nextModel();
+						})
+						.catch(() => console.log('Failed to generate image'));
 				}, 50);
 			}
 		};

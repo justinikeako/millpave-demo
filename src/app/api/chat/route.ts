@@ -1,31 +1,13 @@
-import { StreamingTextResponse, LangChainStream, Message } from 'ai';
+import { StreamingTextResponse, LangChainStream, type Message } from 'ai';
 import { supabaseClient } from '~/utils/supabase-client';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { LLMChain } from 'langchain/chains';
 import { PromptTemplate } from 'langchain/prompts';
-import { AIChatMessage, HumanChatMessage } from 'langchain/schema';
+import { AIMessage, HumanMessage } from 'langchain/schema';
 
 export const runtime = 'edge';
-
-const INQUIRY_TEMPLATE =
-	PromptTemplate.fromTemplate(`Given the following USER PROMPT and CONVERSATION LOG, formulate a question that would be the most relevant to provide the user with an answer from a knowledge base.
-  You should follow the following rules when generating and answer:
-  - Always prioritize the USER PROMPT over the CONVERSATION LOG.
-  - Ignore any CONVERSATION LOG that is not directly related to the USER PROMPT.
-  - Only attempt to answer if a question was posed.
-	- If the USER PROMPT reads along the lines of "that will be all" or "thank you" respond with the same USER PROMPT you got.
-  - The question should be a single sentence.
-  - You should remove any punctuation from the question.
-  - You should remove any words that are not relevant to the question.
-  - If you are unable to formulate a question, respond with the same USER PROMPT you got.
-  
-  USER PROMPT: {userPrompt}
-
-  CONVERSATION LOG: {conversationHistory}
-
-  Final answer:`);
 
 const QA_TEMPLATE = PromptTemplate.fromTemplate(
 	`Answer the question based on the context below. You should follow ALL the following rules when generating and answer:
@@ -56,16 +38,11 @@ const QA_TEMPLATE = PromptTemplate.fromTemplate(
 	Final Answer:`
 );
 
-const llm = new ChatOpenAI({
-	modelName: 'gpt-3.5-turbo',
-	openAIApiKey: process.env.OPENAI_API_KEY,
-	temperature: 0
-});
-
 export default async function POST(req: Request) {
 	console.log('Invoked');
 
-	const messages = (await req.json()).messages as Message[];
+	const { messages } = (await req.json()) as { messages: Message[] };
+
 	const { stream, handlers } = LangChainStream();
 
 	// OpenAI recommends replacing newlines with spaces for best results
@@ -86,23 +63,11 @@ export default async function POST(req: Request) {
 		}
 	);
 
-	// Rephrase user prompt
-	const inquiryChain = new LLMChain({
-		llm,
-		prompt: INQUIRY_TEMPLATE
-	});
-
-	const rephrasedUserInput = await inquiryChain.call({
-		userPrompt: sanitizedUserPrompt,
-		conversationHistory: messages
-	});
-	console.log('Rephrased user input:', rephrasedUserInput);
-
 	const embedder = new OpenAIEmbeddings({
 		modelName: 'text-embedding-ada-002'
 	});
 
-	const embeddings = await embedder.embedQuery(rephrasedUserInput.text);
+	const embeddings = await embedder.embedQuery(sanitizedUserPrompt);
 
 	const results = await vectorStore.similaritySearchVectorWithScore(
 		embeddings,
@@ -121,29 +86,31 @@ export default async function POST(req: Request) {
 		llm: chat
 	});
 
-	chatChain.call(
-		{
-			documents: JSON.stringify(results),
-			sources: results
-				.flatMap(([document]) => document.metadata.source)
-				.join('\n'),
-
-			question: rephrasedUserInput.text,
-			conversationHistory: messages.map((m) =>
-				m.role == 'user'
-					? new HumanChatMessage(m.content)
-					: new AIChatMessage(m.content)
-			)
-		},
-		[
-			handlers,
+	chatChain
+		.call(
 			{
-				handleLLMEnd(output) {
-					console.log('Output:', output.generations.at(0)?.at(0)?.text);
+				documents: JSON.stringify(results),
+				sources: results
+					.flatMap(([document]) => document.metadata.source as string)
+					.join('\n'),
+
+				question: sanitizedUserPrompt,
+				conversationHistory: messages.map((m) =>
+					m.role == 'user'
+						? new HumanMessage(m.content)
+						: new AIMessage(m.content)
+				)
+			},
+			[
+				handlers,
+				{
+					handleLLMEnd(output) {
+						console.log('Output:', output.generations.at(0)?.at(0)?.text);
+					}
 				}
-			}
-		]
-	);
+			]
+		)
+		.catch(() => console.log('Something went wrong in /api/chat'));
 
 	return new StreamingTextResponse(stream);
 }

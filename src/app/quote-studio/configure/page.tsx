@@ -19,9 +19,11 @@ import React from 'react';
 import { Balancer } from 'react-wrap-balancer';
 import { Button } from '~/components/button';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
-	const { stoneMetadataArray, quote, setStageIndex } = useStageContext();
+	const { stoneMetadataArray, quote } = useStageContext();
+	const router = useRouter();
 
 	const { control, register } = useFormContext<StoneProject>();
 	const { fields: addons } = useFieldArray({
@@ -201,8 +203,8 @@ export default function Page() {
 																			className="flex h-6 items-center rounded-sm border border-gray-400 px-1 text-sm capitalize hover:bg-gray-900/5 active:bg-gray-900/10"
 																			type="button"
 																			onClick={() =>
-																				setStageIndex(
-																					signature === 'infill' ? 2 : 3
+																				router.push(
+																					'/quote-studio/' + signature
 																				)
 																			}
 																		>

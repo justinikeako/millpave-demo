@@ -52,7 +52,7 @@ function Option({ value: id, title, subtitle: description }: OptionProps) {
 					required: true,
 					onChange: () => {
 						resetField('measurements');
-						setValidity(1, false);
+						setValidity('/measurements', false);
 					}
 				})}
 				id={id}

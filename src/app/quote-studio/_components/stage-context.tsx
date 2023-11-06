@@ -845,5 +845,18 @@ export function StageProvider(props: React.PropsWithChildren) {
 }
 
 export function useStageContext() {
-	return useContext(StageContext);
+	const contextValue = useContext(StageContext);
+	const { currentStageIndex } = contextValue;
+
+	const [tuple, setTuple] = useState<[number, number]>([0, currentStageIndex]);
+
+	if (tuple[1] !== currentStageIndex) {
+		setTuple([tuple[1], currentStageIndex]);
+	}
+
+	const previousStageIndex = tuple[0];
+
+	const direction = currentStageIndex > previousStageIndex ? 1 : -1;
+
+	return { ...contextValue, direction };
 }

@@ -1,5 +1,6 @@
 import { StageFooter } from './_components/footer';
 import { StageProvider } from './_components/stage-context';
+import { Transition } from './_components/transition';
 
 export const metadata = {
 	title: 'Get a Quote — Millennium Paving Stones LTD.',
@@ -15,7 +16,7 @@ export const metadata = {
 export default function Layout({ children }: React.PropsWithChildren) {
 	return (
 		<StageProvider>
-			{children}
+			<Transition>{children}</Transition>
 			<StageFooter />
 		</StageProvider>
 	);

@@ -9,7 +9,7 @@ import { Balancer } from 'react-wrap-balancer';
 import { GetAQuoteSection } from '~/components/sections/get-a-quote';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cn } from '~/lib/utils';
+import { CategoryFilter } from './components/category-filter';
 
 const categories = [
 	{ id: 'all', displayName: 'All Projects', image: false },
@@ -28,15 +28,7 @@ export const metadata = {
 	openGraph: { title: 'Inspiration for Your Paving Project' }
 };
 
-export default function Page({
-	searchParams
-}: {
-	searchParams: Record<string, string | string[] | undefined>;
-}) {
-	const selectedCategoryId = (
-		typeof searchParams.category === 'string' ? searchParams.category : 'all'
-	) as (typeof categories)[number]['id'];
-
+export default function Page() {
 	return (
 		<>
 			<Main className="space-y-32 !pt-16 sm:!pt-24">
@@ -52,7 +44,6 @@ export default function Page({
 							{categories.map((category) => (
 								<CategoryFilter
 									key={category.id}
-									isSelected={selectedCategoryId === category.id}
 									thumbnailImage={`${category.image}`}
 									{...category}
 								/>
@@ -91,35 +82,6 @@ export default function Page({
 	);
 }
 
-function CategoryFilter({
-	id,
-	displayName,
-	isSelected,
-	thumbnailImage
-}: {
-	isSelected: boolean;
-	thumbnailImage?: string;
-	id: string;
-	displayName: string;
-}) {
-	return (
-		<Link
-			href={{ pathname: '/inspiration', query: { category: id } }}
-			replace
-			className={cn(
-				'flex shrink-0 items-center overflow-hidden rounded-md border border-gray-400 outline-2 -outline-offset-2 outline-pink-700 transition-colors hover:bg-gray-900/5 active:bg-gray-900/10 active:transition-none',
-				isSelected &&
-					'peer-checked:bg-pink-400/10 peer-checked:text-pink-700 peer-checked:outline peer-checked:transition-none peer-checked:hover:bg-pink-400/20 peer-checked:active:bg-pink-400/30'
-			)}
-		>
-			{thumbnailImage && <div className="aspect-square w-12 bg-gray-200" />}
-			<p className="select-none whitespace-nowrap px-4 align-middle font-semibold">
-				{displayName}
-			</p>
-		</Link>
-	);
-}
-
 function GalleryImage({
 	id,
 	selected = false,
@@ -141,7 +103,7 @@ function GalleryImage({
 				alt={'Post Title ' + id}
 				className="object-cover"
 			/>
-			<Link href="/photo/2" className="absolute inset-0">
+			<Link href={'/photo/' + id} className="absolute inset-0">
 				<p className="bg-gradient-to-b from-gray-900/50 p-4 font-display text-lg text-white opacity-0 transition-opacity group-hover:opacity-100">
 					Post Title
 				</p>

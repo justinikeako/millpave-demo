@@ -101,17 +101,16 @@ function Header() {
 		const headerElement = headerRef.current;
 		if (!headerElement) return;
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					const isIntersecting =
-						entry.isIntersecting || entry.intersectionRatio > 0;
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				const elementBottom = entry.boundingClientRect.bottom;
 
-					setTransparent(isIntersecting);
-				});
-			},
-			{ threshold: 0 } // Adjust the threshold as needed
-		);
+				const isIntersecting =
+					entry.isIntersecting || (elementBottom >= 0 && elementBottom <= 80);
+
+				setTransparent(isIntersecting);
+			});
+		});
 
 		const targetElements = document.querySelectorAll(
 			'[data-header-transparent]'

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { products, skuRestocks, skus } from '~/server/db/schema';
 import { and, asc, eq, gte, gt } from 'drizzle-orm';
-import { Sku } from '~/types/product';
+import type { Sku } from '~/types/product';
 
 type StartingSku = Pick<Sku, 'price' | 'unit'>;
 

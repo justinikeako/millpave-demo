@@ -26,15 +26,14 @@ export const metadata = {
 	title: 'Millennium Paving Stones LTD.',
 	description:
 		'The largest paving stone manufacturer in Jamaica. Transform your outdoor walkway, deck, patio, or plaza into a functional work of art.',
-	metadataBase: new URL('https://millpave.notprimitive.com'),
-	viewport: "width=device-width, initial-scale=1, maximum-scale=1"
+	metadataBase: new URL('https://millpave.notprimitive.com')
 };
 
 export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
- }
+	width: 'device-width',
+	initialScale: 1,
+	maximumScale: 1
+};
 
 export default function RootLayout({
 	children

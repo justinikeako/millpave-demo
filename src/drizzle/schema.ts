@@ -1,5 +1,5 @@
 import {
-	mysqlTable,
+	mysqlTableCreator,
 	varchar,
 	index,
 	primaryKey,
@@ -17,6 +17,8 @@ import {
 	PaverDetails,
 	VariantIdTemplate
 } from '~/types/product';
+
+const mysqlTable = mysqlTableCreator((name) => 'millpave_' + name);
 
 const price = customType<{ data: number; driverData: string | number }>({
 	dataType: () => 'decimal(10,2)',

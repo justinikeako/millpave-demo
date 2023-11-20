@@ -9,5 +9,6 @@ export default {
 	driver: 'mysql2',
 	dbCredentials: {
 		connectionString: process.env.PROD_DATABASE_URL as string
-	}
+	},
+	tablesFilter: ['millpave_*']
 } satisfies Config;

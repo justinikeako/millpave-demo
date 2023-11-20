@@ -11,10 +11,13 @@ import {
 
 import { drizzle } from 'drizzle-orm/planetscale-serverless';
 import { Client } from '@planetscale/database';
+import { env } from '~/env.mjs';
 
-const db = drizzle(new Client({
-	url: process.env.DATABASE_URL
-}).connection());
+const db = drizzle(
+	new Client({
+		url: env.DATABASE_URL
+	}).connection()
+);
 
 function main() {
 	console.log('💣 Dropping db nuke');

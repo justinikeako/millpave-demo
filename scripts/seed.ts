@@ -12,10 +12,11 @@ import {
 
 import { drizzle } from 'drizzle-orm/planetscale-serverless';
 import { Client } from '@planetscale/database';
+import { env } from '~/env.mjs';
 
 const db = drizzle(
 	new Client({
-		url: process.env.DATABASE_URL
+		url: env.DATABASE_URL
 	}).connection()
 );
 
@@ -245,7 +246,7 @@ async function addPavers() {
 		}
 	];
 
-	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+	const SIMILAR_PRODUCTS = new Map<string, string[]>([
 		['colonial_classic', ['banjo', 'thin_classic', 'heritage']],
 		['thin_classic', ['colonial_classic', 'banjo', 'circle_bundle']],
 		['banjo', ['colonial_classic', 'heritage', 'cobble_mix']],
@@ -334,7 +335,7 @@ async function addSlabsAndBlocks() {
 		}
 	];
 
-	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+	const SIMILAR_PRODUCTS = new Map<string, string[]>([
 		['savannah', ['heritage', 'circle_stepping', 'grasscrete']],
 		['grasscrete', ['tropical_wave', 'circle_stepping', 'savannah']],
 		['curb_wall', ['tropical_wave', 'circle_stepping', 'savannah']]
@@ -438,7 +439,7 @@ async function addMaintenanceProducts() {
 		];
 
 	// prettier-ignore
-	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+	const SIMILAR_PRODUCTS = new Map<string, string[]>([
 		['oil_sealant', ['water_sealant', 'efflorescence_cleaner', 'polymeric_sand']],
 		['water_sealant', ['oil_sealant', 'efflorescence_cleaner', 'polymeric_sand']],
 		['polymeric_sand', ['oil_sealant', 'water_sealant', 'efflorescence_cleaner']],
@@ -889,7 +890,7 @@ async function addConcreteProductSkus() {
 				productId: product.id.split(':').at(0),
 				id: `${product.id}:${color.id}`,
 				displayName: `${product.displayName} ${color.displayName}`,
-				price: price[color.id] || prices[1],
+				price: price[color.id] ?? prices[1],
 				unit: 'sqft'
 			} as Sku;
 		});
@@ -1102,13 +1103,13 @@ async function addPaverStock() {
 
 			return [
 				{
-					productId: skuIdPrefix.split(':').at(0) as string,
+					productId: skuIdPrefix.split(':').at(0)!,
 					skuId: `${skuIdPrefix}:${colorId}`,
 					locationId: 'KNG_SHOWROOM',
 					quantity: doneToOrder ? 0 : coinFlip() ? showroomQuantity : 0
 				},
 				{
-					productId: skuIdPrefix.split(':').at(0) as string,
+					productId: skuIdPrefix.split(':').at(0)!,
 					skuId: `${skuIdPrefix}:${colorId}`,
 					locationId: 'STT_FACTORY',
 					quantity: doneToOrder ? 0 : coinFlip() ? factoryQuantity : 0
@@ -1143,7 +1144,7 @@ async function addPaverRestockQueue() {
 			return coinFlip(popularity / 2)
 				? [
 						{
-							productId: skuIdPrefix.split(':').at(0) as string,
+							productId: skuIdPrefix.split(':').at(0)!,
 							skuId: `${skuIdPrefix}:${colorId}`,
 							locationId: fromFactory ? 'STT_FACTORY' : 'STT_FACTORY',
 							quantity: fromFactory ? factoryQuantity : showroomQuantity,

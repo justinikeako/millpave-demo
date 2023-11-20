@@ -83,9 +83,6 @@ dependencies:
   dom-to-image:
     specifier: ^2.6.0
     version: 2.6.0
-  dotenv:
-    specifier: ^16.3.1
-    version: 16.3.1
   drizzle-orm:
     specifier: 0.28.6
     version: 0.28.6(@planetscale/database@1.11.0)(mysql2@3.6.2)
@@ -193,6 +190,9 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.16
     version: 10.4.16(postcss@8.4.31)
+  dotenv:
+    specifier: ^16.3.1
+    version: 16.3.1
   drizzle-kit:
     specifier: ^0.19.13
     version: 0.19.13
@@ -2916,7 +2916,7 @@ packages:
   /dotenv@16.3.1:
     resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
     engines: {node: '>=12'}
-    dev: false
+    dev: true
 
   /draco3d@1.5.6:
     resolution: {integrity: sha512-+3NaRjWktb5r61ZFoDejlykPEFKT5N/LkbXsaddlw6xNSXBanUYpFc2AXXpbJDilPHazcSreU/DpQIaxfX0NfQ==}

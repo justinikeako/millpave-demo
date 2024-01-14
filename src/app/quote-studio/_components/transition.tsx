@@ -4,20 +4,8 @@ import { type Variants, AnimatePresence, motion } from 'framer-motion';
 import { useStageContext } from './stage-context';
 import { usePathname } from 'next/navigation';
 
-// Frozen Router is a hack to allow for framer motion exit transitions in app dir
-import { LayoutRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { useContext, useRef } from 'react';
-
-function FrozenRouter(props: { children: React.ReactNode }) {
-	const context = useContext(LayoutRouterContext ?? {});
-	const frozen = useRef(context).current;
-
-	return (
-		<LayoutRouterContext.Provider value={frozen}>
-			{props.children}
-		</LayoutRouterContext.Provider>
-	);
-}
+// Frozen Router is a hack to enables framer motion exit transitions in app dir
+import { FrozenRouter } from '~/components/frozen-router';
 
 const variants: Variants = {
 	hidden: (direction: number) => ({

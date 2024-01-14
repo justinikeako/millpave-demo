@@ -90,7 +90,7 @@ const MotionNavLink = motion(NavLink);
 
 function Header() {
 	const pathname = usePathname();
-	const minimal = pathname.startsWith('/quote-studio');
+	const minimal = pathname.includes('-studio');
 	const headerRef = useRef<HTMLDivElement>(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [isTransparent, setTransparent] = useState(

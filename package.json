@@ -17,6 +17,7 @@
 		"sembed": "tsx -r dotenv/config scripts/scrape-embed.ts"
 	},
 	"dependencies": {
+		"@lumaai/luma-web": "^0.1.17",
 		"@next/bundle-analyzer": "^14.0.4",
 		"@planetscale/database": "^1.13.0",
 		"@radix-ui/react-collapsible": "^1.0.3",

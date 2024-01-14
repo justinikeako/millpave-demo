@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@lumaai/luma-web':
+    specifier: ^0.1.17
+    version: 0.1.17(@types/three@0.160.0)(three@0.160.0)
   '@next/bundle-analyzer':
     specifier: ^14.0.4
     version: 14.0.4
@@ -1147,6 +1150,16 @@ packages:
       zod-to-json-schema: 3.20.3(zod@3.22.4)
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /@lumaai/luma-web@0.1.17(@types/three@0.160.0)(three@0.160.0):
+    resolution: {integrity: sha512-Vp+ezGY6JoFJwF9vNkLDHk90pOrARc9JGpLL1sUh0qH2yJBCwmGf5HO2nFNMk8D5GQLk7EIy8FwsPIewjOBaxA==}
+    peerDependencies:
+      '@types/three': ^0.157.2
+      three: ^0.157.0
+    dependencies:
+      '@types/three': 0.160.0
+      three: 0.160.0
     dev: false
 
   /@mediapipe/tasks-vision@0.10.8:

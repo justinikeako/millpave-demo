@@ -7,15 +7,10 @@ import { CineonToneMapping, RepeatWrapping } from 'three';
 import { OrbitControls, useTexture } from '@react-three/drei';
 import { useState } from 'react';
 import { cn } from '~/lib/utils';
-import { useThree } from '@react-three/fiber';
 import { OrchestratedReveal } from '~/components/reveal';
 
 function Scene({ color }: { color: string }) {
 	const normalMap = useTexture('/normal-map.webp');
-
-	useThree((renderer) => {
-		console.log(renderer.camera.position);
-	});
 
 	return (
 		<>

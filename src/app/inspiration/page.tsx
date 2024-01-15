@@ -11,6 +11,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CategoryFilter } from './components/category-filter';
 
+export const metadata = {
+	title: 'Paving Inspiration — Millennium Paving Stones',
+	description: 'See how our products can transform your outdoor space.',
+	openGraph: { title: 'Inspiration for Your Paving Project' }
+};
+
 const categories = [
 	{ id: 'all', displayName: 'All Projects', image: false },
 	{ id: 'patio', displayName: 'Patios', image: true },
@@ -21,12 +27,6 @@ const categories = [
 	{ id: 'walkway', displayName: 'Walkways', image: true },
 	{ id: 'parking_lot', displayName: 'Parking Lots', image: true }
 ] as const;
-
-export const metadata = {
-	title: 'Paving Inspiration — Millennium Paving Stones',
-	description: 'See how our products can transform your outdoor space.',
-	openGraph: { title: 'Inspiration for Your Paving Project' }
-};
 
 export default function Page() {
 	return (

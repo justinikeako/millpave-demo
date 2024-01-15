@@ -91,10 +91,11 @@ const MotionNavLink = motion(NavLink);
 function Header() {
 	const pathname = usePathname();
 	const minimal = pathname.includes('-studio');
+	const previewStudio = pathname === '/preview-studio';
 	const headerRef = useRef<HTMLDivElement>(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [isTransparent, setTransparent] = useState(
-		['/', '/quote-studio'].includes(pathname)
+		['/', '/quote-studio', '/preview-studio'].includes(pathname)
 	);
 
 	useEffect(() => {
@@ -137,7 +138,9 @@ function Header() {
 				className={cn(
 					RemoveScroll.classNames.fullWidth,
 					'group top-0 z-20 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0',
-					minimal ? 'absolute inset-x-0' : 'sticky'
+					minimal ? 'absolute inset-x-0' : 'sticky',
+					previewStudio &&
+						'after:absolute after:top-0 after:-z-10 after:size-full after:bg-gradient-to-b after:from-black/50'
 				)}
 				ref={headerRef}
 			>

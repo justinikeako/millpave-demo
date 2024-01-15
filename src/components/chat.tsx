@@ -19,7 +19,7 @@ const initialMessages: Message[] = [
 
 function Chat() {
 	const pathname = usePathname();
-	const hide = pathname.startsWith('/quote-studio');
+	const hide = pathname.includes('-studio');
 
 	const {
 		messages,

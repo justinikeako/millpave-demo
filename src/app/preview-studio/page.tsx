@@ -66,7 +66,7 @@ function Page() {
 	};
 
 	const [selectedColorId, setSelectedColorId] =
-		useState<keyof typeof colors>('red');
+		useState<keyof typeof colors>('ash');
 	const selectedColor = colors[selectedColorId];
 
 	return (

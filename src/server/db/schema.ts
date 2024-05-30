@@ -1,10 +1,6 @@
 import { relations } from 'drizzle-orm';
 import {
-<<<<<<< HEAD:src/drizzle/schema.ts
-	mysqlTableCreator,
-=======
 	pgTableCreator,
->>>>>>> app-dir:src/server/db/schema.ts
 	varchar,
 	index,
 	primaryKey,
@@ -24,33 +20,24 @@ import type {
 	VariantIdTemplate
 } from '~/types/product';
 
-<<<<<<< HEAD:src/drizzle/schema.ts
-const mysqlTable = mysqlTableCreator((name) => 'millpave_' + name);
-
-const price = customType<{ data: number; driverData: string | number }>({
-	dataType: () => 'decimal(10,2)',
-	fromDriver: (value) => (typeof value === 'number' ? value : parseFloat(value))
-});
-=======
-const mysqlTable = pgTableCreator((name) => 'millpave_' + name);
->>>>>>> app-dir:src/server/db/schema.ts
+const pgTable = pgTableCreator((name) => 'millpave_' + name);
 
 const price = customType<{ data: number; driverData: string | number }>({
 	dataType: () => 'numeric(14,2)',
 	fromDriver: (value) => (typeof value === 'number' ? value : parseFloat(value))
 });
 
-export const categories = mysqlTable('categories', {
+export const categories = pgTable('categories', {
 	id: varchar('id', { length: 32 }).primaryKey().notNull(),
 	displayName: varchar('display_name', { length: 64 }).notNull()
 });
 
-export const pickupLocations = mysqlTable('pickup_locations', {
+export const pickupLocations = pgTable('pickup_locations', {
 	id: varchar('id', { length: 24 }).primaryKey().notNull(),
 	displayName: varchar('display_name', { length: 32 }).notNull()
 });
 
-export const products = mysqlTable(
+export const products = pgTable(
 	'products',
 	{
 		id: varchar('id', { length: 32 }).primaryKey().notNull(),
@@ -72,7 +59,7 @@ export const products = mysqlTable(
 	})
 );
 
-export const productRecommendations = mysqlTable(
+export const productRecommendations = pgTable(
 	'product_recommendations',
 	{
 		relevance: integer('relevance').notNull(),
@@ -89,7 +76,7 @@ export const productRecommendations = mysqlTable(
 	})
 );
 
-export const skus = mysqlTable(
+export const skus = pgTable(
 	'skus',
 	{
 		id: varchar('id', { length: 48 }).primaryKey().notNull(),
@@ -108,7 +95,7 @@ export const skus = mysqlTable(
 	})
 );
 
-export const skuDetails = mysqlTable(
+export const skuDetails = pgTable(
 	'sku_details',
 	{
 		matcher: varchar('matcher', { length: 48 }).primaryKey().notNull(),
@@ -127,7 +114,7 @@ export const skuDetails = mysqlTable(
 	})
 );
 
-export const quotes = mysqlTable(
+export const quotes = pgTable(
 	'quotes',
 	{
 		id: serial('id').primaryKey().notNull(),
@@ -149,7 +136,7 @@ export const quotes = mysqlTable(
 	})
 );
 
-export const quoteItems = mysqlTable(
+export const quoteItems = pgTable(
 	'quote_items',
 	{
 		createdAt: timestamp('created_at', { mode: 'date', precision: 3 })
@@ -179,7 +166,7 @@ export const quoteItems = mysqlTable(
 	})
 );
 
-export const skuRestocks = mysqlTable(
+export const skuRestocks = pgTable(
 	'sku_restocks',
 	{
 		id: serial('id').primaryKey().notNull(),
@@ -207,7 +194,7 @@ export const skuRestocks = mysqlTable(
 	})
 );
 
-export const skuStock = mysqlTable(
+export const skuStock = pgTable(
 	'sku_stock',
 	{
 		quantity: integer('quantity').notNull(),

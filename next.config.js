@@ -1,4 +1,4 @@
-import withBundleAnalyzer from '@next/bundle-analyzer';
+// import withBundleAnalyzer from '@next/bundle-analyzer';
 
 /**
  * Don't be scared of the generics here.
@@ -8,13 +8,13 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
  * @param {T} config - A generic parameter that flows through to the return type
  * @constraint {{import('next').NextConfig}}
  */
-function defineNextConfig(config) {
-	return withBundleAnalyzer({
-		enabled: process.env.ANALYZE === 'true'
-	})(config);
-}
+// function defineNextConfig(config) {
+// 	return withBundleAnalyzer({
+// 		enabled: process.env.ANALYZE === 'true'
+// 	})(config);
+// }
 
-export default defineNextConfig({
+export default {
 	reactStrictMode: true,
 
 	// typescript: {
@@ -23,16 +23,6 @@ export default defineNextConfig({
 	// eslint: {
 	// 	ignoreDuringBuilds: true
 	// },
-
-	webpack: (config) => {
-		config.experiments = {
-			...config.experiments,
-			asyncWebAssembly: true,
-			topLevelAwait: true
-		};
-
-		return config;
-	},
 
 	images: {
 		remotePatterns: [
@@ -56,4 +46,4 @@ export default defineNextConfig({
 			]
 		}
 	]
-});
+};

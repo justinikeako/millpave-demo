@@ -7,7 +7,7 @@ import { CineonToneMapping, RepeatWrapping } from 'three';
 import { OrbitControls, useTexture } from '@react-three/drei';
 import { useState } from 'react';
 import { cn } from '~/lib/utils';
-import { OrchestratedReveal } from '~/components/reveal';
+import { Reveal, RevealContainer } from '~/components/reveal';
 
 function Scene({ color }: { color: string }) {
 	const normalMap = useTexture('/normal-map.webp');
@@ -82,14 +82,14 @@ function Page() {
 				<Scene color={selectedColor.hex} />
 			</Canvas>
 
-			<div className="absolute bottom-4 w-full space-y-2 px-4">
-				<OrchestratedReveal asChild delay={0.1}>
+			<RevealContainer className="absolute bottom-4 w-full space-y-2 px-4">
+				<Reveal asChild delay={0.1}>
 					<p className="mx-auto w-fit rounded-full bg-black/75 px-2 py-1 text-center text-white/75 shadow-md ring-1 ring-black/10 backdrop-blur-md">
 						Selected Color: {selectedColor.displayName}
 					</p>
-				</OrchestratedReveal>
+				</Reveal>
 
-				<OrchestratedReveal asChild delay={0.2}>
+				<Reveal asChild delay={0.2}>
 					<ul className="no-scrollbar mx-auto flex w-fit max-w-full gap-1 overflow-auto rounded-full bg-black/75 px-1.5 py-1 shadow-md ring-1 ring-black/10 backdrop-blur-md">
 						{Object.entries(colors).map(([colorId, { hex }]) => (
 							<li key={colorId} className="contents">
@@ -107,8 +107,8 @@ function Page() {
 							</li>
 						))}
 					</ul>
-				</OrchestratedReveal>
-			</div>
+				</Reveal>
+			</RevealContainer>
 		</div>
 	);
 }

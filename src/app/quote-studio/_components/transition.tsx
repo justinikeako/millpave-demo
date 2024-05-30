@@ -27,24 +27,27 @@ const variants: Variants = {
 	})
 };
 
-export function Transition(props: React.PropsWithChildren) {
-	const { direction } = useStageContext();
-	const key = usePathname();
+// export function Transition(props: React.PropsWithChildren) {
+// 	const { direction } = useStageContext();
+// 	const key = usePathname();
 
-	return (
-		<AnimatePresence initial={false} mode="wait" custom={direction}>
-			<motion.div
-				key={key}
-				initial="hidden"
-				animate="enter"
-				exit="exit"
-				custom={direction}
-				variants={variants}
-				transition={{ type: 'linear' }}
-				className="overflow-hidden"
-			>
-				<FrozenRouter>{props.children}</FrozenRouter>
-			</motion.div>
-		</AnimatePresence>
-	);
+// 	return (
+// 		<AnimatePresence initial={false} mode="wait" custom={direction}>
+// 			<motion.div
+// 				key={key}
+// 				initial="hidden"
+// 				animate="enter"
+// 				exit="exit"
+// 				custom={direction}
+// 				variants={variants}
+// 				transition={{ type: 'linear' }}
+// 				className="overflow-hidden"
+// 			>
+// 				<FrozenRouter>{props.children}</FrozenRouter>
+// 			</motion.div>
+// 		</AnimatePresence>
+// 	);
+// }
+export function Transition(props: React.PropsWithChildren) {
+	return props.children;
 }

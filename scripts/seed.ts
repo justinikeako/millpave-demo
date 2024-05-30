@@ -10,15 +10,11 @@ import {
 	skus
 } from '~/server/db/schema';
 
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { Client } from '@planetscale/database';
-import { env } from '~/env.mjs';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { createClient } from '@vercel/postgres';
 
-const db = drizzle(
-	new Client({
-		url: env.DATABASE_URL
-	}).connection()
-);
+const client = createClient();
+const db = drizzle(client);
 
 type NewCategory = typeof categories.$inferInsert;
 type NewProduct = typeof products.$inferInsert;
@@ -1151,11 +1147,11 @@ async function addPaverRestockQueue() {
 							date: fromFactory
 								? addBusinessDays(new Date(), Math.round(Math.random() * 20))
 								: coinFlip(0.75)
-								? addHours(new Date(), Math.round(Math.random() * 3))
-								: addBusinessDays(new Date(), Math.round(Math.random() * 7)),
+									? addHours(new Date(), Math.round(Math.random() * 3))
+									: addBusinessDays(new Date(), Math.round(Math.random() * 7)),
 							fulfilled: false
 						}
-				  ]
+					]
 				: [];
 		});
 	}
@@ -1172,6 +1168,8 @@ async function addPaverRestockQueue() {
 }
 
 async function main() {
+	await client.connect();
+
 	await addPickupLocations();
 	await addPavers();
 	await addSlabsAndBlocks();
@@ -1186,9 +1184,10 @@ async function main() {
 try {
 	await main();
 
+	await client.end();
 	console.log('Successfully executed seed script.');
 } catch (e) {
 	console.error(e);
-
-	process.exit(1);
+} finally {
+	await client.end();
 }

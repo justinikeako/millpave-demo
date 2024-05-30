@@ -1,9 +1,9 @@
-const colors = require('tailwindcss/colors');
-const plugin = require('tailwindcss/plugin');
+import type { Config } from 'tailwindcss';
+import colors from 'tailwindcss/colors';
+import plugin from 'tailwindcss/plugin';
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-	content: ['./src/**/*.{js,ts,jsx,tsx}'],
+export default {
+	content: ['./src/**/*.tsx'],
 	theme: {
 		container: {
 			center: true
@@ -110,4 +110,4 @@ module.exports = {
 			});
 		})
 	]
-};
+} satisfies Config;

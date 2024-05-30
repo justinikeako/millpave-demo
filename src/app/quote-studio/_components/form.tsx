@@ -26,12 +26,14 @@ export function StageForm(props: StageFormProps) {
 	const { direction } = useStageContext();
 
 	return (
-		<motion.form
-			custom={direction}
-			variants={variants}
-			initial="enter"
-			animate="center"
-			exit="exit"
+		// <motion.form
+		// 	custom={direction}
+		// 	variants={variants}
+		// 	initial="enter"
+		// 	animate="center"
+		// 	exit="exit"
+		// >
+		<form
 			id="stage-form"
 			className={cn(
 				'min-h-[100svh] px-6 py-24 md:py-32 lg:px-16',
@@ -39,6 +41,7 @@ export function StageForm(props: StageFormProps) {
 			)}
 		>
 			{props.children}
-		</motion.form>
+		</form>
+		// </motion.form>
 	);
 }

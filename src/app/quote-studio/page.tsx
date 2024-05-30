@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from '~/components/button';
-import { OrchestratedReveal } from '~/components/reveal';
+import { Reveal } from '~/components/reveal';
 import Link from 'next/link';
 import { Icon } from '~/components/icon';
 import { Balancer } from 'react-wrap-balancer';
@@ -23,7 +23,8 @@ function Page() {
 				/>
 			</div>
 
-			<OrchestratedReveal
+			<Reveal
+				standalone
 				delay={0.1}
 				data-header-transparent
 				exit={{ opacity: 0, transition: { duration: 0.3 } }}
@@ -60,7 +61,7 @@ function Page() {
 						<Link href="/">Return to Home Page</Link>
 					</Button>
 				</div>
-			</OrchestratedReveal>
+			</Reveal>
 		</>
 	);
 }

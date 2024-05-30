@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from './button';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
-import { OrchestratedReveal } from './reveal';
+import { Reveal } from './reveal';
 import { cn } from '~/lib/utils';
 import { Icon } from './icon';
 import { RemoveScroll } from 'react-remove-scroll';
@@ -41,7 +41,8 @@ function Chat() {
 	return (
 		<Dialog.Root open={open} onOpenChange={setOpen}>
 			<AnimatePresence>
-				<OrchestratedReveal
+				<Reveal
+					standalone
 					delay={0.4}
 					className="pointer-events-none fixed inset-0 z-20 flex items-end justify-end p-4"
 				>
@@ -214,7 +215,7 @@ function Chat() {
 							)}
 						</AnimatePresence>
 					</div>
-				</OrchestratedReveal>
+				</Reveal>
 			</AnimatePresence>
 		</Dialog.Root>
 	);

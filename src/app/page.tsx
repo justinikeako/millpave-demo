@@ -1,4 +1,4 @@
-import { ViewportReveal } from '~/components/reveal';
+import { Reveal } from '~/components/reveal';
 import { Footer } from '~/components/footer';
 import Link from 'next/link';
 import { Balancer } from 'react-wrap-balancer';
@@ -20,7 +20,7 @@ function Page() {
 			<Main>
 				<Hero />
 
-				<ViewportReveal asChild>
+				<Reveal standalone asChild>
 					<FullWidthSection className="space-y-8 p-6 lg:space-y-12 lg:p-16">
 						<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 							<h2 className="font-display text-4xl sm:text-6xl md:text-6xl">
@@ -69,7 +69,7 @@ function Page() {
 							<Link href="/products">View All Products</Link>
 						</Button>
 					</FullWidthSection>
-				</ViewportReveal>
+				</Reveal>
 
 				<GetAQuoteSection />
 				<InspirationSection />

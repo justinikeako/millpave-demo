@@ -19,16 +19,16 @@ export type FormattedProductDetails = {
 	value: string | number;
 }[];
 
-type ExtendedProductDetails<TRawDetails> = Omit<
+type ExtendedProductDetails<Details> = Omit<
 	SkuDetails,
 	'rawData' | 'formattedData'
 > & {
-	rawData: TRawDetails | null;
+	rawData: Details | null;
 	formattedData: FormattedProductDetails;
 };
 
-type SkuWithDetails<TRawDetails> = Sku & {
-	details: ExtendedProductDetails<TRawDetails>;
+type SkuWithDetails<Details> = Sku & {
+	details: ExtendedProductDetails<Details>;
 };
 
 export type StartingSku = Pick<Sku, 'price' | 'unit'>;
@@ -37,14 +37,14 @@ type Similar = Pick<Product, 'id' | 'defaultSkuId' | 'displayName'> & {
 	startingSku: StartingSku;
 };
 
-type FullProduct<TRawDetails, TSkuIdFragments> = Product & {
-	details: ExtendedProductDetails<TRawDetails>[];
+type FullProduct<Details, SkuIdFragments> = Product & {
+	details: ExtendedProductDetails<Details>[];
 	skus: Sku[];
 	category: Category;
 	stock: Stock[];
 	restock: Restock[];
 	similar: Similar[];
-	skuIdFragments: TSkuIdFragments;
+	skuIdFragments: SkuIdFragments;
 };
 
 export type PaverDetails = {

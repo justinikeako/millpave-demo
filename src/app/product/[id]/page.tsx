@@ -6,7 +6,7 @@ import { cn } from '~/lib/utils';
 import { PaverEstimator } from './_components/paver-estimator';
 import { Icon } from '~/components/icon';
 import { formatPrice } from '~/utils/format';
-import { OrchestratedReveal, ViewportReveal } from '~/components/reveal';
+import { Reveal, RevealContainer } from '~/components/reveal';
 import { ProductStock } from '~/components/product-stock';
 import { findSku, unitDisplayNameDictionary } from '~/lib/utils';
 import { LocationsSection } from '~/components/sections/locations';
@@ -26,7 +26,7 @@ import { cache } from 'react';
 export const runtime = 'experimental-edge';
 
 const getProduct = cache(async function (id: string) {
-	return await api.product.getById.query({ productId: id });
+	return await api.product.getById({ productId: id });
 });
 
 type PageProps = {
@@ -57,7 +57,7 @@ export async function generateMetadata({ params, searchParams }: PageProps) {
 							)}.png`
 						}
 					}
-			  }
+				}
 			: {})
 	} as Metadata;
 }
@@ -90,109 +90,111 @@ export default async function Page({ params, searchParams }: PageProps) {
 		<>
 			<Main>
 				{/* Main Content */}
-				<section className="flex flex-col gap-8 py-8 sm:flex-row lg:gap-16 lg:py-16">
-					{/* Gallery */}
+				<RevealContainer asChild>
+					<section className="flex flex-col gap-8 py-8 sm:flex-row lg:gap-16 lg:py-16">
+						{/* Gallery */}
 
-					<OrchestratedReveal delay={0.1} className="flex-1">
-						<Gallery sku={currentSku} showModelViewer={product.hasModels} />
-					</OrchestratedReveal>
+						<Reveal delay={0.1} className="flex-1">
+							<Gallery sku={currentSku} showModelViewer={product.hasModels} />
+						</Reveal>
 
-					{/* Supporting Details */}
-					<OrchestratedReveal
-						delay={0.2}
-						className="flex flex-1 flex-col space-y-8 lg:space-y-12"
-					>
-						{/* Basic Info */}
-						<section className="space-y-2">
-							<div>
-								<p className="font-display text-lg lg:text-xl">
-									<Link href={`/products/${product.category.id}`}>
-										{product.category.displayName}
-									</Link>
-								</p>
-								<h1 className="font-display text-4xl leading-tight md:text-5xl lg:text-6xl xl:text-7xl/tight">
-									{product.displayName}
-								</h1>
-							</div>
-							<div className="flex flex-wrap justify-between gap-x-4 font-display text-lg lg:text-xl">
-								<div className="flex flex-wrap items-center gap-x-4">
-									<p className="whitespace-nowrap">
-										{formatPrice(currentSku.price)} per&nbsp;
-										{currentSku.unit === 'sqft'
-											? unitDisplayNameDictionary.sqft[0]
-											: currentSku.unit}
+						{/* Supporting Details */}
+						<Reveal
+							delay={0.2}
+							className="flex flex-1 flex-col space-y-8 lg:space-y-12"
+						>
+							{/* Basic Info */}
+							<section className="space-y-2">
+								<div>
+									<p className="font-display text-lg lg:text-xl">
+										<Link href={`/products/${product.category.id}`}>
+											{product.category.displayName}
+										</Link>
 									</p>
-									{currentSku.details.rawData?.pcs_per_sqft && (
-										<>
-											<div className="h-[1.15em] w-px bg-current" />
-											<p className="whitespace-nowrap">
-												{formatPrice(
-													currentSku.price /
-														currentSku.details.rawData.pcs_per_sqft
-												)}
-												&nbsp;per unit
-											</p>
-										</>
-									)}
+									<h1 className="font-display text-4xl leading-tight md:text-5xl lg:text-6xl xl:text-7xl/tight">
+										{product.displayName}
+									</h1>
 								</div>
+								<div className="flex flex-wrap justify-between gap-x-4 font-display text-lg lg:text-xl">
+									<div className="flex flex-wrap items-center gap-x-4">
+										<p className="whitespace-nowrap">
+											{formatPrice(currentSku.price)} per&nbsp;
+											{currentSku.unit === 'sqft'
+												? unitDisplayNameDictionary.sqft[0]
+												: currentSku.unit}
+										</p>
+										{currentSku.details.rawData?.pcs_per_sqft && (
+											<>
+												<div className="h-[1.15em] w-px bg-current" />
+												<p className="whitespace-nowrap">
+													{formatPrice(
+														currentSku.price /
+															currentSku.details.rawData.pcs_per_sqft
+													)}
+													&nbsp;per unit
+												</p>
+											</>
+										)}
+									</div>
 
-								<ProductStock
-									productId={product.id}
-									skuId={skuId}
-									outOfStockMessage={
-										['concrete_pavers', 'slabs_blocks'].includes(
-											product.category.id
-										)
-											? 'Done to order'
-											: undefined
-									}
-								/>
-							</div>
-						</section>
+									<ProductStock
+										productId={product.id}
+										skuId={skuId}
+										outOfStockMessage={
+											['concrete_pavers', 'slabs_blocks'].includes(
+												product.category.id
+											)
+												? 'Done to order'
+												: undefined
+										}
+									/>
+								</div>
+							</section>
 
-						{/* Description (desktop) */}
-						<Section heading="Description" className="max-lg:hidden">
-							<p>{product.description}</p>
-						</Section>
+							{/* Description (desktop) */}
+							<Section heading="Description" className="max-lg:hidden">
+								<p>{product.description}</p>
+							</Section>
 
-						{/* Sku Picker */}
-						<SkuPicker
-							skuId={skuId}
-							variantIdTemplate={product.variantIdTemplate}
-						/>
-
-						{/* Paver Estimator */}
-						{product.estimator === 'paver' && currentSku.details?.rawData && (
-							<PaverEstimator
-								paverDetails={currentSku.details.rawData}
-								sku={currentSku}
+							{/* Sku Picker */}
+							<SkuPicker
+								skuId={skuId}
+								variantIdTemplate={product.variantIdTemplate}
 							/>
-						)}
 
-						{/* Description (Mobile) */}
-						<Section heading="Description" className="lg:hidden">
-							<p>{product.description}</p>
-						</Section>
+							{/* Paver Estimator */}
+							{product.estimator === 'paver' && currentSku.details?.rawData && (
+								<PaverEstimator
+									paverDetails={currentSku.details.rawData}
+									sku={currentSku}
+								/>
+							)}
 
-						{/* Specifications */}
-						<Section heading="Specifications">
-							<ul>
-								{currentSku.details.formattedData.map((detail, index) => (
-									<li
-										key={index}
-										className="flex justify-between rounded-sm border-b border-gray-300 py-3 last:border-none"
-									>
-										<p>{detail.displayName}</p>
-										<p>{detail.value}</p>
-									</li>
-								))}
-							</ul>
-						</Section>
-					</OrchestratedReveal>
-				</section>
+							{/* Description (Mobile) */}
+							<Section heading="Description" className="lg:hidden">
+								<p>{product.description}</p>
+							</Section>
+
+							{/* Specifications */}
+							<Section heading="Specifications">
+								<ul>
+									{currentSku.details.formattedData.map((detail, index) => (
+										<li
+											key={index}
+											className="flex justify-between rounded-sm border-b border-gray-300 py-3 last:border-none"
+										>
+											<p>{detail.displayName}</p>
+											<p>{detail.value}</p>
+										</li>
+									))}
+								</ul>
+							</Section>
+						</Reveal>
+					</section>
+				</RevealContainer>
 
 				{/* Similar Products */}
-				<ViewportReveal className="flex flex-col space-y-16 py-16">
+				<Reveal standalone className="flex flex-col space-y-16 py-16">
 					<h2 className="max-w-[28ch] self-center text-center font-display text-3xl lg:text-4xl xl:text-5xl">
 						Similar to {product.displayName}
 					</h2>
@@ -222,7 +224,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 							</li>
 						</HorizontalScroller>
 					</div>
-				</ViewportReveal>
+				</Reveal>
 
 				<GetAQuoteSection />
 

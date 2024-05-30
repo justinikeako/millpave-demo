@@ -22,8 +22,9 @@ export const productRouter = createTRPCRouter({
 					details: true,
 					skus: true,
 					recommendations: {
-						orderBy: (productRecommendations, { desc }) =>
-							desc(productRecommendations.relevance),
+						orderBy: (productRecommendations, { desc }) => [
+							desc(productRecommendations.relevance)
+						],
 						with: {
 							recommending: {
 								columns: {

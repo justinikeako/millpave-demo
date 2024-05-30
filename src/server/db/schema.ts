@@ -1,39 +1,30 @@
+import { relations } from 'drizzle-orm';
 import {
-	mysqlTableCreator,
+	pgTableCreator,
 	varchar,
 	index,
 	primaryKey,
 	text,
 	json,
-	datetime,
-	double,
-	int,
+	timestamp,
+	doublePrecision,
+	integer,
+	boolean,
 	customType,
-	bigint
-} from 'drizzle-orm/mysql-core';
-import { relations, sql } from 'drizzle-orm';
+	bigint,
+	serial
+} from 'drizzle-orm/pg-core';
 import type {
 	FormattedProductDetails,
 	PaverDetails,
 	VariantIdTemplate
 } from '~/types/product';
 
-const mysqlTable = mysqlTableCreator((name) => 'millpave_' + name);
+const mysqlTable = pgTableCreator((name) => 'millpave_' + name);
 
 const price = customType<{ data: number; driverData: string | number }>({
-	dataType: () => 'decimal(10,2)',
+	dataType: () => 'numeric(14,2)',
 	fromDriver: (value) => (typeof value === 'number' ? value : parseFloat(value))
-});
-
-const bigprice = customType<{ data: number; driverData: string | number }>({
-	dataType: () => 'decimal(14,2)',
-	fromDriver: (value) => (typeof value === 'number' ? value : parseFloat(value))
-});
-
-const boolean = customType<{ data: boolean; driverData: number }>({
-	dataType: () => 'tinyint',
-	toDriver: (value) => Number(value),
-	fromDriver: (value) => value > 0
 });
 
 export const categories = mysqlTable('categories', {
@@ -53,7 +44,9 @@ export const products = mysqlTable(
 		displayName: varchar('display_name', { length: 48 }).notNull(),
 		description: text('description').notNull(),
 		defaultSkuId: varchar('default_sku_id', { length: 48 }).notNull(),
-		categoryId: varchar('category_id', { length: 32 }).notNull(),
+		categoryId: varchar('category_id', { length: 32 })
+			.notNull()
+			.references(() => categories.id),
 		variantIdTemplate: json('variant_id_template')
 			.notNull()
 			.$type<VariantIdTemplate>(),
@@ -66,6 +59,23 @@ export const products = mysqlTable(
 	})
 );
 
+export const productRecommendations = mysqlTable(
+	'product_recommendations',
+	{
+		relevance: integer('relevance').notNull(),
+		recommenderId: varchar('recommender_id', { length: 32 }).notNull(),
+		recommendingId: varchar('recommending_id', { length: 32 }).notNull()
+	},
+	(table) => ({
+		productRecommendationsRecommenderIdIdx: index(
+			'product_recommendations_recommender_id_idx'
+		).on(table.recommenderId),
+		productRecommendationsRecommenderIdRecommendingId: primaryKey({
+			columns: [table.recommenderId, table.recommendingId]
+		})
+	})
+);
+
 export const skus = mysqlTable(
 	'skus',
 	{
@@ -73,8 +83,12 @@ export const skus = mysqlTable(
 		displayName: varchar('display_name', { length: 64 }).notNull(),
 		price: price('price').notNull(),
 		unit: varchar('unit', { length: 4 }).notNull(),
-		productId: varchar('product_id', { length: 32 }).notNull(),
-		detailsMatcher: varchar('details_matcher', { length: 48 }).notNull()
+		productId: varchar('product_id', { length: 32 })
+			.notNull()
+			.references(() => products.id),
+		detailsMatcher: varchar('details_matcher', { length: 48 })
+			.notNull()
+			.references(() => skuDetails.matcher)
 	},
 	(table) => ({
 		skusProductIdIdx: index('skus_product_id_idx').on(table.productId)
@@ -85,7 +99,9 @@ export const skuDetails = mysqlTable(
 	'sku_details',
 	{
 		matcher: varchar('matcher', { length: 48 }).primaryKey().notNull(),
-		productId: varchar('product_id', { length: 32 }).notNull(),
+		productId: varchar('product_id', { length: 32 })
+			.notNull()
+			.references(() => products.id),
 		rawData: json('raw_data').$type<PaverDetails | null>(),
 		formattedData: json('formatted_data')
 			.notNull()
@@ -101,19 +117,19 @@ export const skuDetails = mysqlTable(
 export const quotes = mysqlTable(
 	'quotes',
 	{
-		id: bigint('id', { mode: 'number' }).autoincrement().primaryKey().notNull(),
-		createdAt: datetime('created_at', { mode: 'date', fsp: 3 })
-			.default(sql`CURRENT_TIMESTAMP(3)`)
+		id: serial('id').primaryKey().notNull(),
+		createdAt: timestamp('created_at', { mode: 'date', precision: 3 })
+			.defaultNow()
 			.notNull(),
-		updatedAt: datetime('updated_at', { mode: 'date', fsp: 3 })
-			.default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+		updatedAt: timestamp('updated_at', { mode: 'date', precision: 3 })
+			.defaultNow()
 			.notNull(),
 		title: varchar('title', { length: 64 }).default('Untitled Quote').notNull(),
-		totalArea: double('area').default(0).notNull(),
-		totalWeight: double('weight').default(0).notNull(),
-		subtotal: bigprice('subtotal').default(0).notNull(),
-		tax: bigprice('tax').default(0).notNull(),
-		total: bigprice('total').default(0).notNull()
+		totalArea: doublePrecision('area').default(0).notNull(),
+		totalWeight: doublePrecision('weight').default(0).notNull(),
+		subtotal: price('subtotal').default(0).notNull(),
+		tax: price('tax').default(0).notNull(),
+		total: price('total').default(0).notNull()
 	},
 	(table) => ({
 		quotesTitleIdx: index('quotes_title_idx').on(table.title)
@@ -123,38 +139,49 @@ export const quotes = mysqlTable(
 export const quoteItems = mysqlTable(
 	'quote_items',
 	{
-		createdAt: datetime('created_at', { mode: 'date', fsp: 3 })
-			.default(sql`CURRENT_TIMESTAMP(3)`)
+		createdAt: timestamp('created_at', { mode: 'date', precision: 3 })
+			.defaultNow()
 			.notNull(),
-		skuId: varchar('sku_id', { length: 48 }).notNull(),
-		quantity: int('quantity').notNull(),
+		quantity: integer('quantity').notNull(),
 		unit: varchar('unit', { length: 4 }).notNull(),
-		cost: bigprice('cost').notNull(),
-		area: double('area'),
-		weight: double('weight').notNull(),
-		pickupLocationId: varchar('pickup_location_id', { length: 24 }).notNull(),
-		quoteId: bigint('id', { mode: 'number' }).notNull(),
+		cost: price('cost').notNull(),
+		area: doublePrecision('area'),
+		weight: doublePrecision('weight').notNull(),
+		skuId: varchar('sku_id', { length: 48 })
+			.notNull()
+			.references(() => skus.id),
+		pickupLocationId: varchar('pickup_location_id', { length: 24 })
+			.notNull()
+			.references(() => pickupLocations.id),
+		quoteId: bigint('id', { mode: 'number' })
+			.notNull()
+			.references(() => quotes.id),
 		metadata: json('metadata')
 	},
 	(table) => ({
 		quoteItemsQuoteIdIdx: index('quote_items_quote_id_idx').on(table.quoteId),
-		quoteItemsSkuIdPickupLocationIdQuoteId: primaryKey(
-			table.skuId,
-			table.pickupLocationId,
-			table.quoteId
-		)
+		quoteItemsSkuIdPickupLocationIdQuoteId: primaryKey({
+			columns: [table.skuId, table.pickupLocationId, table.quoteId]
+		})
 	})
 );
 
 export const skuRestocks = mysqlTable(
 	'sku_restocks',
 	{
-		skuId: varchar('sku_id', { length: 48 }).notNull(),
-		quantity: int('quantity').notNull(),
-		date: datetime('date', { mode: 'date', fsp: 3 }).notNull(),
+		id: serial('id').primaryKey().notNull(),
+		quantity: integer('quantity').notNull(),
+		date: timestamp('date', { mode: 'date', precision: 3 }).notNull(),
 		fulfilled: boolean('fulfilled').default(false).notNull(),
-		locationId: varchar('location_id', { length: 24 }).notNull(),
-		productId: varchar('product_id', { length: 32 }).notNull()
+		skuId: varchar('sku_id', { length: 48 })
+			.notNull()
+			.references(() => skus.id),
+		locationId: varchar('location_id', { length: 24 })
+			.notNull()
+			.references(() => pickupLocations.id),
+		productId: varchar('product_id', { length: 32 })
+			.notNull()
+			.references(() => products.id)
 	},
 	(table) => ({
 		skuRestocksLocationIdIdx: index('sku_restocks_location_id_idx').on(
@@ -163,36 +190,23 @@ export const skuRestocks = mysqlTable(
 		skuRestocksProductIdIdx: index('sku_restocks_product_id_idx').on(
 			table.productId
 		),
-		skuRestocksSkuIdIdx: index('sku_restocks_sku_id_idx').on(table.skuId),
-		skuRestocksSkuIdLocationId: primaryKey(table.skuId, table.locationId)
-	})
-);
-
-export const productRecommendations = mysqlTable(
-	'product_recommendations',
-	{
-		relevance: int('relevance').notNull(),
-		recommenderId: varchar('recommender_id', { length: 32 }).notNull(),
-		recommendingId: varchar('recommending_id', { length: 32 }).notNull()
-	},
-	(table) => ({
-		productRecommendationsRecommenderIdIdx: index(
-			'product_recommendations_recommender_id_idx'
-		).on(table.recommenderId),
-		productRecommendationsRecommenderIdRecommendingId: primaryKey(
-			table.recommenderId,
-			table.recommendingId
-		)
+		skuRestocksSkuIdIdx: index('sku_restocks_sku_id_idx').on(table.skuId)
 	})
 );
 
 export const skuStock = mysqlTable(
 	'sku_stock',
 	{
-		quantity: int('quantity').notNull(),
-		skuId: varchar('sku_id', { length: 191 }).notNull(),
-		locationId: varchar('location_id', { length: 191 }).notNull(),
-		productId: varchar('product_id', { length: 191 }).notNull()
+		quantity: integer('quantity').notNull(),
+		skuId: varchar('sku_id', { length: 191 })
+			.notNull()
+			.references(() => skus.id),
+		locationId: varchar('location_id', { length: 191 })
+			.notNull()
+			.references(() => pickupLocations.id),
+		productId: varchar('product_id', { length: 191 })
+			.notNull()
+			.references(() => products.id)
 	},
 	(table) => ({
 		skuStockLocationIdIdx: index('sku_stock_location_id_idx').on(
@@ -200,7 +214,9 @@ export const skuStock = mysqlTable(
 		),
 		skuStockProductIdIdx: index('sku_stock_product_id_idx').on(table.productId),
 		skuStockSkuIdIdx: index('sku_stock_sku_id_idx').on(table.skuId),
-		skuStockSkuIdLocationId: primaryKey(table.skuId, table.locationId)
+		skuStockSkuIdLocationId: primaryKey({
+			columns: [table.skuId, table.locationId]
+		})
 	})
 );
 

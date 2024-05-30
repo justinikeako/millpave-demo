@@ -1,4 +1,4 @@
-import { ViewportReveal } from '~/components/reveal';
+import { Reveal, RevealContainer } from '~/components/reveal';
 import { FullWidthSection } from './full-width';
 import { Balancer } from 'react-wrap-balancer';
 import { Slot } from '@radix-ui/react-slot';
@@ -19,7 +19,7 @@ export function SplitSection({
 	slot
 }: SplitSectionProps) {
 	return (
-		<ViewportReveal asChild>
+		<Reveal standalone asChild>
 			<FullWidthSection className="flex flex-col gap-4 sm:flex-row sm:gap-2 md:gap-4 lg:gap-16">
 				<div className="flex flex-col justify-center px-6 pt-16 sm:order-2 sm:flex-[5] sm:py-32 lg:pl-0 lg:pr-16">
 					<div className="max-w-sm xl:max-w-md">
@@ -35,6 +35,6 @@ export function SplitSection({
 				</div>
 				<Slot className="py-4 sm:order-1 sm:flex-[6] sm:py-0">{slot}</Slot>
 			</FullWidthSection>
-		</ViewportReveal>
+		</Reveal>
 	);
 }

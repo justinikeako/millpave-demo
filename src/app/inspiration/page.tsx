@@ -1,6 +1,6 @@
 import React from 'react';
 import { Footer } from '~/components/footer';
-import { OrchestratedReveal, ViewportReveal } from '../../components/reveal';
+import { RevealContainer, Reveal } from '../../components/reveal';
 import { Main } from '~/components/main';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
 import { FullWidthSection } from '~/components/sections/full-width';
@@ -31,51 +31,53 @@ const categories = [
 export default function Page() {
 	return (
 		<>
-			<Main className="space-y-32 !pt-16 sm:!pt-24">
-				<section className="space-y-24">
-					<OrchestratedReveal delay={0.1} asChild>
-						<h1 className="mx-auto max-w-[21ch] text-center font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
-							Which types of projects would you like to see?
-						</h1>
-					</OrchestratedReveal>
+			<RevealContainer asChild>
+				<Main className="space-y-32 !pt-16 sm:!pt-24">
+					<section className="space-y-24">
+						<Reveal delay={0.1} asChild>
+							<h1 className="mx-auto max-w-[21ch] text-center font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
+								Which types of projects would you like to see?
+							</h1>
+						</Reveal>
 
-					<OrchestratedReveal asChild delay={0.2}>
-						<ul className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2">
-							{categories.map((category) => (
-								<CategoryFilter
-									key={category.id}
-									thumbnailImage={`${category.image}`}
-									{...category}
-								/>
-							))}
-						</ul>
-					</OrchestratedReveal>
-				</section>
-
-				<ViewportReveal asChild className="space-y-4 sm:space-y-8">
-					<FullWidthSection className="px-1 sm:px-2 lg:px-3 xl:px-4 2xl:px-6">
-						<div className="grid-cols-3 gap-4 overflow-hidden lg:grid lg:grid-cols-4">
-							<div className="mb-8 flex items-center">
-								<p className="mx-auto max-w-md text-center font-display text-xl sm:text-3xl">
-									<Balancer>
-										See how our products can transform your outdoor space.
-									</Balancer>
-								</p>
-							</div>
-
-							<ul className="grid grid-cols-3 gap-1 sm:gap-2 lg:contents lg:gap-3">
-								{[...Array(4).keys()].map((index) => (
-									<GalleryImage key={index} id={index} />
+						<Reveal asChild delay={0.2}>
+							<ul className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2">
+								{categories.map((category) => (
+									<CategoryFilter
+										key={category.id}
+										thumbnailImage={`${category.image}`}
+										{...category}
+									/>
 								))}
 							</ul>
-						</div>
-					</FullWidthSection>
-				</ViewportReveal>
+						</Reveal>
+					</section>
 
-				<GetAQuoteSection />
-				<LearnSection />
-				<AugmentedRealityGallerySection />
-			</Main>
+					<Reveal asChild className="space-y-4 sm:space-y-8">
+						<FullWidthSection className="px-1 sm:px-2 lg:px-3 xl:px-4 2xl:px-6">
+							<div className="grid-cols-3 gap-4 overflow-hidden lg:grid lg:grid-cols-4">
+								<div className="mb-8 flex items-center">
+									<p className="mx-auto max-w-md text-center font-display text-xl sm:text-3xl">
+										<Balancer>
+											See how our products can transform your outdoor space.
+										</Balancer>
+									</p>
+								</div>
+
+								<ul className="grid grid-cols-3 gap-1 sm:gap-2 lg:contents lg:gap-3">
+									{[...Array(4).keys()].map((index) => (
+										<GalleryImage key={index} id={index} />
+									))}
+								</ul>
+							</div>
+						</FullWidthSection>
+					</Reveal>
+
+					<GetAQuoteSection />
+					<LearnSection />
+					<AugmentedRealityGallerySection />
+				</Main>
+			</RevealContainer>
 
 			<Footer />
 		</>

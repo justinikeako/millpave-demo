@@ -9,15 +9,10 @@ import {
 	skus
 } from '~/server/db/schema';
 
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { Client } from '@planetscale/database';
-import { env } from '~/env.mjs';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { sql, createClient } from '@vercel/postgres';
 
-const db = drizzle(
-	new Client({
-		url: env.DATABASE_URL
-	}).connection()
-);
+export const db = drizzle(sql);
 
 function main() {
 	console.log('💣 Dropping db nuke');

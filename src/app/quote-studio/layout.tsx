@@ -16,7 +16,7 @@ export const metadata = {
 export default function Layout({ children }: React.PropsWithChildren) {
 	return (
 		<StageProvider>
-			<Transition>{children}</Transition>
+			{children}
 			<StageFooter />
 		</StageProvider>
 	);

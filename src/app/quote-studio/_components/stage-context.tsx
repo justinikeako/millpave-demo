@@ -574,7 +574,7 @@ function getQuote(project: StoneProject, stoneMetadataArray: StoneMetadata[]) {
 				? {
 						...item,
 						sqftCoverage: roundFractionDigits(item.sqftCoverage * 1.05, 2)
-				  }
+					}
 				: item,
 			reducePickups
 		)

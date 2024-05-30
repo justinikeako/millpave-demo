@@ -6,7 +6,7 @@ import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Logo } from './logo';
-import { OrchestratedReveal } from './reveal';
+import { Reveal } from './reveal';
 import { Icon } from './icon';
 import { cn } from '~/lib/utils';
 import { RemoveScroll } from 'react-remove-scroll';
@@ -132,62 +132,64 @@ function Header() {
 
 	return (
 		<Dialog.Root open={menuOpen} modal onOpenChange={setMenuOpen}>
-			<header
-				data-minimal={minimal}
-				data-transparent={isTransparent || undefined}
-				className={cn(
-					RemoveScroll.classNames.fullWidth,
-					'group top-0 z-20 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0',
-					minimal ? 'absolute inset-x-0' : 'sticky',
-					previewStudio &&
-						'after:absolute after:top-0 after:-z-10 after:size-full after:bg-gradient-to-b after:from-black/50'
-				)}
-				ref={headerRef}
-			>
-				<OrchestratedReveal className="flex h-16 items-center px-6 2xl:container lg:px-16">
-					<Dialog.Trigger asChild>
-						<Button
-							intent="tertiary"
-							className="group-data-[minimal=true]:order-3 group-data-[transparent]:text-gray-100 group-data-[minimal=false]:lg:hidden"
-						>
-							<Icon name="menu" size={24} />
-						</Button>
-					</Dialog.Trigger>
+			<Reveal asChild standalone>
+				<header
+					data-minimal={minimal}
+					data-transparent={isTransparent || undefined}
+					className={cn(
+						RemoveScroll.classNames.fullWidth,
+						'group top-0 z-20 -mb-px border-b border-gray-500/5 bg-gray-100/90 text-gray-900 transition-colors before:absolute before:inset-0 before:-z-10 before:backdrop-blur-sm before:transition-opacity data-[transparent]:border-transparent data-[transparent]:bg-transparent data-[transparent]:text-gray-100 data-[transparent]:before:opacity-0',
+						minimal ? 'absolute inset-x-0' : 'sticky',
+						previewStudio &&
+							'after:absolute after:top-0 after:-z-10 after:size-full after:bg-gradient-to-b after:from-black/50'
+					)}
+					ref={headerRef}
+				>
+					<div className="flex h-16 items-center px-6 2xl:container lg:px-16">
+						<Dialog.Trigger asChild>
+							<Button
+								intent="tertiary"
+								className="group-data-[minimal=true]:order-3 group-data-[transparent]:text-gray-100 group-data-[minimal=false]:lg:hidden"
+							>
+								<Icon name="menu" size={24} />
+							</Button>
+						</Dialog.Trigger>
 
-					<div className="flex flex-1 justify-center group-data-[minimal=true]:justify-start lg:justify-start">
-						<Link href="/" className="block w-fit">
-							<Logo variant="text" className="max-sm:hidden" />
-							<Logo className="sm:hidden" />
-						</Link>
-					</div>
-					<nav className="flex select-none items-center justify-between group-data-[minimal=true]:hidden">
-						{/* Desktop Links */}
-						<ul className="flex flex-row items-center gap-4 bg-transparent px-0 max-lg:hidden">
-							<NavLink href="/products">Products</NavLink>
-							<NavLink href="/inspiration">Inspiration</NavLink>
-							<NavLink href="/resources">Resources</NavLink>
-							<NavLink href="/quote-studio">
-								Get a Quote&nbsp;
-								<span className="relative inline-block rounded-sm bg-gradient-to-t from-black/10 px-1 text-sm font-semibold before:absolute  before:inset-0 before:rounded-sm before:border before:border-black/10 before:gradient-mask-t-0 group-data-[transparent]:border-white/25 group-data-[transparent]:bg-gradient-to-b group-data-[transparent]:from-white/25 group-data-[transparent]:before:border-white/25 group-data-[transparent]:before:gradient-mask-b-0 ">
-									New
-								</span>
-							</NavLink>
-							<NavLink href="/contact">Contact</NavLink>
-						</ul>
-					</nav>
-					<div className="flex items-center justify-end gap-4 lg:flex-1">
-						<Button
-							asChild
-							intent="tertiary"
-							className="group-data-[minimal=true]:hidden group-data-[transparent]:text-gray-100"
-						>
-							<Link href="/quote/17">
-								<Icon name="shopping_cart" size={24} />
+						<div className="flex flex-1 justify-center group-data-[minimal=true]:justify-start lg:justify-start">
+							<Link href="/" className="block w-fit">
+								<Logo variant="text" className="max-sm:hidden" />
+								<Logo className="sm:hidden" />
 							</Link>
-						</Button>
+						</div>
+						<nav className="flex select-none items-center justify-between group-data-[minimal=true]:hidden">
+							{/* Desktop Links */}
+							<ul className="flex flex-row items-center gap-4 bg-transparent px-0 max-lg:hidden">
+								<NavLink href="/products">Products</NavLink>
+								<NavLink href="/inspiration">Inspiration</NavLink>
+								<NavLink href="/resources">Resources</NavLink>
+								<NavLink href="/quote-studio">
+									Get a Quote&nbsp;
+									<span className="relative inline-block rounded-sm bg-gradient-to-t from-black/10 px-1 text-sm font-semibold before:absolute  before:inset-0 before:rounded-sm before:border before:border-black/10 before:gradient-mask-t-0 group-data-[transparent]:border-white/25 group-data-[transparent]:bg-gradient-to-b group-data-[transparent]:from-white/25 group-data-[transparent]:before:border-white/25 group-data-[transparent]:before:gradient-mask-b-0 ">
+										New
+									</span>
+								</NavLink>
+								<NavLink href="/contact">Contact</NavLink>
+							</ul>
+						</nav>
+						<div className="flex items-center justify-end gap-4 lg:flex-1">
+							<Button
+								asChild
+								intent="tertiary"
+								className="group-data-[minimal=true]:hidden group-data-[transparent]:text-gray-100"
+							>
+								<Link href="/quote/17">
+									<Icon name="shopping_cart" size={24} />
+								</Link>
+							</Button>
+						</div>
 					</div>
-				</OrchestratedReveal>
-			</header>
+				</header>
+			</Reveal>
 
 			{/* Fullscreen Menu */}
 			<AnimatePresence>

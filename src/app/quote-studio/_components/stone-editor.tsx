@@ -517,7 +517,7 @@ function PatternForm({
 
 	const paverQuery = api.product.getById.useQuery(
 		{ productId: 'colonial_classic' },
-		{ refetchOnWindowFocus: false, keepPreviousData: true }
+		{ refetchOnWindowFocus: false }
 	);
 	const paver = paverQuery.data;
 
@@ -565,7 +565,7 @@ function PatternForm({
 						displayName: sku.displayName,
 						price: sku.price,
 						details: sku.details.rawData!
-				  }
+					}
 				: undefined
 		);
 
@@ -706,7 +706,7 @@ function PatternForm({
 																	({ id }) =>
 																		id ===
 																		contents.fields[index]?.skuId.split(':')[1]
-															  )?.css
+																)?.css
 															: undefined
 													}
 													onClick={(e) =>
@@ -963,7 +963,7 @@ function StoneForm({
 
 	const currentPaverQuery = api.product.getById.useQuery(
 		{ productId: currentPaverId },
-		{ refetchOnWindowFocus: false, keepPreviousData: true }
+		{ refetchOnWindowFocus: false }
 	);
 	const pavers = paversQuery.data;
 	const currentPaver = currentPaverQuery.data;

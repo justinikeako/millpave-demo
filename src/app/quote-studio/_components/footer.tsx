@@ -8,8 +8,8 @@ import { Icon } from '~/components/icon';
 import React from 'react';
 import { maximumStageIndex, stages } from './stages';
 
-export function StageFooter() {
-	const { currentStageIndex, stageStatus, getStageStatus, quote } =
+export const StageFooter = () => {
+	const { currentStageIndex, stageStatus, quote, getStageStatus } =
 		useStageContext();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -45,10 +45,10 @@ export function StageFooter() {
 											disabled={
 												pathname === '/quote-studio/configure'
 													? // Only enabled the configure stage if all prior stages are valid
-													  highestValidIndex < maximumStageIndex - 1
+														highestValidIndex < maximumStageIndex - 1
 													: // Otherwise only enable the next stage IF the current stage is valid
-													  index >
-													  (currentStageIsValid
+														index >
+														(currentStageIsValid
 															? highestValidIndex + 1
 															: highestValidIndex)
 											}
@@ -81,7 +81,7 @@ export function StageFooter() {
 							intent="primary"
 							type="button"
 							id="finish"
-							disabled={createQuote.isLoading}
+							disabled={createQuote.isPending}
 							className="flex-1 focus:outline md:flex-none"
 							onClick={async () => {
 								const { quoteId } = await createQuote.mutateAsync({
@@ -91,7 +91,7 @@ export function StageFooter() {
 								router.push(`/quote/${quoteId}`);
 							}}
 						>
-							{createQuote.isLoading ? (
+							{createQuote.isPending ? (
 								<>Redirecting</>
 							) : (
 								<>
@@ -115,7 +115,7 @@ export function StageFooter() {
 			</div>
 		</footer>
 	);
-}
+};
 
 type StageSelectorProps = React.PropsWithChildren<{
 	pathname: string;

@@ -830,7 +830,7 @@ export function StageProvider(props: React.PropsWithChildren) {
 				stageStatus,
 				currentStageIndex,
 				stoneMetadataArray,
-				getStageStatus,
+				getStageStatus: getStageStatus,
 				setQuoteId,
 				getStoneMetadata,
 				addStoneMetadata,

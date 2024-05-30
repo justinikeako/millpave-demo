@@ -26,7 +26,6 @@ const config = {
 				argsIgnorePattern: '^_'
 			}
 		],
-		'@typescript-eslint/require-await': 'off',
 		'@typescript-eslint/no-misused-promises': [
 			'error',
 			{
@@ -35,6 +34,8 @@ const config = {
 				}
 			}
 		],
+		'@typescript-eslint/require-await': 'off',
+		'@typescript-eslint/unbound-method': 'off',
 		'drizzle/enforce-delete-with-where': [
 			'error',
 			{

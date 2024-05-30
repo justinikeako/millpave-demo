@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Footer } from '~/components/footer';
 import { RevealContainer, Reveal } from '../../components/reveal';
 import { Main } from '~/components/main';
@@ -40,17 +40,19 @@ export default function Page() {
 							</h1>
 						</Reveal>
 
-						<Reveal asChild delay={0.2}>
-							<ul className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2">
-								{categories.map((category) => (
-									<CategoryFilter
-										key={category.id}
-										thumbnailImage={`${category.image}`}
-										{...category}
-									/>
-								))}
-							</ul>
-						</Reveal>
+						<Suspense fallback={<p>Loading...</p>}>
+							<Reveal asChild delay={0.2}>
+								<ul className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2">
+									{categories.map((category) => (
+										<CategoryFilter
+											key={category.id}
+											thumbnailImage={`${category.image}`}
+											{...category}
+										/>
+									))}
+								</ul>
+							</Reveal>
+						</Suspense>
 					</section>
 
 					<Reveal asChild className="space-y-4 sm:space-y-8">

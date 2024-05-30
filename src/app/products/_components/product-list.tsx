@@ -7,15 +7,17 @@ import { Button } from '~/components/button';
 import { ProductCard } from '~/components/product-card';
 import { api } from '~/trpc/react';
 
-type InitialData = InfiniteData<{
+type Page = {
 	products: (typeof products.$inferSelect & {
 		startingSku: StartingSku;
 	})[];
 	nextCursor: string | undefined;
-}>;
+};
+
+// I don't know why `string` is necessary here, but it is.
+type InitialData = InfiniteData<Page, string>;
 
 export function ProductList({ initialData }: { initialData: InitialData }) {
-	initialData.pageParams;
 	const productsQuery = api.product.getByCategory.useInfiniteQuery(
 		{ categoryId: 'all' },
 		{

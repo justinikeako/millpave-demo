@@ -3,8 +3,6 @@ import './globals.css';
 import { Inter, Source_Serif_4 } from 'next/font/google';
 import { cn } from '~/lib/utils';
 
-import { headers } from 'next/headers';
-
 import { TRPCReactProvider } from '~/trpc/react';
 import { Chat } from '~/components/chat';
 import { Header } from '~/components/header';
@@ -52,7 +50,7 @@ export default function RootLayout({
 				<Header />
 				<Chat />
 
-				<TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
+				<TRPCReactProvider>{children}</TRPCReactProvider>
 			</body>
 		</html>
 	);

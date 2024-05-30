@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { VariantIdTemplate } from '../types/product';
+import type { VariantIdTemplate } from '../types/product';
 
 type SkuPickerContextValue = {
 	skuIdFragments: string[];
@@ -84,7 +84,7 @@ function ProductPicker({ products }: ProductPickerProps) {
 
 									const sustainedColorId = structuredClone(
 										skuIdFragments
-									).pop() as string;
+									).pop()!;
 
 									const newDefaultSkuId = products.find(
 										({ id }) => id === newProductId
@@ -127,7 +127,7 @@ function VariantPicker({ variantIdTemplate, section }: VariantPickerProps) {
 				// Index 0 is reserved for the product id
 				const fragmentIndex = index + 1;
 
-				const variantFragmentId = skuIdFragments[fragmentIndex] as string;
+				const variantFragmentId = skuIdFragments[fragmentIndex]!;
 				const variantFragmentDisplayName = variantIdTemplate[
 					index
 				]?.fragments?.find(({ id }) => id === variantFragmentId)?.displayName;

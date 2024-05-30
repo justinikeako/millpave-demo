@@ -6,6 +6,11 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
+import { initTRPC } from '@trpc/server';
+import superjson from 'superjson';
+import { ZodError } from 'zod';
+
+import { db } from '~/server/db';
 
 /**
  * 1. CONTEXT
@@ -13,39 +18,17 @@
  * This section defines the "contexts" that are available in the backend API.
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
- */
-import { type FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
-
-import { db } from '~/server/db';
-
-type CreateContextOptions = Record<string, never>;
-
-/**
- * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
- * it from here.
  *
- * Examples of things you may need it for:
- * - testing, so we don't have to mock Next.js' req/res
- * - tRPC's `createServerSideHelpers`, where we don't have req/res
+ * This helper generates the "internals" for a tRPC context. The API handler and RSC clients each
+ * wrap this and provides the required context.
  *
- * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
+ * @see https://trpc.io/docs/server/context
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+export const createTRPCContext = async (opts: { headers: Headers }) => {
 	return {
-		db
+		db,
+		...opts
 	};
-};
-
-/**
- * This is the actual context you will use in your router. It will be used to process every request
- * that goes through your tRPC endpoint.
- *
- * @see https://trpc.io/docs/context
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const createTRPCContext = (_opts: FetchCreateContextFnOptions) => {
-	return createInnerTRPCContext({});
 };
 
 /**
@@ -55,10 +38,6 @@ export const createTRPCContext = (_opts: FetchCreateContextFnOptions) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-import { initTRPC } from '@trpc/server';
-import superjson from 'superjson';
-import { ZodError } from 'zod';
-
 const t = initTRPC.context<typeof createTRPCContext>().create({
 	transformer: superjson,
 	errorFormatter({ shape, error }) {
@@ -71,6 +50,13 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 		};
 	}
 });
+
+/**
+ * Create a server-side caller.
+ *
+ * @see https://trpc.io/docs/server/server-side-calls
+ */
+export const createCallerFactory = t.createCallerFactory;
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)

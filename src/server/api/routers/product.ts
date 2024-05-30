@@ -1,9 +1,9 @@
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { products, skuRestocks, skus } from '~/drizzle/schema';
+import { products, skuRestocks, skus } from '~/server/db/schema';
 import { and, asc, eq, gte, gt } from 'drizzle-orm';
-import { Sku } from '~/types/product';
+import type { Sku } from '~/types/product';
 
 type StartingSku = Pick<Sku, 'price' | 'unit'>;
 
@@ -22,8 +22,9 @@ export const productRouter = createTRPCRouter({
 					details: true,
 					skus: true,
 					recommendations: {
-						orderBy: (productRecommendations, { desc }) =>
-							desc(productRecommendations.relevance),
+						orderBy: (productRecommendations, { desc }) => [
+							desc(productRecommendations.relevance)
+						],
 						with: {
 							recommending: {
 								columns: {

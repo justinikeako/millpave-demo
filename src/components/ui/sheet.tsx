@@ -2,7 +2,7 @@
 
 import React from 'react';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
-import { VariantProps, cva } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '~/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';

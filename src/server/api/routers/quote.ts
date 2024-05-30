@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { inArray, gte, eq } from 'drizzle-orm';
-import { quotes, skus, skuRestocks, quoteItems } from '~/drizzle/schema';
+import { quotes, skus, skuRestocks, quoteItems } from '~/server/db/schema';
 import { QuoteItem } from '~/types/quote';
 import { getQuoteDetails } from '~/lib/utils';
 
@@ -27,7 +27,7 @@ export const quoteRouter = createTRPCRouter({
 				.delete(quotes)
 				.where(eq(quotes.id, parseInt(input.quoteId)));
 
-			return { quoteId: quote.insertId, success: true };
+			return { quoteId: quote.oid, success: true };
 		}),
 	addItems: publicProcedure
 		.input(
@@ -53,7 +53,7 @@ export const quoteRouter = createTRPCRouter({
 					.set(details)
 					.where(eq(quotes.id, input.quoteId));
 
-				return { quoteId: quote.insertId };
+				return { quoteId: quote.oid };
 			} else {
 				const details = getQuoteDetails(input.items);
 
@@ -61,12 +61,12 @@ export const quoteRouter = createTRPCRouter({
 
 				await ctx.db.insert(quoteItems).values(
 					input.items.map((item) => ({
-						quoteId: parseInt(quote.insertId),
+						quoteId: quote.oid,
 						...item
 					}))
 				);
 
-				return { quoteId: quote.insertId };
+				return { quoteId: quote.oid };
 			}
 		}),
 	getFulfillment: publicProcedure

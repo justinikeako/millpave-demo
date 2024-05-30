@@ -1,4 +1,6 @@
-import { api } from '~/utils/api';
+'use client';
+
+import { api } from '~/trpc/react';
 import { formatNumber, formatRestockDate } from '~/utils/format';
 
 type ProductStockProps = {
@@ -50,7 +52,7 @@ export function ProductStock({
 			<p>
 				{formattedRestockDate
 					? 'Restocks ' + formattedRestockDate
-					: outOfStockMessage || 'Out of stock'}
+					: outOfStockMessage ?? 'Out of stock'}
 			</p>
 		);
 	}

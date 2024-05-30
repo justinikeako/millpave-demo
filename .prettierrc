@@ -9,5 +9,5 @@
 	"jsxBracketSameLine": false,
 	"semi": true,
 	"plugins": ["prettier-plugin-tailwindcss"],
-	"tailwindConfig": "./tailwind.config.cjs"
+	"tailwindConfig": "./tailwind.config.ts"
 }

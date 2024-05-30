@@ -1,3 +1,5 @@
+'use client';
+
 import { SplitSection } from './split';
 import { Button } from '~/components/button';
 import Link from 'next/link';

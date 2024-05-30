@@ -1,8 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import { useRef } from 'react';
 import { Button } from '../button';
 import { Icon } from '../icon';
-import { ViewportReveal } from '../reveal';
+import { Reveal } from '../reveal';
 import { FullWidthSection } from './full-width';
 import { Balancer } from 'react-wrap-balancer';
 import Image from 'next/image';
@@ -11,7 +13,7 @@ function InspirationSection() {
 	const carouselRef = useRef<HTMLAnchorElement>(null);
 
 	return (
-		<ViewportReveal className="space-y-16 px-6 py-16 lg:px-16" asChild>
+		<Reveal standalone className="space-y-16 px-6 py-16 lg:px-16" asChild>
 			<FullWidthSection>
 				<div className="space-y-4">
 					<p className="m-auto text-center font-display text-lg md:text-xl">
@@ -123,7 +125,7 @@ function InspirationSection() {
 					</div>
 				</Link>
 			</FullWidthSection>
-		</ViewportReveal>
+		</Reveal>
 	);
 }
 

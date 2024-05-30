@@ -7,28 +7,12 @@ import {
 	skuRestocks,
 	pickupLocations,
 	skus
-} from '~/drizzle/schema';
+} from '~/server/db/schema';
 
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { connect } from '@planetscale/database';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { sql, createClient } from '@vercel/postgres';
 
-const connection = connect({
-	host: process.env['PROD_DATABASE_HOST'],
-	username: process.env['PROD_DATABASE_USERNAME'],
-	password: process.env['PROD_DATABASE_PASSWORD']
-});
-
-// import { drizzle } from 'drizzle-orm/mysql2';
-// import mysql from 'mysql2/promise';
-
-// const connection = await mysql.createConnection({
-// 	database: process.env.LOCAL_DB_NAME,
-// 	host: process.env.LOCAL_DB_HOST,
-// 	user: process.env.LOCAL_DB_USER,
-// 	password: process.env.LOCAL_DB_PASS
-// });
-
-const db = drizzle(connection);
+export const db = drizzle(sql);
 
 function main() {
 	console.log('💣 Dropping db nuke');

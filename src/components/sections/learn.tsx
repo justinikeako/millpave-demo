@@ -2,12 +2,12 @@ import { Button } from '../button';
 import Link from 'next/link';
 import { Icon } from '../icon';
 import { Balancer } from 'react-wrap-balancer';
-import { ViewportReveal } from '../reveal';
+import { Reveal } from '../reveal';
 import Image from 'next/image';
 
 function LearnSection() {
 	return (
-		<ViewportReveal asChild>
+		<Reveal standalone asChild>
 			<section className="grid grid-cols-1 gap-4 py-16 sm:grid-cols-2 sm:grid-rows-2 md:grid-cols-3 xl:grid-cols-4 xl:grid-rows-none">
 				<div className="banjo-grid group relative flex h-[32rem] shrink-0 flex-col items-start gap-3 bg-gray-600 p-6 text-white sm:col-span-2 sm:h-[28rem] sm:justify-between md:col-span-2 md:row-span-2 md:h-auto md:justify-start xl:row-span-full xl:h-[28rem] xl:justify-between">
 					<div className="absolute bottom-0 right-0 h-3/5 w-full xs:h-full xs:w-3/5 md:w-3/4 xl:w-1/2">
@@ -106,7 +106,7 @@ function LearnSection() {
 					</Button>
 				</div>
 			</section>
-		</ViewportReveal>
+		</Reveal>
 	);
 }
 

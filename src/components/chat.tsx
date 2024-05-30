@@ -1,19 +1,26 @@
+'use client';
+
 import { useState } from 'react';
 import { Button } from './button';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
-import { OrchestratedReveal } from './reveal';
+import { Reveal } from './reveal';
 import { cn } from '~/lib/utils';
 import { Icon } from './icon';
 import { RemoveScroll } from 'react-remove-scroll';
 import * as Dialog from '@radix-ui/react-dialog';
-import { useChat, Message } from 'ai/react';
+import { useChat, type Message } from 'ai/react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 const initialMessages: Message[] = [
-	{ id: 'first', content: 'Hi, how can I help?', role: 'assistant' }
+	{ id: 'init', content: 'Hi, how can I help?', role: 'assistant' }
 ];
 
-function Chat({ hide }: { hide: boolean }) {
+function Chat() {
+	const pathname = usePathname();
+	const hide = pathname.includes('-studio');
+
 	const {
 		messages,
 		input,
@@ -34,7 +41,8 @@ function Chat({ hide }: { hide: boolean }) {
 	return (
 		<Dialog.Root open={open} onOpenChange={setOpen}>
 			<AnimatePresence>
-				<OrchestratedReveal
+				<Reveal
+					standalone
 					delay={0.4}
 					className="pointer-events-none fixed inset-0 z-20 flex items-end justify-end p-4"
 				>
@@ -128,7 +136,13 @@ function Chat({ hide }: { hide: boolean }) {
 													)}
 												>
 													<ReactMarkdown
-														linkTarget="_blank"
+														components={{
+															a: ({ href, children }) => (
+																<Link href={href!} target="_blank">
+																	{children}
+																</Link>
+															)
+														}}
 														className="markdownanswer"
 													>
 														{message.content}
@@ -201,7 +215,7 @@ function Chat({ hide }: { hide: boolean }) {
 							)}
 						</AnimatePresence>
 					</div>
-				</OrchestratedReveal>
+				</Reveal>
 			</AnimatePresence>
 		</Dialog.Root>
 	);

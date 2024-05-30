@@ -1,12 +1,9 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Sku, ExtendedPaverDetails } from '~/types/product';
-import { Measurements, QuoteItem, Shape, Unit } from '~/types/quote';
+import type { Sku, ExtendedPaverDetails } from '~/types/product';
+import type { Measurements, QuoteItem, Shape, Unit } from '~/types/quote';
 
-export function roundFractionDigits(
-	value: number | number,
-	fractionDigits: number
-) {
+export function roundFractionDigits(value: number, fractionDigits: number) {
 	const valueAsNumber = typeof value === 'string' ? parseFloat(value) : value;
 
 	return parseFloat(valueAsNumber.toFixed(fractionDigits));
@@ -21,7 +18,7 @@ export function getQuoteDetails(
 
 	for (const cartItem of quoteItems) {
 		subtotal += cartItem.cost;
-		totalArea += cartItem?.area || 0;
+		totalArea += cartItem?.area ?? 0;
 		totalWeight += cartItem.weight;
 	}
 
@@ -55,8 +52,8 @@ export function findSku(
 	details: ExtendedPaverDetails[] | undefined
 ) {
 	const foundSku = skus?.find((currentSku) => currentSku.id === skuId);
-	const foundDetails = details?.find((details) =>
-		skuId?.includes(details.matcher)
+	const foundDetails = details?.find(
+		(details) => skuId?.includes(details.matcher)
 	);
 
 	if (!foundSku || !foundDetails) return undefined;
@@ -94,12 +91,12 @@ export function pluralize(
 }
 
 export function stopPropagate(
-	callback: (e: React.FormEvent<HTMLFormElement>) => void
+	callback: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
 ) {
 	return (e: React.FormEvent<HTMLFormElement>) => {
 		e.stopPropagation();
 
-		callback(e);
+		callback(e).catch(() => console.log('stopPropagate failed :('));
 	};
 }
 

@@ -1,5 +1,4 @@
 import { addBusinessDays, addHours } from 'date-fns';
-import { InferModel } from 'drizzle-orm';
 import {
 	categories,
 	productRecommendations,
@@ -9,40 +8,23 @@ import {
 	pickupLocations,
 	skuStock,
 	skus
-} from '~/drizzle/schema';
+} from '~/server/db/schema';
 
-// import { drizzle } from 'drizzle-orm/mysql2';
-// import mysql from 'mysql2/promise';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { createClient } from '@vercel/postgres';
 
-// const connection = await mysql.createConnection({
-// 	database: process.env.LOCAL_DB_NAME,
-// 	host: process.env.LOCAL_DB_HOST,
-// 	user: process.env.LOCAL_DB_USER,
-// 	password: process.env.LOCAL_DB_PASS
-// });
+const client = createClient();
+const db = drizzle(client);
 
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { connect } from '@planetscale/database';
+type NewCategory = typeof categories.$inferInsert;
+type NewProduct = typeof products.$inferInsert;
+type NewProductRecommendations = typeof productRecommendations.$inferInsert;
+type ProductDetails = typeof skuDetails.$inferSelect;
+type Sku = typeof skus.$inferInsert;
+type Stock = typeof skuStock.$inferInsert;
 
-const connection = connect({
-	host: process.env['PROD_DATABASE_HOST'],
-	username: process.env['PROD_DATABASE_USERNAME'],
-	password: process.env['PROD_DATABASE_PASSWORD']
-});
-
-const db = drizzle(connection);
-
-type NewCategory = InferModel<typeof categories, 'insert'>;
-type NewProduct = InferModel<typeof products, 'insert'>;
-type NewProductRecommendations = InferModel<
-	typeof productRecommendations,
-	'insert'
->;
-type ProductDetails = InferModel<typeof skuDetails>;
-type Sku = InferModel<typeof skus, 'insert'>;
-type Stock = InferModel<typeof skuStock, 'insert'>;
-type Restock = InferModel<typeof skuRestocks, 'insert'>;
-type NewPickupLocation = InferModel<typeof pickupLocations, 'insert'>;
+type Restock = typeof skuRestocks.$inferInsert;
+type NewPickupLocation = typeof pickupLocations.$inferInsert;
 
 const PICKUP_LOCATIONS: NewPickupLocation[] = [
 	{ id: 'KNG_SHOWROOM', displayName: 'Kingston Showroom' },
@@ -260,7 +242,7 @@ async function addPavers() {
 		}
 	];
 
-	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+	const SIMILAR_PRODUCTS = new Map<string, string[]>([
 		['colonial_classic', ['banjo', 'thin_classic', 'heritage']],
 		['thin_classic', ['colonial_classic', 'banjo', 'circle_bundle']],
 		['banjo', ['colonial_classic', 'heritage', 'cobble_mix']],
@@ -349,7 +331,7 @@ async function addSlabsAndBlocks() {
 		}
 	];
 
-	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+	const SIMILAR_PRODUCTS = new Map<string, string[]>([
 		['savannah', ['heritage', 'circle_stepping', 'grasscrete']],
 		['grasscrete', ['tropical_wave', 'circle_stepping', 'savannah']],
 		['curb_wall', ['tropical_wave', 'circle_stepping', 'savannah']]
@@ -453,7 +435,7 @@ async function addMaintenanceProducts() {
 		];
 
 	// prettier-ignore
-	const SIMILAR_PRODUCTS: Map<string, string[]> = new Map([
+	const SIMILAR_PRODUCTS = new Map<string, string[]>([
 		['oil_sealant', ['water_sealant', 'efflorescence_cleaner', 'polymeric_sand']],
 		['water_sealant', ['oil_sealant', 'efflorescence_cleaner', 'polymeric_sand']],
 		['polymeric_sand', ['oil_sealant', 'water_sealant', 'efflorescence_cleaner']],
@@ -904,7 +886,7 @@ async function addConcreteProductSkus() {
 				productId: product.id.split(':').at(0),
 				id: `${product.id}:${color.id}`,
 				displayName: `${product.displayName} ${color.displayName}`,
-				price: price[color.id] || prices[1],
+				price: price[color.id] ?? prices[1],
 				unit: 'sqft'
 			} as Sku;
 		});
@@ -1117,13 +1099,13 @@ async function addPaverStock() {
 
 			return [
 				{
-					productId: skuIdPrefix.split(':').at(0) as string,
+					productId: skuIdPrefix.split(':').at(0)!,
 					skuId: `${skuIdPrefix}:${colorId}`,
 					locationId: 'KNG_SHOWROOM',
 					quantity: doneToOrder ? 0 : coinFlip() ? showroomQuantity : 0
 				},
 				{
-					productId: skuIdPrefix.split(':').at(0) as string,
+					productId: skuIdPrefix.split(':').at(0)!,
 					skuId: `${skuIdPrefix}:${colorId}`,
 					locationId: 'STT_FACTORY',
 					quantity: doneToOrder ? 0 : coinFlip() ? factoryQuantity : 0
@@ -1158,18 +1140,18 @@ async function addPaverRestockQueue() {
 			return coinFlip(popularity / 2)
 				? [
 						{
-							productId: skuIdPrefix.split(':').at(0) as string,
+							productId: skuIdPrefix.split(':').at(0)!,
 							skuId: `${skuIdPrefix}:${colorId}`,
 							locationId: fromFactory ? 'STT_FACTORY' : 'STT_FACTORY',
 							quantity: fromFactory ? factoryQuantity : showroomQuantity,
 							date: fromFactory
 								? addBusinessDays(new Date(), Math.round(Math.random() * 20))
 								: coinFlip(0.75)
-								? addHours(new Date(), Math.round(Math.random() * 3))
-								: addBusinessDays(new Date(), Math.round(Math.random() * 7)),
+									? addHours(new Date(), Math.round(Math.random() * 3))
+									: addBusinessDays(new Date(), Math.round(Math.random() * 7)),
 							fulfilled: false
 						}
-				  ]
+					]
 				: [];
 		});
 	}
@@ -1186,6 +1168,8 @@ async function addPaverRestockQueue() {
 }
 
 async function main() {
+	await client.connect();
+
 	await addPickupLocations();
 	await addPavers();
 	await addSlabsAndBlocks();
@@ -1200,9 +1184,10 @@ async function main() {
 try {
 	await main();
 
+	await client.end();
 	console.log('Successfully executed seed script.');
 } catch (e) {
 	console.error(e);
-
-	process.exit(1);
+} finally {
+	await client.end();
 }

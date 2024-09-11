@@ -1,8 +1,6 @@
 import { Footer } from '~/components/footer';
-import { Button } from '~/components/button';
 import { Main } from '~/components/main';
 import { RevealContainer, Reveal } from '~/components/reveal';
-import { Icon } from '~/components/icon';
 import {
 	Select,
 	SelectContent,
@@ -14,19 +12,10 @@ import { LearnSection } from '~/components/sections/learn';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
 import { InspirationSection } from '~/components/sections/inspiration';
 import { GetAQuoteSection } from '~/components/sections/get-a-quote';
-import {
-	Sheet,
-	SheetBody,
-	SheetClose,
-	SheetContent,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger
-} from '~/components/ui/sheet';
 import { api } from '~/trpc/server';
 import { notFound } from 'next/navigation';
 import { ProductList } from './_components/product-list';
-import { Filters } from './_components/filters';
+import { Filters, FilterSheet } from './_components/filters';
 
 export const runtime = 'experimental-edge';
 
@@ -65,31 +54,7 @@ export default async function Page() {
 									<h2 className="flex items-center gap-2 font-display text-lg lg:text-xl">
 										<span>All Items</span>
 
-										<Sheet>
-											<SheetTrigger asChild>
-												<Button intent="tertiary" className="lg:hidden">
-													<span className="sr-only">Filters</span>
-													<Icon name="tune" />
-												</Button>
-											</SheetTrigger>
-
-											<SheetContent open={false} position="left">
-												<SheetHeader>
-													<SheetTitle className="flex-1">Filters</SheetTitle>
-
-													<SheetClose asChild>
-														<Button intent="tertiary" size="small">
-															<span className="sr-only">Dismiss</span>
-															<Icon name="close" />
-														</Button>
-													</SheetClose>
-												</SheetHeader>
-
-												<SheetBody className="space-y-4">
-													<Filters />
-												</SheetBody>
-											</SheetContent>
-										</Sheet>
+										<FilterSheet />
 									</h2>
 									<div className="flex items-center gap-2">
 										<p>Sort</p>

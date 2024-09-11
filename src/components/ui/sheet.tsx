@@ -6,7 +6,6 @@ import { type VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '~/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMediaQuery } from '~/utils/use-media-query';
 
 const Sheet = SheetPrimitive.Root;
 
@@ -87,8 +86,6 @@ const SheetContent = React.forwardRef<
 	React.ElementRef<typeof SheetPrimitive.Content>,
 	DialogContentProps
 >(({ position, className, open, children, ...props }, ref) => {
-	const screenLg = useMediaQuery('(min-width: 480px)');
-
 	return (
 		<AnimatePresence>
 			{open && (
@@ -110,35 +107,20 @@ const SheetContent = React.forwardRef<
 						{...props}
 					>
 						<motion.div
-							initial={{
-								...(screenLg
-									? { x: position === 'left' ? '-100%' : '100%' }
-									: { y: '100%' })
+							className="[--x-hidden:0] [--x-shown:0] [--y-hidden:100%] [--y-shown:0] md:[--x-hidden:-100%] md:[--x-shown:0] md:[--y-hidden:0] md:[--y-shown:0]"
+							initial={{ x: 'var(--x-hidden)', y: 'var(--y-hidden)' }}
+							animate={{
+								x: 'var(--x-shown)',
+								y: 'var(--y-shown)',
+								transition: {
+									type: 'spring',
+									duration: 0.5,
+									bounce: 0
+								}
 							}}
-							animate={
-								screenLg
-									? {
-											x: 0,
-											transition: {
-												type: 'spring',
-												duration: 0.5,
-												bounce: 0
-											}
-									  }
-									: {
-											y: 0,
-											transition: {
-												type: 'spring',
-												duration: 0.5,
-												bounce: 0,
-												delay: 0.1
-											}
-									  }
-							}
 							exit={{
-								...(screenLg
-									? { x: position === 'left' ? '-100%' : '100%' }
-									: { y: '100%' }),
+								x: 'var(--x-hidden)',
+								y: 'var(--y-hidden)',
 								transition: {
 									type: 'spring',
 									duration: 0.35,

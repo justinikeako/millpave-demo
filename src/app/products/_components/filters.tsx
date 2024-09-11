@@ -3,6 +3,18 @@
 import { Icon } from '~/components/icon';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { Checkbox, type CheckboxProps } from '~/components/checkbox';
+import {
+	SheetClose,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+	Sheet,
+	SheetBody,
+	SheetTrigger
+} from '~/components/ui/sheet';
+import { Button } from '~/components/button';
+import { set } from 'date-fns';
+import { useState } from 'react';
 
 type FilterProps = Omit<CheckboxProps, 'slot'> & {
 	slot?: React.ReactNode;
@@ -289,5 +301,36 @@ export function Filters() {
 				</ul>
 			</FilterGroup>
 		</>
+	);
+}
+
+export function FilterSheet() {
+	const [open, setOpen] = useState(false);
+
+	return (
+		<Sheet onOpenChange={() => setOpen(!open)} open={open}>
+			<SheetTrigger asChild>
+				<Button intent="tertiary" className="lg:hidden">
+					<span className="sr-only">Filters</span>
+					<Icon name="tune" />
+				</Button>
+			</SheetTrigger>
+			<SheetContent open={open} position="left">
+				<SheetHeader>
+					<SheetTitle className="flex-1">Filters</SheetTitle>
+
+					<SheetClose asChild>
+						<Button intent="tertiary" size="small">
+							<span className="sr-only">Dismiss</span>
+							<Icon name="close" />
+						</Button>
+					</SheetClose>
+				</SheetHeader>
+
+				<SheetBody className="space-y-4">
+					<Filters />
+				</SheetBody>
+			</SheetContent>
+		</Sheet>
 	);
 }

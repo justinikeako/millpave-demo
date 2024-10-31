@@ -54,10 +54,11 @@ const sheetVariants = cva(
 	{
 		variants: {
 			position: {
-				top: 'w-full',
-				bottom: 'w-full md:max-w-md rounded-t-2xl md:rounded-2xl md:bottom-8',
-				left: '',
-				right: ''
+				top: 'w-full md:[--x-hidden:0] md:[--y-hidden:-100%]',
+				bottom:
+					'w-full md:max-w-md rounded-t-2xl md:rounded-2xl md:bottom-8 md:[--x-hidden:0] md:[--y-hidden:100%]',
+				left: 'md:[--x-hidden:-100%] md:[--y-hidden:0]',
+				right: 'md:[--x-hidden:100%] md:[--y-hidden:0]'
 			}
 		},
 		compoundVariants: [
@@ -103,11 +104,14 @@ const SheetContent = React.forwardRef<
 						forceMount
 						asChild
 						ref={ref}
-						className={cn(sheetVariants({ position }), className)}
+						className={cn(
+							'[--x-hidden:0] [--x-shown:0] [--y-hidden:100%] [--y-shown:0] md:[--x-shown:0] md:[--y-shown:0]',
+							sheetVariants({ position }),
+							className
+						)}
 						{...props}
 					>
 						<motion.div
-							className="[--x-hidden:0] [--x-shown:0] [--y-hidden:100%] [--y-shown:0] md:[--x-hidden:-100%] md:[--x-shown:0] md:[--y-hidden:0] md:[--y-shown:0]"
 							initial={{ x: 'var(--x-hidden)', y: 'var(--y-hidden)' }}
 							animate={{
 								x: 'var(--x-shown)',

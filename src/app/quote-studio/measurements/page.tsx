@@ -9,7 +9,7 @@ import {
 } from '~/components/ui/select';
 import { useFormContext, Controller, type Path } from 'react-hook-form';
 import { type StoneProject, type Unit1D, type Unit2D } from '~/types/quote';
-import { StageForm } from '../_components/form';
+import { StageForm } from '../components/form';
 import {
 	calculateRunningFoot,
 	unitDisplayNameDictionary,

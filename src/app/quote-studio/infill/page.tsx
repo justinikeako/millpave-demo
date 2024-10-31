@@ -1,9 +1,9 @@
 'use client';
 
-import { StageForm } from '../_components/form';
-import { StoneEditor } from '../_components/stone-editor';
+import { StageForm } from '../components/form';
+import { PatternEditor } from '../components/pattern-editor';
 import { Button } from '../../../components/button';
-import { useStageContext } from '../_components/stage-context';
+import { useStageContext } from '../components/stage-context';
 import Balancer from 'react-wrap-balancer';
 import { useRouter } from 'next/navigation';
 
@@ -56,7 +56,7 @@ export default function Page() {
 				Customize your infill...
 			</h2>
 
-			<StoneEditor name="infill.contents" dimension="2D" stageIndex={2} />
+			<PatternEditor name="infill.contents" dimension="2D" stageIndex={2} />
 		</StageForm>
 	);
 }

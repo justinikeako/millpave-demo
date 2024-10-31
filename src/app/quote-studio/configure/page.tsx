@@ -6,9 +6,9 @@ import {
 	useFieldArray,
 	useFormContext
 } from 'react-hook-form';
-import { StageForm } from '../_components/form';
+import { StageForm } from '../components/form';
 import { unitDisplayNameDictionary } from '~/lib/utils';
-import { useStageContext } from '../_components/stage-context';
+import { useStageContext } from '../components/stage-context';
 import { type StoneProject } from '~/types/quote';
 import { api } from '~/trpc/react';
 import { addWeeks } from 'date-fns';
@@ -172,8 +172,10 @@ export default function Page() {
 																{hasStock
 																	? 'Today'
 																	: restockDate
-																	? restockDate
-																	: formatRestockDate(addWeeks(new Date(), 4))}
+																		? restockDate
+																		: formatRestockDate(
+																				addWeeks(new Date(), 4)
+																			)}
 																&nbsp;at&nbsp;
 																<Link
 																	target="_blank"

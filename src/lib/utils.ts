@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Sku, ExtendedPaverDetails } from '~/types/product';
-import type { Measurements, QuoteItem, Shape, Unit } from '~/types/quote';
+import type { measurementsSchema, QuoteItem, Shape, Unit } from '~/types/quote';
 
 export function roundFractionDigits(value: number, fractionDigits: number) {
 	const valueAsNumber = typeof value === 'string' ? parseFloat(value) : value;
@@ -52,8 +52,8 @@ export function findSku(
 	details: ExtendedPaverDetails[] | undefined
 ) {
 	const foundSku = skus?.find((currentSku) => currentSku.id === skuId);
-	const foundDetails = details?.find(
-		(details) => skuId?.includes(details.matcher)
+	const foundDetails = details?.find((details) =>
+		skuId?.includes(details.matcher)
 	);
 
 	if (!foundSku || !foundDetails) return undefined;

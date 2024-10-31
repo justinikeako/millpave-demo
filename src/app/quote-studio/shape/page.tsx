@@ -1,8 +1,8 @@
 'use client';
 
 import { useFormContext } from 'react-hook-form';
-import { useStageContext } from '../_components/stage-context';
-import { StageForm } from '../_components/form';
+import { useStageContext } from '../components/stage-context';
+import { StageForm } from '../components/form';
 import type { StoneProject } from '~/types/quote';
 import { Balancer } from 'react-wrap-balancer';
 

@@ -9,8 +9,6 @@ import type {
 	Quote,
 	QuoteItem,
 	Shape,
-	Stone1D,
-	Stone2D,
 	StoneProject,
 	Unit,
 	Unit1D,
@@ -96,124 +94,87 @@ function getInfill(
 	let infillArea = Math.max(0, area);
 
 	const items: Item[] = [];
-
-	// Cut out fixed values first; divy up ratio values afterwards
-	const fractionalStones: (Pattern2D | Stone2D)[] = [];
+	const fractionalPatterns: Pattern2D[] = [];
 	let fractionalTotal = 0;
-	const fixedStones: (Pattern2D | Stone2D)[] = [];
+	const fixedPatterns: Pattern2D[] = [];
 
-	for (const stoneOrPattern of infill.contents) {
-		if (stoneOrPattern.coverage.unit === 'fr') {
+	for (const pattern of infill.contents) {
+		if (pattern.coverage.unit === 'fr') {
 			fractionalTotal += parseFloat(
-				stoneOrPattern.coverage.value as unknown as string
+				pattern.coverage.value as unknown as string
 			);
-			fractionalStones.push(stoneOrPattern);
-		} else fixedStones.push(stoneOrPattern);
+			fractionalPatterns.push(pattern);
+		} else {
+			fixedPatterns.push(pattern);
+		}
 	}
 
-	for (const stoneOrPattern of fixedStones) {
-		const unit = stoneOrPattern.coverage.unit;
-
+	for (const pattern of fixedPatterns) {
+		const unit = pattern.coverage.unit;
 		let fixedSegmentArea = 0;
 
-		if (unit !== 'fr' && unit !== 'pal' && unit !== 'pcs' && unit !== 'unit')
-			fixedSegmentArea = toSqft(stoneOrPattern.coverage.value, unit);
-
-		if (stoneOrPattern.type === 'stone') {
-			const stone = stoneOrPattern;
-			const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
-
-			if (unit === 'unit')
-				fixedSegmentArea =
-					stone.coverage.value / stoneMetadata.details.pcs_per_sqft;
-
-			items.push({
-				...stoneMetadata,
-				sqftCoverage: fixedSegmentArea,
-				signatures: ['infill']
-			});
-		} else {
-			const pattern = stoneOrPattern;
-			// Determine the area that each of each stone in the pattern takes up within the pattern unit
-			let patternArea = 0;
-			const stones: { area: number; metadata: StoneMetadata }[] = [];
-			for (const stone of pattern.contents) {
-				const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
-				const stoneArea = stone.quantity / stoneMetadata.details.pcs_per_sqft;
-
-				patternArea += stoneArea;
-				stones.push({ area: stoneArea, metadata: stoneMetadata });
-			}
-
-			if (unit === 'unit')
-				fixedSegmentArea = pattern.coverage.value * patternArea;
-
-			// Sum up the area and divide the total area by it to find the scale factor
-			const scaleFactor = fixedSegmentArea / patternArea;
-
-			// Determine the area taken up by each stone in the full area segment using the scale factor
-			items.push(
-				...stones.map(
-					({ area, metadata }): Item => ({
-						...metadata,
-						sqftCoverage: area * scaleFactor,
-						signatures: ['infill']
-					})
-				)
-			);
+		if (unit !== 'fr' && unit !== 'pal' && unit !== 'pcs' && unit !== 'unit') {
+			fixedSegmentArea = toSqft(pattern.coverage.value, unit);
 		}
+
+		let patternArea = 0;
+		const stones: { area: number; metadata: StoneMetadata }[] = [];
+		for (const stone of pattern.contents) {
+			const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+			const stoneArea = stone.quantity / stoneMetadata.details.pcs_per_sqft;
+
+			patternArea += stoneArea;
+			stones.push({ area: stoneArea, metadata: stoneMetadata });
+		}
+
+		if (unit === 'unit') {
+			fixedSegmentArea = pattern.coverage.value * patternArea;
+		}
+
+		const scaleFactor = fixedSegmentArea / patternArea;
+
+		items.push(
+			...stones.map(
+				({ area, metadata }): Item => ({
+					...metadata,
+					sqftCoverage: area * scaleFactor,
+					signatures: ['infill']
+				})
+			)
+		);
 
 		infillArea -= fixedSegmentArea;
 	}
 
-	// Fixed stones may exceed the available infill space
 	infillArea = Math.max(infillArea, 0);
 
-	for (const stoneOrPattern of fractionalStones) {
-		// Break the loop since there's no space left to fill
+	for (const pattern of fractionalPatterns) {
 		if (infillArea === 0) break;
 
 		const fractionalSegmentArea =
-			infillArea * (stoneOrPattern.coverage.value / fractionalTotal);
+			infillArea * (pattern.coverage.value / fractionalTotal);
 
-		if (stoneOrPattern.type === 'stone') {
-			const stoneMetadata = getStoneMetadata(
-				stoneOrPattern.skuId,
-				stoneMetadataArray
-			);
+		let patternArea = 0;
+		const stones: { area: number; metadata: StoneMetadata }[] = [];
+		for (const stone of pattern.contents) {
+			const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+			const stoneArea = stone.quantity / stoneMetadata.details.pcs_per_sqft;
 
-			items.push({
-				...stoneMetadata,
-				sqftCoverage: fractionalSegmentArea,
-				signatures: ['infill']
-			});
-		} else {
-			const pattern = stoneOrPattern;
-			// Determine the area that each of each stone in the pattern takes up within the pattern unit
-			let patternArea = 0;
-			const stones: { area: number; metadata: StoneMetadata }[] = [];
-			for (const stone of pattern.contents) {
-				const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
-				const stoneArea = stone.quantity / stoneMetadata.details.pcs_per_sqft;
-
-				patternArea += stoneArea;
-				stones.push({ area: stoneArea, metadata: stoneMetadata });
-			}
-
-			// Sum up the area and divide the total area by it to find the scale factor
-			const scaleFactor = fractionalSegmentArea / patternArea;
-
-			// Determine the area taken up by each stone in the full area segment using the scale factor
-			items.push(
-				...stones.map(
-					({ area, metadata }): Item => ({
-						...metadata,
-						sqftCoverage: area * scaleFactor,
-						signatures: ['infill']
-					})
-				)
-			);
+			patternArea += stoneArea;
+			stones.push({ area: stoneArea, metadata: stoneMetadata });
 		}
+
+		const scaleFactor = fractionalSegmentArea / patternArea;
+
+		items.push(
+			...stones.map(
+				({ area, metadata }): Item => ({
+					...metadata,
+					sqftCoverage: area * scaleFactor,
+					signatures: ['infill']
+				})
+			)
+		);
 	}
 
 	return { area: Math.max(0, area), items: items };
@@ -246,160 +207,109 @@ function getBorder(
 	let runningFoot = toFt(border.runningLength.value, inheritedUnit);
 
 	const items: Item[] = [];
-	// Cut out fixed values first; divy up ratio values afterwards
-	const fractionalStones: (Pattern1D | Stone1D)[] = [];
+	// Separate fixed and fractional patterns
+	const fractionalPatterns: Pattern1D[] = [];
 	let fractionalTotal = 0;
-	const fixedStones: (Pattern1D | Stone1D)[] = [];
+	const fixedPatterns: Pattern1D[] = [];
 
-	for (const stoneOrPattern of border.contents) {
-		if (stoneOrPattern.coverage.unit === 'fr') {
+	for (const pattern of border.contents) {
+		if (pattern.coverage.unit === 'fr') {
 			fractionalTotal += parseFloat(
-				stoneOrPattern.coverage.value as unknown as string
+				pattern.coverage.value as unknown as string
 			);
-			fractionalStones.push(stoneOrPattern);
-		} else fixedStones.push(stoneOrPattern);
+			fractionalPatterns.push(pattern);
+		} else {
+			fixedPatterns.push(pattern);
+		}
 	}
 
-	for (const stoneOrPattern of fixedStones) {
-		const unit = stoneOrPattern.coverage.unit;
+	for (const pattern of fixedPatterns) {
+		const unit = pattern.coverage.unit;
 		let fixedSegmentLength = 0;
 
-		if (unit !== 'fr' && unit !== 'pal' && unit !== 'pcs' && unit !== 'unit')
-			toSqft(stoneOrPattern.coverage.value, unit);
+		if (unit !== 'fr' && unit !== 'pal' && unit !== 'pcs' && unit !== 'unit') {
+			toSqft(pattern.coverage.value, unit);
+		}
 
-		if (stoneOrPattern.type === 'stone') {
-			const stone = stoneOrPattern;
+		let patternLength = 0;
+		const stones: { length: number; metadata: StoneMetadata }[] = [];
+		for (const stone of pattern.contents) {
 			const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+			const { inverseConversionFactor } = getConversionFactors(
+				stoneMetadata,
+				border.orientation
+			);
+			const stoneLength = stone.quantity * inverseConversionFactor;
 
-			const { conversionFactor, inverseConversionFactor } =
-				getConversionFactors(stoneMetadata, border.orientation);
+			patternLength += stoneLength;
+			stones.push({ length: stoneLength, metadata: stoneMetadata });
+		}
 
-			if (unit === 'unit')
-				fixedSegmentLength = stone.coverage.value * inverseConversionFactor;
+		if (unit === 'unit') {
+			fixedSegmentLength = pattern.coverage.value * patternLength;
+		}
 
-			runningFoot -= fixedSegmentLength;
+		const scaleFactor = fixedSegmentLength / patternLength;
 
-			const fixedSegmentArea = fixedSegmentLength * conversionFactor;
-
-			borderArea += fixedSegmentArea;
-
-			items.push({
-				...stoneMetadata,
-				sqftCoverage: fixedSegmentArea,
-				signatures: ['border']
-			});
-		} else {
-			const pattern = stoneOrPattern;
-			// Determine the area that each of each stone in the pattern takes up within the pattern unit
-			let patternLength = 0;
-			const stones: { length: number; metadata: StoneMetadata }[] = [];
-			for (const stone of pattern.contents) {
-				const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
-				const { inverseConversionFactor } = getConversionFactors(
-					stoneMetadata,
+		items.push(
+			...stones.map(({ length, metadata }): Item => {
+				const { conversionFactor } = getConversionFactors(
+					metadata,
 					border.orientation
 				);
-				const stoneLength = stone.quantity * inverseConversionFactor;
+				const stoneArea = length * conversionFactor;
 
-				patternLength += stoneLength;
-				stones.push({ length: stoneLength, metadata: stoneMetadata });
-			}
+				borderArea += stoneArea * scaleFactor;
 
-			if (unit === 'unit')
-				fixedSegmentLength = pattern.coverage.value * patternLength;
-
-			// Sum up the length and divide the total length by it to find the scale factor
-			const scaleFactor = fixedSegmentLength / patternLength;
-
-			// Determine the length taken up by each stone in the full length segment using the scale factor
-			items.push(
-				...stones.map(({ length, metadata }): Item => {
-					const { conversionFactor } = getConversionFactors(
-						metadata,
-						border.orientation
-					);
-					const stoneArea = length * conversionFactor;
-
-					return {
-						...metadata,
-						sqftCoverage: stoneArea * scaleFactor,
-						signatures: ['border']
-					};
-				})
-			);
-		}
+				return {
+					...metadata,
+					sqftCoverage: stoneArea * scaleFactor,
+					signatures: ['border']
+				};
+			})
+		);
 	}
 
 	runningFoot = Math.max(runningFoot, 0);
 
-	for (const stoneOrPattern of fractionalStones) {
+	for (const pattern of fractionalPatterns) {
 		if (runningFoot <= 0) break;
 
-		if (stoneOrPattern.type === 'stone') {
-			const stoneMetadata = getStoneMetadata(
-				stoneOrPattern.skuId,
-				stoneMetadataArray
-			);
-
-			const { conversionFactor } = getConversionFactors(
+		let patternLength = 0;
+		const stones: { length: number; metadata: StoneMetadata }[] = [];
+		for (const stone of pattern.contents) {
+			const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
+			const { inverseConversionFactor } = getConversionFactors(
 				stoneMetadata,
 				border.orientation
 			);
+			const stoneLength = stone.quantity * inverseConversionFactor;
 
-			const fractionalSegmentLength =
-				runningFoot * (stoneOrPattern.coverage.value / fractionalTotal);
-			const fractionalSegmentArea = fractionalSegmentLength * conversionFactor;
+			patternLength += stoneLength;
+			stones.push({ length: stoneLength, metadata: stoneMetadata });
+		}
 
-			borderArea += fractionalSegmentArea;
+		const fractionalSegmentLength =
+			runningFoot * (pattern.coverage.value / fractionalTotal);
+		const scaleFactor = fractionalSegmentLength / patternLength;
 
-			items.push({
-				...stoneMetadata,
-				sqftCoverage: fractionalSegmentArea,
-				signatures: ['border']
-			});
-		} else {
-			const pattern = stoneOrPattern;
-			// Determine the area that each of each stone in the pattern takes up within the pattern unit
-			let patternLength = 0;
-			const stones: { length: number; metadata: StoneMetadata }[] = [];
-			for (const stone of pattern.contents) {
-				const stoneMetadata = getStoneMetadata(stone.skuId, stoneMetadataArray);
-				const { inverseConversionFactor } = getConversionFactors(
-					stoneMetadata,
+		items.push(
+			...stones.map(({ length, metadata }): Item => {
+				const { conversionFactor } = getConversionFactors(
+					metadata,
 					border.orientation
 				);
-				const stoneLength = stone.quantity / inverseConversionFactor;
+				const stoneArea = length * conversionFactor;
 
-				patternLength += stoneLength;
-				stones.push({ length: stoneLength, metadata: stoneMetadata });
-			}
+				borderArea += stoneArea * scaleFactor;
 
-			const fractionalSegmentLength =
-				runningFoot * (stoneOrPattern.coverage.value / fractionalTotal);
-
-			// Sum up the length and divide the total length by it to find the scale factor
-			const scaleFactor = fractionalSegmentLength / patternLength;
-
-			// Determine the length taken up by each stone in the full length segment using the scale factor
-			items.push(
-				...stones.map(({ length, metadata }): Item => {
-					const { conversionFactor } = getConversionFactors(
-						metadata,
-						border.orientation
-					);
-					const unscaledStoneArea = length * conversionFactor;
-					const stoneArea = unscaledStoneArea * scaleFactor;
-
-					borderArea += stoneArea;
-
-					return {
-						...metadata,
-						sqftCoverage: stoneArea,
-						signatures: ['border']
-					};
-				})
-			);
-		}
+				return {
+					...metadata,
+					sqftCoverage: stoneArea * scaleFactor,
+					signatures: ['border']
+				};
+			})
+		);
 	}
 
 	return {

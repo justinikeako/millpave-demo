@@ -1,6 +1,6 @@
 'use client';
 
-import { StageForm } from '../_components/form';
+import { StageForm } from '../components/form';
 import { Button } from '~/components/button';
 import Balancer from 'react-wrap-balancer';
 import { Icon } from '~/components/icon';

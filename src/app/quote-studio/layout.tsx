@@ -1,6 +1,6 @@
-import { StageFooter } from './_components/footer';
-import { StageProvider } from './_components/stage-context';
-import { Transition } from './_components/transition';
+import { StageFooter } from './components/footer';
+import { StageProvider } from './components/stage-context';
+import { Transition } from './components/transition';
 
 export const metadata = {
 	title: 'Get a Quote — Millennium Paving Stones LTD.',

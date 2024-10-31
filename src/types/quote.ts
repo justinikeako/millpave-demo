@@ -46,21 +46,6 @@ const StoneMetadata = z.object({
 });
 export type StoneMetadata = z.infer<typeof StoneMetadata>;
 
-const Stone1D = z.object({
-	type: z.literal('stone'),
-	skuId: z.string(),
-	coverage: CoverageInput1D
-});
-const Stone2D = z.object({
-	type: z.literal('stone'),
-	skuId: z.string(),
-	coverage: CoverageInput2D
-});
-export type Stone1D = z.infer<typeof Stone1D>;
-export type Stone2D = z.infer<typeof Stone2D>;
-const Stone = z.union([Stone1D, Stone2D]);
-export type Stone = z.infer<typeof Stone>;
-
 const Pattern1D = z.object({
 	type: z.literal('pattern'),
 	id: z.string(),
@@ -93,7 +78,7 @@ export type Pattern = z.infer<typeof Pattern>;
 
 export type Coverage = { value: number; unit: Unit };
 
-const Measurements = z.object({
+const measurementsSchema = z.object({
 	width: z.number(),
 	length: z.number(),
 	radius: z.number(),
@@ -101,12 +86,13 @@ const Measurements = z.object({
 	runningLength: z.number(),
 	unit: Unit1D
 });
-export type Measurements = z.infer<typeof Measurements>;
 
-export const InfillConfig = z.object({
-	contents: z.union([Pattern2D, Stone2D]).array()
+export type Measurements = z.infer<typeof measurementsSchema>;
+
+export const infillConfigSchema = z.object({
+	contents: Pattern2D.array()
 });
-export type InfillConfig = z.infer<typeof InfillConfig>;
+export type InfillConfig = z.infer<typeof infillConfigSchema>;
 
 const BorderLength = z.object({
 	value: z.number(),
@@ -119,18 +105,18 @@ export type BorderOrientation = z.infer<typeof BorderOrientation>;
 export const BorderConfig = z.object({
 	runningLength: BorderLength,
 	orientation: BorderOrientation,
-	contents: z.union([Pattern1D, Stone1D]).array()
+	contents: Pattern1D.array()
 });
 export type BorderConfig = z.infer<typeof BorderConfig>;
 
-export const StoneProject = z.object({
+export const stoneProjectSchema = z.object({
 	email: z.string(),
 
 	shape: Shape,
 
-	measurements: Measurements,
+	measurements: measurementsSchema,
 
-	infill: InfillConfig,
+	infill: infillConfigSchema,
 
 	border: BorderConfig,
 
@@ -144,7 +130,7 @@ export const StoneProject = z.object({
 		.array()
 });
 
-export type StoneProject = z.infer<typeof StoneProject>;
+export type StoneProject = z.infer<typeof stoneProjectSchema>;
 
 export const QuoteItem = z.object({
 	skuId: z.string(),

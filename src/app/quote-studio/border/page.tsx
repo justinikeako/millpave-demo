@@ -12,12 +12,12 @@ import {
 	PopoverTrigger,
 	PopoverContent
 } from '~/components/ui/popover';
-import { StageForm } from '../_components/form';
+import { StageForm } from '../components/form';
 import { Controller, useFormContext } from 'react-hook-form';
-import { StoneEditor } from '../_components/stone-editor';
+import { PatternEditor } from '../components/pattern-editor';
 import type { BorderOrientation, StoneProject } from '~/types/quote';
 import { calculateRunningFoot, unitDisplayNameDictionary } from '~/lib/utils';
-import { useStageContext } from '../_components/stage-context';
+import { useStageContext } from '../components/stage-context';
 import { Button } from '~/components/button';
 import Balancer from 'react-wrap-balancer';
 import { Icon } from '~/components/icon';
@@ -79,7 +79,7 @@ export default function Page() {
 
 			<BorderOptions />
 
-			<StoneEditor name="border.contents" dimension="1D" stageIndex={3} />
+			<PatternEditor name="border.contents" dimension="1D" stageIndex={3} />
 		</StageForm>
 	);
 }

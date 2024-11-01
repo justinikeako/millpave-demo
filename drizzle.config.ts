@@ -3,7 +3,8 @@ import { env } from '~/env';
 
 export default {
 	schema: './src/server/db/schema.ts',
-	driver: 'pg',
-	dbCredentials: { connectionString: env.POSTGRES_URL },
+	dialect: 'postgresql',
+	driver: 'pglite',
+	dbCredentials: { url: env.POSTGRES_URL },
 	tablesFilter: ['millpave_*']
 } satisfies Config;

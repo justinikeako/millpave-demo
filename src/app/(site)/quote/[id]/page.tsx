@@ -18,37 +18,39 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
-export const runtime = 'experimental-edge';
+export const runtime = "edge";
 
 const getQuote = cache(async function (id: string) {
 	return await api.quote.getById({ quoteId: id });
 });
 
 type PageProps = {
-	params: {
+	params: Promise<{
 		id: string;
-	};
+	}>;
 };
-export async function generateMetadata({ params }: PageProps) {
-	const quote = await getQuote(params.id);
+export async function generateMetadata(props: PageProps) {
+    const params = await props.params;
+    const quote = await getQuote(params.id);
 
-	return {
+    return {
 		title: `${quote!.title} — Millennium Paving Stones LTD.`
 	} as Metadata;
 }
 
-export default async function Page({ params }: PageProps) {
-	const quoteId = params.id;
+export default async function Page(props: PageProps) {
+    const params = await props.params;
+    const quoteId = params.id;
 
-	const quote = await getQuote(quoteId);
-	if (!quote) return notFound();
-	const itemsSkuIds = quote.items.map(({ skuId }) => skuId);
+    const quote = await getQuote(quoteId);
+    if (!quote) return notFound();
+    const itemsSkuIds = quote.items.map(({ skuId }) => skuId);
 
-	const itemsFulfillment = await api.quote.getFulfillment({
+    const itemsFulfillment = await api.quote.getFulfillment({
 		skuIds: itemsSkuIds
 	});
 
-	return (
+    return (
 		<>
 			<Main className="space-y-16 py-8 lg:py-16">
 				<RevealContainer>

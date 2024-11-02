@@ -17,7 +17,7 @@ import { notFound } from 'next/navigation';
 import { ProductList } from './_components/product-list';
 import { Filters, FilterSheet } from './_components/filters';
 
-export const runtime = 'experimental-edge';
+export const runtime = "edge";
 
 export const metadata = {
 	title: 'Product Catalogue — Millennium Paving Stones LTD.'

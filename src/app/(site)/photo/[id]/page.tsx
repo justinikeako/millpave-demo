@@ -1,4 +1,5 @@
 'use client';
+import { use } from 'react';
 
 import * as Dialog from '@radix-ui/react-dialog';
 
@@ -11,12 +12,14 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '~/components/button';
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
-export default function PhotoModal({ params }: Props) {
+export default function PhotoModal(props: Props) {
+	const params = use(props.params);
 	const photoId = params.id;
 
 	const router = useRouter();
+
 	function handleDismiss() {
 		router.push('/inspiration');
 	}

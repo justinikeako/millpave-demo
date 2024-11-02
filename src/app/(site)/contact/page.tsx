@@ -14,10 +14,11 @@ export const metadata: Metadata = {
 	title: 'Contact — Millennium Paving Stones LTD.'
 };
 
-function Page({ searchParams }: { searchParams: { form: FormType } }) {
-	const formType = searchParams.form || 'general';
+async function Page(props: { searchParams: Promise<{ form: FormType }> }) {
+    const searchParams = await props.searchParams;
+    const formType = searchParams.form || 'general';
 
-	return (
+    return (
 		<>
 			<RevealContainer asChild>
 				<Main>

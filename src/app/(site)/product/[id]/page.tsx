@@ -23,7 +23,7 @@ import { Gallery } from './_components/gallery';
 import type { Metadata } from 'next';
 import { cache } from 'react';
 
-export const runtime = "edge";
+export const runtime = 'edge';
 
 const getProduct = cache(async function (id: string) {
 	return await api.product.getById({ productId: id });
@@ -31,22 +31,22 @@ const getProduct = cache(async function (id: string) {
 
 type PageProps = {
 	params: Promise<{ id: string }>;
-	searchParams: Record<string, string | string[] | undefined>;
+	searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export async function generateMetadata(props: PageProps) {
-    const searchParams = await props.searchParams;
-    const params = await props.params;
-    const productId = params.id;
-    const variantId =
+	const searchParams = await props.searchParams;
+	const params = await props.params;
+	const productId = params.id;
+	const variantId =
 		typeof searchParams.sku === 'string'
 			? decodeURIComponent(searchParams.sku)
 			: undefined;
-    const skuId = productId + ':' + variantId;
+	const skuId = productId + ':' + variantId;
 
-    const product = await getProduct(params.id);
+	const product = await getProduct(params.id);
 
-    return {
+	return {
 		title: `${product.displayName} — Millennium Paving Stones LTD.`,
 		description: product.description,
 		...(product.hasModels
@@ -65,32 +65,32 @@ export async function generateMetadata(props: PageProps) {
 }
 
 export default async function Page(props: PageProps) {
-    const searchParams = await props.searchParams;
-    const params = await props.params;
-    const productId = params.id;
-    const variantId =
+	const searchParams = await props.searchParams;
+	const params = await props.params;
+	const productId = params.id;
+	const variantId =
 		typeof searchParams.sku === 'string'
 			? decodeURIComponent(searchParams.sku)
 			: undefined;
-    const skuId = productId ? productId + ':' + variantId : undefined;
+	const skuId = productId ? productId + ':' + variantId : undefined;
 
-    const product = await getProduct(productId);
+	const product = await getProduct(productId);
 
-    const [, ...defaultVariantFragments] = product.defaultSkuId.split(':');
-    const defaultVariantId = defaultVariantFragments.join(':');
+	const [, ...defaultVariantFragments] = product.defaultSkuId.split(':');
+	const defaultVariantId = defaultVariantFragments.join(':');
 
-    const skuExists = product.skus.some((currentSku) => currentSku.id === skuId);
+	const skuExists = product.skus.some((currentSku) => currentSku.id === skuId);
 
-    if (!skuExists)
+	if (!skuExists)
 		return redirect(
 			`/product/${product.id}?sku=${encodeURIComponent(defaultVariantId)}`
 		);
 
-    const currentSku = findSku(skuId, product?.skus, product?.details);
+	const currentSku = findSku(skuId, product?.skus, product?.details);
 
-    if (!product || !currentSku || !skuId) return notFound();
+	if (!product || !currentSku || !skuId) return notFound();
 
-    return (
+	return (
 		<>
 			<Main>
 				{/* Main Content */}

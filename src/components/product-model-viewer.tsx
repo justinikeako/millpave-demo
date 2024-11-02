@@ -244,4 +244,4 @@ function AndroidARLink({ file, title, link }: AndroidARLinkProps) {
 	);
 }
 
-export default ProductViewer3D;
+export { ProductViewer3D };

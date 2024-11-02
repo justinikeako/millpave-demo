@@ -1,7 +1,6 @@
 'use client';
 
 import { Icon } from '~/components/icon';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -9,10 +8,7 @@ import { Suspense, useCallback } from 'react';
 import type { Sku } from '~/types/product';
 import { cn } from '~/lib/utils';
 
-const ProductModelViewer = dynamic(
-	() => import('~/components/product-model-viewer'),
-	{ suspense: true, ssr: false }
-);
+import { ProductViewer3D } from '~/components/product-model-viewer';
 
 type GalleryProps = {
 	sku: Sku;
@@ -89,10 +85,7 @@ export function Gallery({ sku, showModelViewer }: GalleryProps) {
 								</div>
 							}
 						>
-							<ProductModelViewer
-								skuId={sku.id}
-								displayName={sku.displayName}
-							/>
+							<ProductViewer3D skuId={sku.id} displayName={sku.displayName} />
 						</Suspense>
 					)
 				) : (

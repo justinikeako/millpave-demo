@@ -1,31 +1,31 @@
 'use client';
 
-import { type Variants, AnimatePresence, motion } from 'framer-motion';
-import { useStageContext } from './stage-context';
-import { usePathname } from 'next/navigation';
+// import { type Variants, AnimatePresence, motion } from 'framer-motion';
+// import { useStageContext } from './stage-context';
+// import { usePathname } from 'next/navigation';
 
-// Frozen Router is a hack to enables framer motion exit transitions in app dir
-import { FrozenRouter } from '~/components/frozen-router';
+// // Frozen Router is a hack to enables framer motion exit transitions in app dir
+// import { FrozenRouter } from '~/components/frozen-router';
 
-const variants: Variants = {
-	hidden: (direction: number) => ({
-		x: direction > 0 ? 50 : -50,
-		opacity: 0,
-		transition: { type: 'spring', duration: 0.5, bounce: 0 }
-	}),
-	enter: {
-		x: 0,
-		opacity: 1,
-		zIndex: 1,
-		transition: { type: 'spring', duration: 0.5, bounce: 0 }
-	},
-	exit: (direction: number) => ({
-		x: direction > 0 ? -50 : 50,
-		opacity: 0,
-		zIndex: 0,
-		transition: { type: 'spring', duration: 0.5, bounce: 0 }
-	})
-};
+// const variants: Variants = {
+// 	hidden: (direction: number) => ({
+// 		x: direction > 0 ? 50 : -50,
+// 		opacity: 0,
+// 		transition: { type: 'spring', duration: 0.5, bounce: 0 }
+// 	}),
+// 	enter: {
+// 		x: 0,
+// 		opacity: 1,
+// 		zIndex: 1,
+// 		transition: { type: 'spring', duration: 0.5, bounce: 0 }
+// 	},
+// 	exit: (direction: number) => ({
+// 		x: direction > 0 ? -50 : 50,
+// 		opacity: 0,
+// 		zIndex: 0,
+// 		transition: { type: 'spring', duration: 0.5, bounce: 0 }
+// 	})
+// };
 
 // export function Transition(props: React.PropsWithChildren) {
 // 	const { direction } = useStageContext();
@@ -48,6 +48,7 @@ const variants: Variants = {
 // 		</AnimatePresence>
 // 	);
 // }
+
 export function Transition(props: React.PropsWithChildren) {
 	return props.children;
 }

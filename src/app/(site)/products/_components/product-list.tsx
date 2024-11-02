@@ -28,7 +28,7 @@ export function ProductList({ initialData }: { initialData: InitialData }) {
 		}
 	);
 
-	const products = productsQuery.data!;
+	const products = productsQuery.data;
 
 	return (
 		<>

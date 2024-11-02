@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Footer } from '~/components/footer';
-import { RevealContainer, Reveal } from '../../components/reveal';
+import { RevealContainer, Reveal } from '~/components/reveal';
 import { Main } from '~/components/main';
 import { AugmentedRealityGallerySection } from '~/components/sections/ar-gallery';
 import { FullWidthSection } from '~/components/sections/full-width';

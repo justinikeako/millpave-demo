@@ -2,7 +2,7 @@
 
 import { StageForm } from '../components/form';
 import { PatternEditor } from '../components/pattern-editor';
-import { Button } from '../../../components/button';
+import { Button } from '~/components/button';
 import { useStageContext } from '../components/stage-context';
 import Balancer from 'react-wrap-balancer';
 import { useRouter } from 'next/navigation';

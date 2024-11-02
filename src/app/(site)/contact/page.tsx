@@ -1,5 +1,5 @@
 import { Footer } from '~/components/footer';
-import { Button } from '../../components/button';
+import { Button } from '~/components/button';
 import { Main } from '~/components/main';
 import { Reveal, RevealContainer } from '~/components/reveal';
 import { Icon } from '~/components/icon';
@@ -15,10 +15,10 @@ export const metadata: Metadata = {
 };
 
 async function Page(props: { searchParams: Promise<{ form: FormType }> }) {
-    const searchParams = await props.searchParams;
-    const formType = searchParams.form || 'general';
+	const searchParams = await props.searchParams;
+	const formType = searchParams.form || 'general';
 
-    return (
+	return (
 		<>
 			<RevealContainer asChild>
 				<Main>

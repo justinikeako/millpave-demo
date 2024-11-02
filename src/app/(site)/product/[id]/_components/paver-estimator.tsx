@@ -11,8 +11,8 @@ import {
 	SelectValue,
 	SelectContent,
 	SelectItem
-} from '../../../../components/ui/select';
-import { Button } from '../../../../components/button';
+} from '~/components/ui/select';
+import { Button } from '~/components/button';
 
 type PaverEstimatorProps = {
 	paverDetails: PaverDetails;
